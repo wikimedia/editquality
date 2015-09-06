@@ -1,6 +1,6 @@
 """
 Filters a set of revision IDs for use in an edit quality labeling campaign by
-whether they need review or not.  This script uses a MediaWiki API to mark
+whether they need reviewed or not.  This script uses a MediaWiki API to mark
 edits by trusted users as not needing review and reverted edits/edits by
 blocked users as needing review.
 
