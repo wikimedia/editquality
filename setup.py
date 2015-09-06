@@ -13,7 +13,7 @@ def requirements(fname):
 setup(
     name="editquality",
     version="0.0.2",  # see editquality/__init__.py
-    author="Aaron Halfaker / Morten Warncke-Wang",
+    author="Aaron Halfaker",
     author_email="ahalfaker@wikimedia.org",
     description="A library for performing automatic detection of the " +
                 "quality of Wikipedia edits.",
@@ -35,8 +35,6 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        "Topic :: Text Processing :: Linguistic",
-        "Topic :: Text Processing :: General",
         "Topic :: Utilities",
         "Topic :: Scientific/Engineering"
     ],
