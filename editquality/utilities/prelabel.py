@@ -5,15 +5,15 @@ edits by trusted users as not needing review and reverted edits/edits by
 blocked users as needing review.
 
 :Usage:
-    edit_quality_filter -h | --help
-    edit_quality_filter <api-host>
-                        [--rev-ids=<path>]
-                        [--labels=<path>]
-                        [--trusted-groups=<grp>]
-                        [--trusted-edits=<edits>]
-                        [--revert-radius=<revs>]
-                        [--revert-window=<hours>]
-                        [--verbose]
+    prelabel -h | --help
+    prelabel <api-host>
+             [--rev-ids=<path>]
+             [--labels=<path>]
+             [--trusted-groups=<grp>]
+             [--trusted-edits=<edits>]
+             [--revert-radius=<revs>]
+             [--revert-window=<hours>]
+             [--verbose]
 
 :Options:
     <api-host>               MediaWiki host were the API should be queried
@@ -33,11 +33,11 @@ blocked users as needing review.
 
 :Example:
 
-    $ cat revids.tsv | \
-      editquality
-         prelabel
-         https://en.wikipedia.org \
-         --trusted-groups=sysop,rollbacker,bot \
+    $ cat revids.tsv | \\
+      editquality \\
+         prelabel \\
+         https://en.wikipedia.org \\
+         --trusted-groups=sysop,rollbacker,bot \\
          --trusted-edits=50
     rev_id	needs_review	reason
     637976519	False	trusted group
