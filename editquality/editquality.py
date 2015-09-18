@@ -1,8 +1,9 @@
 """
 This script provides access to a set of utilities for extracting features and
-building article quality classifiers.
+building edit quality predictors.
 
-* prelabel -- Gathers quality labeling events from XML dumps
+* fetch_labels -- Fetches labels from the labels server for a campaign
+* prelabel -- Labels edits by whether or not they require review
 
 Usage:
     editquality (-h | --help)
