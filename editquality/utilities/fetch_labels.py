@@ -3,11 +3,13 @@ Extracts labels from a Wikilabels server.  Assumes the general schema of
 the Edit quality campaign.
 
 Usage:
-    fetch_labels <campaign-url> <field> [--no-aggregation]
+    fetch_labels <campaign-url> <field> --default=<bool> [--no-aggregation]
 
 Options:
     <campaign-url>    The base URL of a campaign from which to extract labels.
     <field>           The field (good-faith, damaging) to retrieve.
+    --default=<bool>  A default value that will be used if the best label
+                      submitted NULL values.
     --no-aggregation  If set, all labels will be returned.  The default
                       behavior is to collapse the labels by task.
 """
@@ -28,10 +30,12 @@ def main(argv=None):
 
     aggregate = not args['--no-aggregation']  # Warning: Double Negative!
 
-    run(campaign_url, field, aggregate)
+    default = args['--default'].lower() in ("true", "t")
+
+    run(campaign_url, field, default, aggregate)
 
 
-def run(campaign_url, field, aggregate):
+def run(campaign_url, field, default, aggregate):
 
     writer = mysqltsv.Writer(sys.stdout)
 
@@ -45,7 +49,9 @@ def run(campaign_url, field, aggregate):
             labels = [l['data'][field] for l in task_doc['labels']]
 
         for label in labels:
-            writer.write([task_doc['data']['rev_id'], bool(label)])
+            if label is None:
+                label = default
+            writer.write([task_doc['data']['rev_id'], label])
 
 
 def aggregate_labels(label_docs, field):
