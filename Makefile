@@ -1,18 +1,44 @@
 
 all_models:
-	make models/enwiki.reverted.linear_svc.model & \
-	make models/enwiki.damaging.linear_svc.model & \
-	make models/enwiki.goodfaith.linear_svc.model & \
-	make models/fawiki.reverted.linear_svc.model & \
-	make models/fawiki.damaging.linear_svc.model & \
-	make models/fawiki.goodfaith.linear_svc.model & \
-	make models/ptwiki.reverted.linear_svc.model & \
-	make models/ptwiki.damaging.linear_svc.model & \
+	make models/enwiki.reverted.linear_svc.model & && sleep 0.5 \
+	make models/enwiki.damaging.linear_svc.model & && sleep 0.5 \
+	make models/enwiki.goodfaith.linear_svc.model & && sleep 0.5 \
+	make models/fawiki.reverted.linear_svc.model & && sleep 0.5 \
+	make models/fawiki.damaging.linear_svc.model & && sleep 0.5 \
+	make models/fawiki.goodfaith.linear_svc.model & && sleep 0.5 \
+	make models/ptwiki.reverted.linear_svc.model & && sleep 0.5 \
+	make models/ptwiki.damaging.linear_svc.model & && sleep 0.5 \
 	make models/ptwiki.goodfaith.linear_svc.model &
 
 
 
 ############################# English Wikipedia ################################
+
+datasets/enwiki.rev_reverted.20k_2015.tsv: \
+		datasets/enwiki.rev_damaging.20k_2015.tsv
+	cut datasets/enwiki.rev_damaging.20k_2015.tsv -f1 | \
+	./utility label_reverted \
+		--host https://en.wikipedia.org \
+		--verbose > \
+	datasets/enwiki.rev_reverted.20k_2015.tsv
+
+datasets/enwiki.features_reverted.20k_2015.tsv: \
+		datasets/enwiki.rev_reverted.20k_2015.tsv
+	cat datasets/enwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.enwiki.damaging \
+		--host https://en.wikipedia.org \
+		--verbose > \
+	datasets/enwiki.features_reverted.20k_2015.tsv
+
+models/enwiki.reverted.linear_svc.model: \
+		datasets/enwiki.features_reverted.20k_2015.tsv
+	cat datasets/enwiki.features_reverted.20k_2015.tsv | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.enwiki.damaging \
+		--version=0.4.0 > \
+	models/enwiki.reverted.linear_svc.model
 
 datasets/enwiki.rev_damaging.20k_2015.tsv:
 	./utility fetch_labels \
@@ -67,6 +93,32 @@ models/enwiki.goodfaith.linear_svc.model: \
 
 ############################# Persian Wikipedia ################################
 
+datasets/fawiki.rev_reverted.20k_2015.tsv: \
+		datasets/fawiki.rev_damaging.20k_2015.tsv
+	cut datasets/fawiki.rev_damaging.20k_2015.tsv -f1 | \
+	./utility label_reverted \
+		--host https://en.wikipedia.org \
+		--verbose > \
+	datasets/fawiki.rev_reverted.20k_2015.tsv
+
+datasets/fawiki.features_reverted.20k_2015.tsv: \
+		datasets/fawiki.rev_reverted.20k_2015.tsv
+	cat datasets/fawiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.fawiki.damaging \
+		--host https://en.wikipedia.org \
+		--verbose > \
+	datasets/fawiki.features_reverted.20k_2015.tsv
+
+models/fawiki.reverted.linear_svc.model: \
+		datasets/fawiki.features_reverted.20k_2015.tsv
+	cat datasets/fawiki.features_reverted.20k_2015.tsv | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.fawiki.damaging \
+		--version=0.4.0 > \
+	models/fawiki.reverted.linear_svc.model
+
 datasets/fawiki.rev_damaging.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ \
@@ -119,6 +171,32 @@ models/fawiki.goodfaith.linear_svc.model: \
 
 
 ############################# Portugueses Wikipedia ############################
+
+datasets/ptwiki.rev_reverted.20k_2015.tsv: \
+		datasets/ptwiki.rev_damaging.20k_2015.tsv
+	cut datasets/ptwiki.rev_damaging.20k_2015.tsv -f1 | \
+	./utility label_reverted \
+		--host https://en.wikipedia.org \
+		--verbose > \
+	datasets/ptwiki.rev_reverted.20k_2015.tsv
+
+datasets/ptwiki.features_reverted.20k_2015.tsv: \
+		datasets/ptwiki.rev_reverted.20k_2015.tsv
+	cat datasets/ptwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.ptwiki.damaging \
+		--host https://en.wikipedia.org \
+		--verbose > \
+	datasets/ptwiki.features_reverted.20k_2015.tsv
+
+models/ptwiki.reverted.linear_svc.model: \
+		datasets/ptwiki.features_reverted.20k_2015.tsv
+	cat datasets/ptwiki.features_reverted.20k_2015.tsv | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.enwiki.damaging \
+		--version=0.4.0 > \
+	models/enwiki.reverted.linear_svc.model
 
 datasets/ptwiki.rev_damaging.20k_2015.tsv:
 	./utility fetch_labels \
