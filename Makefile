@@ -1,14 +1,14 @@
 
 all_models:
-	make enwiki.reverted.linear_svc.model & \
-	make enwiki.damaging.linear_svc.model & \
-	make enwiki.goodfaith.linear_svc.model & \
-	make fawiki.reverted.linear_svc.model & \
-	make fawiki.damaging.linear_svc.model & \
-	make fawiki.goodfaith.linear_svc.model & \
-	make ptwiki.reverted.linear_svc.model & \
-	make ptwiki.damaging.linear_svc.model & \
-	make ptwiki.goodfaith.linear_svc.model &
+	make models/enwiki.reverted.linear_svc.model & \
+	make models/enwiki.damaging.linear_svc.model & \
+	make models/enwiki.goodfaith.linear_svc.model & \
+	make models/fawiki.reverted.linear_svc.model & \
+	make models/fawiki.damaging.linear_svc.model & \
+	make models/fawiki.goodfaith.linear_svc.model & \
+	make models/ptwiki.reverted.linear_svc.model & \
+	make models/ptwiki.damaging.linear_svc.model & \
+	make models/ptwiki.goodfaith.linear_svc.model &
 
 
 
