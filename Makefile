@@ -10,9 +10,22 @@ all_models:
 	make models/ptwiki.damaging.linear_svc.model & sleep 0.5 && \
 	make models/ptwiki.goodfaith.linear_svc.model &
 
+############################# German Wikipedia ################################
 
+datasets/dewiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/42223/output/0/tsv?download=true > \
+	dewiki.sampled_revisions.20k_2015.tsv
 
-############################# English Wikipedia ################################
+datasets/dewiki.prelabeled_revisions.20k_2015.tsv:
+		datasets/dewiki.sampled_revisions.20k_2015.tsv
+	cat datasets/dewiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://de.wikipedia.org \
+		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/dewiki.prelabeled_revisions.20k_2015.tsv
+
+############################# English Wikipedia ###############################
 
 datasets/enwiki.rev_reverted.20k_2015.tsv: \
 		datasets/enwiki.rev_damaging.20k_2015.tsv
@@ -93,6 +106,21 @@ models/enwiki.goodfaith.linear_svc.model: \
                 --label-type=bool > \
 	models/enwiki.goodfaith.linear_svc.model
 
+
+############################# Spanish Wikipedia ################################
+
+datasets/eswiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/42221/output/0/tsv?download=true > \
+	eswiki.sampled_revisions.20k_2015.tsv
+
+datasets/eswiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/eswiki.sampled_revisions.20k_2015.tsv
+	cat datasets/eswiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://es.wikipedia.org \
+		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/eswiki.prelabeled_revisions.20k_2015.tsv
 
 ############################# Persian Wikipedia ################################
 
@@ -175,6 +203,50 @@ models/fawiki.goodfaith.linear_svc.model: \
                 --label-type=bool > \
 	models/fawiki.goodfaith.linear_svc.model
 
+############################# Hebrew Wikipedia ################################
+
+datasets/hewiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/42222/output/0/tsv?download=true > \
+	hewiki.sampled_revisions.20k_2015.tsv
+
+datasets/hewiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/hewiki.sampled_revisions.20k_2015.tsv
+	cat datasets/hewiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://he.wikipedia.org \
+		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/hewiki.prelabeled_revisions.20k_2015.tsv
+
+############################# Italian Wikipedia ###############################
+
+datasets/itwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/42224/output/0/tsv?download=true > \
+	itwiki.sampled_revisions.20k_2015.tsv
+
+datasets/itwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/itwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/itwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://it.wikipedia.org \
+		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/itwiki.prelabeled_revisions.20k_2015.tsv
+
+############################### Dutch Wikipedia ###############################
+
+datasets/nlwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/42225/output/0/tsv?download=true > \
+	nlwiki.sampled_revisions.20k_2015.tsv
+
+datasets/nlwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/nlwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/nlwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://nl.wikipedia.org \
+		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/nlwiki.prelabeled_revisions.20k_2015.tsv
 
 ############################# Portugueses Wikipedia ############################
 
