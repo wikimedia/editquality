@@ -31,25 +31,6 @@ blocked users as needing review.
                              used.
     --verbose                Prints dots and stuff to <stderr>
 
-:Example:
-
-    $ cat revids.tsv | \\
-      editquality \\
-         prelabel \\
-         https://en.wikipedia.org \\
-         --trusted-groups=sysop,rollbacker,bot \\
-         --trusted-edits=50
-    rev_id	needs_review	reason
-    637976519	False	trusted group
-    638286816	False	trusted edits
-    640200183	False	trusted edits
-    639175405	False	trusted group
-    640135863	True	blocked user
-    636609456	False	trusted group
-    636432698	False	trusted edits
-    638205366	False	trusted group
-    638870751	False	trusted edits
-    636289822	False	trusted group
 """
 import os.path
 import sys
@@ -58,7 +39,6 @@ from functools import lru_cache
 from itertools import islice
 
 import docopt
-
 import mwapi
 import mwreverts.api
 import mysqltsv
@@ -77,7 +57,7 @@ def main(argv=None):
         path = os.path.expanduser(args['--rev-ids'])
         rev_ids_f = open(path, 'r')
 
-    rev_ids = (int(line) for line in rev_ids_f)
+    rev_ids = read_revids(rev_ids_f)
 
     if args['--labels'] == "<stdout>":
         labels_f = sys.stdout
@@ -86,8 +66,6 @@ def main(argv=None):
         labels_f = open(path, 'w')
 
     labels = mysqltsv.Writer(labels_f, headers=HEADERS)
-
-    rev_ids = (int(line) for line in rev_ids_f)
 
     trusted_groups = set(args['--trusted-groups'].strip().split(",")) \
                      if args['--trusted-groups'] is not None else None
@@ -100,12 +78,20 @@ def main(argv=None):
 
     verbose = args['--verbose']
 
-    run(api_host, rev_ids, labels, trusted_groups, trusted_edits, revert_radius,
-        revert_window, verbose)
+    run(api_host, rev_ids, labels, trusted_groups, trusted_edits,
+        revert_radius, revert_window, verbose)
 
 
-def run(api_host, rev_ids, labels, trusted_groups, trusted_edits, revert_radius,
-        revert_window, verbose):
+def read_revids(f):
+    for line in f:
+        if line.strip() == "rev_id":
+            continue
+        else:
+            yield int(line)
+
+
+def run(api_host, rev_ids, labels, trusted_groups, trusted_edits,
+        revert_radius, revert_window, verbose):
 
     # Construct our API session
     session = mwapi.Session(api_host,
