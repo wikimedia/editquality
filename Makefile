@@ -14,9 +14,9 @@ all_models:
 
 datasets/dewiki.sampled_revisions.20k_2015.tsv:
 	wget -qO- http://quarry.wmflabs.org/run/42223/output/0/tsv?download=true > \
-	dewiki.sampled_revisions.20k_2015.tsv
+	datasets/dewiki.sampled_revisions.20k_2015.tsv
 
-datasets/dewiki.prelabeled_revisions.20k_2015.tsv:
+datasets/dewiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/dewiki.sampled_revisions.20k_2015.tsv
 	cat datasets/dewiki.sampled_revisions.20k_2015.tsv | \
 	./utility prelabel https://de.wikipedia.org \
@@ -111,7 +111,7 @@ models/enwiki.goodfaith.linear_svc.model: \
 
 datasets/eswiki.sampled_revisions.20k_2015.tsv:
 	wget -qO- http://quarry.wmflabs.org/run/42221/output/0/tsv?download=true > \
-	eswiki.sampled_revisions.20k_2015.tsv
+	datasets/eswiki.sampled_revisions.20k_2015.tsv
 
 datasets/eswiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/eswiki.sampled_revisions.20k_2015.tsv
@@ -205,9 +205,9 @@ models/fawiki.goodfaith.linear_svc.model: \
 
 ############################# Hebrew Wikipedia ################################
 
-datasets/hewiki.sampled_revisions.20k_2015.tsv:
+datasets/hewiki.sampled_revisions.20k_2015.tsv: 
 	wget -qO- http://quarry.wmflabs.org/run/42222/output/0/tsv?download=true > \
-	hewiki.sampled_revisions.20k_2015.tsv
+	datasets/hewiki.sampled_revisions.20k_2015.tsv
 
 datasets/hewiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/hewiki.sampled_revisions.20k_2015.tsv
@@ -222,7 +222,7 @@ datasets/hewiki.prelabeled_revisions.20k_2015.tsv: \
 
 datasets/itwiki.sampled_revisions.20k_2015.tsv:
 	wget -qO- http://quarry.wmflabs.org/run/42224/output/0/tsv?download=true > \
-	itwiki.sampled_revisions.20k_2015.tsv
+	datasets/itwiki.sampled_revisions.20k_2015.tsv
 
 datasets/itwiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/itwiki.sampled_revisions.20k_2015.tsv
@@ -237,7 +237,7 @@ datasets/itwiki.prelabeled_revisions.20k_2015.tsv: \
 
 datasets/nlwiki.sampled_revisions.20k_2015.tsv:
 	wget -qO- http://quarry.wmflabs.org/run/42225/output/0/tsv?download=true > \
-	nlwiki.sampled_revisions.20k_2015.tsv
+	datasets/nlwiki.sampled_revisions.20k_2015.tsv
 
 datasets/nlwiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/nlwiki.sampled_revisions.20k_2015.tsv
