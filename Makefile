@@ -205,7 +205,7 @@ models/fawiki.goodfaith.linear_svc.model: \
 
 ############################# Hebrew Wikipedia ################################
 
-datasets/hewiki.sampled_revisions.20k_2015.tsv: 
+datasets/hewiki.sampled_revisions.20k_2015.tsv:
 	wget -qO- http://quarry.wmflabs.org/run/42222/output/0/tsv?download=true > \
 	datasets/hewiki.sampled_revisions.20k_2015.tsv
 
@@ -329,7 +329,7 @@ models/ptwiki.goodfaith.linear_svc.model: \
                 --label-type=bool > \
 	models/ptwiki.goodfaith.linear_svc.model
 
-################################# WikiData ##### ################################
+################################# WikiData ####################################
 
 datasets/wikidatawiki.sampled_revisions.20k_2015.tsv:
 	wget -qO- http://quarry.wmflabs.org/run/42225/output/0/tsv?download=true > \
@@ -353,10 +353,10 @@ datasets/wikidatawiki.features_reverted.20k_2015.tsv: \
 	datasets/wikidatawiki.features_reverted.20k_2015.tsv
 
 datasets/wikidatawiki.prelabeled_revisions.20k_2015.tsv: \
-                datasets/wikidatawiki.sampled_revisions.20k_2015.tsv
-        cat datasets/wikidatawiki.sampled_revisions.20k_2015.tsv | \
-        ./utility prelabel https://www.wikidata.org \
-                --trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
-                --trusted-edits=1000 \
-                --verbose > \
-        datasets/wikidatawiki.prelabeled_revisions.20k_2015.tsv
+		datasets/wikidatawiki.sampled_revisions.20k_2015.tsv
+	cat datasets/wikidatawiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://www.wikidata.org \
+		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/wikidatawiki.prelabeled_revisions.20k_2015.tsv
