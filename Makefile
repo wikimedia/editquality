@@ -328,3 +328,35 @@ models/ptwiki.goodfaith.linear_svc.model: \
 		--version=0.0.2 \
                 --label-type=bool > \
 	models/ptwiki.goodfaith.linear_svc.model
+
+################################# WikiData ##### ################################
+
+datasets/wikidatawiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/42225/output/0/tsv?download=true > \
+	datasets/wikidatawiki.sampled_revisions.20k_2015.tsv
+
+datasets/wikidatawiki.rev_reverted.20k_2015.tsv: \
+		datasets/wikidatawiki.sampled_revisions.20k_2015.tsv
+	cut datasets/wikidatawiki.sampled_revisions.20k_2015.tsv -f1 | \
+	./utility label_reverted \
+		--host https://www.wikidata.org \
+		--verbose > \
+	datasets/wikidatawiki.rev_reverted.20k_2015.tsv
+
+datasets/wikidatawiki.features_reverted.20k_2015.tsv: \
+		datasets/wikidatawiki.rev_reverted.20k_2015.tsv
+	cat datasets/wikidatawiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		wb_vandalism.feature_lists.wikidatawiki.damaging \
+		--host https://www.wikidata.org \
+		--verbose > \
+	datasets/wikidatawiki.features_reverted.20k_2015.tsv
+
+datasets/wikidatawiki.prelabeled_revisions.20k_2015.tsv: \
+                datasets/wikidatawiki.sampled_revisions.20k_2015.tsv
+        cat datasets/wikidatawiki.sampled_revisions.20k_2015.tsv | \
+        ./utility prelabel https://www.wikidata.org \
+                --trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+                --trusted-edits=1000 \
+                --verbose > \
+        datasets/wikidatawiki.prelabeled_revisions.20k_2015.tsv
