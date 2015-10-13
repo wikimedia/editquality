@@ -340,6 +340,7 @@ datasets/wikidatawiki.rev_reverted.20k_2015.tsv: \
 	cut datasets/wikidatawiki.sampled_revisions.20k_2015.tsv -f1 | \
 	./utility label_reverted \
 		--host https://www.wikidata.org \
+		--revert-radius=3 \
 		--verbose > \
 	datasets/wikidatawiki.rev_reverted.20k_2015.tsv
 

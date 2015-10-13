@@ -61,7 +61,7 @@ def main(argv=None):
 
 
 def read_rev_pages(f):
-    first_line_parts = f.readline().split("\t")
+    first_line_parts = f.readline().strip().split("\t")
     if first_line_parts[0] != "rev_id":
         if len(first_line_parts) == 1:
             rev_id = first_line_parts[0]
