@@ -12,7 +12,7 @@ def requirements(fname):
 
 setup(
     name="editquality",
-    version="0.0.4",  # see editquality/__init__.py
+    version="0.0.5",  # see editquality/__init__.py
     author="Aaron Halfaker",
     author_email="ahalfaker@wikimedia.org",
     description="A library for performing automatic detection of the " +
