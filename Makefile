@@ -41,12 +41,13 @@ datasets/enwiki.features_reverted.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.enwiki.damaging \
 		--host https://en.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/enwiki.features_reverted.20k_2015.tsv
 
 models/enwiki.reverted.linear_svc.model: \
 		datasets/enwiki.features_reverted.20k_2015.tsv
-	cat datasets/enwiki.features_reverted.20k_2015.tsv | \
+	cat datasets/enwiki.features_reverted.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.damaging \
@@ -67,12 +68,13 @@ datasets/enwiki.features_damaging.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.enwiki.damaging \
 		--host https://en.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/enwiki.features_damaging.20k_2015.tsv
 
 models/enwiki.damaging.linear_svc.model: \
 		datasets/enwiki.features_damaging.20k_2015.tsv
-	cat datasets/enwiki.features_damaging.20k_2015.tsv | \
+	cat datasets/enwiki.features_damaging.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.damaging \
@@ -93,12 +95,13 @@ datasets/enwiki.features_goodfaith.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.enwiki.goodfaith \
 		--host https://en.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/enwiki.features_goodfaith.20k_2015.tsv
 
 models/enwiki.goodfaith.linear_svc.model: \
 		datasets/enwiki.features_goodfaith.20k_2015.tsv
-	cat datasets/enwiki.features_goodfaith.20k_2015.tsv | \
+	cat datasets/enwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.goodfaith \
@@ -233,6 +236,22 @@ datasets/itwiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/itwiki.prelabeled_revisions.20k_2015.tsv
 
+############################### Indonesian Wikipedia ##########################
+
+datasets/idwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/45271/output/0/tsv?download=true > \
+	datasets/idwiki.sampled_revisions.20k_2015.tsv
+
+datasets/idwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/idwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/idwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://id.wikipedia.org \
+		--trusted-groups=autoreview,bot,bureaucrat,checkuser,editor,flow-bot,oversight,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/idwiki.prelabeled_revisions.20k_2015.tsv
+
+
 ############################### Dutch Wikipedia ###############################
 
 datasets/nlwiki.sampled_revisions.20k_2015.tsv:
@@ -243,7 +262,7 @@ datasets/nlwiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/nlwiki.sampled_revisions.20k_2015.tsv
 	cat datasets/nlwiki.sampled_revisions.20k_2015.tsv | \
 	./utility prelabel https://nl.wikipedia.org \
-		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/nlwiki.prelabeled_revisions.20k_2015.tsv
