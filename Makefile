@@ -25,6 +25,16 @@ datasets/dewiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/dewiki.prelabeled_revisions.20k_2015.tsv
 
+datasets/dewiki.rev_reverted.20k_2015.tsv: \
+		datasets/dewiki.rev_reverted.20k_2015.tsv
+	cat datasets/dewiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://de.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/dewiki.rev_reverted.20k_2015.tsv
+
+
 ############################# English Wikipedia ###############################
 
 datasets/enwiki.rev_reverted.20k_2015.tsv: \
@@ -32,6 +42,7 @@ datasets/enwiki.rev_reverted.20k_2015.tsv: \
 	cut datasets/enwiki.rev_damaging.20k_2015.tsv -f1 | \
 	./utility label_reverted \
 		--host https://en.wikipedia.org \
+		--revert-radius 3 \
 		--verbose > \
 	datasets/enwiki.rev_reverted.20k_2015.tsv
 
@@ -79,7 +90,7 @@ models/enwiki.damaging.linear_svc.model: \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.damaging \
 		--version=0.0.2 \
-                --label-type=bool > \
+		--label-type=bool > \
 	models/enwiki.damaging.linear_svc.model
 
 datasets/enwiki.rev_goodfaith.20k_2015.tsv:
@@ -106,7 +117,7 @@ models/enwiki.goodfaith.linear_svc.model: \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.goodfaith \
 		--version=0.0.2 \
-                --label-type=bool > \
+		--label-type=bool > \
 	models/enwiki.goodfaith.linear_svc.model
 
 
@@ -125,6 +136,15 @@ datasets/eswiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/eswiki.prelabeled_revisions.20k_2015.tsv
 
+datasets/eswiki.rev_reverted.20k_2015.tsv: \
+		datasets/eswiki.rev_reverted.20k_2015.tsv
+	cat datasets/eswiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://es.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/eswiki.rev_reverted.20k_2015.tsv
+
 ############################# Persian Wikipedia ################################
 
 datasets/fawiki.rev_reverted.20k_2015.tsv: \
@@ -132,6 +152,7 @@ datasets/fawiki.rev_reverted.20k_2015.tsv: \
 	cut datasets/fawiki.rev_damaging.20k_2015.tsv -f1 | \
 	./utility label_reverted \
 		--host https://fa.wikipedia.org \
+		--revert-radius 3 \
 		--verbose > \
 	datasets/fawiki.rev_reverted.20k_2015.tsv
 
@@ -151,7 +172,7 @@ models/fawiki.reverted.linear_svc.model: \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.damaging \
 		--version=0.4.1 \
-                --label-type=bool > \
+		--label-type=bool > \
 	models/fawiki.reverted.linear_svc.model
 
 datasets/fawiki.rev_damaging.20k_2015.tsv:
@@ -177,7 +198,7 @@ models/fawiki.damaging.linear_svc.model: \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.damaging \
 		--version=0.0.2 \
-                --label-type=bool > \
+		--label-type=bool > \
 	models/fawiki.damaging.linear_svc.model
 
 datasets/fawiki.rev_goodfaith.20k_2015.tsv:
@@ -203,7 +224,7 @@ models/fawiki.goodfaith.linear_svc.model: \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.goodfaith \
 		--version=0.0.2 \
-                --label-type=bool > \
+		--label-type=bool > \
 	models/fawiki.goodfaith.linear_svc.model
 
 ############################# Hebrew Wikipedia ################################
@@ -221,6 +242,15 @@ datasets/hewiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/hewiki.prelabeled_revisions.20k_2015.tsv
 
+datasets/hewiki.rev_reverted.20k_2015.tsv: \
+		datasets/hewiki.rev_reverted.20k_2015.tsv
+	cat datasets/hewiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://he.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/hewiki.rev_reverted.20k_2015.tsv
+
 ############################# Italian Wikipedia ###############################
 
 datasets/itwiki.sampled_revisions.20k_2015.tsv:
@@ -235,6 +265,15 @@ datasets/itwiki.prelabeled_revisions.20k_2015.tsv: \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/itwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/itwiki.rev_reverted.20k_2015.tsv: \
+		datasets/itwiki.rev_reverted.20k_2015.tsv
+	cat datasets/itwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://it.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/itwiki.rev_reverted.20k_2015.tsv
 
 ############################### Indonesian Wikipedia ##########################
 
@@ -251,6 +290,14 @@ datasets/idwiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/idwiki.prelabeled_revisions.20k_2015.tsv
 
+datasets/idwiki.rev_reverted.20k_2015.tsv: \
+		datasets/idwiki.rev_reverted.20k_2015.tsv
+	cat datasets/idwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://id.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/idwiki.rev_reverted.20k_2015.tsv
 
 ############################### Dutch Wikipedia ###############################
 
@@ -267,6 +314,15 @@ datasets/nlwiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/nlwiki.prelabeled_revisions.20k_2015.tsv
 
+datasets/nlwiki.rev_reverted.20k_2015.tsv: \
+		datasets/nlwiki.rev_reverted.20k_2015.tsv
+	cat datasets/nlwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://nl.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/nlwiki.rev_reverted.20k_2015.tsv
+
 ############################# Portugueses Wikipedia ############################
 
 datasets/ptwiki.rev_reverted.20k_2015.tsv: \
@@ -274,6 +330,7 @@ datasets/ptwiki.rev_reverted.20k_2015.tsv: \
 	cut datasets/ptwiki.rev_damaging.20k_2015.tsv -f1 | \
 	./utility label_reverted \
 		--host https://pt.wikipedia.org \
+		--revert-radius 3 \
 		--verbose > \
 	datasets/ptwiki.rev_reverted.20k_2015.tsv
 
@@ -293,7 +350,7 @@ models/ptwiki.reverted.linear_svc.model: \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.damaging \
 		--version=0.4.1 \
-                --label-type=bool > \
+		--label-type=bool > \
 	models/ptwiki.reverted.linear_svc.model
 
 datasets/ptwiki.rev_damaging.20k_2015.tsv:
@@ -319,7 +376,7 @@ models/ptwiki.damaging.linear_svc.model: \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.damaging \
 		--version=0.0.2 \
-                --label-type=bool > \
+		--label-type=bool > \
 	models/ptwiki.damaging.linear_svc.model
 
 datasets/ptwiki.rev_goodfaith.20k_2015.tsv:
@@ -345,7 +402,7 @@ models/ptwiki.goodfaith.linear_svc.model: \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.goodfaith \
 		--version=0.0.2 \
-                --label-type=bool > \
+		--label-type=bool > \
 	models/ptwiki.goodfaith.linear_svc.model
 
 ################################# WikiData ####################################
