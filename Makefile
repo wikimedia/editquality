@@ -26,13 +26,23 @@ datasets/dewiki.prelabeled_revisions.20k_2015.tsv: \
 	datasets/dewiki.prelabeled_revisions.20k_2015.tsv
 
 datasets/dewiki.rev_reverted.20k_2015.tsv: \
-		datasets/dewiki.rev_reverted.20k_2015.tsv
+		datasets/dewiki.sampled_revisions.20k_2015.tsv
 	cat datasets/dewiki.sampled_revisions.20k_2015.tsv | \
 	./utility label_reverted \
 		--host https://de.wikipedia.org \
 		--revert-radius 3 \
 		--verbose > \
 	datasets/dewiki.rev_reverted.20k_2015.tsv
+
+datasets/dewiki.features_reverted.20k_2015.tsv: \
+		datasets/dewiki.rev_reverted.20k_2015.tsv
+	cat datasets/dewiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.dewiki.damaging \
+		--host https://de.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/dewiki.features_reverted.20k_2015.tsv
 
 
 ############################# English Wikipedia ###############################
@@ -137,13 +147,23 @@ datasets/eswiki.prelabeled_revisions.20k_2015.tsv: \
 	datasets/eswiki.prelabeled_revisions.20k_2015.tsv
 
 datasets/eswiki.rev_reverted.20k_2015.tsv: \
-		datasets/eswiki.rev_reverted.20k_2015.tsv
+		datasets/eswiki.sampled_revisions.20k_2015.tsv
 	cat datasets/eswiki.sampled_revisions.20k_2015.tsv | \
 	./utility label_reverted \
 		--host https://es.wikipedia.org \
 		--revert-radius 3 \
 		--verbose > \
 	datasets/eswiki.rev_reverted.20k_2015.tsv
+
+datasets/eswiki.features_reverted.20k_2015.tsv: \
+		datasets/eswiki.rev_reverted.20k_2015.tsv
+	cat datasets/eswiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.eswiki.damaging \
+		--host https://es.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/eswiki.features_reverted.20k_2015.tsv
 
 ############################# Persian Wikipedia ################################
 
@@ -243,13 +263,23 @@ datasets/hewiki.prelabeled_revisions.20k_2015.tsv: \
 	datasets/hewiki.prelabeled_revisions.20k_2015.tsv
 
 datasets/hewiki.rev_reverted.20k_2015.tsv: \
-		datasets/hewiki.rev_reverted.20k_2015.tsv
+		datasets/hewiki.sampled_revisions.20k_2015.tsv
 	cat datasets/hewiki.sampled_revisions.20k_2015.tsv | \
 	./utility label_reverted \
 		--host https://he.wikipedia.org \
 		--revert-radius 3 \
 		--verbose > \
 	datasets/hewiki.rev_reverted.20k_2015.tsv
+
+datasets/hewiki.features_reverted.20k_2015.tsv: \
+		datasets/hewiki.rev_reverted.20k_2015.tsv
+	cat datasets/hewiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.eswiki.damaging \
+		--host https://he.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/hewiki.features_reverted.20k_2015.tsv
 
 ############################# Italian Wikipedia ###############################
 
@@ -267,13 +297,23 @@ datasets/itwiki.prelabeled_revisions.20k_2015.tsv: \
 	datasets/itwiki.prelabeled_revisions.20k_2015.tsv
 
 datasets/itwiki.rev_reverted.20k_2015.tsv: \
-		datasets/itwiki.rev_reverted.20k_2015.tsv
+		datasets/itwiki.sampled_revisions.20k_2015.tsv
 	cat datasets/itwiki.sampled_revisions.20k_2015.tsv | \
 	./utility label_reverted \
 		--host https://it.wikipedia.org \
 		--revert-radius 3 \
 		--verbose > \
 	datasets/itwiki.rev_reverted.20k_2015.tsv
+
+datasets/itwiki.features_reverted.20k_2015.tsv: \
+		datasets/itwiki.rev_reverted.20k_2015.tsv
+	cat datasets/itwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.itwiki.damaging \
+		--host https://it.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/itwiki.features_reverted.20k_2015.tsv
 
 ############################### Indonesian Wikipedia ##########################
 
@@ -291,13 +331,33 @@ datasets/idwiki.prelabeled_revisions.20k_2015.tsv: \
 	datasets/idwiki.prelabeled_revisions.20k_2015.tsv
 
 datasets/idwiki.rev_reverted.20k_2015.tsv: \
-		datasets/idwiki.rev_reverted.20k_2015.tsv
+		datasets/idwiki.sampled_revisions.20k_2015.tsv
 	cat datasets/idwiki.sampled_revisions.20k_2015.tsv | \
 	./utility label_reverted \
 		--host https://id.wikipedia.org \
 		--revert-radius 3 \
 		--verbose > \
 	datasets/idwiki.rev_reverted.20k_2015.tsv
+
+datasets/idwiki.features_reverted.20k_2015.tsv: \
+		datasets/idwiki.rev_reverted.20k_2015.tsv
+	cat datasets/idwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.idwiki.damaging \
+		--host https://id.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/idwiki.features_reverted.20k_2015.tsv
+
+models/idwiki.reverted.linear_svc.model: \
+		datasets/idwiki.features_reverted.20k_2015.tsv
+	cut datasets/idwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.idwiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/idwiki.reverted.linear_svc.model
 
 ############################### Dutch Wikipedia ###############################
 
@@ -315,13 +375,33 @@ datasets/nlwiki.prelabeled_revisions.20k_2015.tsv: \
 	datasets/nlwiki.prelabeled_revisions.20k_2015.tsv
 
 datasets/nlwiki.rev_reverted.20k_2015.tsv: \
-		datasets/nlwiki.rev_reverted.20k_2015.tsv
+		datasets/nlwiki.sampled_revisions.20k_2015.tsv
 	cat datasets/nlwiki.sampled_revisions.20k_2015.tsv | \
 	./utility label_reverted \
 		--host https://nl.wikipedia.org \
 		--revert-radius 3 \
 		--verbose > \
 	datasets/nlwiki.rev_reverted.20k_2015.tsv
+
+datasets/nlwiki.features_reverted.20k_2015.tsv: \
+		datasets/nlwiki.rev_reverted.20k_2015.tsv
+	cat datasets/nlwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.nlwiki.damaging \
+		--host https://nl.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/nlwiki.features_reverted.20k_2015.tsv
+
+models/nlwiki.reverted.linear_svc.model: \
+		datasets/nlwiki.features_reverted.20k_2015.tsv
+	cut datasets/nlwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.nlwiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/nlwiki.reverted.linear_svc.model
 
 ############################# Portugueses Wikipedia ############################
 
@@ -348,7 +428,7 @@ models/ptwiki.reverted.linear_svc.model: \
 	cat datasets/ptwiki.features_reverted.20k_2015.tsv | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.enwiki.damaging \
+		editquality.feature_lists.ptwiki.damaging \
 		--version=0.4.1 \
 		--label-type=bool > \
 	models/ptwiki.reverted.linear_svc.model
