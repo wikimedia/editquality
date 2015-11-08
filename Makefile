@@ -1,14 +1,4 @@
 
-all_models:
-	make models/enwiki.reverted.linear_svc.model & sleep 0.5 && \
-	make models/enwiki.damaging.linear_svc.model & sleep 0.5 && \
-	make models/enwiki.goodfaith.linear_svc.model & sleep 0.5 && \
-	make models/fawiki.reverted.linear_svc.model & sleep 0.5 && \
-	make models/fawiki.damaging.linear_svc.model & sleep 0.5 && \
-	make models/fawiki.goodfaith.linear_svc.model & sleep 0.5 && \
-	make models/ptwiki.reverted.linear_svc.model & sleep 0.5 && \
-	make models/ptwiki.damaging.linear_svc.model & sleep 0.5 && \
-	make models/ptwiki.goodfaith.linear_svc.model &
 
 ############################# German Wikipedia ################################
 
@@ -484,6 +474,94 @@ models/ptwiki.goodfaith.linear_svc.model: \
 		--version=0.0.2 \
 		--label-type=bool > \
 	models/ptwiki.goodfaith.linear_svc.model
+
+############################# Turkish Wikipedia ############################
+
+datasets/trwiki.rev_reverted.20k_2015.tsv: \
+		datasets/trwiki.rev_damaging.20k_2015.tsv
+	cut datasets/trwiki.rev_damaging.20k_2015.tsv -f1 | \
+	./utility label_reverted \
+		--host https://tr.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/trwiki.rev_reverted.20k_2015.tsv
+
+datasets/trwiki.features_reverted.20k_2015.tsv: \
+		datasets/trwiki.rev_reverted.20k_2015.tsv
+	cat datasets/trwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.trwiki.damaging \
+		--host https://tr.wikipedia.org \
+		--verbose > \
+	datasets/trwiki.features_reverted.20k_2015.tsv
+
+models/trwiki.reverted.linear_svc.model: \
+		datasets/trwiki.features_reverted.20k_2015.tsv
+	cat datasets/trwiki.features_reverted.20k_2015.tsv | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.trwiki.damaging \
+		--version=0.4.1 \
+		--label-type=bool > \
+	models/trwiki.reverted.linear_svc.model
+
+datasets/trwiki.rev_damaging.20k_2015.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/trwiki/5/ \
+		damaging \
+		--default=False > \
+	datasets/trwiki.rev_damaging.20k_2015.tsv
+
+datasets/trwiki.features_damaging.20k_2015.tsv: \
+		datasets/trwiki.rev_damaging.20k_2015.tsv
+	cat datasets/trwiki.rev_damaging.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.trwiki.damaging \
+		--host https://tr.wikipedia.org \
+		--verbose > \
+	datasets/trwiki.features_damaging.20k_2015.tsv
+
+models/trwiki.damaging.linear_svc.model: \
+		datasets/trwiki.features_damaging.20k_2015.tsv
+	cat datasets/trwiki.features_damaging.20k_2015.tsv | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.trwiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/trwiki.damaging.linear_svc.model
+
+datasets/trwiki.rev_goodfaith.20k_2015.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/trwiki/5/ \
+		goodfaith \
+		--default=True > \
+	datasets/trwiki.rev_goodfaith.20k_2015.tsv
+
+datasets/trwiki.features_goodfaith.20k_2015.tsv: \
+		datasets/trwiki.rev_goodfaith.20k_2015.tsv
+	cat datasets/trwiki.rev_goodfaith.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.trwiki.goodfaith \
+		--host https://tr.wikipedia.org \
+		--verbose > \
+	datasets/trwiki.features_goodfaith.20k_2015.tsv
+
+models/trwiki.goodfaith.linear_svc.model: \
+		datasets/trwiki.features_goodfaith.20k_2015.tsv
+	cat datasets/trwiki.features_goodfaith.20k_2015.tsv | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.trwiki.goodfaith \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/trwiki.goodfaith.linear_svc.model
+
+trwiki_models: \
+		models/trwiki.damaging.linear_svc.model \
+		models/trwiki.goodfaith.linear_svc.model \
+		models/trwiki.reverted.linear_svc.model
+
 
 ################################# WikiData ####################################
 
