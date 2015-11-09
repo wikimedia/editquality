@@ -1,5 +1,19 @@
 
 
+models: \
+		dewiki_models \
+		enwiki_models \
+		eswiki_models \
+		fawiki_models \
+		frwiki_models \
+		hewiki_models \
+		idwiki_models \
+		itwiki_models \
+		nlwiki_models \
+		ptwiki_models \
+		trwiki_models \
+		viwiki_models
+
 ############################# German Wikipedia ################################
 
 datasets/dewiki.sampled_revisions.20k_2015.tsv:
@@ -33,6 +47,19 @@ datasets/dewiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/dewiki.features_reverted.20k_2015.tsv
+
+models/dewiki.reverted.linear_svc.model: \
+		datasets/dewiki.features_reverted.20k_2015.tsv
+	cat datasets/dewiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.dewiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/dewiki.reverted.linear_svc.model
+
+dewiki_models: \
+		models/dewiki.reverted.linear_svc.model
 
 
 ############################# English Wikipedia ###############################
@@ -120,6 +147,10 @@ models/enwiki.goodfaith.linear_svc.model: \
 		--label-type=bool > \
 	models/enwiki.goodfaith.linear_svc.model
 
+enwiki_models: \
+		models/enwiki.damaging.linear_svc.model \
+		models/enwiki.goodfaith.linear_svc.model \
+		models/enwiki.reverted.linear_svc.model
 
 ############################# Spanish Wikipedia ################################
 
@@ -154,6 +185,19 @@ datasets/eswiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/eswiki.features_reverted.20k_2015.tsv
+
+models/eswiki.reverted.linear_svc.model: \
+		datasets/eswiki.features_reverted.20k_2015.tsv
+	cat datasets/eswiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.eswiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/eswiki.reverted.linear_svc.model
+
+eswiki_models: \
+		models/eswiki.reverted.linear_svc.model
 
 ############################# Persian Wikipedia ################################
 
@@ -237,6 +281,58 @@ models/fawiki.goodfaith.linear_svc.model: \
 		--label-type=bool > \
 	models/fawiki.goodfaith.linear_svc.model
 
+fawiki_models: \
+		models/fawiki.damaging.linear_svc.model \
+		models/fawiki.goodfaith.linear_svc.model \
+		models/fawiki.reverted.linear_svc.model
+
+############################# French Wikipedia ################################
+
+datasets/frwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/48090/output/0/tsv?download=true > \
+	datasets/frwiki.sampled_revisions.20k_2015.tsv
+
+datasets/frwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/frwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/frwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://fr.wikipedia.org \
+		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/frwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/frwiki.rev_reverted.20k_2015.tsv: \
+		datasets/frwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/frwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://fr.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/frwiki.rev_reverted.20k_2015.tsv
+
+datasets/frwiki.features_reverted.20k_2015.tsv: \
+		datasets/frwiki.rev_reverted.20k_2015.tsv
+	cat datasets/frwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.frwiki.damaging \
+		--host https://fr.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/frwiki.features_reverted.20k_2015.tsv
+
+models/frwiki.reverted.linear_svc.model: \
+		datasets/frwiki.features_reverted.20k_2015.tsv
+	cat datasets/frwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.frwiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/frwiki.reverted.linear_svc.model
+
+frwiki_models: \
+		models/frwiki.reverted.linear_svc.model
+
 ############################# Hebrew Wikipedia ################################
 
 datasets/hewiki.sampled_revisions.20k_2015.tsv:
@@ -271,39 +367,18 @@ datasets/hewiki.features_reverted.20k_2015.tsv: \
 		--verbose > \
 	datasets/hewiki.features_reverted.20k_2015.tsv
 
-############################# Italian Wikipedia ###############################
+models/hewiki.reverted.linear_svc.model: \
+		datasets/hewiki.features_reverted.20k_2015.tsv
+	cut datasets/hewiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.hewiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/hewiki.reverted.linear_svc.model
 
-datasets/itwiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/42224/output/0/tsv?download=true > \
-	datasets/itwiki.sampled_revisions.20k_2015.tsv
-
-datasets/itwiki.prelabeled_revisions.20k_2015.tsv: \
-		datasets/itwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/itwiki.sampled_revisions.20k_2015.tsv | \
-	./utility prelabel https://it.wikipedia.org \
-		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
-		--trusted-edits=1000 \
-		--verbose > \
-	datasets/itwiki.prelabeled_revisions.20k_2015.tsv
-
-datasets/itwiki.rev_reverted.20k_2015.tsv: \
-		datasets/itwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/itwiki.sampled_revisions.20k_2015.tsv | \
-	./utility label_reverted \
-		--host https://it.wikipedia.org \
-		--revert-radius 3 \
-		--verbose > \
-	datasets/itwiki.rev_reverted.20k_2015.tsv
-
-datasets/itwiki.features_reverted.20k_2015.tsv: \
-		datasets/itwiki.rev_reverted.20k_2015.tsv
-	cat datasets/itwiki.rev_reverted.20k_2015.tsv | \
-	revscoring extract_features \
-		editquality.feature_lists.itwiki.damaging \
-		--host https://it.wikipedia.org \
-		--include-revid \
-		--verbose > \
-	datasets/itwiki.features_reverted.20k_2015.tsv
+hewiki_models: \
+		models/hewiki.reverted.linear_svc.model
 
 ############################### Indonesian Wikipedia ##########################
 
@@ -349,6 +424,56 @@ models/idwiki.reverted.linear_svc.model: \
 		--label-type=bool > \
 	models/idwiki.reverted.linear_svc.model
 
+idwiki_models: \
+		models/idwiki.reverted.linear_svc.model
+
+############################# Italian Wikipedia ###############################
+
+datasets/itwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/42224/output/0/tsv?download=true > \
+	datasets/itwiki.sampled_revisions.20k_2015.tsv
+
+datasets/itwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/itwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/itwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://it.wikipedia.org \
+		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/itwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/itwiki.rev_reverted.20k_2015.tsv: \
+		datasets/itwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/itwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://it.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/itwiki.rev_reverted.20k_2015.tsv
+
+datasets/itwiki.features_reverted.20k_2015.tsv: \
+		datasets/itwiki.rev_reverted.20k_2015.tsv
+	cat datasets/itwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.itwiki.damaging \
+		--host https://it.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/itwiki.features_reverted.20k_2015.tsv
+
+models/itwiki.reverted.linear_svc.model: \
+		datasets/itwiki.features_reverted.20k_2015.tsv
+	cat datasets/itwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.itwiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/itwiki.reverted.linear_svc.model
+
+itwiki_models: \
+		models/itwiki.reverted.linear_svc.model
+
 ############################### Dutch Wikipedia ###############################
 
 datasets/nlwiki.sampled_revisions.20k_2015.tsv:
@@ -392,6 +517,9 @@ models/nlwiki.reverted.linear_svc.model: \
 		--version=0.0.1 \
 		--label-type=bool > \
 	models/nlwiki.reverted.linear_svc.model
+
+nlwiki_models: \
+		models/nlwiki.reverted.linear_svc.model
 
 ############################# Portugueses Wikipedia ############################
 
@@ -474,6 +602,11 @@ models/ptwiki.goodfaith.linear_svc.model: \
 		--version=0.0.2 \
 		--label-type=bool > \
 	models/ptwiki.goodfaith.linear_svc.model
+
+ptwiki_models: \
+		models/ptwiki.damaging.linear_svc.model \
+		models/ptwiki.goodfaith.linear_svc.model \
+		models/ptwiki.reverted.linear_svc.model
 
 ############################# Turkish Wikipedia ############################
 
@@ -562,36 +695,49 @@ trwiki_models: \
 		models/trwiki.goodfaith.linear_svc.model \
 		models/trwiki.reverted.linear_svc.model
 
+############################### Vietnamese Wikipedia ###########################
 
-################################# WikiData ####################################
+datasets/viwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/48094/output/0/tsv?download=true > \
+	datasets/viwiki.sampled_revisions.20k_2015.tsv
 
-datasets/wikidatawiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/42225/output/0/tsv?download=true > \
-	datasets/wikidatawiki.sampled_revisions.20k_2015.tsv
-
-datasets/wikidatawiki.rev_reverted.20k_2015.tsv: \
-		datasets/wikidatawiki.sampled_revisions.20k_2015.tsv
-	cut datasets/wikidatawiki.sampled_revisions.20k_2015.tsv -f1 | \
-	./utility label_reverted \
-		--host https://www.wikidata.org \
-		--revert-radius=3 \
-		--verbose > \
-	datasets/wikidatawiki.rev_reverted.20k_2015.tsv
-
-datasets/wikidatawiki.features_reverted.20k_2015.tsv: \
-		datasets/wikidatawiki.rev_reverted.20k_2015.tsv
-	cat datasets/wikidatawiki.rev_reverted.20k_2015.tsv | \
-	revscoring extract_features \
-		wb_vandalism.feature_lists.wikidatawiki.damaging \
-		--host https://www.wikidata.org \
-		--verbose > \
-	datasets/wikidatawiki.features_reverted.20k_2015.tsv
-
-datasets/wikidatawiki.prelabeled_revisions.20k_2015.tsv: \
-		datasets/wikidatawiki.sampled_revisions.20k_2015.tsv
-	cat datasets/wikidatawiki.sampled_revisions.20k_2015.tsv | \
-	./utility prelabel https://www.wikidata.org \
-		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+datasets/viwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/viwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/viwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://vi.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
 		--verbose > \
-	datasets/wikidatawiki.prelabeled_revisions.20k_2015.tsv
+	datasets/viwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/viwiki.rev_reverted.20k_2015.tsv: \
+		datasets/viwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/viwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://vi.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/viwiki.rev_reverted.20k_2015.tsv
+
+datasets/viwiki.features_reverted.20k_2015.tsv: \
+		datasets/viwiki.rev_reverted.20k_2015.tsv
+	cat datasets/viwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.viwiki.damaging \
+		--host https://vi.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/viwiki.features_reverted.20k_2015.tsv
+
+models/viwiki.reverted.linear_svc.model: \
+		datasets/viwiki.features_reverted.20k_2015.tsv
+	cut datasets/viwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.viwiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/viwiki.reverted.linear_svc.model
+
+viwiki_models: \
+		models/viwiki.reverted.linear_svc.model
