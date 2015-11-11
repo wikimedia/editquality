@@ -12,6 +12,7 @@ models: \
 		nlwiki_models \
 		ptwiki_models \
 		trwiki_models \
+		#ukwiki_models \
 		viwiki_models
 
 ############################# German Wikipedia ################################
@@ -741,3 +742,51 @@ models/viwiki.reverted.linear_svc.model: \
 
 viwiki_models: \
 		models/viwiki.reverted.linear_svc.model
+
+
+############################### Ukranian Wikipedia ############################
+
+datasets/ukwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/48094/output/0/tsv?download=true > \
+	datasets/ukwiki.sampled_revisions.20k_2015.tsv
+
+datasets/ukwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/ukwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/ukwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://uk.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/ukwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/ukwiki.rev_reverted.20k_2015.tsv: \
+		datasets/ukwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/ukwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://uk.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/ukwiki.rev_reverted.20k_2015.tsv
+
+datasets/ukwiki.features_reverted.20k_2015.tsv: \
+		datasets/ukwiki.rev_reverted.20k_2015.tsv
+	cat datasets/ukwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.ukwiki.damaging \
+		--host https://uk.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/ukwiki.features_reverted.20k_2015.tsv
+
+models/ukwiki.reverted.linear_svc.model: \
+		datasets/ukwiki.features_reverted.20k_2015.tsv
+	cut datasets/ukwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.ukwiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/ukwiki.reverted.linear_svc.model
+
+ukwiki_models: \
+		models/ukwiki.reverted.linear_svc.model
