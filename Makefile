@@ -90,7 +90,7 @@ models/enwiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.damaging \
-		--version=0.4.1 \
+		--version=0.4.2 \
 		--label-type=bool > \
 	models/enwiki.reverted.linear_svc.model
 
@@ -117,7 +117,7 @@ models/enwiki.damaging.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.damaging \
-		--version=0.0.2 \
+		--version=0.0.3 \
 		--label-type=bool > \
 	models/enwiki.damaging.linear_svc.model
 
@@ -144,7 +144,7 @@ models/enwiki.goodfaith.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.goodfaith \
-		--version=0.0.2 \
+		--version=0.0.3 \
 		--label-type=bool > \
 	models/enwiki.goodfaith.linear_svc.model
 
@@ -193,7 +193,7 @@ models/eswiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.eswiki.damaging \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		--label-type=bool > \
 	models/eswiki.reverted.linear_svc.model
 
@@ -226,7 +226,7 @@ models/fawiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.damaging \
-		--version=0.4.1 \
+		--version=0.4.2 \
 		--label-type=bool > \
 	models/fawiki.reverted.linear_svc.model
 
@@ -252,7 +252,7 @@ models/fawiki.damaging.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.damaging \
-		--version=0.0.2 \
+		--version=0.0.3 \
 		--label-type=bool > \
 	models/fawiki.damaging.linear_svc.model
 
@@ -278,7 +278,7 @@ models/fawiki.goodfaith.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.goodfaith \
-		--version=0.0.2 \
+		--version=0.0.3 \
 		--label-type=bool > \
 	models/fawiki.goodfaith.linear_svc.model
 
@@ -327,7 +327,7 @@ models/frwiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.frwiki.damaging \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		--label-type=bool > \
 	models/frwiki.reverted.linear_svc.model
 
@@ -374,7 +374,7 @@ models/hewiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.hewiki.damaging \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		--label-type=bool > \
 	models/hewiki.reverted.linear_svc.model
 
@@ -421,7 +421,7 @@ models/idwiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.idwiki.damaging \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		--label-type=bool > \
 	models/idwiki.reverted.linear_svc.model
 
@@ -468,7 +468,7 @@ models/itwiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.itwiki.damaging \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		--label-type=bool > \
 	models/itwiki.reverted.linear_svc.model
 
@@ -515,7 +515,7 @@ models/nlwiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.nlwiki.damaging \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		--label-type=bool > \
 	models/nlwiki.reverted.linear_svc.model
 
@@ -548,7 +548,7 @@ models/ptwiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.damaging \
-		--version=0.4.1 \
+		--version=0.4.2 \
 		--label-type=bool > \
 	models/ptwiki.reverted.linear_svc.model
 
@@ -574,7 +574,7 @@ models/ptwiki.damaging.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.damaging \
-		--version=0.0.2 \
+		--version=0.0.3 \
 		--label-type=bool > \
 	models/ptwiki.damaging.linear_svc.model
 
@@ -600,7 +600,7 @@ models/ptwiki.goodfaith.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.goodfaith \
-		--version=0.0.2 \
+		--version=0.0.3 \
 		--label-type=bool > \
 	models/ptwiki.goodfaith.linear_svc.model
 
@@ -635,7 +635,7 @@ models/trwiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.trwiki.damaging \
-		--version=0.4.1 \
+		--version=0.4.2 \
 		--label-type=bool > \
 	models/trwiki.reverted.linear_svc.model
 
@@ -661,7 +661,7 @@ models/trwiki.damaging.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.trwiki.damaging \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		--label-type=bool > \
 	models/trwiki.damaging.linear_svc.model
 
@@ -687,7 +687,7 @@ models/trwiki.goodfaith.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.trwiki.goodfaith \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		--label-type=bool > \
 	models/trwiki.goodfaith.linear_svc.model
 
@@ -736,7 +736,7 @@ models/viwiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.viwiki.damaging \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		--label-type=bool > \
 	models/viwiki.reverted.linear_svc.model
 
