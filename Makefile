@@ -613,7 +613,7 @@ ptwiki_models: \
 ############################### Russian Wikipedia ############################
 
 datasets/ruwiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/48094/output/0/tsv?download=true > \
+	wget -qO- http://quarry.wmflabs.org/run/48649/output/0/tsv?download=true > \
 	datasets/ruwiki.sampled_revisions.20k_2015.tsv
 
 datasets/ruwiki.prelabeled_revisions.20k_2015.tsv: \
