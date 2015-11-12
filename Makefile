@@ -747,7 +747,7 @@ viwiki_models: \
 ############################### Ukranian Wikipedia ############################
 
 datasets/ukwiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/48094/output/0/tsv?download=true > \
+	wget -qO- http://quarry.wmflabs.org/run/48597/output/0/tsv?download=true > \
 	datasets/ukwiki.sampled_revisions.20k_2015.tsv
 
 datasets/ukwiki.prelabeled_revisions.20k_2015.tsv: \
