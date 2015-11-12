@@ -104,7 +104,7 @@ def run(api_host, rev_ids, labels, trusted_groups, trusted_edits,
     for rev_doc in rev_docs:
         try:
             rev_id, page_id = rev_doc['revid'], rev_doc['page']['pageid']
-            user_id, user_text = rev_doc['userid'], rev_doc['user']
+            user_id, user_text = rev_doc.get('userid'), rev_doc.get('user')
 
             # If registered editor, check for trusted groups and trusted edits
             if user_id > 0:
