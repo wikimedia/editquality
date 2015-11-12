@@ -11,6 +11,7 @@ models: \
 		itwiki_models \
 		nlwiki_models \
 		ptwiki_models \
+		#ruwiki_models \
 		trwiki_models \
 		#ukwiki_models \
 		viwiki_models
@@ -609,6 +610,53 @@ ptwiki_models: \
 		models/ptwiki.goodfaith.linear_svc.model \
 		models/ptwiki.reverted.linear_svc.model
 
+############################### Russian Wikipedia ############################
+
+datasets/ruwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/48649/output/0/tsv?download=true > \
+	datasets/ruwiki.sampled_revisions.20k_2015.tsv
+
+datasets/ruwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/ruwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/ruwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://ru.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/ruwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/ruwiki.rev_reverted.20k_2015.tsv: \
+		datasets/ruwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/ruwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://ru.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/ruwiki.rev_reverted.20k_2015.tsv
+
+datasets/ruwiki.features_reverted.20k_2015.tsv: \
+		datasets/ruwiki.rev_reverted.20k_2015.tsv
+	cat datasets/ruwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.ruwiki.damaging \
+		--host https://ru.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/ruwiki.features_reverted.20k_2015.tsv
+
+models/ruwiki.reverted.linear_svc.model: \
+		datasets/ruwiki.features_reverted.20k_2015.tsv
+	cut datasets/ruwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.ruwiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/ruwiki.reverted.linear_svc.model
+
+ruwiki_models: \
+		models/ruwiki.reverted.linear_svc.model
+
 ############################# Turkish Wikipedia ############################
 
 datasets/trwiki.rev_reverted.20k_2015.tsv: \
@@ -696,54 +744,6 @@ trwiki_models: \
 		models/trwiki.goodfaith.linear_svc.model \
 		models/trwiki.reverted.linear_svc.model
 
-############################### Vietnamese Wikipedia ###########################
-
-datasets/viwiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/48094/output/0/tsv?download=true > \
-	datasets/viwiki.sampled_revisions.20k_2015.tsv
-
-datasets/viwiki.prelabeled_revisions.20k_2015.tsv: \
-		datasets/viwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/viwiki.sampled_revisions.20k_2015.tsv | \
-	./utility prelabel https://vi.wikipedia.org \
-		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
-		--trusted-edits=1000 \
-		--verbose > \
-	datasets/viwiki.prelabeled_revisions.20k_2015.tsv
-
-datasets/viwiki.rev_reverted.20k_2015.tsv: \
-		datasets/viwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/viwiki.sampled_revisions.20k_2015.tsv | \
-	./utility label_reverted \
-		--host https://vi.wikipedia.org \
-		--revert-radius 3 \
-		--verbose > \
-	datasets/viwiki.rev_reverted.20k_2015.tsv
-
-datasets/viwiki.features_reverted.20k_2015.tsv: \
-		datasets/viwiki.rev_reverted.20k_2015.tsv
-	cat datasets/viwiki.rev_reverted.20k_2015.tsv | \
-	revscoring extract_features \
-		editquality.feature_lists.viwiki.damaging \
-		--host https://vi.wikipedia.org \
-		--include-revid \
-		--verbose > \
-	datasets/viwiki.features_reverted.20k_2015.tsv
-
-models/viwiki.reverted.linear_svc.model: \
-		datasets/viwiki.features_reverted.20k_2015.tsv
-	cut datasets/viwiki.features_reverted.20k_2015.tsv -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.viwiki.damaging \
-		--version=0.0.2 \
-		--label-type=bool > \
-	models/viwiki.reverted.linear_svc.model
-
-viwiki_models: \
-		models/viwiki.reverted.linear_svc.model
-
-
 ############################### Ukranian Wikipedia ############################
 
 datasets/ukwiki.sampled_revisions.20k_2015.tsv:
@@ -790,3 +790,50 @@ models/ukwiki.reverted.linear_svc.model: \
 
 ukwiki_models: \
 		models/ukwiki.reverted.linear_svc.model
+
+############################### Vietnamese Wikipedia ###########################
+
+datasets/viwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/48094/output/0/tsv?download=true > \
+	datasets/viwiki.sampled_revisions.20k_2015.tsv
+
+datasets/viwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/viwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/viwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://vi.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/viwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/viwiki.rev_reverted.20k_2015.tsv: \
+		datasets/viwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/viwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://vi.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/viwiki.rev_reverted.20k_2015.tsv
+
+datasets/viwiki.features_reverted.20k_2015.tsv: \
+		datasets/viwiki.rev_reverted.20k_2015.tsv
+	cat datasets/viwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.viwiki.damaging \
+		--host https://vi.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/viwiki.features_reverted.20k_2015.tsv
+
+models/viwiki.reverted.linear_svc.model: \
+		datasets/viwiki.features_reverted.20k_2015.tsv
+	cut datasets/viwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.viwiki.damaging \
+		--version=0.0.2 \
+		--label-type=bool > \
+	models/viwiki.reverted.linear_svc.model
+
+viwiki_models: \
+		models/viwiki.reverted.linear_svc.model
