@@ -86,20 +86,32 @@ def run(rev_pages, rev_reverteds, session, revert_radius, revert_window,
     for rev_id, page_id in rev_pages:
         try:
             # Detect reverted status
-            _, reverted, _ = mwreverts.api.check(session, rev_id,
-                                                 page_id=page_id,
-                                                 radius=revert_radius,
-                                                 window=revert_window,
-                                                 rvprop=["user"])
-
+            try:
+                _, reverted, reverted_to = \
+                    mwreverts.api.check(session, rev_id, page_id=page_id,
+                                        radius=revert_radius,
+                                        window=revert_window,
+                                        rvprop=["user"])
+            except KeyError:
+                # Couldn't find the revision
+                sys.stderr.write("?")
+                continue
+            
             damaging_revert = False
             if reverted is not None:
                 reverted_doc = [r for r in reverted.reverteds
                                 if r['revid'] == rev_id][0]
 
-                # Exclude self-reverts
-                damaging_revert = \
-                    reverted_doc['user'] != reverted.reverting['user']
+                # Exclude self-reverts and revisions that are reverted back to
+                # by others
+                self_revert = \
+                    reverted_doc['user'] == reverted.reverting['user']
+                was_reverted_to_by_someone_else = \
+                    reverted_to is not None and \
+                    reverted_doc['user'] != reverted_to.reverting['user']
+
+                damaging_revert = not (self_revert or
+                                       was_reverted_to_by_someone_else)
 
             if verbose:
                 if damaging_revert:
@@ -114,7 +126,6 @@ def run(rev_pages, rev_reverteds, session, revert_radius, revert_window,
         except KeyboardInterrupt:
             sys.stderr.write("\n^C Caught.  Exiting...")
             break
-
         except:
             sys.stderr.write(traceback.format_exc())
             sys.stderr.write("\n")
