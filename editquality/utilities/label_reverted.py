@@ -96,7 +96,7 @@ def run(rev_pages, rev_reverteds, session, revert_radius, revert_window,
                 # Couldn't find the revision
                 sys.stderr.write("?")
                 continue
-            
+
             damaging_revert = False
             if reverted is not None:
                 reverted_doc = [r for r in reverted.reverteds
