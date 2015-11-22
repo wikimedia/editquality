@@ -107,7 +107,7 @@ def run(api_host, rev_ids, labels, trusted_groups, trusted_edits,
             user_id, user_text = rev_doc.get('userid'), rev_doc.get('user')
 
             # If registered editor, check for trusted groups and trusted edits
-            if user_id > 0:
+            if user_id is not None and user_id > 0:
                 if trusted_groups is not None and \
                    user_in_trusted_group(session, user_text, trusted_groups):
                     if verbose:
