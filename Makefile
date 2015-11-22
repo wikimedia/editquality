@@ -4,16 +4,18 @@ models: \
 		dewiki_models \
 		enwiki_models \
 		eswiki_models \
+		etwiki_models \
 		fawiki_models \
 		frwiki_models \
 		hewiki_models \
 		idwiki_models \
 		itwiki_models \
+		jawiki_models \
 		nlwiki_models \
 		ptwiki_models \
 		#ruwiki_models \
 		trwiki_models \
-		#ukwiki_models \
+		ukwiki_models \
 		viwiki_models
 
 ############################# German Wikipedia ################################
@@ -200,6 +202,53 @@ models/eswiki.reverted.linear_svc.model: \
 
 eswiki_models: \
 		models/eswiki.reverted.linear_svc.model
+
+########################### Estonian Wikipedia ################################
+
+datasets/etwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/50110/output/0/tsv?download=true > \
+	datasets/etwiki.sampled_revisions.20k_2015.tsv
+
+datasets/etwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/etwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/etwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://et.wikipedia.org \
+		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/etwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/etwiki.rev_reverted.20k_2015.tsv: \
+		datasets/etwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/etwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://et.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/etwiki.rev_reverted.20k_2015.tsv
+
+datasets/etwiki.features_reverted.20k_2015.tsv: \
+		datasets/etwiki.rev_reverted.20k_2015.tsv
+	cat datasets/etwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.etwiki.damaging \
+		--host https://et.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/etwiki.features_reverted.20k_2015.tsv
+
+models/etwiki.reverted.linear_svc.model: \
+		datasets/etwiki.features_reverted.20k_2015.tsv
+	cat datasets/etwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.etwiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/etwiki.reverted.linear_svc.model
+
+etwiki_models: \
+		models/etwiki.reverted.linear_svc.model
 
 ############################# Persian Wikipedia ################################
 
@@ -475,6 +524,53 @@ models/itwiki.reverted.linear_svc.model: \
 
 itwiki_models: \
 		models/itwiki.reverted.linear_svc.model
+
+########################### Japanese Wikipedia ################################
+
+datasets/jawiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/50111/output/0/tsv?download=true > \
+	datasets/jawiki.sampled_revisions.20k_2015.tsv
+
+datasets/jawiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/jawiki.sampled_revisions.20k_2015.tsv
+	cat datasets/jawiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://ja.wikipedia.org \
+		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/jawiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/jawiki.rev_reverted.20k_2015.tsv: \
+		datasets/jawiki.sampled_revisions.20k_2015.tsv
+	cat datasets/jawiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://ja.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/jawiki.rev_reverted.20k_2015.tsv
+
+datasets/jawiki.features_reverted.20k_2015.tsv: \
+		datasets/jawiki.rev_reverted.20k_2015.tsv
+	cat datasets/jawiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.jawiki.damaging \
+		--host https://ja.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/jawiki.features_reverted.20k_2015.tsv
+
+models/jawiki.reverted.linear_svc.model: \
+		datasets/jawiki.features_reverted.20k_2015.tsv
+	cat datasets/jawiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.jawiki.damaging \
+		--version=0.0.1 \
+		--label-type=bool > \
+	models/jawiki.reverted.linear_svc.model
+
+jawiki_models: \
+		models/jawiki.reverted.linear_svc.model
 
 ############################### Dutch Wikipedia ###############################
 
