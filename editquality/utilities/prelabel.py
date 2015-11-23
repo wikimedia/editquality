@@ -73,7 +73,7 @@ def main(argv=None):
                     if args['--trusted-edits'] is not None else None
 
     revert_radius = int(args['--revert-radius'])
-    revert_window = float(args['--revert-window'])*60*60 \
+    revert_window = float(args['--revert-window']) * 60 * 60 \
                     if args['--revert-window'] is not None else None
 
     verbose = args['--verbose']
