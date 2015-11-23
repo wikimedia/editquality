@@ -17,8 +17,6 @@ import sys
 import traceback
 from importlib import import_module
 
-import docopt
-
 
 USAGE = """Usage:
     editquality (-h | --help)
