@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = portuguese.diff.badwords_added / \
                                max(portuguese.diff.words_added, 1)
-proportion_of_badwords_removed = portuguese.diff.badwords_added / \
-                                 max(portuguese.diff.words_added, 1)
+proportion_of_badwords_removed = portuguese.diff.badwords_removed / \
+                                 max(portuguese.diff.words_removed, 1)
 proportion_of_misspellings_added = portuguese.diff.misspellings_added / \
                                    max(portuguese.diff.words_added, 1)
-proportion_of_misspellings_removed = portuguese.diff.misspellings_added / \
-                                     max(portuguese.diff.words_added, 1)
+proportion_of_misspellings_removed = portuguese.diff.misspellings_removed / \
+                                     max(portuguese.diff.words_removed, 1)
 proportion_of_informals_added = portuguese.diff.informals_added / \
                                 max(portuguese.diff.words_added, 1)
-proportion_of_informals_removed = portuguese.diff.informals_added / \
-                                  max(portuguese.diff.words_added, 1)
+proportion_of_informals_removed = portuguese.diff.informals_removed / \
+                                  max(portuguese.diff.words_removed, 1)
 
 proportion_of_badwords = portuguese.parent_revision.badwords / \
                          max(portuguese.parent_revision.words, 1)
