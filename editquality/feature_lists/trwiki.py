@@ -5,12 +5,12 @@ from . import enwiki
 
 proportion_of_badwords_added = turkish.diff.badwords_added / \
                                max(turkish.diff.words_added, 1)
-proportion_of_badwords_removed = turkish.diff.badwords_added / \
-                                 max(turkish.diff.words_added, 1)
+proportion_of_badwords_removed = turkish.diff.badwords_removed / \
+                                 max(turkish.diff.words_removed, 1)
 proportion_of_informals_added = turkish.diff.informals_added / \
                                 max(turkish.diff.words_added, 1)
-proportion_of_informals_removed = turkish.diff.informals_added / \
-                                  max(turkish.diff.words_added, 1)
+proportion_of_informals_removed = turkish.diff.informals_removed / \
+                                  max(turkish.diff.words_removed, 1)
 
 proportion_of_badwords = turkish.parent_revision.badwords / \
                          max(turkish.parent_revision.words, 1)

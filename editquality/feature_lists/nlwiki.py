@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = dutch.diff.badwords_added / \
                                max(dutch.diff.words_added, 1)
-proportion_of_badwords_removed = dutch.diff.badwords_added / \
-                                 max(dutch.diff.words_added, 1)
+proportion_of_badwords_removed = dutch.diff.badwords_removed / \
+                                 max(dutch.diff.words_removed, 1)
 proportion_of_misspellings_added = dutch.diff.misspellings_added / \
                                    max(dutch.diff.words_added, 1)
-proportion_of_misspellings_removed = dutch.diff.misspellings_added / \
-                                     max(dutch.diff.words_added, 1)
+proportion_of_misspellings_removed = dutch.diff.misspellings_removed / \
+                                     max(dutch.diff.words_removed, 1)
 proportion_of_informals_added = dutch.diff.informals_added / \
                                 max(dutch.diff.words_added, 1)
-proportion_of_informals_removed = dutch.diff.informals_added / \
-                                  max(dutch.diff.words_added, 1)
+proportion_of_informals_removed = dutch.diff.informals_removed / \
+                                  max(dutch.diff.words_removed, 1)
 
 proportion_of_badwords = dutch.parent_revision.badwords / \
                          max(dutch.parent_revision.words, 1)

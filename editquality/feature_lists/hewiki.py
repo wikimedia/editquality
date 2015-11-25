@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = hebrew.diff.badwords_added / \
                                max(hebrew.diff.words_added, 1)
-proportion_of_badwords_removed = hebrew.diff.badwords_added / \
-                                 max(hebrew.diff.words_added, 1)
+proportion_of_badwords_removed = hebrew.diff.badwords_removed / \
+                                 max(hebrew.diff.words_removed, 1)
 proportion_of_misspellings_added = hebrew.diff.misspellings_added / \
                                    max(hebrew.diff.words_added, 1)
-proportion_of_misspellings_removed = hebrew.diff.misspellings_added / \
-                                     max(hebrew.diff.words_added, 1)
+proportion_of_misspellings_removed = hebrew.diff.misspellings_removed / \
+                                     max(hebrew.diff.words_removed, 1)
 proportion_of_informals_added = hebrew.diff.informals_added / \
                                 max(hebrew.diff.words_added, 1)
-proportion_of_informals_removed = hebrew.diff.informals_added / \
-                                  max(hebrew.diff.words_added, 1)
+proportion_of_informals_removed = hebrew.diff.informals_removed / \
+                                  max(hebrew.diff.words_removed, 1)
 
 proportion_of_badwords = hebrew.parent_revision.badwords / \
                          max(hebrew.parent_revision.words, 1)

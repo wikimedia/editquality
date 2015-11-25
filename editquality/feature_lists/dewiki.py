@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = german.diff.badwords_added / \
                                max(german.diff.words_added, 1)
-proportion_of_badwords_removed = german.diff.badwords_added / \
-                                 max(german.diff.words_added, 1)
+proportion_of_badwords_removed = german.diff.badwords_removed / \
+                                 max(german.diff.words_removed, 1)
 proportion_of_misspellings_added = german.diff.misspellings_added / \
                                    max(german.diff.words_added, 1)
-proportion_of_misspellings_removed = german.diff.misspellings_added / \
-                                     max(german.diff.words_added, 1)
+proportion_of_misspellings_removed = german.diff.misspellings_removed / \
+                                     max(german.diff.words_removed, 1)
 proportion_of_informals_added = german.diff.informals_added / \
                                 max(german.diff.words_added, 1)
-proportion_of_informals_removed = german.diff.informals_added / \
-                                  max(german.diff.words_added, 1)
+proportion_of_informals_removed = german.diff.informals_removed / \
+                                  max(german.diff.words_removed, 1)
 
 proportion_of_badwords = german.parent_revision.badwords / \
                          max(german.parent_revision.words, 1)

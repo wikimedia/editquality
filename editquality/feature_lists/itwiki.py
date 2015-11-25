@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = italian.diff.badwords_added / \
                                max(italian.diff.words_added, 1)
-proportion_of_badwords_removed = italian.diff.badwords_added / \
-                                 max(italian.diff.words_added, 1)
+proportion_of_badwords_removed = italian.diff.badwords_removed / \
+                                 max(italian.diff.words_removed, 1)
 proportion_of_misspellings_added = italian.diff.misspellings_added / \
                                    max(italian.diff.words_added, 1)
-proportion_of_misspellings_removed = italian.diff.misspellings_added / \
-                                     max(italian.diff.words_added, 1)
+proportion_of_misspellings_removed = italian.diff.misspellings_removed / \
+                                     max(italian.diff.words_removed, 1)
 proportion_of_informals_added = italian.diff.informals_added / \
                                 max(italian.diff.words_added, 1)
-proportion_of_informals_removed = italian.diff.informals_added / \
-                                  max(italian.diff.words_added, 1)
+proportion_of_informals_removed = italian.diff.informals_removed / \
+                                  max(italian.diff.words_removed, 1)
 
 proportion_of_badwords = italian.parent_revision.badwords / \
                          max(italian.parent_revision.words, 1)

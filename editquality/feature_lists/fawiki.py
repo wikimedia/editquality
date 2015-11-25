@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = persian.diff.badwords_added / \
                                max(persian.diff.words_added, 1)
-proportion_of_badwords_removed = persian.diff.badwords_added / \
-                                 max(persian.diff.words_added, 1)
+proportion_of_badwords_removed = persian.diff.badwords_removed / \
+                                 max(persian.diff.words_removed, 1)
 proportion_of_misspellings_added = persian.diff.misspellings_added / \
                                    max(persian.diff.words_added, 1)
-proportion_of_misspellings_removed = persian.diff.misspellings_added / \
-                                     max(persian.diff.words_added, 1)
+proportion_of_misspellings_removed = persian.diff.misspellings_removed / \
+                                     max(persian.diff.words_removed, 1)
 proportion_of_informals_added = persian.diff.informals_added / \
                                 max(persian.diff.words_added, 1)
-proportion_of_informals_removed = persian.diff.informals_added / \
-                                  max(persian.diff.words_added, 1)
+proportion_of_informals_removed = persian.diff.informals_removed / \
+                                  max(persian.diff.words_removed, 1)
 
 proportion_of_badwords = persian.parent_revision.badwords / \
                          max(persian.parent_revision.words, 1)
