@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = spanish.diff.badwords_added / \
                                max(spanish.diff.words_added, 1)
-proportion_of_badwords_removed = spanish.diff.badwords_added / \
-                                 max(spanish.diff.words_added, 1)
+proportion_of_badwords_removed = spanish.diff.badwords_removed / \
+                                 max(spanish.diff.words_removed, 1)
 proportion_of_misspellings_added = spanish.diff.misspellings_added / \
                                    max(spanish.diff.words_added, 1)
-proportion_of_misspellings_removed = spanish.diff.misspellings_added / \
-                                     max(spanish.diff.words_added, 1)
+proportion_of_misspellings_removed = spanish.diff.misspellings_removed / \
+                                     max(spanish.diff.words_removed, 1)
 proportion_of_informals_added = spanish.diff.informals_added / \
                                 max(spanish.diff.words_added, 1)
-proportion_of_informals_removed = spanish.diff.informals_added / \
-                                  max(spanish.diff.words_added, 1)
+proportion_of_informals_removed = spanish.diff.informals_removed / \
+                                  max(spanish.diff.words_removed, 1)
 
 proportion_of_badwords = spanish.parent_revision.badwords / \
                          max(spanish.parent_revision.words, 1)

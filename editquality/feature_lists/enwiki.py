@@ -4,16 +4,16 @@ from revscoring.languages import english
 
 proportion_of_badwords_added = english.diff.badwords_added / \
                                max(english.diff.words_added, 1)
-proportion_of_badwords_removed = english.diff.badwords_added / \
-                                 max(english.diff.words_added, 1)
+proportion_of_badwords_removed = english.diff.badwords_removed / \
+                                 max(english.diff.words_removed, 1)
 proportion_of_misspellings_added = english.diff.misspellings_added / \
                                    max(english.diff.words_added, 1)
-proportion_of_misspellings_removed = english.diff.misspellings_added / \
-                                     max(english.diff.words_added, 1)
+proportion_of_misspellings_removed = english.diff.misspellings_removed / \
+                                     max(english.diff.words_removed, 1)
 proportion_of_informals_added = english.diff.informals_added / \
                                 max(english.diff.words_added, 1)
-proportion_of_informals_removed = english.diff.informals_added / \
-                                  max(english.diff.words_added, 1)
+proportion_of_informals_removed = english.diff.informals_removed / \
+                                  max(english.diff.words_removed, 1)
 
 proportion_of_badwords = english.parent_revision.badwords / \
                          max(english.parent_revision.words, 1)

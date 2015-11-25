@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = vietnamese.diff.badwords_added / \
                                max(vietnamese.diff.words_added, 1)
-proportion_of_badwords_removed = vietnamese.diff.badwords_added / \
-                                 max(vietnamese.diff.words_added, 1)
+proportion_of_badwords_removed = vietnamese.diff.badwords_removed / \
+                                 max(vietnamese.diff.words_removed, 1)
 proportion_of_misspellings_added = vietnamese.diff.misspellings_added / \
                                    max(vietnamese.diff.words_added, 1)
-proportion_of_misspellings_removed = vietnamese.diff.misspellings_added / \
-                                     max(vietnamese.diff.words_added, 1)
+proportion_of_misspellings_removed = vietnamese.diff.misspellings_removed / \
+                                     max(vietnamese.diff.words_removed, 1)
 proportion_of_informals_added = vietnamese.diff.informals_added / \
                                 max(vietnamese.diff.words_added, 1)
-proportion_of_informals_removed = vietnamese.diff.informals_added / \
-                                  max(vietnamese.diff.words_added, 1)
+proportion_of_informals_removed = vietnamese.diff.informals_removed / \
+                                  max(vietnamese.diff.words_removed, 1)
 
 proportion_of_badwords = vietnamese.parent_revision.badwords / \
                          max(vietnamese.parent_revision.words, 1)

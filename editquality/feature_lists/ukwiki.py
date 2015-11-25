@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = ukrainian.diff.badwords_added / \
                                max(ukrainian.diff.words_added, 1)
-proportion_of_badwords_removed = ukrainian.diff.badwords_added / \
-                                 max(ukrainian.diff.words_added, 1)
+proportion_of_badwords_removed = ukrainian.diff.badwords_removed / \
+                                 max(ukrainian.diff.words_removed, 1)
 proportion_of_misspellings_added = ukrainian.diff.misspellings_added / \
                                    max(ukrainian.diff.words_added, 1)
-proportion_of_misspellings_removed = ukrainian.diff.misspellings_added / \
-                                     max(ukrainian.diff.words_added, 1)
+proportion_of_misspellings_removed = ukrainian.diff.misspellings_removed / \
+                                     max(ukrainian.diff.words_removed, 1)
 proportion_of_informals_added = ukrainian.diff.informals_added / \
                                 max(ukrainian.diff.words_added, 1)
-proportion_of_informals_removed = ukrainian.diff.informals_added / \
-                                  max(ukrainian.diff.words_added, 1)
+proportion_of_informals_removed = ukrainian.diff.informals_removed / \
+                                  max(ukrainian.diff.words_removed, 1)
 
 proportion_of_badwords = ukrainian.parent_revision.badwords / \
                          max(ukrainian.parent_revision.words, 1)
