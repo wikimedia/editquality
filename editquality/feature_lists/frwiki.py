@@ -5,12 +5,12 @@ from . import enwiki
 
 proportion_of_badwords_added = french.diff.badwords_added / \
                                max(french.diff.words_added, 1)
-proportion_of_badwords_removed = french.diff.badwords_added / \
-                                 max(french.diff.words_added, 1)
+proportion_of_badwords_removed = french.diff.badwords_removed / \
+                                 max(french.diff.words_removed, 1)
 proportion_of_misspellings_added = french.diff.misspellings_added / \
                                    max(french.diff.words_added, 1)
-proportion_of_misspellings_removed = french.diff.misspellings_added / \
-                                     max(french.diff.words_added, 1)
+proportion_of_misspellings_removed = french.diff.misspellings_removed / \
+                                     max(french.diff.words_removed, 1)
 
 proportion_of_badwords = french.parent_revision.badwords / \
                          max(french.parent_revision.words, 1)

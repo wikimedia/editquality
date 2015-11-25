@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = estonian.diff.badwords_added / \
                                max(estonian.diff.words_added, 1)
-proportion_of_badwords_removed = estonian.diff.badwords_added / \
-                                 max(estonian.diff.words_added, 1)
+proportion_of_badwords_removed = estonian.diff.badwords_removed / \
+                                 max(estonian.diff.words_removed, 1)
 proportion_of_misspellings_added = estonian.diff.misspellings_added / \
                                    max(estonian.diff.words_added, 1)
-proportion_of_misspellings_removed = estonian.diff.misspellings_added / \
-                                     max(estonian.diff.words_added, 1)
+proportion_of_misspellings_removed = estonian.diff.misspellings_removed / \
+                                     max(estonian.diff.words_removed, 1)
 proportion_of_informals_added = estonian.diff.informals_added / \
                                 max(estonian.diff.words_added, 1)
-proportion_of_informals_removed = estonian.diff.informals_added / \
-                                  max(estonian.diff.words_added, 1)
+proportion_of_informals_removed = estonian.diff.informals_removed / \
+                                  max(estonian.diff.words_removed, 1)
 
 proportion_of_badwords = estonian.parent_revision.badwords / \
                          max(estonian.parent_revision.words, 1)

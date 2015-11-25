@@ -5,16 +5,16 @@ from . import enwiki
 
 proportion_of_badwords_added = indonesian.diff.badwords_added / \
                                max(indonesian.diff.words_added, 1)
-proportion_of_badwords_removed = indonesian.diff.badwords_added / \
-                                 max(indonesian.diff.words_added, 1)
+proportion_of_badwords_removed = indonesian.diff.badwords_removed / \
+                                 max(indonesian.diff.words_removed, 1)
 proportion_of_misspellings_added = indonesian.diff.misspellings_added / \
                                    max(indonesian.diff.words_added, 1)
-proportion_of_misspellings_removed = indonesian.diff.misspellings_added / \
-                                     max(indonesian.diff.words_added, 1)
+proportion_of_misspellings_removed = indonesian.diff.misspellings_removed / \
+                                     max(indonesian.diff.words_removed, 1)
 proportion_of_informals_added = indonesian.diff.informals_added / \
                                 max(indonesian.diff.words_added, 1)
-proportion_of_informals_removed = indonesian.diff.informals_added / \
-                                  max(indonesian.diff.words_added, 1)
+proportion_of_informals_removed = indonesian.diff.informals_removed / \
+                                  max(indonesian.diff.words_removed, 1)
 
 proportion_of_badwords = indonesian.parent_revision.badwords / \
                          max(indonesian.parent_revision.words, 1)
