@@ -1,7 +1,7 @@
 from revscoring.features.modifiers import log, max
 from revscoring.languages import italian
 
-from . import enwiki
+from . import english, util
 
 proportion_of_badwords_added = italian.diff.badwords_added / \
                                max(italian.diff.words_added, 1)
@@ -30,7 +30,10 @@ added_misspellings_ratio = proportion_of_misspellings_added / \
 added_informals_ratio = proportion_of_informals_added / \
                         max(proportion_of_informals, 0.01)
 
-damaging = enwiki.damaging + [
+damaging = util.no_lang_damaging + english.badwords + [
+    log(italian.diff.words_added + 1),
+    log(italian.diff.words_removed + 1),
+    log(italian.parent_revision.words + 1),
     log(italian.diff.badwords_added + 1),
     log(italian.diff.badwords_removed + 1),
     log(italian.diff.informals_added + 1),
