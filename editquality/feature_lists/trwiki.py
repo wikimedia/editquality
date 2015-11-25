@@ -1,7 +1,7 @@
 from revscoring.features.modifiers import log, max
 from revscoring.languages import turkish
 
-from . import enwiki
+from . import enwiki, util
 
 proportion_of_badwords_added = turkish.diff.badwords_added / \
                                max(turkish.diff.words_added, 1)
@@ -22,7 +22,7 @@ added_badwords_ratio = proportion_of_badwords_added / \
 added_informals_ratio = proportion_of_informals_added / \
                         max(proportion_of_informals, 0.01)
 
-damaging = enwiki.damaging + [
+damaging = util.no_lang_damaging + enwiki.badwords + enwiki.informals + [
     log(turkish.diff.badwords_added + 1),
     log(turkish.diff.badwords_removed + 1),
     log(turkish.diff.informals_added + 1),
