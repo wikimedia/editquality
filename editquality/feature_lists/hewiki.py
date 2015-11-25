@@ -1,7 +1,7 @@
 from revscoring.features.modifiers import log, max
 from revscoring.languages import hebrew
 
-from . import enwiki
+from . import enwiki, util
 
 proportion_of_badwords_added = hebrew.diff.badwords_added / \
                                max(hebrew.diff.words_added, 1)
@@ -30,7 +30,7 @@ added_misspellings_ratio = proportion_of_misspellings_added / \
 added_informals_ratio = proportion_of_informals_added / \
                         max(proportion_of_informals, 0.01)
 
-damaging = enwiki.damaging + [
+damaging = util.no_lang_damaging + enwiki.badwords + enwiki.informals + [
     log(hebrew.diff.badwords_added + 1),
     log(hebrew.diff.badwords_removed + 1),
     log(hebrew.diff.informals_added + 1),
