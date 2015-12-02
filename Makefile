@@ -10,13 +10,13 @@ models: \
 		hewiki_models \
 		idwiki_models \
 		itwiki_models \
-		jawiki_models \
 		nlwiki_models \
 		ptwiki_models \
-		#ruwiki_models \
 		trwiki_models \
 		ukwiki_models \
 		viwiki_models
+		#jawiki_models
+		#ruwiki_models
 
 ############################# German Wikipedia ################################
 
