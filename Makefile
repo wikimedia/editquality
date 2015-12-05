@@ -17,6 +17,7 @@ models: \
 		viwiki_models
 		#jawiki_models
 		#ruwiki_models
+		#urwiki_models
 
 ############################# German Wikipedia ################################
 
@@ -886,6 +887,54 @@ models/ukwiki.reverted.linear_svc.model: \
 
 ukwiki_models: \
 		models/ukwiki.reverted.linear_svc.model
+
+
+############################### Urdu Wikipedia #################################
+
+datasets/urwiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/51666/output/0/tsv?download=true > \
+	datasets/urwiki.sampled_revisions.20k_2015.tsv
+
+datasets/urwiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/urwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/urwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://ur.wikipedia.org \
+		--trusted-groups=bot, bureaucrat, sysop, rollbackers \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/urwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/urwiki.rev_reverted.20k_2015.tsv: \
+		datasets/urwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/urwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://ur.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/urwiki.rev_reverted.20k_2015.tsv
+
+datasets/urwiki.features_reverted.20k_2015.tsv: \
+		datasets/urwiki.rev_reverted.20k_2015.tsv
+	cat datasets/urwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.urwiki.damaging \
+		--host https://ur.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/urwiki.features_reverted.20k_2015.tsv
+
+models/urwiki.reverted.linear_svc.model: \
+		datasets/urwiki.features_reverted.20k_2015.tsv
+	cut datasets/urwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.urwiki.damaging \
+		--version=0.0.3 \
+		--label-type=bool > \
+	models/urwiki.reverted.linear_svc.model
+
+urwiki_models: \
+		models/urwiki.reverted.linear_svc.model
 
 ############################### Vietnamese Wikipedia ###########################
 
