@@ -892,14 +892,14 @@ ukwiki_models: \
 ############################### Urdu Wikipedia #################################
 
 datasets/urwiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/51666/output/0/tsv?download=true > \
+	wget -qO- http://quarry.wmflabs.org/run/51705/output/0/tsv?download=true > \
 	datasets/urwiki.sampled_revisions.20k_2015.tsv
 
 datasets/urwiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/urwiki.sampled_revisions.20k_2015.tsv
 	cat datasets/urwiki.sampled_revisions.20k_2015.tsv | \
 	./utility prelabel https://ur.wikipedia.org \
-		--trusted-groups=bot, bureaucrat, sysop, rollbackers \
+		--trusted-groups=bot,bureaucrat,sysop,rollbackers \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/urwiki.prelabeled_revisions.20k_2015.tsv
