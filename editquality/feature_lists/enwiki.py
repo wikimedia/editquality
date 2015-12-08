@@ -1,7 +1,7 @@
 from revscoring.features.modifiers import log, max
 from revscoring.languages import english
 
-from . import util
+from . import common
 
 proportion_of_badwords_added = english.diff.badwords_added / \
                                max(english.diff.words_added, 1)
@@ -46,10 +46,22 @@ informals = [
     proportion_of_informals_removed
 ]
 
-damaging = util.no_lang_damaging + [
-    log(english.diff.words_added + 1),
-    log(english.diff.words_removed + 1),
-    log(english.parent_revision.words + 1)
-] + badwords + informals
+misspellings = [
+    added_misspellings_ratio,
+    log(english.diff.misspellings_added + 1),
+    log(english.diff.misspellings_removed + 1),
+    proportion_of_misspellings_added,
+    proportion_of_misspellings_removed
+]
 
+damaging = common.page + common.diff + common.user_rights + \
+           badwords + informals + misspellings + \
+           [log(english.diff.words_added + 1),
+            log(english.diff.words_removed + 1),
+            log(english.parent_revision.words + 1)]
+damaging_user = damaging + common.protected_user
+
+reverted = damaging
+reverted_user = damaging_user
 goodfaith = damaging
+goodfaith_user = damaging_user

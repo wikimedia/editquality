@@ -1,7 +1,7 @@
 from revscoring.features.modifiers import log, max
 from revscoring.languages import italian
 
-from . import enwiki, util
+from . import common, enwiki
 
 proportion_of_badwords_added = italian.diff.badwords_added / \
                                max(italian.diff.words_added, 1)
@@ -30,25 +30,39 @@ added_misspellings_ratio = proportion_of_misspellings_added / \
 added_informals_ratio = proportion_of_informals_added / \
                         max(proportion_of_informals, 0.01)
 
-damaging = util.no_lang_damaging + enwiki.badwords + [
-    log(italian.diff.words_added + 1),
-    log(italian.diff.words_removed + 1),
-    log(italian.parent_revision.words + 1),
+badwords = [
+    added_badwords_ratio,
     log(italian.diff.badwords_added + 1),
     log(italian.diff.badwords_removed + 1),
-    log(italian.diff.informals_added + 1),
-    log(italian.diff.informals_removed + 1),
-    log(italian.diff.misspellings_added + 1),
-    log(italian.diff.misspellings_removed + 1),
     proportion_of_badwords_added,
     proportion_of_badwords_removed,
-    proportion_of_informals_added,
-    proportion_of_informals_removed,
-    proportion_of_misspellings_added,
-    proportion_of_misspellings_removed,
-    added_badwords_ratio,
-    added_informals_ratio,
-    added_misspellings_ratio
 ]
 
+informals = [
+    added_informals_ratio,
+    log(italian.diff.informals_added + 1),
+    log(italian.diff.informals_removed + 1),
+    proportion_of_informals_added,
+    proportion_of_informals_removed
+]
+
+misspellings = [
+    added_misspellings_ratio,
+    log(italian.diff.misspellings_added + 1),
+    log(italian.diff.misspellings_removed + 1),
+    proportion_of_misspellings_added,
+    proportion_of_misspellings_removed
+]
+
+damaging = common.page + common.diff + common.user_rights + \
+           enwiki.badwords + enwiki.informals + \
+           badwords + informals + misspellings + \
+           [log(italian.diff.words_added + 1),
+            log(italian.diff.words_removed + 1),
+            log(italian.parent_revision.words + 1)]
+damaging_user = damaging + common.protected_user
+
+reverted = damaging
+reverted_user = damaging_user
 goodfaith = damaging
+goodfaith_user = damaging_user
