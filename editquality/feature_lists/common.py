@@ -1,7 +1,11 @@
 from revscoring.features import diff, page, parent_revision, user
 from revscoring.features.modifiers import log
 
-no_lang_damaging = [
+etc = [
+    parent_revision.was_same_user
+]
+
+diff = [
     log(diff.added_symbolic_chars_ratio + 1),
     log(diff.chars_added + 1),
     log(diff.chars_removed + 1),
@@ -23,9 +27,19 @@ no_lang_damaging = [
     log(diff.symbolic_chars_removed + 1),
     log(diff.uppercase_chars_added + 1),
     log(diff.uppercase_chars_removed + 1),
-    diff.bytes_changed + 1,
-    diff.bytes_changed_ratio,
-    page.is_content_namespace,
-    parent_revision.was_same_user,
+    diff.bytes_changed,
+    diff.bytes_changed_ratio
+]
+
+page = [
+    page.is_content_namespace
+]
+
+user_rights = [
     user.is_bot
+]
+
+protected_user = [
+    user.is_anon,
+    user.age
 ]
