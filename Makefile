@@ -719,7 +719,7 @@ models/idwiki.reverted-user.linear_svc.model: \
 	cut datasets/idwiki.features_reverted_user.20k_2015.tsv -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.idwiki.reverted-user \
+		editquality.feature_lists.idwiki.reverted_user \
 		--version=0.0.3 \
 		--label-type=bool > \
 	models/idwiki.reverted-user.linear_svc.model
