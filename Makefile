@@ -19,6 +19,25 @@ models: \
 		#ruwiki_models
 		#urwiki_models
 
+tuning_reports: \
+		dewiki_tuning_reports \
+		enwiki_tuning_reports \
+		eswiki_tuning_reports \
+		etwiki_tuning_reports \
+		fawiki_tuning_reports \
+		frwiki_tuning_reports \
+		hewiki_tuning_reports \
+		idwiki_tuning_reports \
+		itwiki_tuning_reports \
+		nlwiki_tuning_reports \
+		ptwiki_tuning_reports \
+		trwiki_tuning_reports \
+		ukwiki_tuning_reports \
+		viwiki_tuning_reports
+		#jawiki_tuning_reports
+		#ruwiki_tuning_reports
+		#urwiki_tuning_reports
+
 ############################# German Wikipedia ################################
 
 datasets/dewiki.sampled_revisions.20k_2015.tsv:
@@ -52,6 +71,17 @@ datasets/dewiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/dewiki.features_reverted.20k_2015.tsv
+
+tuning_reports/dewiki.reverted.md: \
+		datasets/dewiki.features_reverted.20k_2015.tsv
+	cat datasets/dewiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.dewiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/dewiki.reverted.md
 
 models/dewiki.reverted.linear_svc.model: \
 		datasets/dewiki.features_reverted.20k_2015.tsv
@@ -87,6 +117,8 @@ dewiki_models: \
 		models/dewiki.reverted.linear_svc.model \
 		models/dewiki.reverted-user.linear_svc.model
 
+dewiki_tuning_reports: \
+		tuning_reports/dewiki.reverted.md
 
 ############################# English Wikipedia ###############################
 
@@ -108,6 +140,17 @@ datasets/enwiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/enwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/enwiki.reverted.md: \
+		datasets/enwiki.features_reverted.20k_2015.tsv
+	cat datasets/enwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/enwiki.reverted.md
 
 models/enwiki.reverted.linear_svc.model: \
 		datasets/enwiki.features_reverted.20k_2015.tsv
@@ -156,6 +199,17 @@ datasets/enwiki.features_damaging.20k_2015.tsv: \
 		--verbose > \
 	datasets/enwiki.features_damaging.20k_2015.tsv
 
+tuning_reports/enwiki.damaging.md: \
+		datasets/enwiki.features_damaging.20k_2015.tsv
+	cat datasets/enwiki.features_damaging.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiki.damaging \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/enwiki.damaging.md
+
 models/enwiki.damaging.linear_svc.model: \
 		datasets/enwiki.features_damaging.20k_2015.tsv
 	cat datasets/enwiki.features_damaging.20k_2015.tsv | cut -f2- | \
@@ -203,6 +257,17 @@ datasets/enwiki.features_goodfaith.20k_2015.tsv: \
 		--verbose > \
 	datasets/enwiki.features_goodfaith.20k_2015.tsv
 
+tuning_reports/enwiki.goodfaith.md: \
+		datasets/enwiki.features_goodfaith.20k_2015.tsv
+	cat datasets/enwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiki.goodfaith \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/enwiki.goodfaith.md
+
 models/enwiki.goodfaith.linear_svc.model: \
 		datasets/enwiki.features_goodfaith.20k_2015.tsv
 	cat datasets/enwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
@@ -235,11 +300,16 @@ models/enwiki.goodfaith-user.linear_svc.model: \
 
 enwiki_models: \
 		models/enwiki.reverted.linear_svc.model \
-		models/enwiki.reverted-user.linear_svc.model \
 		models/enwiki.damaging.linear_svc.model \
-		models/enwiki.damaging-user.linear_svc.model \
 		models/enwiki.goodfaith.linear_svc.model \
+		models/enwiki.reverted-user.linear_svc.model \
+		models/enwiki.damaging-user.linear_svc.model \
 		models/enwiki.goodfaith-user.linear_svc.model
+
+enwiki_tuning_reports: \
+		tuning_reports/enwiki.reverted.md \
+		tuning_reports/enwiki.damaging.md \
+		tuning_reports/enwiki.goodfaith.md
 
 ############################# Spanish Wikipedia ################################
 
@@ -275,6 +345,17 @@ datasets/eswiki.features_reverted.20k_2015.tsv: \
 		--verbose > \
 	datasets/eswiki.features_reverted.20k_2015.tsv
 
+tuning_reports/eswiki.reverted.md: \
+		datasets/eswiki.features_reverted.20k_2015.tsv
+	cat datasets/eswiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/eswiki.reverted.md
+
 models/eswiki.reverted.linear_svc.model: \
 		datasets/eswiki.features_reverted.20k_2015.tsv
 	cat datasets/eswiki.features_reverted.20k_2015.tsv | cut -f2- | \
@@ -308,6 +389,9 @@ models/eswiki.reverted-user.linear_svc.model: \
 eswiki_models: \
 		models/eswiki.reverted.linear_svc.model \
 		models/eswiki.reverted-user.linear_svc.model
+
+eswiki_tuning_reports: \
+		tuning_reports/eswiki.reverted.md
 
 ########################### Estonian Wikipedia ################################
 
@@ -343,6 +427,17 @@ datasets/etwiki.features_reverted.20k_2015.tsv: \
 		--verbose > \
 	datasets/etwiki.features_reverted.20k_2015.tsv
 
+tuning_reports/etwiki.reverted.md: \
+		datasets/etwiki.features_reverted.20k_2015.tsv
+	cat datasets/etwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.etwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/etwiki.reverted.md
+
 models/etwiki.reverted.linear_svc.model: \
 		datasets/etwiki.features_reverted.20k_2015.tsv
 	cat datasets/etwiki.features_reverted.20k_2015.tsv | cut -f2- | \
@@ -377,6 +472,9 @@ etwiki_models: \
 		models/etwiki.reverted.linear_svc.model \
 		models/etwiki.reverted-user.linear_svc.model
 
+etwiki_tuning_reports: \
+		tuning_reports/etwiki.reverted.md
+
 ############################# Persian Wikipedia ################################
 
 datasets/fawiki.rev_reverted.20k_2015.tsv: \
@@ -396,6 +494,17 @@ datasets/fawiki.features_reverted.20k_2015.tsv: \
 		--host https://fa.wikipedia.org \
 		--verbose > \
 	datasets/fawiki.features_reverted.20k_2015.tsv
+
+tuning_reports/fawiki.reverted.md: \
+		datasets/fawiki.features_reverted.20k_2015.tsv
+	cat datasets/fawiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fawiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/fawiki.reverted.md
 
 models/fawiki.reverted.linear_svc.model: \
 		datasets/fawiki.features_reverted.20k_2015.tsv
@@ -442,6 +551,17 @@ datasets/fawiki.features_damaging.20k_2015.tsv: \
 		--verbose > \
 	datasets/fawiki.features_damaging.20k_2015.tsv
 
+tuning_reports/fawiki.damaging.md: \
+		datasets/fawiki.features_damaging.20k_2015.tsv
+	cat datasets/fawiki.features_damaging.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fawiki.damaging \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/fawiki.damaging.md
+
 models/fawiki.damaging.linear_svc.model: \
 		datasets/fawiki.features_damaging.20k_2015.tsv
 	cat datasets/fawiki.features_damaging.20k_2015.tsv | \
@@ -487,6 +607,17 @@ datasets/fawiki.features_goodfaith.20k_2015.tsv: \
 		--verbose > \
 	datasets/fawiki.features_goodfaith.20k_2015.tsv
 
+tuning_reports/fawiki.goodfaith.md: \
+		datasets/fawiki.features_goodfaith.20k_2015.tsv
+	cat datasets/fawiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fawiki.goodfaith \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/fawiki.goodfaith.md
+
 models/fawiki.goodfaith.linear_svc.model: \
 		datasets/fawiki.features_goodfaith.20k_2015.tsv
 	cat datasets/fawiki.features_goodfaith.20k_2015.tsv | \
@@ -524,6 +655,11 @@ fawiki_models: \
 		models/fawiki.damaging-user.linear_svc.model \
 		models/fawiki.goodfaith-user.linear_svc.model
 
+fawiki_tuning_reports: \
+		tuning_reports/fawiki.reverted.md \
+		tuning_reports/fawiki.damaging.md \
+		tuning_reports/fawiki.goodfaith.md
+
 ############################# French Wikipedia ################################
 
 datasets/frwiki.sampled_revisions.20k_2015.tsv:
@@ -557,6 +693,17 @@ datasets/frwiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/frwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/frwiki.reverted.md: \
+		datasets/frwiki.features_reverted.20k_2015.tsv
+	cat datasets/frwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.frwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/frwiki.reverted.md
 
 models/frwiki.reverted.linear_svc.model: \
 		datasets/frwiki.features_reverted.20k_2015.tsv
@@ -592,6 +739,9 @@ frwiki_models: \
 		models/frwiki.reverted.linear_svc.model \
 		models/frwiki.reverted-user.linear_svc.model
 
+frwiki_tuning_reports: \
+		tuning_reports/frwiki.reverted.md
+
 ############################# Hebrew Wikipedia ################################
 
 datasets/hewiki.sampled_revisions.20k_2015.tsv:
@@ -625,6 +775,17 @@ datasets/hewiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/hewiki.features_reverted.20k_2015.tsv
+
+tuning_reports/hewiki.reverted.md: \
+		datasets/hewiki.features_reverted.20k_2015.tsv
+	cat datasets/hewiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hewiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/hewiki.reverted.md
 
 models/hewiki.reverted.linear_svc.model: \
 		datasets/hewiki.features_reverted.20k_2015.tsv
@@ -660,6 +821,9 @@ hewiki_models: \
 		models/hewiki.reverted.linear_svc.model \
 		models/hewiki.reverted-user.linear_svc.model
 
+hewiki_tuning_reports: \
+		tuning_reports/hewiki.reverted.md
+
 ############################### Indonesian Wikipedia ##########################
 
 datasets/idwiki.sampled_revisions.20k_2015.tsv:
@@ -693,6 +857,17 @@ datasets/idwiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/idwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/idwiki.reverted.md: \
+		datasets/idwiki.features_reverted.20k_2015.tsv
+	cat datasets/idwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.idwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/idwiki.reverted.md
 
 models/idwiki.reverted.linear_svc.model: \
 		datasets/idwiki.features_reverted.20k_2015.tsv
@@ -728,6 +903,9 @@ idwiki_models: \
 		models/idwiki.reverted.linear_svc.model \
 		models/idwiki.reverted-user.linear_svc.model
 
+idwiki_tuning_reports: \
+		tuning_reports/idwiki.reverted.md
+
 ############################# Italian Wikipedia ###############################
 
 datasets/itwiki.sampled_revisions.20k_2015.tsv:
@@ -761,6 +939,17 @@ datasets/itwiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/itwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/itwiki.reverted.md: \
+		datasets/itwiki.features_reverted.20k_2015.tsv
+	cat datasets/itwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.itwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/itwiki.reverted.md
 
 models/itwiki.reverted.linear_svc.model: \
 		datasets/itwiki.features_reverted.20k_2015.tsv
@@ -796,6 +985,9 @@ itwiki_models: \
 		models/itwiki.reverted.linear_svc.model \
 		models/itwiki.reverted-user.linear_svc.model
 
+itwiki_tuning_reports: \
+		tuning_reports/itwiki.reverted.md
+
 ########################### Japanese Wikipedia ################################
 
 datasets/jawiki.sampled_revisions.20k_2015.tsv:
@@ -829,6 +1021,17 @@ datasets/jawiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/jawiki.features_reverted.20k_2015.tsv
+
+tuning_reports/jawiki.reverted.md: \
+		datasets/jawiki.features_reverted.20k_2015.tsv
+	cat datasets/jawiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.jawiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/jawiki.reverted.md
 
 models/jawiki.reverted.linear_svc.model: \
 		datasets/jawiki.features_reverted.20k_2015.tsv
@@ -864,6 +1067,9 @@ jawiki_models: \
 		models/jawiki.reverted.linear_svc.model \
 		models/jawiki.reverted-user.linear_svc.model
 
+jawiki_tuning_reports: \
+		tuning_reports/jawiki.reverted.md
+
 ############################### Dutch Wikipedia ###############################
 
 datasets/nlwiki.sampled_revisions.20k_2015.tsv:
@@ -897,6 +1103,17 @@ datasets/nlwiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/nlwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/nlwiki.reverted.md: \
+		datasets/nlwiki.features_reverted.20k_2015.tsv
+	cat datasets/nlwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.nlwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/nlwiki.reverted.md
 
 models/nlwiki.reverted.linear_svc.model: \
 		datasets/nlwiki.features_reverted.20k_2015.tsv
@@ -932,6 +1149,9 @@ nlwiki_models: \
 		models/nlwiki.reverted.linear_svc.model \
 		models/nlwiki.reverted-user.linear_svc.model
 
+nlwiki_tuning_reports: \
+		tuning_reports/nlwiki.reverted.md
+
 ############################# Portugueses Wikipedia ############################
 
 datasets/ptwiki.rev_reverted.20k_2015.tsv: \
@@ -951,6 +1171,17 @@ datasets/ptwiki.features_reverted.20k_2015.tsv: \
 		--host https://pt.wikipedia.org \
 		--verbose > \
 	datasets/ptwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/ptwiki.reverted.md: \
+		datasets/ptwiki.features_reverted.20k_2015.tsv
+	cat datasets/ptwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ptwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/ptwiki.reverted.md
 
 models/ptwiki.reverted.linear_svc.model: \
 		datasets/ptwiki.features_reverted.20k_2015.tsv
@@ -997,6 +1228,17 @@ datasets/ptwiki.features_damaging.20k_2015.tsv: \
 		--verbose > \
 	datasets/ptwiki.features_damaging.20k_2015.tsv
 
+tuning_reports/ptwiki.damaging.md: \
+		datasets/ptwiki.features_damaging.20k_2015.tsv
+	cat datasets/ptwiki.features_damaging.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ptwiki.damaging \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/ptwiki.damaging.md
+
 models/ptwiki.damaging.linear_svc.model: \
 		datasets/ptwiki.features_damaging.20k_2015.tsv
 	cat datasets/ptwiki.features_damaging.20k_2015.tsv | \
@@ -1042,6 +1284,17 @@ datasets/ptwiki.features_goodfaith.20k_2015.tsv: \
 		--verbose > \
 	datasets/ptwiki.features_goodfaith.20k_2015.tsv
 
+tuning_reports/ptwiki.goodfaith.md: \
+		datasets/ptwiki.features_goodfaith.20k_2015.tsv
+	cat datasets/ptwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ptwiki.goodfaith \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/ptwiki.goodfaith.md
+
 models/ptwiki.goodfaith.linear_svc.model: \
 		datasets/ptwiki.features_goodfaith.20k_2015.tsv
 	cat datasets/ptwiki.features_goodfaith.20k_2015.tsv | \
@@ -1079,6 +1332,11 @@ ptwiki_models: \
 		models/ptwiki.reverted-user.linear_svc.model \
 		models/ptwiki.reverted-user.linear_svc.model
 
+ptwiki_tuning_reports: \
+		tuning_reports/ptwiki.reverted.md \
+		tuning_reports/ptwiki.damaging.md \
+		tuning_reports/ptwiki.goodfaith.md
+
 ############################### Russian Wikipedia ############################
 
 datasets/ruwiki.sampled_revisions.20k_2015.tsv:
@@ -1112,6 +1370,17 @@ datasets/ruwiki.features_reverted.20k_2015.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/ruwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/ruwiki.reverted.md: \
+		datasets/ruwiki.features_reverted.20k_2015.tsv
+	cat datasets/ruwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ruwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/ruwiki.reverted.md
 
 models/ruwiki.reverted.linear_svc.model: \
 		datasets/ruwiki.features_reverted.20k_2015.tsv
@@ -1147,6 +1416,9 @@ ruwiki_models: \
 		models/ruwiki.reverted.linear_svc.model \
 		models/ruwiki.reverted-user.linear_svc.model
 
+ruwiki_tuning_reports: \
+		tuning_reports/ruwiki.reverted.md
+
 ############################# Turkish Wikipedia ############################
 
 datasets/trwiki.rev_reverted.20k_2015.tsv: \
@@ -1166,6 +1438,17 @@ datasets/trwiki.features_reverted.20k_2015.tsv: \
 		--host https://tr.wikipedia.org \
 		--verbose > \
 	datasets/trwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/trwiki.reverted.md: \
+		datasets/trwiki.features_reverted.20k_2015.tsv
+	cat datasets/trwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.trwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/trwiki.reverted.md
 
 models/trwiki.reverted.linear_svc.model: \
 		datasets/trwiki.features_reverted.20k_2015.tsv
@@ -1212,6 +1495,17 @@ datasets/trwiki.features_damaging.20k_2015.tsv: \
 		--verbose > \
 	datasets/trwiki.features_damaging.20k_2015.tsv
 
+tuning_reports/trwiki.damaging.md: \
+		datasets/trwiki.features_damaging.20k_2015.tsv
+	cat datasets/trwiki.features_damaging.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.trwiki.damaging \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/trwiki.damaging.md
+
 models/trwiki.damaging.linear_svc.model: \
 		datasets/trwiki.features_damaging.20k_2015.tsv
 	cat datasets/trwiki.features_damaging.20k_2015.tsv | \
@@ -1257,6 +1551,17 @@ datasets/trwiki.features_goodfaith.20k_2015.tsv: \
 		--verbose > \
 	datasets/trwiki.features_goodfaith.20k_2015.tsv
 
+tuning_reports/trwiki.goodfaith.md: \
+		datasets/trwiki.features_goodfaith.20k_2015.tsv
+	cat datasets/trwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.trwiki.goodfaith \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/trwiki.goodfaith.md
+
 models/trwiki.goodfaith.linear_svc.model: \
 		datasets/trwiki.features_goodfaith.20k_2015.tsv
 	cat datasets/trwiki.features_goodfaith.20k_2015.tsv | \
@@ -1294,6 +1599,11 @@ trwiki_models: \
 		models/trwiki.damaging-user.linear_svc.model \
 		models/trwiki.goodfaith-user.linear_svc.model
 
+trwiki_tuning_reports: \
+		tuning_reports/trwiki.reverted.md \
+		tuning_reports/trwiki.damaging.md \
+		tuning_reports/trwiki.goodfaith.md
+
 ############################### Ukranian Wikipedia ############################
 
 datasets/ukwiki.sampled_revisions.20k_2015.tsv:
@@ -1328,6 +1638,17 @@ datasets/ukwiki.features_reverted.20k_2015.tsv: \
 		--verbose > \
 	datasets/ukwiki.features_reverted.20k_2015.tsv
 
+tuning_reports/ukwiki.reverted.md: \
+		datasets/ukwiki.features_reverted.20k_2015.tsv
+	cat datasets/ukwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ukwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/ukwiki.reverted.md
+
 models/ukwiki.reverted.linear_svc.model: \
 		datasets/ukwiki.features_reverted.20k_2015.tsv
 	cut datasets/ukwiki.features_reverted.20k_2015.tsv -f2- | \
@@ -1360,8 +1681,10 @@ models/ukwiki.reverted-user.linear_svc.model: \
 
 ukwiki_models: \
 		models/ukwiki.reverted.linear_svc.model \
-		models/ukwiki.reverted.linear_svc.model
+		models/ukwiki.reverted-user.linear_svc.model
 
+ukwiki_tuning_reports: \
+		tuning_reports/ukwiki.reverted.md
 
 ############################### Urdu Wikipedia #################################
 
@@ -1397,6 +1720,17 @@ datasets/urwiki.features_reverted.20k_2015.tsv: \
 		--verbose > \
 	datasets/urwiki.features_reverted.20k_2015.tsv
 
+tuning_reports/urwiki.reverted.md: \
+		datasets/urwiki.features_reverted.20k_2015.tsv
+	cat datasets/urwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.urwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/urwiki.reverted.md
+
 models/urwiki.reverted.linear_svc.model: \
 		datasets/urwiki.features_reverted.20k_2015.tsv
 	cut datasets/urwiki.features_reverted.20k_2015.tsv -f2- | \
@@ -1430,6 +1764,9 @@ models/urwiki.reverted-user.linear_svc.model: \
 urwiki_models: \
 		models/urwiki.reverted.linear_svc.model \
 		models/urwiki.reverted-user.linear_svc.model
+
+urwiki_tuning_reports: \
+		tuning_reports/urwiki.reverted.md
 
 ############################### Vietnamese Wikipedia ###########################
 
@@ -1465,6 +1802,17 @@ datasets/viwiki.features_reverted.20k_2015.tsv: \
 		--verbose > \
 	datasets/viwiki.features_reverted.20k_2015.tsv
 
+tuning_reports/viwiki.reverted.md: \
+		datasets/viwiki.features_reverted.20k_2015.tsv
+	cat datasets/viwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.viwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/viwiki.reverted.md
+
 models/viwiki.reverted.linear_svc.model: \
 		datasets/viwiki.features_reverted.20k_2015.tsv
 	cut datasets/viwiki.features_reverted.20k_2015.tsv -f2- | \
@@ -1498,3 +1846,6 @@ models/viwiki.reverted-user.linear_svc.model: \
 viwiki_models: \
 		models/viwiki.reverted.linear_svc.model \
 		models/viwiki.reverted-user.linear_svc.model
+
+viwiki_tuning_reports: \
+		tuning_reports/viwiki.reverted.md
