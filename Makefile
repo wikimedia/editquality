@@ -98,6 +98,7 @@ models/enwiki.reverted.linear_svc.model: \
 	models/enwiki.reverted.linear_svc.model
 
 datasets/enwiki.rev_damaging.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ \
 		damaging \
@@ -125,6 +126,7 @@ models/enwiki.damaging.linear_svc.model: \
 	models/enwiki.damaging.linear_svc.model
 
 datasets/enwiki.rev_goodfaith.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ \
 		goodfaith \
@@ -281,6 +283,7 @@ models/fawiki.reverted.linear_svc.model: \
 	models/fawiki.reverted.linear_svc.model
 
 datasets/fawiki.rev_damaging.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ \
 		damaging \
@@ -307,6 +310,7 @@ models/fawiki.damaging.linear_svc.model: \
 	models/fawiki.damaging.linear_svc.model
 
 datasets/fawiki.rev_goodfaith.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ \
 		goodfaith \
@@ -650,6 +654,7 @@ models/ptwiki.reverted.linear_svc.model: \
 	models/ptwiki.reverted.linear_svc.model
 
 datasets/ptwiki.rev_damaging.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ \
 		damaging \
@@ -676,6 +681,7 @@ models/ptwiki.damaging.linear_svc.model: \
 	models/ptwiki.damaging.linear_svc.model
 
 datasets/ptwiki.rev_goodfaith.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ \
 		goodfaith \
@@ -784,6 +790,7 @@ models/trwiki.reverted.linear_svc.model: \
 	models/trwiki.reverted.linear_svc.model
 
 datasets/trwiki.rev_damaging.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ \
 		damaging \
@@ -810,6 +817,7 @@ models/trwiki.damaging.linear_svc.model: \
 	models/trwiki.damaging.linear_svc.model
 
 datasets/trwiki.rev_goodfaith.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ \
 		goodfaith \
