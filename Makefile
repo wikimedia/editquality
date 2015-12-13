@@ -492,6 +492,7 @@ datasets/fawiki.features_reverted.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.fawiki.reverted \
 		--host https://fa.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/fawiki.features_reverted.20k_2015.tsv
 
@@ -508,7 +509,7 @@ tuning_reports/fawiki.reverted.md: \
 
 models/fawiki.reverted.linear_svc.model: \
 		datasets/fawiki.features_reverted.20k_2015.tsv
-	cat datasets/fawiki.features_reverted.20k_2015.tsv | \
+	cat datasets/fawiki.features_reverted.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.reverted \
@@ -522,12 +523,13 @@ datasets/fawiki.features_reverted_user.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.fawiki.reverted_user \
 		--host https://fa.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/fawiki.features_reverted_user.20k_2015.tsv
 
 models/fawiki.reverted-user.linear_svc.model: \
 		datasets/fawiki.features_reverted_user.20k_2015.tsv
-	cat datasets/fawiki.features_reverted_user.20k_2015.tsv | \
+	cat datasets/fawiki.features_reverted_user.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.reverted_user \
@@ -548,6 +550,7 @@ datasets/fawiki.features_damaging.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.fawiki.damaging \
 		--host https://fa.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/fawiki.features_damaging.20k_2015.tsv
 
@@ -564,7 +567,7 @@ tuning_reports/fawiki.damaging.md: \
 
 models/fawiki.damaging.linear_svc.model: \
 		datasets/fawiki.features_damaging.20k_2015.tsv
-	cat datasets/fawiki.features_damaging.20k_2015.tsv | \
+	cat datasets/fawiki.features_damaging.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.damaging \
@@ -578,12 +581,13 @@ datasets/fawiki.features_damaging_user.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.fawiki.damaging_user \
 		--host https://fa.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/fawiki.features_damaging_user.20k_2015.tsv
 
 models/fawiki.damaging-user.linear_svc.model: \
 		datasets/fawiki.features_damaging_user.20k_2015.tsv
-	cat datasets/fawiki.features_damaging_user.20k_2015.tsv | \
+	cat datasets/fawiki.features_damaging_user.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.damaging_user \
@@ -604,6 +608,7 @@ datasets/fawiki.features_goodfaith.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.fawiki.goodfaith \
 		--host https://fa.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/fawiki.features_goodfaith.20k_2015.tsv
 
@@ -620,7 +625,7 @@ tuning_reports/fawiki.goodfaith.md: \
 
 models/fawiki.goodfaith.linear_svc.model: \
 		datasets/fawiki.features_goodfaith.20k_2015.tsv
-	cat datasets/fawiki.features_goodfaith.20k_2015.tsv | \
+	cat datasets/fawiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.goodfaith \
@@ -634,12 +639,13 @@ datasets/fawiki.features_goodfaith_user.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.fawiki.goodfaith_user \
 		--host https://fa.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/fawiki.features_goodfaith_user.20k_2015.tsv
 
 models/fawiki.goodfaith-user.linear_svc.model: \
 		datasets/fawiki.features_goodfaith_user.20k_2015.tsv
-	cat datasets/fawiki.features_goodfaith_user.20k_2015.tsv | \
+	cat datasets/fawiki.features_goodfaith_user.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.fawiki.goodfaith_user \
@@ -1169,6 +1175,7 @@ datasets/ptwiki.features_reverted.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.ptwiki.reverted \
 		--host https://pt.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/ptwiki.features_reverted.20k_2015.tsv
 
@@ -1185,7 +1192,7 @@ tuning_reports/ptwiki.reverted.md: \
 
 models/ptwiki.reverted.linear_svc.model: \
 		datasets/ptwiki.features_reverted.20k_2015.tsv
-	cat datasets/ptwiki.features_reverted.20k_2015.tsv | \
+	cat datasets/ptwiki.features_reverted.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.reverted \
@@ -1199,12 +1206,13 @@ datasets/ptwiki.features_reverted_user.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.ptwiki.reverted_user \
 		--host https://pt.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/ptwiki.features_reverted_user.20k_2015.tsv
 
 models/ptwiki.reverted-user.linear_svc.model: \
 		datasets/ptwiki.features_reverted_user.20k_2015.tsv
-	cat datasets/ptwiki.features_reverted_user.20k_2015.tsv | \
+	cat datasets/ptwiki.features_reverted_user.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.reverted_user \
@@ -1225,6 +1233,7 @@ datasets/ptwiki.features_damaging.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.ptwiki.damaging \
 		--host https://pt.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/ptwiki.features_damaging.20k_2015.tsv
 
@@ -1241,7 +1250,7 @@ tuning_reports/ptwiki.damaging.md: \
 
 models/ptwiki.damaging.linear_svc.model: \
 		datasets/ptwiki.features_damaging.20k_2015.tsv
-	cat datasets/ptwiki.features_damaging.20k_2015.tsv | \
+	cat datasets/ptwiki.features_damaging.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.damaging \
@@ -1255,12 +1264,13 @@ datasets/ptwiki.features_damaging_user.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.ptwiki.damaging_user \
 		--host https://pt.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/ptwiki.features_damaging_user.20k_2015.tsv
 
 models/ptwiki.damaging-user.linear_svc.model: \
 		datasets/ptwiki.features_damaging_user.20k_2015.tsv
-	cat datasets/ptwiki.features_damaging_user.20k_2015.tsv | \
+	cat datasets/ptwiki.features_damaging_user.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.damaging_user \
@@ -1281,6 +1291,7 @@ datasets/ptwiki.features_goodfaith.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.ptwiki.goodfaith \
 		--host https://pt.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/ptwiki.features_goodfaith.20k_2015.tsv
 
@@ -1297,7 +1308,7 @@ tuning_reports/ptwiki.goodfaith.md: \
 
 models/ptwiki.goodfaith.linear_svc.model: \
 		datasets/ptwiki.features_goodfaith.20k_2015.tsv
-	cat datasets/ptwiki.features_goodfaith.20k_2015.tsv | \
+	cat datasets/ptwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.goodfaith \
@@ -1311,12 +1322,13 @@ datasets/ptwiki.features_goodfaith_user.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.ptwiki.goodfaith_user \
 		--host https://pt.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/ptwiki.features_goodfaith_user.20k_2015.tsv
 
 models/ptwiki.goodfaith-user.linear_svc.model: \
 		datasets/ptwiki.features_goodfaith_user.20k_2015.tsv
-	cat datasets/ptwiki.features_goodfaith_user.20k_2015.tsv | \
+	cat datasets/ptwiki.features_goodfaith_user.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.ptwiki.goodfaith_user \
@@ -1437,6 +1449,7 @@ datasets/trwiki.features_reverted.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.trwiki.reverted \
 		--host https://tr.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/trwiki.features_reverted.20k_2015.tsv
 
@@ -1453,7 +1466,7 @@ tuning_reports/trwiki.reverted.md: \
 
 models/trwiki.reverted.linear_svc.model: \
 		datasets/trwiki.features_reverted.20k_2015.tsv
-	cat datasets/trwiki.features_reverted.20k_2015.tsv | \
+	cat datasets/trwiki.features_reverted.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.trwiki.reverted \
@@ -1467,12 +1480,13 @@ datasets/trwiki.features_reverted_user.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.trwiki.reverted_user \
 		--host https://tr.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/trwiki.features_reverted_user.20k_2015.tsv
 
 models/trwiki.reverted-user.linear_svc.model: \
 		datasets/trwiki.features_reverted_user.20k_2015.tsv
-	cat datasets/trwiki.features_reverted_user.20k_2015.tsv | \
+	cat datasets/trwiki.features_reverted_user.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.trwiki.reverted_user \
@@ -1493,6 +1507,7 @@ datasets/trwiki.features_damaging.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.trwiki.damaging \
 		--host https://tr.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/trwiki.features_damaging.20k_2015.tsv
 
@@ -1509,7 +1524,7 @@ tuning_reports/trwiki.damaging.md: \
 
 models/trwiki.damaging.linear_svc.model: \
 		datasets/trwiki.features_damaging.20k_2015.tsv
-	cat datasets/trwiki.features_damaging.20k_2015.tsv | \
+	cat datasets/trwiki.features_damaging.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.trwiki.damaging \
@@ -1523,12 +1538,13 @@ datasets/trwiki.features_damaging_user.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.trwiki.damaging_user \
 		--host https://tr.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/trwiki.features_damaging_user.20k_2015.tsv
 
 models/trwiki.damaging-user.linear_svc.model: \
 		datasets/trwiki.features_damaging_user.20k_2015.tsv
-	cat datasets/trwiki.features_damaging_user.20k_2015.tsv | \
+	cat datasets/trwiki.features_damaging_user.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.trwiki.damaging_user \
@@ -1549,6 +1565,7 @@ datasets/trwiki.features_goodfaith.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.trwiki.goodfaith \
 		--host https://tr.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/trwiki.features_goodfaith.20k_2015.tsv
 
@@ -1565,7 +1582,7 @@ tuning_reports/trwiki.goodfaith.md: \
 
 models/trwiki.goodfaith.linear_svc.model: \
 		datasets/trwiki.features_goodfaith.20k_2015.tsv
-	cat datasets/trwiki.features_goodfaith.20k_2015.tsv | \
+	cat datasets/trwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.trwiki.goodfaith \
@@ -1579,12 +1596,13 @@ datasets/trwiki.features_goodfaith_user.20k_2015.tsv: \
 	revscoring extract_features \
 		editquality.feature_lists.trwiki.goodfaith_user \
 		--host https://tr.wikipedia.org \
+		--include-revid \
 		--verbose > \
 	datasets/trwiki.features_goodfaith_user.20k_2015.tsv
 
 models/trwiki.goodfaith-user.linear_svc.model: \
 		datasets/trwiki.features_goodfaith_user.20k_2015.tsv
-	cat datasets/trwiki.features_goodfaith_user.20k_2015.tsv | \
+	cat datasets/trwiki.features_goodfaith_user.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.trwiki.goodfaith_user \
