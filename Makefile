@@ -1329,13 +1329,14 @@ ptwiki_models: \
 		models/ptwiki.damaging.linear_svc.model \
 		models/ptwiki.goodfaith.linear_svc.model \
 		models/ptwiki.reverted-user.linear_svc.model \
-		models/ptwiki.reverted-user.linear_svc.model \
-		models/ptwiki.reverted-user.linear_svc.model
+		models/ptwiki.damaging-user.linear_svc.model \
+		models/ptwiki.goodfaith-user.linear_svc.model
 
 ptwiki_tuning_reports: \
 		tuning_reports/ptwiki.reverted.md \
 		tuning_reports/ptwiki.damaging.md \
 		tuning_reports/ptwiki.goodfaith.md
+
 
 ############################### Russian Wikipedia ############################
 
