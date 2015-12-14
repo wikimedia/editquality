@@ -55,7 +55,7 @@ misspellings = [
 ]
 
 damaging = common.page + common.diff + common.user_rights + \
-           enwiki.badwords + enwiki.informals + \
+           enwiki.badwords + \
            badwords + informals + misspellings + \
            [log(italian.diff.words_added + 1),
             log(italian.diff.words_removed + 1),
