@@ -1,5 +1,5 @@
 mwapi
 mwtypes
 mwreverts
-revscoring >= 0.7.3
+revscoring >= 0.7.10
 mysqltsv
