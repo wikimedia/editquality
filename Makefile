@@ -963,7 +963,7 @@ models/itwiki.reverted.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.itwiki.reverted \
-		--version=0.0.3 \
+		--version=0.0.4 \
 		--label-type=bool > \
 	models/itwiki.reverted.linear_svc.model
 
@@ -983,7 +983,7 @@ models/itwiki.reverted-user.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.itwiki.reverted_user \
-		--version=0.0.3 \
+		--version=0.0.4 \
 		--label-type=bool > \
 	models/itwiki.reverted-user.linear_svc.model
 
