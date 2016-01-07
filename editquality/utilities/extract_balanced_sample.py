@@ -11,7 +11,6 @@ Usage:
                                     [--start=<date>]
                                     [--end=<date>]
                                     [--trusted-groups=<groups>]
-                                    [--trusted-edits=<num>]
                                     [--revert-radius=<revs>]
                                     [--revert-window=<hrs>]
                                     [--reverted-only]
@@ -58,21 +57,29 @@ class Revision(object):
 
 class User(object):
     """Placeholder"""
-    def __init__(self, id, editcount=0, groups=[]):
-        self.id = id
-        self.editcount = editcount
+    def __init__(self, user_name, groups=[], id=None):
+        self.user_name = user_name
         self.usergroups = groups
+        self.id = id
+
+    def __eq__(self, other):
+        return other == self.user_name
 
 
-def load_user_info(user_name, session):
-    res = session.get(action='query', list='users', ususers=user_name,
-                       usprop='groups|editcount')
-    user_data = res["query"]["users"][0]
-    if 'userid' not in user_data:
-        return User(user_name, 0, [])
-    user = User(user_data["userid"], user_data['editcount'],
-                user_data["groups"])
-    return user
+def load_user_group_members(groups, session):
+    users = []
+    aufrom = None
+    while True:
+        res = session.get(action='query', list='allusers', auprop='groups',
+                          augroup='|'.join(groups), aulimit=500,
+                          aufrom=aufrom)
+        user_list = res["query"]["allusers"]
+        for user in user_list:
+            users.append(User(user['name'], user['groups'], user['userid']))
+        if not res.get('continue'):
+            break
+        aufrom = res['continue']['aufrom']
+    return users
 
 
 def page_data(dump, path):
@@ -106,23 +113,19 @@ def main(argv=None):
     if end:
         end = Timestamp(end)
     reverted_only = args['--reverted-only']
-    trusted_groups = args['--trusted-groups']
-    if trusted_groups:
-        trusted_groups = trusted_groups.split(',')
-    min_editcount = args['--trusted-edits']
-    if min_editcount:
-        min_editcount = int(min_editcount)
-
+    trusted_users = None
+    if args['--trusted-groups']:
+        trusted_groups = args['--trusted-groups'].split(',')
+        trusted_users = load_user_group_members(trusted_groups, session)
     run(dumps, session, start, end, revert_radius, revert_window,
-        reverted_only, trusted_groups, min_editcount, rev_reverteds,
+        reverted_only, trusted_users, rev_reverteds,
         verbose=verbose)
 
 
 def run(dumps, session, start, end, revert_radius, revert_window,
-        reverted_only, trusted_groups, min_editcount, rev_reverteds,
+        reverted_only, trusted_users, rev_reverteds,
         verbose=False):
 
-    user_data = {}
     for page in mwxml.map(page_data, dumps):
         detector = mwreverts.Detector()
         rev_data = {}
@@ -138,27 +141,13 @@ def run(dumps, session, start, end, revert_radius, revert_window,
                 for rev in detect.reverteds:
                     rev_data[rev['rev_id']].status = True
                     rev_data[rev['rev_id']].reason.append('Reverted')
-            if min_editcount or trusted_groups:
-                if not user_data.get(revision.user.id):
-                    user_data[revision.user.id] = load_user_info(
-                        revision.user.text, session)
-
-                if min_editcount:
-                    if user_data[revision.user.id].editcount < min_editcount:
-                        rev_data[revision.id].status = True
-                        rev_data[revision.id].reason.append('Low edit count')
-                    else:
-                        rev_data[revision.id].status = False
-
-                if trusted_groups:
-                    for user_goup in user_data[revision.user.id].usergroups:
-                        if user_goup in trusted_groups:
-                            rev_data[revision.id].status = False
-                            rev_data[revision.id].reason.append('User groups')
-                            break
-                    else:
-                        rev_data[revision.id].status = True
-                        rev_data[revision.id].reason.append(
+            if trusted_users:
+                if revision.user.text in trusted_users:
+                    rev_data[revision.id].status = False
+                    rev_data[revision.id].reason.append('User groups')
+                else:
+                    rev_data[revision.id].status = True
+                    rev_data[revision.id].reason.append(
                             'Not in trusted user groups')
 
         for rev in rev_data:
