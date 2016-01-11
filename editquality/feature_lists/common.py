@@ -1,45 +1,108 @@
-from revscoring.features import diff, page, parent_revision, user
-from revscoring.features.modifiers import log
+from revscoring.features import revision_oriented, temporal, wikibase, wikitext
+from revscoring.features.modifiers import div, max, sub
 
-etc = [
-    parent_revision.was_same_user
+wikitext = [
+    wikitext.revision.parent.tokens,
+    wikitext.revision.parent.words,
+    div(wikitext.revision.words, max(wikitext.revision.parent.tokens, 1),
+        name="revision.parent.words_per_token"),
+    wikitext.revision.parent.uppercase_words,
+    div(wikitext.revision.uppercase_words,
+        max(wikitext.revision.parent.tokens, 1),
+        name="revision.parent.uppercase_words_per_token"),
+    div(wikitext.revision.markups, max(wikitext.revision.parent.tokens, 1),
+        name="revision.parent.markups_per_token"),
+    wikitext.revision.diff.markup_delta_sum,
+    wikitext.revision.diff.markup_delta_increase,
+    wikitext.revision.diff.markup_delta_decrease,
+    wikitext.revision.diff.markup_prop_delta_sum,
+    wikitext.revision.diff.markup_prop_delta_increase,
+    wikitext.revision.diff.markup_prop_delta_decrease,
+    wikitext.revision.diff.number_delta_sum,
+    wikitext.revision.diff.number_delta_increase,
+    wikitext.revision.diff.number_delta_decrease,
+    wikitext.revision.diff.number_prop_delta_sum,
+    wikitext.revision.diff.number_prop_delta_increase,
+    wikitext.revision.diff.number_prop_delta_decrease,
+    wikitext.revision.diff.uppercase_word_delta_sum,
+    wikitext.revision.diff.uppercase_word_delta_increase,
+    wikitext.revision.diff.uppercase_word_delta_decrease,
+    wikitext.revision.diff.uppercase_word_prop_delta_sum,
+    wikitext.revision.diff.uppercase_word_prop_delta_increase,
+    wikitext.revision.diff.uppercase_word_prop_delta_decrease,
+    wikitext.revision.diff.longest_repeated_char_added,
+    wikitext.revision.diff.longest_token_added,
+    sub(wikitext.revision.chars, wikitext.revision.parent.chars,
+        name="revision.diff.char_len_change"),
+    sub(wikitext.revision.headings, wikitext.revision.parent.headings,
+        name="revision.diff.headings_change"),
+    sub(wikitext.revision.external_links,
+        wikitext.revision.parent.external_links,
+        name="revision.diff.external_links_change"),
+    sub(wikitext.revision.wikilinks,
+        wikitext.revision.parent.wikilinks,
+        name="revision.diff.wikilinks_change"),
+    sub(wikitext.revision.templates,
+        wikitext.revision.parent.templates,
+        name="revision.diff.templates_change"),
+    sub(wikitext.revision.tag_names_matching(r"ref"),
+        wikitext.revision.parent.tag_names_matching(r"ref"),
+        name="revision.diff.ref_tags_change")
 ]
 
-diff = [
-    log(diff.added_symbolic_chars_ratio + 1),
-    log(diff.chars_added + 1),
-    log(diff.chars_removed + 1),
-    diff.longest_repeated_char_added,
-    diff.longest_token_added,
-    log(diff.markup_chars_added + 1),
-    log(diff.markup_chars_removed + 1),
-    log(diff.numeric_chars_added + 1),
-    log(diff.numeric_chars_removed + 1),
-    diff.proportion_of_chars_added,
-    diff.proportion_of_chars_removed,
-    diff.proportion_of_markup_chars_added,
-    diff.proportion_of_numeric_chars_added,
-    diff.proportion_of_symbolic_chars_added,
-    diff.proportion_of_uppercase_chars_added,
-    log(diff.segments_added + 1),
-    log(diff.segments_removed + 1),
-    log(diff.symbolic_chars_added + 1),
-    log(diff.symbolic_chars_removed + 1),
-    log(diff.uppercase_chars_added + 1),
-    log(diff.uppercase_chars_removed + 1),
-    diff.bytes_changed,
-    diff.bytes_changed_ratio
-]
-
-page = [
-    page.is_content_namespace
+wikibase = [
+    wikibase.revision.parent.claims,
+    wikibase.revision.parent.properties,
+    wikibase.revision.parent.aliases,
+    wikibase.revision.parent.sources,
+    wikibase.revision.parent.qualifiers,
+    wikibase.revision.parent.badges,
+    wikibase.revision.parent.labels,
+    wikibase.revision.parent.sitelinks,
+    wikibase.revision.parent.descriptions,
+    wikibase.revision.diff.sitelinks_added,
+    wikibase.revision.diff.sitelinks_removed,
+    wikibase.revision.diff.sitelinks_changed,
+    wikibase.revision.diff.labels_added,
+    wikibase.revision.diff.labels_removed,
+    wikibase.revision.diff.labels_changed,
+    wikibase.revision.diff.descriptions_added,
+    wikibase.revision.diff.descriptions_removed,
+    wikibase.revision.diff.descriptions_changed,
+    wikibase.revision.diff.aliases_added,
+    wikibase.revision.diff.aliases_removed,
+    wikibase.revision.diff.properties_added,
+    wikibase.revision.diff.properties_removed,
+    wikibase.revision.diff.properties_changed,
+    wikibase.revision.diff.claims_added,
+    wikibase.revision.diff.claims_removed,
+    wikibase.revision.diff.claims_changed,
+    wikibase.revision.diff.identifiers_changed,
+    wikibase.revision.diff.sources_added,
+    wikibase.revision.diff.sources_removed,
+    wikibase.revision.diff.qualifiers_added,
+    wikibase.revision.diff.qualifiers_removed,
+    wikibase.revision.diff.badges_added,
+    wikibase.revision.diff.badges_removed,
+    wikibase.revision.diff.proportion_of_qid_added,
+    wikibase.revision.diff.proportion_of_language_added,
+    wikibase.revision.diff.proportion_of_links_added
 ]
 
 user_rights = [
-    user.is_bot
+    revision_oriented.revision.user.in_group(
+        {'bot'}, name="revision.user.is_bot"),
+    revision_oriented.revision.user.in_group(
+        {'checkuser', 'bureaucrat', 'oversight'},
+        name="revision.user.has_advanced_rights"),
+    revision_oriented.revision.user.in_group(
+        {'sysop'}, name="revision.user.is_admin"),
+    revision_oriented.revision.user.in_group(
+        {'rollbacker', 'abusefilter', 'autopatrolled', 'reviewer'},
+        name="revision.user.is_curator")
 ]
 
 protected_user = [
-    user.is_anon,
-    user.age
+    revision_oriented.revision.user.is_anon,
+    temporal.revision.user.seconds_since_registration
 ]
