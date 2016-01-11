@@ -14,7 +14,8 @@ models: \
 		ptwiki_models \
 		trwiki_models \
 		ukwiki_models \
-		viwiki_models
+		viwiki_models \
+		wikidatawiki_models
 		#jawiki_models
 		#ruwiki_models
 		#urwiki_models
@@ -33,7 +34,8 @@ tuning_reports: \
 		ptwiki_tuning_reports \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
-		viwiki_tuning_reports
+		viwiki_tuning_reports \
+		wikidatawiki_tuning_reports
 		#jawiki_tuning_reports
 		#ruwiki_tuning_reports
 		#urwiki_tuning_reports
@@ -48,7 +50,7 @@ datasets/dewiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/dewiki.sampled_revisions.20k_2015.tsv
 	cat datasets/dewiki.sampled_revisions.20k_2015.tsv | \
 	./utility prelabel https://de.wikipedia.org \
-		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/dewiki.prelabeled_revisions.20k_2015.tsv
@@ -321,7 +323,7 @@ datasets/eswiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/eswiki.sampled_revisions.20k_2015.tsv
 	cat datasets/eswiki.sampled_revisions.20k_2015.tsv | \
 	./utility prelabel https://es.wikipedia.org \
-		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/eswiki.prelabeled_revisions.20k_2015.tsv
@@ -403,7 +405,7 @@ datasets/etwiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/etwiki.sampled_revisions.20k_2015.tsv
 	cat datasets/etwiki.sampled_revisions.20k_2015.tsv | \
 	./utility prelabel https://et.wikipedia.org \
-		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/etwiki.prelabeled_revisions.20k_2015.tsv
@@ -676,7 +678,7 @@ datasets/frwiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/frwiki.sampled_revisions.20k_2015.tsv
 	cat datasets/frwiki.sampled_revisions.20k_2015.tsv | \
 	./utility prelabel https://fr.wikipedia.org \
-		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/frwiki.prelabeled_revisions.20k_2015.tsv
@@ -758,7 +760,7 @@ datasets/hewiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/hewiki.sampled_revisions.20k_2015.tsv
 	cat datasets/hewiki.sampled_revisions.20k_2015.tsv | \
 	./utility prelabel https://he.wikipedia.org \
-		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/hewiki.prelabeled_revisions.20k_2015.tsv
@@ -922,7 +924,7 @@ datasets/itwiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/itwiki.sampled_revisions.20k_2015.tsv
 	cat datasets/itwiki.sampled_revisions.20k_2015.tsv | \
 	./utility prelabel https://it.wikipedia.org \
-		--trusted-groups=sysops,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/itwiki.prelabeled_revisions.20k_2015.tsv
@@ -1868,3 +1870,65 @@ viwiki_models: \
 
 viwiki_tuning_reports: \
 		tuning_reports/viwiki.reverted.md
+
+################################### Wikidata ##################################
+datasets/wikidatawiki.rev_reverted.20k_balanced_2015.tsv: \
+		datasets/wikidatawiki.sampled_revisions.20k_balanced_2015.tsv
+	cat datasets/wikidatawiki.sampled_revisions.20k_balanced_2015.tsv | \
+	editquality label_reverted \
+		--host https://wikidata.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/wikidatawiki.rev_reverted.20k_balanced_2015.tsv
+
+datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv: \
+		datasets/wikidatawiki.rev_reverted.20k_balanced_2015.tsv
+	cat datasets/wikidatawiki.rev_reverted.20k_balanced_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.wikidatawiki.reverted \
+		--host https://wikidata.org \
+		--verbose \
+		--include-revid > \
+	datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv
+
+models/wikidatawiki.reverted.rf.model: \
+		datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv
+	cut datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.wikidatawiki.reverted \
+		--version 0.0.4 \
+		-p 'max_features="log2"' \
+		-p 'criterion="entropy"' \
+		-p 'min_samples_leaf=1' \
+		-p 'n_estimators=80' \
+		--label-type=bool > \
+	models/wikidatawiki.reverted.rf.model
+
+datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv: \
+		datasets/wikidatawiki.sampled_revisions.20k_balanced_2015.tsv
+	cat datasets/wikidatawiki.sampled_revisions.20k_balanced_2015.tsv | \
+	editquality prelabel https://wikidata.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv
+
+tuning_reports/wikidatawiki.reverted.md: \
+		datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv
+	cat datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.wikidatawiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--scoring=roc_auc \
+		--label-type=bool > \
+	tuning_reports/wikidatawiki.reverted.md
+
+
+wikidatawiki_models: \
+		models/wikidatawiki.reverted.linear_svc.model
+
+wikidatawiki_tuning_reports: \
+		tuning_reports/wikidatawiki.reverted.md
