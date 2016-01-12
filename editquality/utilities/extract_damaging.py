@@ -14,6 +14,7 @@ Usage:
                                     [--revert-radius=<revs>]
                                     [--revert-window=<hrs>]
                                     [--reverted-only]
+                                    [--check-blocked]
                                     [--verbose]
                                     [--rev-reverteds=<path>]
 
@@ -33,6 +34,7 @@ Options:
     --trusted-groups=<groups>   User groups that should be considered trusted.
     --trusted-edits=<num>       Minimum number of edits to be considered
                                 trusted.
+    --check-blocked             Check if users are blocked.
     --verbose                   Prints dots and stuff to stderr
     --rev-reverteds=<path>      The location to write output to.
                                 [default: <stdout>]
@@ -85,8 +87,10 @@ def main(argv=None):
     reverted_only = args['--reverted-only']
     trusted_groups = args['--trusted-groups']
     if trusted_groups:
-        trusted_groups = set(g.strip() for g in trusted_groups.split(','))
-
+        trusted_groups = trusted_groups.split(',')
+        trusted_users = load_user_group_members(trusted_groups, session)
+    else:
+        trusted_users = None
     trusted_edits = args['--trusted-edits']
     if trusted_edits:
         trusted_edits = int(trusted_edits)
@@ -96,9 +100,26 @@ def main(argv=None):
     else:
         rev_reverteds = mysqltsv.Writer(open(args['--rev-reverteds'], "w"))
 
+    check_blocked = args['--check-blocked']
     run(dumps, session, start, end, revert_radius, revert_window,
-        reverted_only, trusted_groups, trusted_edits, rev_reverteds,
-        verbose=verbose)
+        reverted_only, trusted_users, trusted_edits, rev_reverteds,
+        check_blocked, verbose=verbose)
+
+
+def load_user_group_members(groups, session):
+    users = []
+    aufrom = None
+    while True:
+        res = session.get(action='query', list='allusers', auprop='groups',
+                          augroup='|'.join(groups), aulimit=500,
+                          aufrom=aufrom)
+        user_list = res["query"]["allusers"]
+        for user in user_list:
+            users.append(User(user['userid'], 0, user['groups']))
+        if not res.get('continue'):
+            break
+        aufrom = res['continue']['aufrom']
+    return users
 
 
 @lru_cache(maxsize=20000)
@@ -130,8 +151,8 @@ def user_recently_blocked(user_text, session, before):
 
 
 def run(paths, session, start, end, revert_radius, revert_window,
-        reverted_only, trusted_groups, trusted_edits, rev_reverteds,
-        verbose=False):
+        reverted_only, trusted_users, trusted_edits, rev_reverteds,
+        check_blocked, verbose=False):
 
     def process_dump(dump, path):
         for page in dump:
@@ -170,18 +191,20 @@ def run(paths, session, start, end, revert_radius, revert_window,
                                                     "someone else"
 
                 # Get user info
-                if revision.user.id and revision.user.id > 0:
+                load_user_data = trusted_edits or check_blocked
+                if revision.user.id and revision.user.id > 0 and \
+                        load_user_data:
                     info = load_user_info(revision.user.text, session)
                 else:
                     info = User(revision.user.id, 0, set())
 
                 two_days_later = revision.timestamp + (60 * 60 * 24 * 2)
-                if trusted_groups and (info.groups & trusted_groups):
+                if trusted_users and info.id in trusted_users:
                     revision.maybe_damaging = False
                     revision.reason = "In trusted group"
-                elif user_recently_blocked(revision.user.text, session,
-                                           two_days_later):
-                    # User was blocked.  Edits may be damaging!
+                elif check_blocked and user_recently_blocked(
+                        revision.user.text, session, two_days_later):
+                    # User was blocked. Edits may be damaging!
                     revision.maybe_damaging = True
                     revision.reason = "User was blocked from editing"
                 elif trusted_edits and info.editcount >= trusted_edits:
@@ -189,6 +212,7 @@ def run(paths, session, start, end, revert_radius, revert_window,
                     revision.reason = "Enough edits to be trusted"
                 else:
                     revision.maybe_damaging = not reverted_only
+                    # We should change it to "Good Faith"
                     revision.reason = "Unknown"
 
                 if len(window) == revert_radius:
