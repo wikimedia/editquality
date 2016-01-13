@@ -29,8 +29,8 @@ Options:
                                 damaging
     --revert-radius=<revs>      The maximum amount of revisions that a
                                 reverting edit can revert [default: 15]
-    --revert-window=<secs>      The maximum amount of time to wait for a
-                                revision to be reverted [default: 172800]
+    --revert-window=<hrs>       The maximum amount of time to wait for a
+                                revision to be reverted [default: 48]
     --trusted-groups=<groups>   User groups that should be considered trusted.
     --trusted-edits=<num>       Minimum number of edits to be considered
                                 trusted.
@@ -68,7 +68,7 @@ def main(argv=None):
     )
 
     revert_radius = int(args['--revert-radius'])
-    revert_window = int(args['--revert-window'])
+    revert_window = int(args['--revert-window']) * (60 * 60)  # secs --> hrs
 
     if args['--host']:
         session = mwapi.Session(args['--host'],
@@ -172,13 +172,15 @@ def run(paths, session, start, end, revert_radius, revert_window,
                 if revert is not None:
                     # A revert!
                     for reverted in revert.reverteds:
-                        if revision.timestamp - \
-                           reverted.timestamp <= revert_window and \
+                        if (revision.timestamp - \
+                            reverted.timestamp) <= revert_window and \
+                           reverted.user is not None and revision.user is not None and \
                            reverted.user.text != revision.user.text and \
                            reverted.maybe_damaging is not False:
                             # Happened within the window
                             # wasn't a self revert and hasn't
                             # already been marked good.
+                            sys.stderr.write("OMG A REVERT")
                             reverted.maybe_damaging = True
                             reverted.reason = "Reverted by someone else"
 
@@ -192,7 +194,7 @@ def run(paths, session, start, end, revert_radius, revert_window,
 
                 # Get user info
                 load_user_data = trusted_edits or check_blocked
-                if revision.user.id and revision.user.id > 0 and \
+                if revision.user.id is not None and revision.user.id > 0 and \
                         load_user_data:
                     info = load_user_info(revision.user.text, session)
                 else:
@@ -227,26 +229,26 @@ def run(paths, session, start, end, revert_radius, revert_window,
     for rev_id, maybe_damaging, reason in mwxml.map(process_dump, paths):
         rev_reverteds.write([rev_id, maybe_damaging, reason])
         if maybe_damaging:
-            if "Reverted" in reason:
+            if reason and "Reverted" in reason:
                 if verbose:
                     sys.stderr.write("r")
                     sys.stderr.flush()
-            elif "blocked" in reason:
+            elif reason and "blocked" in reason:
                 if verbose:
                     sys.stderr.write("b")
                     sys.stderr.flush()
             else:  # "Unknown" in reason:
                 if verbose:
-                    sys.stderr.write("u")
+                    sys.stderr.write(".")
                     sys.stderr.flush()
         else:
-            if "edits" in reason:
+            if reason and "edits" in reason:
                 if verbose:
                     sys.stderr.write("e")
                     sys.stderr.flush()
-            elif "Unknown" in reason:
+            elif reason and "Unknown" in reason:
                 if verbose:
-                    sys.stderr.write("u")
+                    sys.stderr.write(".")
                     sys.stderr.flush()
             else:  # "group" in reason:
                 if verbose:
