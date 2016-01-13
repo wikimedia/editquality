@@ -29,9 +29,10 @@ Options:
                                 damaging
     --revert-radius=<revs>      The maximum amount of revisions that a
                                 reverting edit can revert [default: 15]
-    --revert-window=<secs>      The maximum amount of time to wait for a
-                                revision to be reverted [default: 172800]
+    --revert-window=<hours>     The maximum amount of time to wait for a
+                                revision to be reverted [default: 48]
     --trusted-groups=<groups>   User groups that should be considered trusted.
+                                Split by ",".
     --trusted-edits=<num>       Minimum number of edits to be considered
                                 trusted.
     --check-blocked             Check if users are blocked.
@@ -68,7 +69,7 @@ def main(argv=None):
     )
 
     revert_radius = int(args['--revert-radius'])
-    revert_window = int(args['--revert-window'])
+    revert_window = int(args['--revert-window']) * 3600
 
     if args['--host']:
         session = mwapi.Session(args['--host'],
