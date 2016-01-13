@@ -32,6 +32,7 @@ Options:
     --revert-window=<hrs>       The maximum amount of time to wait for a
                                 revision to be reverted [default: 48]
     --trusted-groups=<groups>   User groups that should be considered trusted.
+                                Split by ",".
     --trusted-edits=<num>       Minimum number of edits to be considered
                                 trusted.
     --check-blocked             Check if users are blocked.
