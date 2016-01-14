@@ -181,7 +181,6 @@ def run(paths, session, start, end, revert_radius, revert_window,
                             # Happened within the window
                             # wasn't a self revert and hasn't
                             # already been marked good.
-                            sys.stderr.write("OMG A REVERT")
                             reverted.maybe_damaging = True
                             reverted.reason = "Reverted by someone else"
 
@@ -214,8 +213,6 @@ def run(paths, session, start, end, revert_radius, revert_window,
                     revision.maybe_damaging = False
                     revision.reason = "Enough edits to be trusted"
                 else:
-                    revision.maybe_damaging = not reverted_only
-                    # We should change it to "Good Faith"
                     revision.reason = "Unknown"
 
                 if len(window) == revert_radius:
@@ -228,7 +225,7 @@ def run(paths, session, start, end, revert_radius, revert_window,
                        old_revision.reason)
 
     for rev_id, maybe_damaging, reason in mwxml.map(process_dump, paths):
-        rev_reverteds.write([rev_id, maybe_damaging, reason])
+        rev_reverteds.write([rev_id, bool(maybe_damaging), reason])
         if maybe_damaging:
             if reason and "Reverted" in reason:
                 if verbose:
