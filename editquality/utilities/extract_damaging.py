@@ -163,12 +163,12 @@ def run(paths, session, start, end, revert_radius, revert_window,
                 revision.maybe_damaging = None
                 revision.reason = None
                 revert = detector.process(revision.sha1, revision)
-                window.append(revision)
 
                 if start and revision.timestamp < start:
                     continue
                 if end and revision.timestamp > end:
                     continue
+                window.append(revision)
 
                 if revert is not None:
                     # A revert!
