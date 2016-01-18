@@ -2,28 +2,16 @@ from revscoring.features import revision_oriented, wikitext
 from revscoring.features.modifiers import sub
 from revscoring.languages import english
 
-from . import common, wikipedia
+from . import mediawiki, wikipedia
 
 local_wiki = [
     revision_oriented.revision.comment_matches(
-        r".*\b(Undid|Reverted|rvv)\b.*",
-        name="enwiki.revision.comment.suggests_revert"
-    ),
-    revision_oriented.revision.comment_matches(
-        r"^/\* [^\*]+ \*/",
-        name="enwiki.revision.comment.suggests_section_edit"
-    ),
-    revision_oriented.revision.comment_matches(
-        r"copy|edit|npov|wp:?el|",
+        r"copy|edit|npov|wp:?el",
         name="enwiki.revision.comment.has_known_word"
     ),
     revision_oriented.revision.comment_matches(
         r"\[\[WP:AES\|←\]\]",
         name="enwiki.revision.comment.is_aes"
-    ),
-    revision_oriented.revision.comment_matches(
-        r".*\[\[[^\]]+\]\].*",
-        name="enwiki.revision.comment.has_link"
     ),
     sub(
         wikitext.revision.template_names_matching(r"^cite"),
@@ -65,7 +53,8 @@ dict_words = [
     english.dictionary.revision.diff.non_dict_word_prop_delta_decrease
 ]
 
-damaging = wikipedia.page + common.wikitext + common.user_rights + \
+damaging = wikipedia.page + local_wiki + \
+           mediawiki.wikitext + mediawiki.user_rights + mediawiki.comment + \
            badwords + informals + dict_words
 
 reverted = damaging
