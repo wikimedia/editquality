@@ -2,7 +2,7 @@ from revscoring.features import revision_oriented, wikibase
 from revscoring.features.meta import bools
 from revscoring.features.modifiers import not_
 
-from . import common
+from . import mediawiki
 
 name = "wikidatawiki"
 
@@ -115,6 +115,6 @@ local_wiki = [
     is_blp
 ]
 
-damaging = common.user_rights + common.wikibase + local_wiki
+damaging = mediawiki.user_rights + mediawiki.wikibase + local_wiki
 reverted = damaging
 goodfaith = damaging
