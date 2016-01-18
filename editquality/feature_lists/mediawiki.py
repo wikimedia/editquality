@@ -1,5 +1,24 @@
+from revscoring import Feature
 from revscoring.features import revision_oriented, temporal, wikibase, wikitext
 from revscoring.features.modifiers import div, max, sub
+
+comment = [
+    revision_oriented.revision.comment_matches(
+        r"^/\* [^\*]+ \*/",
+        name="revision.comment.suggests_section_edit"
+    ),
+    revision_oriented.revision.comment_matches(
+        r".*\[\[[^\]]+\]\].*",
+        name="revision.comment.has_link"
+    )
+]
+
+
+def _process_new_longest(p_longest, r_longest):
+    if r_longest > p_longest:
+        return r_longest
+    else:
+        return 1
 
 wikitext = [
     wikitext.revision.parent.tokens,
@@ -30,8 +49,6 @@ wikitext = [
     wikitext.revision.diff.uppercase_word_prop_delta_sum,
     wikitext.revision.diff.uppercase_word_prop_delta_increase,
     wikitext.revision.diff.uppercase_word_prop_delta_decrease,
-    wikitext.revision.diff.longest_repeated_char_added,
-    wikitext.revision.diff.longest_token_added,
     sub(wikitext.revision.chars, wikitext.revision.parent.chars,
         name="revision.diff.char_len_change"),
     sub(wikitext.revision.headings, wikitext.revision.parent.headings,
