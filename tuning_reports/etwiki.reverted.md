@@ -1,199 +1,199 @@
 # Model tuning report
-- Revscoring version: 0.7.8
+- Revscoring version: 1.0.0rc1
 - Features: editquality.feature_lists.etwiki.reverted
-- Date: 2015-12-09T17:13:00.636147
-- Observations: 19991
+- Date: 2016-01-19T09:15:00.182209
+- Observations: 19981
 - Labels: [false, true]
 - Scoring: roc_auc
 - Folds: 5
 
 # Top scoring configurations
-| model                  |   mean(scores) |   std(scores) | params                                                                          |
-|:-----------------------|---------------:|--------------:|:--------------------------------------------------------------------------------|
-| RandomForestClassifier |          0.905 |         0.013 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=640  |
-| RandomForestClassifier |          0.905 |         0.021 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=80   |
-| RandomForestClassifier |          0.904 |         0.013 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=640  |
-| RandomForestClassifier |          0.902 |         0.016 | criterion="entropy", max_features="log2", min_samples_leaf=7, n_estimators=640  |
-| RandomForestClassifier |          0.902 |         0.018 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=320  |
-| RandomForestClassifier |          0.901 |         0.017 | criterion="entropy", max_features="log2", min_samples_leaf=13, n_estimators=640 |
-| RandomForestClassifier |          0.901 |         0.015 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=80   |
-| RandomForestClassifier |          0.901 |         0.019 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=320  |
-| RandomForestClassifier |          0.901 |         0.014 | criterion="entropy", max_features="log2", min_samples_leaf=7, n_estimators=320  |
-| RandomForestClassifier |          0.901 |         0.015 | criterion="gini", max_features="log2", min_samples_leaf=3, n_estimators=640     |
+| model                      |   mean(scores) |   std(scores) | params                                                                          |
+|:---------------------------|---------------:|--------------:|:--------------------------------------------------------------------------------|
+| GradientBoostingClassifier |          0.91  |         0.009 | max_features="log2", n_estimators=500, learning_rate=0.01, max_depth=7          |
+| RandomForestClassifier     |          0.909 |         0.019 | criterion="entropy", max_features="log2", n_estimators=640, min_samples_leaf=5  |
+| GradientBoostingClassifier |          0.908 |         0.009 | max_features="log2", n_estimators=700, learning_rate=0.01, max_depth=7          |
+| RandomForestClassifier     |          0.906 |         0.019 | criterion="entropy", max_features="log2", n_estimators=640, min_samples_leaf=13 |
+| RandomForestClassifier     |          0.905 |         0.019 | criterion="entropy", max_features="log2", n_estimators=320, min_samples_leaf=3  |
+| RandomForestClassifier     |          0.905 |         0.019 | criterion="entropy", max_features="log2", n_estimators=640, min_samples_leaf=7  |
+| RandomForestClassifier     |          0.905 |         0.022 | criterion="entropy", max_features="log2", n_estimators=640, min_samples_leaf=3  |
+| RandomForestClassifier     |          0.905 |         0.019 | criterion="entropy", max_features="log2", n_estimators=160, min_samples_leaf=3  |
+| RandomForestClassifier     |          0.905 |         0.018 | criterion="entropy", max_features="log2", n_estimators=320, min_samples_leaf=13 |
+| GradientBoostingClassifier |          0.904 |         0.012 | max_features="log2", n_estimators=700, learning_rate=0.01, max_depth=5          |
 
 # Models
-## BernoulliNB
-|   mean(scores) |   std(scores) | params   |
-|---------------:|--------------:|:---------|
-|          0.753 |         0.024 |          |
-
-## GradientBoostingClassifier
-|   mean(scores) |   std(scores) | params                                                                 |
-|---------------:|--------------:|:-----------------------------------------------------------------------|
-|          0.893 |         0.01  | learning_rate=0.01, max_features="log2", max_depth=7, n_estimators=700 |
-|          0.885 |         0.007 | learning_rate=0.1, max_features="log2", max_depth=3, n_estimators=300  |
-|          0.885 |         0.012 | learning_rate=0.01, max_features="log2", max_depth=7, n_estimators=500 |
-|          0.885 |         0.014 | learning_rate=0.01, max_features="log2", max_depth=5, n_estimators=700 |
-|          0.883 |         0.015 | learning_rate=0.1, max_features="log2", max_depth=3, n_estimators=500  |
-|          0.882 |         0.008 | learning_rate=0.1, max_features="log2", max_depth=5, n_estimators=100  |
-|          0.881 |         0.015 | learning_rate=0.1, max_features="log2", max_depth=5, n_estimators=300  |
-|          0.879 |         0.015 | learning_rate=0.01, max_features="log2", max_depth=7, n_estimators=300 |
-|          0.879 |         0.017 | learning_rate=0.01, max_features="log2", max_depth=5, n_estimators=500 |
-|          0.877 |         0.009 | learning_rate=0.1, max_features="log2", max_depth=5, n_estimators=500  |
-|          0.877 |         0.012 | learning_rate=0.1, max_features="log2", max_depth=3, n_estimators=700  |
-|          0.873 |         0.006 | learning_rate=0.1, max_features="log2", max_depth=7, n_estimators=700  |
-|          0.873 |         0.009 | learning_rate=0.1, max_features="log2", max_depth=5, n_estimators=700  |
-|          0.873 |         0.02  | learning_rate=0.1, max_features="log2", max_depth=7, n_estimators=100  |
-|          0.865 |         0.007 | learning_rate=0.1, max_features="log2", max_depth=7, n_estimators=300  |
-|          0.864 |         0.021 | learning_rate=0.01, max_features="log2", max_depth=5, n_estimators=300 |
-|          0.862 |         0.012 | learning_rate=0.1, max_features="log2", max_depth=7, n_estimators=500  |
-|          0.861 |         0.011 | learning_rate=0.1, max_features="log2", max_depth=3, n_estimators=100  |
-|          0.861 |         0.018 | learning_rate=0.01, max_features="log2", max_depth=3, n_estimators=700 |
-|          0.859 |         0.017 | learning_rate=0.01, max_features="log2", max_depth=7, n_estimators=100 |
-|          0.857 |         0.023 | learning_rate=0.01, max_features="log2", max_depth=3, n_estimators=500 |
-|          0.857 |         0.01  | learning_rate=0.1, max_features="log2", max_depth=1, n_estimators=700  |
-|          0.854 |         0.013 | learning_rate=0.1, max_features="log2", max_depth=1, n_estimators=500  |
-|          0.852 |         0.023 | learning_rate=0.01, max_features="log2", max_depth=5, n_estimators=100 |
-|          0.846 |         0.022 | learning_rate=0.01, max_features="log2", max_depth=3, n_estimators=300 |
-|          0.844 |         0.015 | learning_rate=0.1, max_features="log2", max_depth=1, n_estimators=300  |
-|          0.84  |         0.024 | learning_rate=0.01, max_features="log2", max_depth=3, n_estimators=100 |
-|          0.836 |         0.02  | learning_rate=0.1, max_features="log2", max_depth=1, n_estimators=100  |
-|          0.83  |         0.024 | learning_rate=0.01, max_features="log2", max_depth=1, n_estimators=700 |
-|          0.826 |         0.026 | learning_rate=0.01, max_features="log2", max_depth=1, n_estimators=500 |
-|          0.812 |         0.024 | learning_rate=0.01, max_features="log2", max_depth=1, n_estimators=300 |
-|          0.799 |         0.013 | learning_rate=0.01, max_features="log2", max_depth=1, n_estimators=100 |
-|          0.799 |         0.082 | learning_rate=0.5, max_features="log2", max_depth=1, n_estimators=700  |
-|          0.786 |         0.099 | learning_rate=0.5, max_features="log2", max_depth=1, n_estimators=500  |
-|          0.784 |         0.054 | learning_rate=0.5, max_features="log2", max_depth=1, n_estimators=100  |
-|          0.766 |         0.101 | learning_rate=0.5, max_features="log2", max_depth=1, n_estimators=300  |
-|          0.711 |         0.028 | learning_rate=0.5, max_features="log2", max_depth=5, n_estimators=100  |
-|          0.706 |         0.08  | learning_rate=0.5, max_features="log2", max_depth=3, n_estimators=100  |
-|          0.695 |         0.062 | learning_rate=0.5, max_features="log2", max_depth=3, n_estimators=700  |
-|          0.672 |         0.062 | learning_rate=0.5, max_features="log2", max_depth=5, n_estimators=300  |
-|          0.67  |         0.048 | learning_rate=1, max_features="log2", max_depth=1, n_estimators=700    |
-|          0.666 |         0.075 | learning_rate=0.5, max_features="log2", max_depth=7, n_estimators=100  |
-|          0.665 |         0.101 | learning_rate=0.5, max_features="log2", max_depth=3, n_estimators=300  |
-|          0.662 |         0.087 | learning_rate=0.5, max_features="log2", max_depth=3, n_estimators=500  |
-|          0.628 |         0.143 | learning_rate=0.5, max_features="log2", max_depth=7, n_estimators=500  |
-|          0.583 |         0.094 | learning_rate=0.5, max_features="log2", max_depth=5, n_estimators=500  |
-|          0.554 |         0.065 | learning_rate=1, max_features="log2", max_depth=5, n_estimators=100    |
-|          0.552 |         0.075 | learning_rate=1, max_features="log2", max_depth=3, n_estimators=500    |
-|          0.548 |         0.047 | learning_rate=1, max_features="log2", max_depth=7, n_estimators=500    |
-|          0.544 |         0.109 | learning_rate=1, max_features="log2", max_depth=1, n_estimators=500    |
-|          0.541 |         0.061 | learning_rate=1, max_features="log2", max_depth=7, n_estimators=300    |
-|          0.537 |         0.08  | learning_rate=1, max_features="log2", max_depth=3, n_estimators=300    |
-|          0.535 |         0.087 | learning_rate=1, max_features="log2", max_depth=3, n_estimators=100    |
-|          0.534 |         0.048 | learning_rate=1, max_features="log2", max_depth=7, n_estimators=100    |
-|          0.529 |         0.098 | learning_rate=1, max_features="log2", max_depth=1, n_estimators=300    |
-|          0.509 |         0.124 | learning_rate=0.5, max_features="log2", max_depth=5, n_estimators=700  |
-|          0.504 |         0.141 | learning_rate=1, max_features="log2", max_depth=5, n_estimators=300    |
-|          0.499 |         0.165 | learning_rate=1, max_features="log2", max_depth=1, n_estimators=100    |
-|          0.498 |         0.042 | learning_rate=1, max_features="log2", max_depth=5, n_estimators=500    |
-|          0.497 |         0.056 | learning_rate=1, max_features="log2", max_depth=3, n_estimators=700    |
-|          0.484 |         0.076 | learning_rate=1, max_features="log2", max_depth=5, n_estimators=700    |
-|          0     |         0     | learning_rate=0.5, max_features="log2", max_depth=7, n_estimators=300  |
-|          0     |         0     | learning_rate=0.5, max_features="log2", max_depth=7, n_estimators=700  |
-|          0     |         0     | learning_rate=1, max_features="log2", max_depth=7, n_estimators=700    |
+## LogisticRegression
+|   mean(scores) |   std(scores) | params              |
+|---------------:|--------------:|:--------------------|
+|          0.854 |         0.017 | C=0.1, penalty="l1" |
+|          0.854 |         0.015 | C=10, penalty="l1"  |
+|          0.852 |         0.013 | C=1, penalty="l1"   |
+|          0.844 |         0.02  | C=1, penalty="l2"   |
+|          0.842 |         0.022 | C=10, penalty="l2"  |
+|          0.834 |         0.024 | C=0.1, penalty="l2" |
 
 ## SVC
 |   mean(scores) |   std(scores) | params                                                               |
 |---------------:|--------------:|:---------------------------------------------------------------------|
-|          0.726 |         0.037 | gamma=0.0001, C=1, kernel="rbf", cache_size=1000, probability=true   |
-|          0.716 |         0.04  | gamma=0.0001, C=10, kernel="rbf", cache_size=1000, probability=true  |
-|          0.704 |         0.049 | gamma=0.0001, C=0.1, kernel="rbf", cache_size=1000, probability=true |
-|          0.697 |         0.025 | gamma=0.0, C=0.1, kernel="rbf", cache_size=1000, probability=true    |
-|          0.696 |         0.028 | gamma=0.0, C=1, kernel="rbf", cache_size=1000, probability=true      |
-|          0.69  |         0.034 | gamma=0.0, C=10, kernel="rbf", cache_size=1000, probability=true     |
-|          0.687 |         0.017 | gamma=0.001, C=1, kernel="rbf", cache_size=1000, probability=true    |
-|          0.685 |         0.011 | gamma=0.001, C=0.1, kernel="rbf", cache_size=1000, probability=true  |
-|          0.677 |         0.008 | gamma=0.001, C=10, kernel="rbf", cache_size=1000, probability=true   |
+|          0.646 |         0.063 | kernel="rbf", probability=true, gamma=0.0001, C=10, cache_size=1000  |
+|          0.646 |         0.056 | kernel="rbf", probability=true, gamma=0.0001, C=0.1, cache_size=1000 |
+|          0.645 |         0.051 | kernel="rbf", probability=true, gamma=0.001, C=1, cache_size=1000    |
+|          0.645 |         0.051 | kernel="rbf", probability=true, gamma=0.001, C=0.1, cache_size=1000  |
+|          0.644 |         0.061 | kernel="rbf", probability=true, gamma=0.0001, C=1, cache_size=1000   |
+|          0.644 |         0.044 | kernel="rbf", probability=true, gamma=0.001, C=10, cache_size=1000   |
+|          0.641 |         0.04  | kernel="rbf", probability=true, gamma=0.0, C=1, cache_size=1000      |
+|          0.639 |         0.04  | kernel="rbf", probability=true, gamma=0.0, C=10, cache_size=1000     |
+|          0.633 |         0.039 | kernel="rbf", probability=true, gamma=0.0, C=0.1, cache_size=1000    |
 
-## RandomForestClassifier
-|   mean(scores) |   std(scores) | params                                                                          |
-|---------------:|--------------:|:--------------------------------------------------------------------------------|
-|          0.905 |         0.013 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=640  |
-|          0.905 |         0.021 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=80   |
-|          0.904 |         0.013 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=640  |
-|          0.902 |         0.016 | criterion="entropy", max_features="log2", min_samples_leaf=7, n_estimators=640  |
-|          0.902 |         0.018 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=320  |
-|          0.901 |         0.017 | criterion="entropy", max_features="log2", min_samples_leaf=13, n_estimators=640 |
-|          0.901 |         0.015 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=80   |
-|          0.901 |         0.019 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=320  |
-|          0.901 |         0.014 | criterion="entropy", max_features="log2", min_samples_leaf=7, n_estimators=320  |
-|          0.901 |         0.015 | criterion="gini", max_features="log2", min_samples_leaf=3, n_estimators=640     |
-|          0.901 |         0.016 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=160  |
-|          0.9   |         0.016 | criterion="gini", max_features="log2", min_samples_leaf=5, n_estimators=640     |
-|          0.9   |         0.017 | criterion="entropy", max_features="log2", min_samples_leaf=7, n_estimators=160  |
-|          0.9   |         0.016 | criterion="gini", max_features="log2", min_samples_leaf=7, n_estimators=640     |
-|          0.899 |         0.017 | criterion="gini", max_features="log2", min_samples_leaf=13, n_estimators=160    |
-|          0.898 |         0.018 | criterion="entropy", max_features="log2", min_samples_leaf=13, n_estimators=320 |
-|          0.898 |         0.019 | criterion="entropy", max_features="log2", min_samples_leaf=7, n_estimators=80   |
-|          0.898 |         0.017 | criterion="gini", max_features="log2", min_samples_leaf=5, n_estimators=160     |
-|          0.898 |         0.017 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=160  |
-|          0.898 |         0.018 | criterion="gini", max_features="log2", min_samples_leaf=7, n_estimators=320     |
-|          0.896 |         0.017 | criterion="gini", max_features="log2", min_samples_leaf=5, n_estimators=320     |
-|          0.896 |         0.019 | criterion="gini", max_features="log2", min_samples_leaf=13, n_estimators=640    |
-|          0.895 |         0.02  | criterion="gini", max_features="log2", min_samples_leaf=3, n_estimators=320     |
-|          0.895 |         0.015 | criterion="entropy", max_features="log2", min_samples_leaf=13, n_estimators=160 |
-|          0.895 |         0.012 | criterion="gini", max_features="log2", min_samples_leaf=3, n_estimators=160     |
-|          0.895 |         0.018 | criterion="entropy", max_features="log2", min_samples_leaf=13, n_estimators=80  |
-|          0.895 |         0.018 | criterion="gini", max_features="log2", min_samples_leaf=7, n_estimators=160     |
-|          0.894 |         0.015 | criterion="gini", max_features="log2", min_samples_leaf=5, n_estimators=80      |
-|          0.894 |         0.02  | criterion="gini", max_features="log2", min_samples_leaf=13, n_estimators=320    |
-|          0.894 |         0.018 | criterion="gini", max_features="log2", min_samples_leaf=13, n_estimators=80     |
-|          0.892 |         0.019 | criterion="entropy", max_features="log2", min_samples_leaf=1, n_estimators=640  |
-|          0.892 |         0.021 | criterion="gini", max_features="log2", min_samples_leaf=7, n_estimators=40      |
-|          0.891 |         0.023 | criterion="entropy", max_features="log2", min_samples_leaf=7, n_estimators=40   |
-|          0.891 |         0.012 | criterion="gini", max_features="log2", min_samples_leaf=7, n_estimators=80      |
-|          0.89  |         0.02  | criterion="gini", max_features="log2", min_samples_leaf=1, n_estimators=640     |
-|          0.888 |         0.02  | criterion="entropy", max_features="log2", min_samples_leaf=13, n_estimators=40  |
-|          0.888 |         0.02  | criterion="entropy", max_features="log2", min_samples_leaf=13, n_estimators=20  |
-|          0.887 |         0.021 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=40   |
-|          0.886 |         0.014 | criterion="gini", max_features="log2", min_samples_leaf=13, n_estimators=40     |
-|          0.886 |         0.023 | criterion="entropy", max_features="log2", min_samples_leaf=1, n_estimators=160  |
-|          0.886 |         0.022 | criterion="entropy", max_features="log2", min_samples_leaf=1, n_estimators=320  |
-|          0.884 |         0.013 | criterion="gini", max_features="log2", min_samples_leaf=3, n_estimators=20      |
-|          0.882 |         0.018 | criterion="gini", max_features="log2", min_samples_leaf=3, n_estimators=80      |
-|          0.881 |         0.018 | criterion="gini", max_features="log2", min_samples_leaf=5, n_estimators=40      |
-|          0.879 |         0.016 | criterion="gini", max_features="log2", min_samples_leaf=1, n_estimators=320     |
-|          0.878 |         0.01  | criterion="entropy", max_features="log2", min_samples_leaf=7, n_estimators=20   |
-|          0.878 |         0.016 | criterion="gini", max_features="log2", min_samples_leaf=5, n_estimators=20      |
-|          0.877 |         0.018 | criterion="gini", max_features="log2", min_samples_leaf=7, n_estimators=20      |
-|          0.875 |         0.018 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=40   |
-|          0.874 |         0.024 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=20   |
-|          0.873 |         0.009 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=20   |
-|          0.872 |         0.017 | criterion="gini", max_features="log2", min_samples_leaf=13, n_estimators=20     |
-|          0.872 |         0.018 | criterion="gini", max_features="log2", min_samples_leaf=3, n_estimators=40      |
-|          0.871 |         0.02  | criterion="gini", max_features="log2", min_samples_leaf=1, n_estimators=160     |
-|          0.869 |         0.013 | criterion="entropy", max_features="log2", min_samples_leaf=13, n_estimators=10  |
-|          0.868 |         0.023 | criterion="gini", max_features="log2", min_samples_leaf=7, n_estimators=10      |
-|          0.865 |         0.025 | criterion="gini", max_features="log2", min_samples_leaf=1, n_estimators=80      |
-|          0.861 |         0.027 | criterion="entropy", max_features="log2", min_samples_leaf=1, n_estimators=80   |
-|          0.855 |         0.022 | criterion="gini", max_features="log2", min_samples_leaf=13, n_estimators=10     |
-|          0.854 |         0.027 | criterion="entropy", max_features="log2", min_samples_leaf=5, n_estimators=10   |
-|          0.848 |         0.029 | criterion="gini", max_features="log2", min_samples_leaf=1, n_estimators=40      |
-|          0.844 |         0.015 | criterion="entropy", max_features="log2", min_samples_leaf=3, n_estimators=10   |
-|          0.843 |         0.024 | criterion="entropy", max_features="log2", min_samples_leaf=1, n_estimators=40   |
-|          0.842 |         0.02  | criterion="gini", max_features="log2", min_samples_leaf=5, n_estimators=10      |
-|          0.84  |         0.015 | criterion="entropy", max_features="log2", min_samples_leaf=7, n_estimators=10   |
-|          0.835 |         0.028 | criterion="gini", max_features="log2", min_samples_leaf=3, n_estimators=10      |
-|          0.817 |         0.017 | criterion="entropy", max_features="log2", min_samples_leaf=1, n_estimators=20   |
-|          0.809 |         0.016 | criterion="gini", max_features="log2", min_samples_leaf=1, n_estimators=20      |
-|          0.777 |         0.028 | criterion="entropy", max_features="log2", min_samples_leaf=1, n_estimators=10   |
-|          0.775 |         0.03  | criterion="gini", max_features="log2", min_samples_leaf=1, n_estimators=10      |
+## GradientBoostingClassifier
+|   mean(scores) |   std(scores) | params                                                                 |
+|---------------:|--------------:|:-----------------------------------------------------------------------|
+|          0.91  |         0.009 | max_features="log2", n_estimators=500, learning_rate=0.01, max_depth=7 |
+|          0.908 |         0.009 | max_features="log2", n_estimators=700, learning_rate=0.01, max_depth=7 |
+|          0.904 |         0.012 | max_features="log2", n_estimators=700, learning_rate=0.01, max_depth=5 |
+|          0.902 |         0.014 | max_features="log2", n_estimators=300, learning_rate=0.01, max_depth=7 |
+|          0.901 |         0.014 | max_features="log2", n_estimators=500, learning_rate=0.01, max_depth=5 |
+|          0.901 |         0.014 | max_features="log2", n_estimators=700, learning_rate=0.1, max_depth=3  |
+|          0.899 |         0.009 | max_features="log2", n_estimators=100, learning_rate=0.1, max_depth=5  |
+|          0.898 |         0.016 | max_features="log2", n_estimators=300, learning_rate=0.1, max_depth=5  |
+|          0.896 |         0.011 | max_features="log2", n_estimators=700, learning_rate=0.1, max_depth=5  |
+|          0.895 |         0.008 | max_features="log2", n_estimators=300, learning_rate=0.1, max_depth=3  |
+|          0.894 |         0.012 | max_features="log2", n_estimators=500, learning_rate=0.1, max_depth=3  |
+|          0.894 |         0.02  | max_features="log2", n_estimators=700, learning_rate=0.1, max_depth=7  |
+|          0.893 |         0.011 | max_features="log2", n_estimators=300, learning_rate=0.1, max_depth=7  |
+|          0.892 |         0.01  | max_features="log2", n_estimators=100, learning_rate=0.1, max_depth=7  |
+|          0.892 |         0.014 | max_features="log2", n_estimators=500, learning_rate=0.1, max_depth=7  |
+|          0.892 |         0.012 | max_features="log2", n_estimators=500, learning_rate=0.1, max_depth=5  |
+|          0.891 |         0.018 | max_features="log2", n_estimators=100, learning_rate=0.1, max_depth=3  |
+|          0.89  |         0.016 | max_features="log2", n_estimators=700, learning_rate=0.1, max_depth=1  |
+|          0.89  |         0.021 | max_features="log2", n_estimators=700, learning_rate=0.01, max_depth=3 |
+|          0.888 |         0.02  | max_features="log2", n_estimators=300, learning_rate=0.01, max_depth=5 |
+|          0.887 |         0.019 | max_features="log2", n_estimators=500, learning_rate=0.1, max_depth=1  |
+|          0.883 |         0.022 | max_features="log2", n_estimators=500, learning_rate=0.01, max_depth=3 |
+|          0.883 |         0.019 | max_features="log2", n_estimators=300, learning_rate=0.1, max_depth=1  |
+|          0.879 |         0.021 | max_features="log2", n_estimators=100, learning_rate=0.01, max_depth=7 |
+|          0.872 |         0.024 | max_features="log2", n_estimators=300, learning_rate=0.01, max_depth=3 |
+|          0.867 |         0.022 | max_features="log2", n_estimators=100, learning_rate=0.01, max_depth=5 |
+|          0.85  |         0.027 | max_features="log2", n_estimators=100, learning_rate=0.01, max_depth=3 |
+|          0.85  |         0.018 | max_features="log2", n_estimators=100, learning_rate=0.1, max_depth=1  |
+|          0.848 |         0.019 | max_features="log2", n_estimators=700, learning_rate=0.01, max_depth=1 |
+|          0.842 |         0.024 | max_features="log2", n_estimators=500, learning_rate=0.01, max_depth=1 |
+|          0.829 |         0.02  | max_features="log2", n_estimators=300, learning_rate=0.01, max_depth=1 |
+|          0.8   |         0.076 | max_features="log2", n_estimators=700, learning_rate=0.5, max_depth=7  |
+|          0.783 |         0.025 | max_features="log2", n_estimators=100, learning_rate=0.01, max_depth=1 |
+|          0.768 |         0.069 | max_features="log2", n_estimators=100, learning_rate=0.5, max_depth=5  |
+|          0.763 |         0.062 | max_features="log2", n_estimators=500, learning_rate=0.5, max_depth=3  |
+|          0.761 |         0.075 | max_features="log2", n_estimators=100, learning_rate=0.5, max_depth=7  |
+|          0.745 |         0.05  | max_features="log2", n_estimators=100, learning_rate=0.5, max_depth=3  |
+|          0.744 |         0.126 | max_features="log2", n_estimators=500, learning_rate=0.5, max_depth=1  |
+|          0.728 |         0.134 | max_features="log2", n_estimators=500, learning_rate=0.5, max_depth=7  |
+|          0.718 |         0.073 | max_features="log2", n_estimators=300, learning_rate=0.5, max_depth=3  |
+|          0.701 |         0.167 | max_features="log2", n_estimators=300, learning_rate=0.5, max_depth=7  |
+|          0.687 |         0.152 | max_features="log2", n_estimators=300, learning_rate=0.5, max_depth=5  |
+|          0.677 |         0.046 | max_features="log2", n_estimators=100, learning_rate=1, max_depth=3    |
+|          0.662 |         0.099 | max_features="log2", n_estimators=500, learning_rate=0.5, max_depth=5  |
+|          0.654 |         0.133 | max_features="log2", n_estimators=300, learning_rate=0.5, max_depth=1  |
+|          0.63  |         0.101 | max_features="log2", n_estimators=700, learning_rate=0.5, max_depth=3  |
+|          0.629 |         0.185 | max_features="log2", n_estimators=100, learning_rate=0.5, max_depth=1  |
+|          0.625 |         0.14  | max_features="log2", n_estimators=700, learning_rate=0.5, max_depth=1  |
+|          0.579 |         0.044 | max_features="log2", n_estimators=300, learning_rate=1, max_depth=7    |
+|          0.572 |         0.087 | max_features="log2", n_estimators=100, learning_rate=1, max_depth=5    |
+|          0.567 |         0.113 | max_features="log2", n_estimators=700, learning_rate=1, max_depth=3    |
+|          0.567 |         0.077 | max_features="log2", n_estimators=700, learning_rate=1, max_depth=1    |
+|          0.566 |         0.056 | max_features="log2", n_estimators=300, learning_rate=1, max_depth=1    |
+|          0.544 |         0.075 | max_features="log2", n_estimators=500, learning_rate=1, max_depth=1    |
+|          0.541 |         0.074 | max_features="log2", n_estimators=500, learning_rate=1, max_depth=5    |
+|          0.538 |         0.119 | max_features="log2", n_estimators=300, learning_rate=1, max_depth=3    |
+|          0.523 |         0.082 | max_features="log2", n_estimators=700, learning_rate=1, max_depth=7    |
+|          0.521 |         0.047 | max_features="log2", n_estimators=100, learning_rate=1, max_depth=1    |
+|          0.519 |         0.098 | max_features="log2", n_estimators=500, learning_rate=1, max_depth=7    |
+|          0.513 |         0.085 | max_features="log2", n_estimators=700, learning_rate=1, max_depth=5    |
+|          0.501 |         0.087 | max_features="log2", n_estimators=500, learning_rate=1, max_depth=3    |
+|          0     |         0     | max_features="log2", n_estimators=700, learning_rate=0.5, max_depth=5  |
+|          0     |         0     | max_features="log2", n_estimators=300, learning_rate=1, max_depth=5    |
+|          0     |         0     | max_features="log2", n_estimators=100, learning_rate=1, max_depth=7    |
 
 ## GaussianNB
 |   mean(scores) |   std(scores) | params   |
 |---------------:|--------------:|:---------|
-|          0.715 |         0.031 |          |
+|          0.671 |         0.075 |          |
 
-## LogisticRegression
-|   mean(scores) |   std(scores) | params              |
-|---------------:|--------------:|:--------------------|
-|          0.858 |         0.012 | C=10, penalty="l2"  |
-|          0.857 |         0.013 | C=1, penalty="l2"   |
-|          0.857 |         0.012 | C=1, penalty="l1"   |
-|          0.856 |         0.011 | C=10, penalty="l1"  |
-|          0.846 |         0.013 | C=0.1, penalty="l1" |
-|          0.841 |         0.016 | C=0.1, penalty="l2" |
+## BernoulliNB
+|   mean(scores) |   std(scores) | params   |
+|---------------:|--------------:|:---------|
+|           0.77 |          0.02 |          |
+
+## RandomForestClassifier
+|   mean(scores) |   std(scores) | params                                                                          |
+|---------------:|--------------:|:--------------------------------------------------------------------------------|
+|          0.909 |         0.019 | criterion="entropy", max_features="log2", n_estimators=640, min_samples_leaf=5  |
+|          0.906 |         0.019 | criterion="entropy", max_features="log2", n_estimators=640, min_samples_leaf=13 |
+|          0.905 |         0.019 | criterion="entropy", max_features="log2", n_estimators=320, min_samples_leaf=3  |
+|          0.905 |         0.019 | criterion="entropy", max_features="log2", n_estimators=640, min_samples_leaf=7  |
+|          0.905 |         0.022 | criterion="entropy", max_features="log2", n_estimators=640, min_samples_leaf=3  |
+|          0.905 |         0.019 | criterion="entropy", max_features="log2", n_estimators=160, min_samples_leaf=3  |
+|          0.905 |         0.018 | criterion="entropy", max_features="log2", n_estimators=320, min_samples_leaf=13 |
+|          0.904 |         0.019 | criterion="entropy", max_features="log2", n_estimators=160, min_samples_leaf=7  |
+|          0.904 |         0.017 | criterion="entropy", max_features="log2", n_estimators=320, min_samples_leaf=5  |
+|          0.903 |         0.021 | criterion="entropy", max_features="log2", n_estimators=320, min_samples_leaf=7  |
+|          0.903 |         0.021 | criterion="entropy", max_features="log2", n_estimators=160, min_samples_leaf=13 |
+|          0.902 |         0.021 | criterion="entropy", max_features="log2", n_estimators=80, min_samples_leaf=3   |
+|          0.901 |         0.014 | criterion="entropy", max_features="log2", n_estimators=80, min_samples_leaf=13  |
+|          0.901 |         0.018 | criterion="gini", max_features="log2", n_estimators=160, min_samples_leaf=5     |
+|          0.901 |         0.022 | criterion="entropy", max_features="log2", n_estimators=160, min_samples_leaf=5  |
+|          0.9   |         0.019 | criterion="gini", max_features="log2", n_estimators=640, min_samples_leaf=7     |
+|          0.9   |         0.02  | criterion="gini", max_features="log2", n_estimators=320, min_samples_leaf=5     |
+|          0.9   |         0.02  | criterion="gini", max_features="log2", n_estimators=640, min_samples_leaf=5     |
+|          0.899 |         0.017 | criterion="entropy", max_features="log2", n_estimators=80, min_samples_leaf=5   |
+|          0.899 |         0.023 | criterion="gini", max_features="log2", n_estimators=640, min_samples_leaf=3     |
+|          0.898 |         0.021 | criterion="gini", max_features="log2", n_estimators=640, min_samples_leaf=13    |
+|          0.897 |         0.023 | criterion="gini", max_features="log2", n_estimators=320, min_samples_leaf=7     |
+|          0.897 |         0.017 | criterion="entropy", max_features="log2", n_estimators=80, min_samples_leaf=7   |
+|          0.897 |         0.021 | criterion="gini", max_features="log2", n_estimators=320, min_samples_leaf=13    |
+|          0.896 |         0.031 | criterion="entropy", max_features="log2", n_estimators=640, min_samples_leaf=1  |
+|          0.896 |         0.017 | criterion="entropy", max_features="log2", n_estimators=40, min_samples_leaf=7   |
+|          0.896 |         0.019 | criterion="gini", max_features="log2", n_estimators=160, min_samples_leaf=13    |
+|          0.896 |         0.014 | criterion="entropy", max_features="log2", n_estimators=40, min_samples_leaf=13  |
+|          0.895 |         0.025 | criterion="gini", max_features="log2", n_estimators=160, min_samples_leaf=7     |
+|          0.895 |         0.02  | criterion="gini", max_features="log2", n_estimators=160, min_samples_leaf=3     |
+|          0.895 |         0.024 | criterion="gini", max_features="log2", n_estimators=320, min_samples_leaf=3     |
+|          0.895 |         0.019 | criterion="gini", max_features="log2", n_estimators=80, min_samples_leaf=13     |
+|          0.894 |         0.025 | criterion="gini", max_features="log2", n_estimators=80, min_samples_leaf=7      |
+|          0.894 |         0.022 | criterion="entropy", max_features="log2", n_estimators=320, min_samples_leaf=1  |
+|          0.893 |         0.02  | criterion="gini", max_features="log2", n_estimators=80, min_samples_leaf=3      |
+|          0.892 |         0.018 | criterion="entropy", max_features="log2", n_estimators=40, min_samples_leaf=5   |
+|          0.892 |         0.016 | criterion="gini", max_features="log2", n_estimators=40, min_samples_leaf=5      |
+|          0.891 |         0.02  | criterion="gini", max_features="log2", n_estimators=40, min_samples_leaf=13     |
+|          0.89  |         0.016 | criterion="entropy", max_features="log2", n_estimators=20, min_samples_leaf=13  |
+|          0.889 |         0.022 | criterion="gini", max_features="log2", n_estimators=80, min_samples_leaf=5      |
+|          0.888 |         0.019 | criterion="gini", max_features="log2", n_estimators=40, min_samples_leaf=3      |
+|          0.887 |         0.02  | criterion="gini", max_features="log2", n_estimators=20, min_samples_leaf=13     |
+|          0.887 |         0.027 | criterion="gini", max_features="log2", n_estimators=640, min_samples_leaf=1     |
+|          0.886 |         0.02  | criterion="entropy", max_features="log2", n_estimators=10, min_samples_leaf=13  |
+|          0.885 |         0.026 | criterion="gini", max_features="log2", n_estimators=40, min_samples_leaf=7      |
+|          0.883 |         0.028 | criterion="entropy", max_features="log2", n_estimators=10, min_samples_leaf=5   |
+|          0.882 |         0.03  | criterion="gini", max_features="log2", n_estimators=320, min_samples_leaf=1     |
+|          0.88  |         0.017 | criterion="entropy", max_features="log2", n_estimators=40, min_samples_leaf=3   |
+|          0.879 |         0.017 | criterion="entropy", max_features="log2", n_estimators=20, min_samples_leaf=5   |
+|          0.877 |         0.028 | criterion="entropy", max_features="log2", n_estimators=20, min_samples_leaf=7   |
+|          0.876 |         0.023 | criterion="gini", max_features="log2", n_estimators=160, min_samples_leaf=1     |
+|          0.876 |         0.015 | criterion="entropy", max_features="log2", n_estimators=160, min_samples_leaf=1  |
+|          0.876 |         0.012 | criterion="entropy", max_features="log2", n_estimators=20, min_samples_leaf=3   |
+|          0.875 |         0.031 | criterion="gini", max_features="log2", n_estimators=20, min_samples_leaf=7      |
+|          0.874 |         0.027 | criterion="gini", max_features="log2", n_estimators=20, min_samples_leaf=3      |
+|          0.871 |         0.027 | criterion="gini", max_features="log2", n_estimators=20, min_samples_leaf=5      |
+|          0.868 |         0.031 | criterion="entropy", max_features="log2", n_estimators=10, min_samples_leaf=7   |
+|          0.865 |         0.022 | criterion="entropy", max_features="log2", n_estimators=80, min_samples_leaf=1   |
+|          0.864 |         0.023 | criterion="gini", max_features="log2", n_estimators=10, min_samples_leaf=7      |
+|          0.863 |         0.016 | criterion="gini", max_features="log2", n_estimators=10, min_samples_leaf=13     |
+|          0.859 |         0.02  | criterion="gini", max_features="log2", n_estimators=80, min_samples_leaf=1      |
+|          0.855 |         0.016 | criterion="gini", max_features="log2", n_estimators=10, min_samples_leaf=5      |
+|          0.84  |         0.022 | criterion="gini", max_features="log2", n_estimators=10, min_samples_leaf=3      |
+|          0.839 |         0.014 | criterion="entropy", max_features="log2", n_estimators=40, min_samples_leaf=1   |
+|          0.833 |         0.024 | criterion="gini", max_features="log2", n_estimators=40, min_samples_leaf=1      |
+|          0.832 |         0.023 | criterion="entropy", max_features="log2", n_estimators=10, min_samples_leaf=3   |
+|          0.807 |         0.024 | criterion="gini", max_features="log2", n_estimators=20, min_samples_leaf=1      |
+|          0.799 |         0.026 | criterion="entropy", max_features="log2", n_estimators=20, min_samples_leaf=1   |
+|          0.779 |         0.022 | criterion="entropy", max_features="log2", n_estimators=10, min_samples_leaf=1   |
+|          0.777 |         0.025 | criterion="gini", max_features="log2", n_estimators=10, min_samples_leaf=1      |
 
