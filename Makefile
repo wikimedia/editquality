@@ -165,6 +165,7 @@ models/enwiki.reverted.gradient_boosting.model: \
 	models/enwiki.reverted.gradient_boosting.model
 
 datasets/enwiki.rev_damaging.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ \
 		damaging \
@@ -213,6 +214,7 @@ models/enwiki.damaging.gradient_boosting.model: \
 	models/enwiki.damaging.gradient_boosting.model
 
 datasets/enwiki.rev_goodfaith.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ \
 		goodfaith \
@@ -465,6 +467,7 @@ models/fawiki.reverted.gradient_boosting.model: \
 	models/fawiki.reverted.gradient_boosting.model
 
 datasets/fawiki.rev_damaging.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ \
 		damaging \
@@ -513,6 +516,7 @@ models/fawiki.damaging.gradient_boosting.model: \
 	models/fawiki.damaging.gradient_boosting.model
 
 datasets/fawiki.rev_goodfaith.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ \
 		goodfaith \
@@ -1049,6 +1053,7 @@ models/ptwiki.reverted.gradient_boosting.model: \
 	models/ptwiki.reverted.gradient_boosting.model
 
 datasets/ptwiki.rev_damaging.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ \
 		damaging \
@@ -1097,6 +1102,7 @@ models/ptwiki.damaging.gradient_boosting.model: \
 	models/ptwiki.damaging.gradient_boosting.model
 
 datasets/ptwiki.rev_goodfaith.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ \
 		goodfaith \
@@ -1279,6 +1285,7 @@ models/trwiki.reverted.gradient_boosting.model: \
 	models/trwiki.reverted.gradient_boosting.model
 
 datasets/trwiki.rev_damaging.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ \
 		damaging \
@@ -1327,6 +1334,7 @@ models/trwiki.damaging.gradient_boosting.model: \
 	models/trwiki.damaging.gradient_boosting.model
 
 datasets/trwiki.rev_goodfaith.20k_2015.tsv:
+	mkdir -p datasets
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ \
 		goodfaith \
