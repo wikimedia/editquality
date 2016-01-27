@@ -1360,7 +1360,7 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.goodfaith \
-		--version=0.0.2 \
+		--version=0.1.0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
