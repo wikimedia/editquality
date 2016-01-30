@@ -414,6 +414,19 @@ etwiki_tuning_reports: \
 
 ############################# Persian Wikipedia ################################
 
+datasets/fawiki.sampled_revisions.2.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/59580/output/0/tsv?download=true > \
+	datasets/fawiki.sampled_revisions.2.20k_2015.tsv
+
+datasets/fawiki.prelabeled_revisions.2.20k_2015.tsv: \
+		datasets/fawiki.sampled_revisions.2.20k_2015.tsv
+	cat datasets/fawiki.sampled_revisions.2.20k_2015.tsv | \
+	./utility prelabel https://fa.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/fawiki.prelabeled_revisions.2.20k_2015.tsv
+
 datasets/fawiki.rev_reverted.20k_2015.tsv: \
 		datasets/fawiki.rev_damaging.20k_2015.tsv
 	cut datasets/fawiki.rev_damaging.20k_2015.tsv -f1 | \
