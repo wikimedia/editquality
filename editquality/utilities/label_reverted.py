@@ -10,6 +10,7 @@ Usage:
                                 [--revert-window=<hrs>]
                                 [--revisions=<path>]
                                 [--reverteds=<path>]
+                                [--threads=<num>]
                                 [--verbose]
 
 Options:
@@ -24,10 +25,13 @@ Options:
                             [default: <stdin>]
     --reverteds=<path>      The location to write output to.
                             [default: <stdout>]
+    --threads=<num>         The number of parallel threads to start for
+                            processing edits. [default: <cpu_count>]
     --verbose               Prints dots and stuff to stderr
 """
 import sys
 import traceback
+from multiprocessing import cpu_count
 
 import docopt
 import mwapi
@@ -56,16 +60,21 @@ def main(argv=None):
         reverteds = mysqltsv.Writer(open(args['--reverteds'], "w"),
                                     headers=output_headers)
 
+    if args['--threads'] == "<cpu_count>":
+        threads = cpu_count()
+    else:
+        threads = int(args['--threads'])
+
     host = args['--host']
     session = mwapi.Session(host, user_agent="ORES revert labeling utility")
 
     verbose = args['--verbose']
 
-    run(revisions, reverteds, session, revert_radius, revert_window,
+    run(revisions, reverteds, session, revert_radius, revert_window, threads,
         verbose=verbose)
 
 
-def run(revisions, reverteds, session, revert_radius, revert_window,
+def run(revisions, reverteds, session, revert_radius, revert_window, threads,
         verbose=False):
 
     def check_was_damaging_revert(revision):
@@ -103,7 +112,9 @@ def run(revisions, reverteds, session, revert_radius, revert_window,
             sys.stderr.write(traceback.format_exc())
             sys.stderr.write("\n")
 
-    for revision, reverted in para.map(check_was_damaging_revert, revisions):
+    rev_reverteds = para.map(check_was_damaging_revert, revisions,
+                             mappers=threads)
+    for revision, reverted in rev_reverteds:
         if reverted is None:
             if verbose:
                 sys.stderr.write("?")
