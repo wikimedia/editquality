@@ -1,6 +1,6 @@
 """
 Filters a set of revision IDs for use in an edit quality labeling campaign by
-whether they need reviewed or not.  This script uses a MediaWiki API to mark
+whether they need review or not.  This script uses a MediaWiki API to mark
 edits by trusted users as not needing review and reverted edits/edits by
 blocked users as needing review.
 
@@ -14,6 +14,7 @@ blocked users as needing review.
              [--revert-radius=<revs>]
              [--revert-window=<hours>]
              [--verbose]
+             [--debug]
 
 :Options:
     <api-host>               MediaWiki host were the API should be queried
@@ -30,8 +31,10 @@ blocked users as needing review.
                              reverted in hours.  If unset, no limit will be
                              used.
     --verbose                Prints dots and stuff to <stderr>
+    --debug                  Prints debug logs to stderr
 
 """
+import logging
 import os.path
 import sys
 import traceback
@@ -41,13 +44,21 @@ from itertools import islice
 import docopt
 import mwapi
 import mwreverts.api
+import para
+
 import mysqltsv
 
 HEADERS = ['rev_id', 'needs_review', 'reason']
+logger = logging.getLogger(__name__)
 
 
 def main(argv=None):
     args = docopt.docopt(__doc__, argv=argv)
+
+    logging.basicConfig(
+        format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
+    )
+    logger.setLevel(logging.DEBUG if args['--debug'] else logging.WARNING)
 
     api_host = args['<api-host>']
 
@@ -97,59 +108,54 @@ def run(api_host, rev_ids, labels, trusted_groups, trusted_edits,
     session = mwapi.Session(api_host,
                             user_agent="editquality -- Labeling script.")
 
-    # Get a document for each revision from the API
-    rev_docs = query_revisions_by_revids(session, revids=rev_ids,
-                                         rvprop=['ids', 'user', 'userid'])
+    def prelabel(rev_ids):
+        # Get a document for each revision from the API
+        rev_docs = query_revisions_by_revids(session, revids=rev_ids,
+                                             rvprop=['ids', 'user', 'userid'])
+        for rev_doc in rev_docs:
+            try:
+                rev_id, page_id = rev_doc['revid'], rev_doc['page']['pageid']
+                user_id, user_text = rev_doc.get('userid'), rev_doc.get('user')
 
-    for rev_doc in rev_docs:
-        try:
-            rev_id, page_id = rev_doc['revid'], rev_doc['page']['pageid']
-            user_id, user_text = rev_doc.get('userid'), rev_doc.get('user')
-
-            # If registered editor, check for trusted groups and trusted edits
-            if user_id is not None and user_id > 0:
-                if trusted_groups is not None and \
+                if user_id is not None and user_id > 0 and \
+                   trusted_groups is not None and \
                    user_in_trusted_group(session, user_text, trusted_groups):
-                    if verbose:
-                        sys.stderr.write(".")
-                        sys.stderr.flush()
-                    labels.write([rev_doc['revid'], False, "trusted group"])
-                    continue
+                    # If user in trusted groups
+                    yield rev_doc['revid'], False, "trusted group"
 
-                if trusted_edits is not None and \
+                elif user_id is not None and user_id > 0 and \
+                     trusted_edits is not None and \
                    user_has_trusted_edits(session, user_text, trusted_edits):
-                    if verbose:
-                        sys.stderr.write(".")
-                        sys.stderr.flush()
-                    labels.write([rev_doc['revid'], False,
-                                  "trusted edits"])
-                    continue
+                    # If user has trusted total edits
+                    yield rev_doc['revid'], False, "trusted edits"
 
-            # Check whether this user was blocked
-            if user_was_blocked(session, user_text):
-                if verbose:
-                    sys.stderr.write("b")
-                    sys.stderr.flush()
-                labels.write([rev_doc['revid'], True, "blocked user"])
-                continue
+                elif user_was_blocked(session, user_text):
+                    # Check whether this user was blocked
+                    yield rev_doc['revid'], True, "blocked user"
 
-            # Check if the edit was reverted (slow)
-            if edit_was_reverted(session, rev_id, page_id, revert_radius,
-                                 revert_window):
-                if verbose:
-                    sys.stderr.write("r")
-                    sys.stderr.flush()
-                labels.write([rev_doc['revid'], True, "reverted edit"])
-                continue
+                elif edit_was_reverted(session, rev_id, page_id, revert_radius,
+                                       revert_window):
+                    # Check if the edit was reverted (slow)
+                    yield rev_doc['revid'], True, "reverted edit"
 
-            # If we haven't written a label yet, then we don't know what's up
-            if verbose:
-                sys.stderr.write("u")
-                sys.stderr.flush()
-            labels.write([rev_doc['revid'], True, None])
-        except Exception:
-            sys.stderr.write(traceback.format_exc())
-            continue
+                else:
+                    # We don't know what's up
+                    yield rev_doc['revid'], True, None
+            except Exception:
+                sys.stderr.write(traceback.format_exc())
+
+    rev_id_chunks = chunk(rev_ids, 50)
+
+    for rev_id, needs_review, reason in para.map(prelabel, rev_id_chunks):
+        if verbose:
+            if not needs_review:
+                sys.stderr.write(".")
+            else:
+                sys.stderr.write((reason or "?")[0])
+
+            sys.stderr.flush()
+
+        labels.write([rev_id, needs_review, reason])
 
     if verbose:
         sys.stderr.write("\n")
@@ -167,6 +173,7 @@ def user_was_blocked(session, user_text):
 
 
 def edit_was_reverted(session, rev_id, page_id, radius, window):
+    logger.debug("Checking if {0} was reverted".format(rev_id))
     _, reverted, _ = mwreverts.api.check(session, rev_id, page_id=page_id,
                                          radius=radius, window=window)
 
@@ -181,6 +188,7 @@ def user_has_trusted_edits(session, user_name, trusted_edits):
 
 @lru_cache(maxsize=5000)
 def get_user_doc(session, user_name):
+    logger.debug("Getting user_doc for {0}".format(user_name))
     doc = session.get(action='query', list='users', ususers=user_name,
                       usprop=["groups", "implicitgroups", "editcount"])
     return doc['query']['users'][0]
@@ -197,30 +205,34 @@ def get_user_blocks(session, user_text):
     """
     Returns a list of blocks for a single user
     """
+    logger.debug("Getting user_blocks for {0}".format(user_text))
     doc = session.get(action='query', list='blocks', bkusers=user_text,
                       bkprop=['id'])
     return doc['query']['blocks']
 
 
-def query_revisions_by_revids(session, revids, batch=50, **params):
+def query_revisions_by_revids(session, revids, **params):
     """
     Gets a set of revisions by their IDs by repeatedly querying in batches.
     If an ID cannot be found, it is ignored.
     """
-    revids_iter = iter(revids)
+    doc = session.get(action='query', prop='revisions',
+                      revids=revids, **params)
+
+    for page_doc in doc['query'].get('pages', {}).values():
+        revisions = page_doc.get('revisions', [])
+        if 'revisions' in page_doc:
+            del page_doc['revisions']
+
+        for revision_doc in revisions:
+            revision_doc['page'] = page_doc
+            yield revision_doc
+
+
+def chunk(iterable, size):
     while True:
-        batch_ids = list(islice(revids_iter, 0, batch))
-        if len(batch_ids) == 0:
+        batch = list(islice(iterable, 0, size))
+        if len(batch) == 0:
             break
         else:
-            doc = session.get(action='query', prop='revisions',
-                              revids=batch_ids, **params)
-
-            for page_doc in doc['query'].get('pages', {}).values():
-                revisions = page_doc.get('revisions', [])
-                if 'revisions' in page_doc:
-                    del page_doc['revisions']
-
-                for revision_doc in revisions:
-                    revision_doc['page'] = page_doc
-                    yield revision_doc
+            yield batch
