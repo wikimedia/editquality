@@ -13,6 +13,7 @@ blocked users as needing review.
              [--trusted-edits=<edits>]
              [--revert-radius=<revs>]
              [--revert-window=<hours>]
+             [--threads=<num>]
              [--verbose]
              [--debug]
 
@@ -30,6 +31,8 @@ blocked users as needing review.
     --revert-window=<hrs>    Maximum amount of time before an edit can be
                              reverted in hours.  If unset, no limit will be
                              used.
+     --threads=<num>         The number of parallel threads to start for
+                             processing edits. [default: <cpu_count>]
     --verbose                Prints dots and stuff to <stderr>
     --debug                  Prints debug logs to stderr
 
@@ -40,6 +43,7 @@ import sys
 import traceback
 from functools import lru_cache
 from itertools import islice
+from multiprocessing import cpu_count
 
 import docopt
 import mwapi
@@ -87,10 +91,15 @@ def main(argv=None):
     revert_window = float(args['--revert-window']) * 60 * 60 \
                     if args['--revert-window'] is not None else None
 
+    if args['--threads'] == "<cpu_count>":
+        threads = cpu_count()
+    else:
+        threads = int(args['--threads'])
+
     verbose = args['--verbose']
 
     run(api_host, rev_ids, labels, trusted_groups, trusted_edits,
-        revert_radius, revert_window, verbose)
+        revert_radius, revert_window, threads, verbose)
 
 
 def read_revids(f):
@@ -102,7 +111,7 @@ def read_revids(f):
 
 
 def run(api_host, rev_ids, labels, trusted_groups, trusted_edits,
-        revert_radius, revert_window, verbose):
+        revert_radius, revert_window, threads, verbose):
 
     # Construct our API session
     session = mwapi.Session(api_host,
@@ -145,8 +154,8 @@ def run(api_host, rev_ids, labels, trusted_groups, trusted_edits,
                 sys.stderr.write(traceback.format_exc())
 
     rev_id_chunks = chunk(rev_ids, 50)
-
-    for rev_id, needs_review, reason in para.map(prelabel, rev_id_chunks):
+    rev_review_reasons = para.map(prelabel, rev_id_chunks, mappers=threads)
+    for rev_id, needs_review, reason in rev_review_reasons:
         if verbose:
             if not needs_review:
                 sys.stderr.write(".")
