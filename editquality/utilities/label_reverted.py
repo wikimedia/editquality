@@ -24,10 +24,10 @@ Options:
                             edit can revert [default: 15]
     --revert-window=<hrs>   The maximum amount of time (in hours) to wait for a
                             revision to be reverted [default: 48]
-    --exclude-reverted=<regex>   Regex if the reverted edit comment matches,
-                                 consider the edit not reverted
-    --exclude-reverting=<regex>  Regex if the reverting edit comment matches,
-                                 onsider the edit not reverted
+    --exclude-reverted=<regex>   If the reverted edit comment matches the
+                                 regex, consider the edit not reverted
+    --exclude-reverting=<regex>  If the reverting edit comment matches the
+                                 regex, consider the edit not reverted
     --revisions=<path>      A TSV file containing a list of rev_ids to check.
                             [default: <stdin>]
     --reverteds=<path>      The location to write output to.
