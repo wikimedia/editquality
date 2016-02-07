@@ -8,11 +8,13 @@ Usage:
     label_reverted -h | --help
     label_reverted --host=<url> [--revert-radius=<revs>]
                                 [--revert-window=<hrs>]
+                                [--exclude-reverted=<regex>]
+                                [--exclude-reverting=<regex>]
                                 [--revisions=<path>]
                                 [--reverteds=<path>]
-                                [--exclude-regex=<regex>]
                                 [--threads=<num>]
                                 [--verbose]
+                                [--debug]
 
 Options:
     -h --help               Prints out this documentation
@@ -22,16 +24,20 @@ Options:
                             edit can revert [default: 15]
     --revert-window=<hrs>   The maximum amount of time (in hours) to wait for a
                             revision to be reverted [default: 48]
+    --exclude-reverted=<regex>   Regex if the reverted edit comment matches,
+                                 consider the edit not reverted
+    --exclude-reverting=<regex>  Regex if the reverting edit comment matches,
+                                 onsider the edit not reverted
     --revisions=<path>      A TSV file containing a list of rev_ids to check.
                             [default: <stdin>]
     --reverteds=<path>      The location to write output to.
                             [default: <stdout>]
-    --exclude-regex=<regex> Regex if an edit matches, consider it not reverted
-                            under any condition.
     --threads=<num>         The number of parallel threads to start for
                             processing edits. [default: <cpu_count>]
     --verbose               Prints dots and stuff to stderr
+    --debug                 Prints debugging logs
 """
+import logging
 import re
 import sys
 import traceback
@@ -44,12 +50,30 @@ import para
 
 import mysqltsv
 
+logger = logging.getLogger(__name__)
+
 
 def main(argv=None):
     args = docopt.docopt(__doc__, argv=argv)
 
+    logging.basicConfig(
+        level=logging.WARNING,
+        format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
+    )
+    logger.setLevel(logging.DEBUG if args['--debug'] else logging.INFO)
+
     revert_radius = int(args['--revert-radius'])
     revert_window = int(args['--revert-window']) * 60 * 60
+
+    if args['--exclude-reverted'] is not None:
+        exclude_reverted = re.compile(args['--exclude-reverted'])
+    else:
+        exclude_reverted = None
+
+    if args['--exclude-reverting'] is not None:
+        exclude_reverting = re.compile(args['--exclude-reverting'])
+    else:
+        exclude_reverting = None
 
     if args['--revisions'] == "<stdin>":
         revisions = mysqltsv.Reader(sys.stdin)
@@ -73,18 +97,15 @@ def main(argv=None):
     session = mwapi.Session(host, user_agent="ORES revert labeling utility")
 
     verbose = args['--verbose']
-    regex = args['--exclude-regex']
-    run(revisions, reverteds, session, revert_radius, revert_window, threads,
-        regex, verbose=verbose)
+
+    run(revisions, reverteds, session, revert_radius, revert_window,
+        exclude_reverted, exclude_reverting, threads, verbose=verbose)
 
 
-def run(revisions, reverteds, session, revert_radius, revert_window, threads,
-        regex, verbose=False):
+def run(revisions, reverteds, session, revert_radius, revert_window,
+        exclude_reverted, exclude_reverting, threads, verbose=False):
 
     def check_was_damaging_revert(revision):
-        rvprop = ["user"]
-        if regex:
-            rvprop.append("comment")
         try:
             # Detect reverted status
             try:
@@ -92,7 +113,7 @@ def run(revisions, reverteds, session, revert_radius, revert_window, threads,
                     mwreverts.api.check(session, revision.rev_id,
                                         radius=revert_radius,
                                         window=revert_window,
-                                        rvprop=rvprop)
+                                        rvprop={'user', 'comment', 'ids'})
             except KeyError:
                 yield revision, None
             else:
@@ -101,21 +122,33 @@ def run(revisions, reverteds, session, revert_radius, revert_window, threads,
                     reverted_doc = [r for r in reverted.reverteds
                                     if r['revid'] == int(revision.rev_id)][0]
 
-                    comment_check = not (
-                        regex and re.search(regex, reverted_doc["comment"]))
-                    if comment_check:
-                        # Exclude self-reverts and revisions that are reverted
-                        # back to by others
-                        self_revert = \
-                            reverted_doc['user'] == reverted.reverting['user']
-                        was_reverted_to_by_someone_else = \
-                            reverted_to is not None and \
-                            reverted_doc['user'] != \
-                            reverted_to.reverting['user']
+                    # self-reverts
+                    self_revert = \
+                        reverted_doc['user'] == reverted.reverting['user']
+                    # revisions that are reverted back to by others
+                    reverted_back_to = \
+                        reverted_to is not None and \
+                        reverted_doc['user'] != \
+                        reverted_to.reverting['user']
+                    # comment checks for reverted and reverting edits
+                    comment_exclusion = False
+                    reverted_comment = reverted_doc.get("comment", "")
+                    reverting_comment = reverted.reverting.get("comment", "")
+                    if exclude_reverted and \
+                       exclude_reverted.match(reverted_comment):
+                        comment_exclusion = True
+                        logger.debug("Excluding reverted comment {0}"
+                                     .format(reverted_comment))
+                    elif exclude_reverting and \
+                         exclude_reverting.match(reverting_comment):
+                        comment_exclusion = True
+                        logger.debug("Excluding reverting comment {0}"
+                                     .format(reverting_comment))
 
-                        damaging_reverted = not (
-                            self_revert or was_reverted_to_by_someone_else)
-                # Print out row
+                    damaging_reverted = not (self_revert or
+                                             reverted_back_to or
+                                             comment_exclusion)
+                # Yield label
                 yield revision, damaging_reverted
 
         except:
