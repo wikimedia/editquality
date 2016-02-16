@@ -53,8 +53,9 @@ dict_words = [
     english.dictionary.revision.diff.non_dict_word_prop_delta_decrease
 ]
 
-damaging = wikipedia.page + local_wiki + \
-           mediawiki.wikitext + mediawiki.user_rights + mediawiki.comment + \
+damaging = wikipedia.page + \
+           mediawiki.wikitext + mediawiki.user_rights + \
+           mediawiki.protected_user + mediawiki.comment + \
            badwords + informals + dict_words
 
 reverted = damaging
