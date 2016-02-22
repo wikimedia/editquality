@@ -212,6 +212,22 @@ models/enwiki.damaging.gradient_boosting.model: \
 		--label-type=bool > \
 	models/enwiki.damaging.gradient_boosting.model
 
+models/enwiki.damaging.linear_svc.model: \
+		datasets/enwiki.features_damaging.20k_2015.tsv
+	cat datasets/enwiki.features_damaging.20k_2015.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.enwiki.damaging \
+		--version=0.1.0 \
+		-s 'pr' -s 'roc' \
+		-s 'recall_at_fpr(max_fpr=0.10)' \
+		-s 'filter_rate_at_recall(min_recall=0.90)' \
+		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/enwiki.damaging.linear_svc.model
+
 datasets/enwiki.rev_goodfaith.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ \
@@ -537,7 +553,7 @@ datasets/fawiki.features_goodfaith.20k_2015.tsv: \
 	cat datasets/fawiki.rev_goodfaith.20k_2015.tsv | \
 	revscoring extract_features \
 		editquality.feature_lists.fawiki.goodfaith \
-		--host https://fa.wikipedia.org \l
+		--host https://fa.wikipedia.org \
 		--include-revid \
 		--verbose > \
 	datasets/fawiki.features_goodfaith.20k_2015.tsv
