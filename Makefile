@@ -1025,6 +1025,77 @@ nlwiki_models: \
 nlwiki_tuning_reports: \
 		tuning_reports/nlwiki.reverted.md
 
+############################# Polish Wikipedia ############################
+
+datasets/plwiki.sampled_revisions.20k_2015.tsv:
+        wget -qO- http://quarry.wmflabs.org/run/65541/output/0/tsv?download=true > \
+        datasets/plwiki.sampled_revisions.20k_2015.tsv
+
+datasets/plwiki.prelabeled_revisions.20k_2015.tsv: \
+                datasets/plwiki.sampled_revisions.20k_2015.tsv
+        cat datasets/plwiki.sampled_revisions.20k_2015.tsv | \
+        ./utility prelabel https://pl.wikipedia.org \
+                --trusted-groups=bot,bureaucrat,sysop,rollbackers \
+                --trusted-edits=1000 \
+                --verbose > \
+        datasets/plwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/plwiki.rev_reverted.20k_2015.tsv: \
+                datasets/plwiki.sampled_revisions.20k_2015.tsv
+        cat datasets/plwiki.sampled_revisions.20k_2015.tsv | \
+        ./utility label_reverted \
+                --host https://pl.wikipedia.org \
+                --revert-radius 3 \
+                --verbose > \
+        datasets/plwiki.rev_reverted.20k_2015.tsv
+
+datasets/plwiki.features_reverted.20k_2015.tsv: \
+                datasets/plwiki.rev_reverted.20k_2015.tsv
+        cat datasets/plwiki.rev_reverted.20k_2015.tsv | \
+        revscoring extract_features \
+                editquality.feature_lists.plwiki.reverted \
+                --host https://pl.wikipedia.org \
+                --include-revid \
+                --verbose > \
+        datasets/plwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/plwiki.reverted.md: \
+                datasets/plwiki.features_reverted.20k_2015.tsv
+        cat datasets/plwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+        revscoring tune \
+                config/classifiers.params.yaml \
+                editquality.feature_lists.plwiki.reverted \
+                --cv-timeout=60 \
+                --debug \
+                --label-type=bool > \
+        tuning_reports/plwiki.reverted.md
+
+models/plwiki.reverted.rf.model: \
+                datasets/plwiki.features_reverted.20k_2015.tsv
+        cut datasets/plwiki.features_reverted.20k_2015.tsv -f2- | \
+        revscoring train_test \
+                revscoring.scorer_models.RF \
+                editquality.feature_lists.plwiki.reverted \
+                --version 0.1.0 \
+                -p 'max_features="log2"' \
+                -p 'criterion="entropy"' \
+                -p 'min_samples_leaf=7' \
+                -p 'n_estimators=640' \
+                -s 'pr' -s 'roc' \
+                -s 'recall_at_fpr(max_fpr=0.10)' \
+                -s 'filter_rate_at_recall(min_recall=0.90)' \
+                -s 'filter_rate_at_recall(min_recall=0.75)' \
+                --balance-sample-weight \
+                --center --scale \
+                --label-type=bool > \
+        models/plwiki.reverted.rf.model
+
+plwiki_models: \
+                models/plwiki.reverted.rf.model
+
+plwiki_tuning_reports: \
+                tuning_reports/plwiki.reverted.md
+
 ############################# Portugueses Wikipedia ############################
 
 datasets/ptwiki.rev_reverted.20k_2015.tsv: \
