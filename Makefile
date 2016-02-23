@@ -1070,17 +1070,17 @@ tuning_reports/plwiki.reverted.md: \
                 --label-type=bool > \
         tuning_reports/plwiki.reverted.md
 
-models/plwiki.reverted.gradient_boosting.model: \
+models/plwiki.reverted.rf.model: \
                 datasets/plwiki.features_reverted.20k_2015.tsv
         cut datasets/plwiki.features_reverted.20k_2015.tsv -f2- | \
         revscoring train_test \
-                revscoring.scorer_models.GradientBoosting \
+                revscoring.scorer_models.RF \
                 editquality.feature_lists.plwiki.reverted \
-                --version=0.1.0 \
-                -p 'max_depth=7' \
-                -p 'learning_rate=0.01' \
+                --version 0.1.0 \
                 -p 'max_features="log2"' \
-                -p 'n_estimators=700' \
+                -p 'criterion="entropy"' \
+                -p 'min_samples_leaf=7' \
+                -p 'n_estimators=640' \
                 -s 'pr' -s 'roc' \
                 -s 'recall_at_fpr(max_fpr=0.10)' \
                 -s 'filter_rate_at_recall(min_recall=0.90)' \
@@ -1088,10 +1088,10 @@ models/plwiki.reverted.gradient_boosting.model: \
                 --balance-sample-weight \
                 --center --scale \
                 --label-type=bool > \
-        models/plwiki.reverted.gradient_boosting.model
+        models/plwiki.reverted.rf.model
 
 plwiki_models: \
-                models/plwiki.reverted.gradient_boosting.model
+                models/plwiki.reverted.rf.model
 
 plwiki_tuning_reports: \
                 tuning_reports/plwiki.reverted.md
