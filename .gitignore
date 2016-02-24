@@ -5,6 +5,7 @@ models/old/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+ipython/.ipynb_checkpoints/
 
 # Temporary text editor files
 *~
