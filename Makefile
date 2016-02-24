@@ -40,6 +40,77 @@ tuning_reports: \
 		#ruwiki_tuning_reports
 		#urwiki_tuning_reports
 
+############################# Arabic Wikipedia ################################
+
+datasets/arwiki.sampled_revisions.20k_2016.tsv:
+        wget -qO- http://quarry.wmflabs.org/run/65713/output/0/tsv?download=true > \
+        datasets/arwiki.sampled_revisions.20k_2016.tsv
+
+datasets/arwiki.prelabeled_revisions.20k_2016.tsv: \
+                datasets/arwiki.sampled_revisions.20k_2016.tsv
+        cat datasets/arwiki.sampled_revisions.20k_2016.tsv | \
+        ./utility prelabel https://ar.wikipedia.org \
+                --trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+                --trusted-edits=1000 \
+                --verbose > \
+        datasets/arwiki.prelabeled_revisions.20k_2016.tsv
+
+datasets/arwiki.rev_reverted.20k_2016.tsv: \
+                datasets/arwiki.sampled_revisions.20k_2016.tsv
+        cat datasets/arwiki.sampled_revisions.20k_2016.tsv | \
+        ./utility label_reverted \
+                --host https://ar.wikipedia.org \
+                --revert-radius 3 \
+                --verbose > \
+        datasets/arwiki.rev_reverted.20k_2016.tsv
+
+datasets/arwiki.features_reverted.20k_2016.tsv: \
+                datasets/arwiki.rev_reverted.20k_2016.tsv
+        cat datasets/arwiki.rev_reverted.20k_2016.tsv | \
+        revscoring extract_features \
+                editquality.feature_lists.arwiki.reverted \
+                --host https://ar.wikipedia.org \
+                --include-revid \
+                --verbose > \
+        datasets/arwiki.features_reverted.20k_2016.tsv
+
+tuning_reports/arwiki.reverted.md: \
+                datasets/arwiki.features_reverted.20k_2016.tsv
+        cat datasets/arwiki.features_reverted.20k_2016.tsv | cut -f2- | \
+        revscoring tune \
+                config/classifiers.params.yaml \
+                editquality.feature_lists.arwiki.reverted \
+                --cv-timeout=60 \
+                --debug \
+                --label-type=bool > \
+        tuning_reports/arwiki.reverted.md
+
+models/arwiki.reverted.rf.model: \
+                datasets/arwiki.features_reverted.20k_2016.tsv
+        cut datasets/arwiki.features_reverted.20k_2016.tsv -f2- | \
+        revscoring train_test \
+                revscoring.scorer_models.RF \
+                editquality.feature_lists.arwiki.reverted \
+                --version 0.1.0 \
+                -p 'max_features="log2"' \
+                -p 'criterion="entropy"' \
+                -p 'min_samples_leaf=5' \
+                -p 'n_estimators=640' \
+                -s 'pr' -s 'roc' \
+                -s 'recall_at_fpr(max_fpr=0.10)' \
+                -s 'filter_rate_at_recall(min_recall=0.90)' \
+                -s 'filter_rate_at_recall(min_recall=0.75)' \
+                --balance-sample-weight \
+                --center --scale \
+                --label-type=bool > \
+        models/arwiki.reverted.rf.model
+
+arwiki_models: \
+                models/arwiki.reverted.rf.model
+
+arwiki_tuning_reports: \
+                tuning_reports/arwiki.reverted.md
+
 ############################# German Wikipedia ################################
 
 datasets/dewiki.sampled_revisions.20k_2015.tsv:
