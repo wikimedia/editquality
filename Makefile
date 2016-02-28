@@ -756,6 +756,16 @@ datasets/hewiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/hewiki.prelabeled_revisions.20k_2015.tsv
 
+datasets/hewiki.revisions_to_review.5k_2015.tsv: \
+		datasets/hewiki.prelabeled_revisions.20k_2015.tsv
+	(echo "rev_id\tneeds_review\treason"; \
+	 (cat datasets/hewiki.prelabeled_revisions.20k_2015.tsv | grep True | \
+	  shuf -n 2500; \
+	  cat datasets/hewiki.prelabeled_revisions.20k_2015.tsv | grep False | \
+	  shuf -n 2500 \
+	 ) | shuf \
+	) > datasets/hewiki.revisions_to_review.5k_2015.tsv
+
 datasets/hewiki.rev_reverted.20k_2015.tsv: \
 		datasets/hewiki.sampled_revisions.20k_2015.tsv
 	cat datasets/hewiki.sampled_revisions.20k_2015.tsv | \
@@ -1095,6 +1105,32 @@ nlwiki_models: \
 
 nlwiki_tuning_reports: \
 		tuning_reports/nlwiki.reverted.md
+
+############################# Norwegian Wikipedia #############################
+
+datasets/nowiki.sampled_revisions.20k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/67249/output/0/tsv?download=true > \
+	datasets/nowiki.sampled_revisions.20k_2015.tsv
+
+datasets/nowiki.prelabeled_revisions.20k_2015.tsv: \
+		datasets/nowiki.sampled_revisions.20k_2015.tsv
+	cat datasets/nowiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://no.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/nowiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/nowiki.revisions_to_review.5k_2015.tsv: \
+		datasets/nowiki.prelabeled_revisions.20k_2015.tsv
+	(echo "rev_id\tneeds_review\treason"; \
+	 (cat datasets/nowiki.prelabeled_revisions.20k_2015.tsv | grep True | \
+	  shuf -n 2500; \
+	  cat datasets/nowiki.prelabeled_revisions.20k_2015.tsv | grep False | \
+	  shuf -n 2500 \
+	 ) | shuf \
+	) > datasets/nowiki.revisions_to_review.5k_2015.tsv
+
 
 ############################# Polish Wikipedia ############################
 
@@ -1703,14 +1739,28 @@ datasets/viwiki.sampled_revisions.20k_2015.tsv:
 	wget -qO- http://quarry.wmflabs.org/run/48094/output/0/tsv?download=true > \
 	datasets/viwiki.sampled_revisions.20k_2015.tsv
 
-datasets/viwiki.prelabeled_revisions.20k_2015.tsv: \
-		datasets/viwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/viwiki.sampled_revisions.20k_2015.tsv | \
+datasets/viwiki.sampled_revisions.500k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/65793/output/0/tsv?download=true > \
+	datasets/viwiki.sampled_revisions.500k_2015.tsv
+
+datasets/viwiki.prelabeled_revisions.500k_2015.tsv: \
+		datasets/viwiki.sampled_revisions.500k_2015.tsv
+	cat datasets/viwiki.sampled_revisions.500k_2015.tsv | \
 	./utility prelabel https://vi.wikipedia.org \
-		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-groups=checkuser,bureaucrat,sysop,eliminator,bot \
 		--trusted-edits=1000 \
 		--verbose > \
-	datasets/viwiki.prelabeled_revisions.20k_2015.tsv
+	datasets/viwiki.prelabeled_revisions.500k_2015.tsv
+
+datasets/viwiki.revisions_to_review.5k_2015.tsv: \
+		datasets/viwiki.prelabeled_revisions.500k_2015.tsv
+	(echo "rev_id\tneeds_review\treason"; \
+	 (cat datasets/viwiki.prelabeled_revisions.500k_2015.tsv | grep True | \
+	  shuf -n 2500; \
+	  cat datasets/viwiki.prelabeled_revisions.500k_2015.tsv | grep False | \
+	  shuf -n 2500 \
+	 ) | shuf \
+	) > datasets/viwiki.revisions_to_review.500k_2015.tsv
 
 datasets/viwiki.rev_reverted.20k_2015.tsv: \
 		datasets/viwiki.sampled_revisions.20k_2015.tsv
