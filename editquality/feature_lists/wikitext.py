@@ -77,11 +77,11 @@ diff = [
         name="revision.diff.templates_change"),
     sub(wikitext.revision.ref_tags,
         wikitext.revision.parent.ref_tags,
-        name="revision.diff.ref_tags_change")
+        name="revision.diff.ref_tags_change"),
     Feature("revision.diff.longest_new_token",
             _process_new_longest, returns=int,
             depends_on=[wikitext.revision.parent.longest_token,
-                        wikitext.revision.longest_token])
+                        wikitext.revision.longest_token]),
     Feature("revision.diff.longest_new_repeated_char",
             _process_new_longest, returns=int,
             depends_on=[wikitext.revision.parent.longest_repeated_char,
