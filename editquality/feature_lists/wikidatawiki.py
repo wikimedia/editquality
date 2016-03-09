@@ -115,7 +115,8 @@ local_wiki = [
     is_blp
 ]
 
-damaging = mediawiki.user_rights + mediawiki.protected_user + \
-           mediawiki.wikibase + local_wiki
+damaging = mediawiki.comment + mediawiki.user_rights + \
+           mediawiki.protected_user + wikibase.parent + wikibase.diff + \
+           local_wiki
 reverted = damaging
 goodfaith = damaging

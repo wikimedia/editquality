@@ -40,76 +40,89 @@ tuning_reports: \
 		#ruwiki_tuning_reports
 		#urwiki_tuning_reports
 
+test_statistics = \
+		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
+		-s 'pr' -s 'roc' \
+		-s 'recall_at_fpr(max_fpr=0.10)' \
+		-s 'filter_rate_at_recall(min_recall=0.90)' \
+		-s 'filter_rate_at_recall(min_recall=0.75)'
+
 ############################# Arabic Wikipedia ################################
 
 datasets/arwiki.sampled_revisions.20k_2016.tsv:
-        wget -qO- http://quarry.wmflabs.org/run/65713/output/0/tsv?download=true > \
-        datasets/arwiki.sampled_revisions.20k_2016.tsv
+	wget -qO- http://quarry.wmflabs.org/run/65713/output/0/tsv?download=true > \
+	datasets/arwiki.sampled_revisions.20k_2016.tsv
 
 datasets/arwiki.prelabeled_revisions.20k_2016.tsv: \
-                datasets/arwiki.sampled_revisions.20k_2016.tsv
-        cat datasets/arwiki.sampled_revisions.20k_2016.tsv | \
-        ./utility prelabel https://ar.wikipedia.org \
-                --trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
-                --trusted-edits=1000 \
-                --verbose > \
-        datasets/arwiki.prelabeled_revisions.20k_2016.tsv
+		datasets/arwiki.sampled_revisions.20k_2016.tsv
+	cat datasets/arwiki.sampled_revisions.20k_2016.tsv | \
+	./utility prelabel https://ar.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/arwiki.prelabeled_revisions.20k_2016.tsv
 
 datasets/arwiki.rev_reverted.20k_2016.tsv: \
-                datasets/arwiki.sampled_revisions.20k_2016.tsv
-        cat datasets/arwiki.sampled_revisions.20k_2016.tsv | \
-        ./utility label_reverted \
-                --host https://ar.wikipedia.org \
-                --revert-radius 3 \
-                --verbose > \
-        datasets/arwiki.rev_reverted.20k_2016.tsv
+		datasets/arwiki.sampled_revisions.20k_2016.tsv
+	cat datasets/arwiki.sampled_revisions.20k_2016.tsv | \
+	./utility label_reverted \
+		--host https://ar.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/arwiki.rev_reverted.20k_2016.tsv
 
 datasets/arwiki.features_reverted.20k_2016.tsv: \
-                datasets/arwiki.rev_reverted.20k_2016.tsv
-        cat datasets/arwiki.rev_reverted.20k_2016.tsv | \
-        revscoring extract_features \
-                editquality.feature_lists.arwiki.reverted \
-                --host https://ar.wikipedia.org \
-                --include-revid \
-                --verbose > \
-        datasets/arwiki.features_reverted.20k_2016.tsv
+		datasets/arwiki.rev_reverted.20k_2016.tsv
+	cat datasets/arwiki.rev_reverted.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.arwiki.reverted \
+		--host https://ar.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/arwiki.features_reverted.20k_2016.tsv
 
 tuning_reports/arwiki.reverted.md: \
-                datasets/arwiki.features_reverted.20k_2016.tsv
-        cat datasets/arwiki.features_reverted.20k_2016.tsv | cut -f2- | \
-        revscoring tune \
-                config/classifiers.params.yaml \
-                editquality.feature_lists.arwiki.reverted \
-                --cv-timeout=60 \
-                --debug \
-                --label-type=bool > \
-        tuning_reports/arwiki.reverted.md
+		datasets/arwiki.features_reverted.20k_2016.tsv
+	cat datasets/arwiki.features_reverted.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.arwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/arwiki.reverted.md
+
+models/arwiki.reverted.liner_svc.model: \
+		datasets/arwiki.features_reverted.20k_2016.tsv
+	cut datasets/arwiki.features_reverted.20k_2016.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.LinearSVC \
+		editquality.feature_lists.arwiki.reverted \
+		--version 0.0.1 \
+		$(test_statistics) \
+		--balance-sample \
+		--center --scale \
+		--label-type=bool > \
+	models/arwiki.reverted.liner_svc.model
 
 models/arwiki.reverted.rf.model: \
-                datasets/arwiki.features_reverted.20k_2016.tsv
-        cut datasets/arwiki.features_reverted.20k_2016.tsv -f2- | \
-        revscoring train_test \
-                revscoring.scorer_models.RF \
-                editquality.feature_lists.arwiki.reverted \
-                --version 0.1.0 \
-                -p 'max_features="log2"' \
-                -p 'criterion="entropy"' \
-                -p 'min_samples_leaf=5' \
-                -p 'n_estimators=640' \
-                -s 'pr' -s 'roc' \
-                -s 'recall_at_fpr(max_fpr=0.10)' \
-                -s 'filter_rate_at_recall(min_recall=0.90)' \
-                -s 'filter_rate_at_recall(min_recall=0.75)' \
-                --balance-sample-weight \
-                --center --scale \
-                --label-type=bool > \
-        models/arwiki.reverted.rf.model
+		datasets/arwiki.features_reverted.20k_2016.tsv
+	cut datasets/arwiki.features_reverted.20k_2016.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.arwiki.reverted \
+		--version 0.0.1 \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/arwiki.reverted.rf.model
 
 arwiki_models: \
-                models/arwiki.reverted.rf.model
+	models/arwiki.reverted.rf.model
 
 arwiki_tuning_reports: \
-                tuning_reports/arwiki.reverted.md
+	tuning_reports/arwiki.reverted.md
 
 ############################# German Wikipedia ################################
 
@@ -167,10 +180,7 @@ models/dewiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=300' \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -226,10 +236,7 @@ models/enwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -274,10 +281,7 @@ models/enwiki.damaging.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -289,12 +293,10 @@ models/enwiki.damaging.linear_svc.model: \
 	revscoring train_test \
 		revscoring.scorer_models.LinearSVC \
 		editquality.feature_lists.enwiki.damaging \
-		--version=0.1.0 \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
-		--balance-sample-weight \
+		--version=0.5.0 \
+		-p 'cache_size=100000' \
+		$(test_statistics) \
+		--balance-sample \
 		--center --scale \
 		--label-type=bool > \
 	models/enwiki.damaging.linear_svc.model
@@ -338,10 +340,7 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -413,10 +412,7 @@ models/eswiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -484,10 +480,7 @@ models/etwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -555,10 +548,7 @@ models/fawiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -603,10 +593,7 @@ models/fawiki.damaging.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -651,10 +638,7 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -726,10 +710,7 @@ models/frwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -807,10 +788,7 @@ models/hewiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -878,10 +856,7 @@ models/idwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -949,10 +924,7 @@ models/itwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1020,10 +992,7 @@ models/jawiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1091,10 +1060,7 @@ models/nlwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1139,69 +1105,67 @@ datasets/plwiki.sampled_revisions.20k_2015.tsv:
         datasets/plwiki.sampled_revisions.20k_2015.tsv
 
 datasets/plwiki.prelabeled_revisions.20k_2015.tsv: \
-                datasets/plwiki.sampled_revisions.20k_2015.tsv
-        cat datasets/plwiki.sampled_revisions.20k_2015.tsv | \
-        ./utility prelabel https://pl.wikipedia.org \
-                --trusted-groups=bot,bureaucrat,sysop,rollbackers \
-                --trusted-edits=1000 \
-                --verbose > \
-        datasets/plwiki.prelabeled_revisions.20k_2015.tsv
+		datasets/plwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/plwiki.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://pl.wikipedia.org \
+		--trusted-groups=bot,bureaucrat,sysop,rollbackers \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/plwiki.prelabeled_revisions.20k_2015.tsv
 
 datasets/plwiki.rev_reverted.20k_2015.tsv: \
-                datasets/plwiki.sampled_revisions.20k_2015.tsv
-        cat datasets/plwiki.sampled_revisions.20k_2015.tsv | \
-        ./utility label_reverted \
-                --host https://pl.wikipedia.org \
-                --revert-radius 3 \
-                --verbose > \
-        datasets/plwiki.rev_reverted.20k_2015.tsv
+		datasets/plwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/plwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://pl.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/plwiki.rev_reverted.20k_2015.tsv
 
 datasets/plwiki.features_reverted.20k_2015.tsv: \
-                datasets/plwiki.rev_reverted.20k_2015.tsv
-        cat datasets/plwiki.rev_reverted.20k_2015.tsv | \
-        revscoring extract_features \
-                editquality.feature_lists.plwiki.reverted \
-                --host https://pl.wikipedia.org \
-                --include-revid \
-                --verbose > \
-        datasets/plwiki.features_reverted.20k_2015.tsv
+		datasets/plwiki.rev_reverted.20k_2015.tsv
+	cat datasets/plwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.plwiki.reverted \
+		--host https://pl.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/plwiki.features_reverted.20k_2015.tsv
 
 tuning_reports/plwiki.reverted.md: \
-                datasets/plwiki.features_reverted.20k_2015.tsv
-        cat datasets/plwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-        revscoring tune \
-                config/classifiers.params.yaml \
-                editquality.feature_lists.plwiki.reverted \
-                --cv-timeout=60 \
-                --debug \
-                --label-type=bool > \
-        tuning_reports/plwiki.reverted.md
+		datasets/plwiki.features_reverted.20k_2015.tsv
+	cat datasets/plwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.plwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/plwiki.reverted.md
 
 models/plwiki.reverted.rf.model: \
-                datasets/plwiki.features_reverted.20k_2015.tsv
-        cut datasets/plwiki.features_reverted.20k_2015.tsv -f2- | \
-        revscoring train_test \
-                revscoring.scorer_models.RF \
-                editquality.feature_lists.plwiki.reverted \
-                --version 0.1.0 \
-                -p 'max_features="log2"' \
-                -p 'criterion="entropy"' \
-                -p 'min_samples_leaf=7' \
-                -p 'n_estimators=640' \
-                -s 'pr' -s 'roc' \
-                -s 'recall_at_fpr(max_fpr=0.10)' \
-                -s 'filter_rate_at_recall(min_recall=0.90)' \
-                -s 'filter_rate_at_recall(min_recall=0.75)' \
-                --balance-sample-weight \
-                --center --scale \
-                --label-type=bool > \
-        models/plwiki.reverted.rf.model
+		datasets/plwiki.features_reverted.20k_2015.tsv
+	cut datasets/plwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.plwiki.reverted \
+		--version 0.1.0 \
+		-p 'max_features="log2"' \
+		-p 'criterion="entropy"' \
+		-p 'min_samples_leaf=7' \
+		-p 'n_estimators=640' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/plwiki.reverted.rf.model
 
 plwiki_models: \
-                models/plwiki.reverted.rf.model
+		models/plwiki.reverted.rf.model
 
 plwiki_tuning_reports: \
-                tuning_reports/plwiki.reverted.md
+		tuning_reports/plwiki.reverted.md
+
 
 ############################# Portugueses Wikipedia ############################
 
@@ -1246,10 +1210,7 @@ models/ptwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1294,10 +1255,7 @@ models/ptwiki.damaging.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1342,10 +1300,7 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1418,10 +1373,7 @@ models/ruwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1476,10 +1428,7 @@ models/trwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1524,10 +1473,7 @@ models/trwiki.damaging.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1572,10 +1518,7 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1647,10 +1590,7 @@ models/ukwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1718,10 +1658,7 @@ models/urwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1803,10 +1740,7 @@ models/viwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
@@ -1849,10 +1783,7 @@ models/wikidatawiki.reverted.rf.model: \
 		-p 'criterion="entropy"' \
 		-p 'min_samples_leaf=1' \
 		-p 'n_estimators=80' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.90)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
