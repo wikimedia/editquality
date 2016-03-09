@@ -1,6 +1,7 @@
 
 
 models: \
+		arwiki_models \
 		dewiki_models \
 		enwiki_models \
 		eswiki_models \
@@ -11,6 +12,7 @@ models: \
 		idwiki_models \
 		itwiki_models \
 		nlwiki_models \
+		plwiki_models \
 		ptwiki_models \
 		trwiki_models \
 		ukwiki_models \
@@ -21,6 +23,7 @@ models: \
 		#urwiki_models
 
 tuning_reports: \
+		arwiki_tuning_reports \
 		dewiki_tuning_reports \
 		enwiki_tuning_reports \
 		eswiki_tuning_reports \
@@ -31,6 +34,7 @@ tuning_reports: \
 		idwiki_tuning_reports \
 		itwiki_tuning_reports \
 		nlwiki_tuning_reports \
+		plwiki_tuning_reports \
 		ptwiki_tuning_reports \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
