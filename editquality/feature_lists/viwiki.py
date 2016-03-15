@@ -1,6 +1,6 @@
 from revscoring.languages import vietnamese
 
-from . import enwiki, mediawiki, wikipedia
+from . import enwiki, mediawiki, wikipedia, wikitext
 
 badwords = [
     vietnamese.badwords.revision.diff.match_delta_sum,
@@ -36,7 +36,7 @@ dict_words = [
 ]
 
 damaging = wikipedia.page + \
-           mediawiki.wikitext + mediawiki.user_rights + \
+           wikitext.parent + wikitext.diff + mediawiki.user_rights + \
            mediawiki.protected_user + mediawiki.comment + \
            badwords + informals + dict_words + \
            enwiki.badwords + enwiki.informals
