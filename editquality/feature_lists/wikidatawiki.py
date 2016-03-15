@@ -1,8 +1,8 @@
-from revscoring.features import revision_oriented, wikibase
+from revscoring.features import revision_oriented, wikibase as wikibase_features
 from revscoring.features.meta import bools
 from revscoring.features.modifiers import not_
 
-from . import mediawiki
+from . import mediawiki, wikibase
 
 name = "wikidatawiki"
 
@@ -54,7 +54,7 @@ is_item_creation = revision_oriented.revision.comment_matches(
     name=name + ".is_item_creation")
 
 # Properties changed
-diff = wikibase.revision.diff
+diff = wikibase_features.revision.diff
 sex_or_gender_changed = diff.property_changed(
     properties.SEX_OR_GENDER,
     name=name + '.sex_or_gender_changed')
@@ -85,7 +85,7 @@ en_label_changed = bools.item_in_set(
 
 
 # Status
-revision = wikibase.revision
+revision = wikibase_features.revision
 is_human = revision.has_property_value(properties.INSTANCE_OF, items.HUMAN,
                                        name=name + '.is_human')
 has_birthday = revision.has_property(properties.DATE_OF_BIRTH,
@@ -115,7 +115,8 @@ local_wiki = [
     is_blp
 ]
 
-damaging = mediawiki.user_rights + mediawiki.protected_user + \
-           mediawiki.wikibase + local_wiki
+damaging = mediawiki.comment + mediawiki.user_rights + \
+           mediawiki.protected_user + wikibase.parent + wikibase.diff + \
+           local_wiki
 reverted = damaging
 goodfaith = damaging

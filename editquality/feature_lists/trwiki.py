@@ -1,6 +1,6 @@
 from revscoring.languages import turkish
 
-from . import enwiki, mediawiki, wikipedia
+from . import enwiki, mediawiki, wikipedia, wikitext
 
 badwords = [
     turkish.badwords.revision.diff.match_delta_sum,
@@ -21,7 +21,7 @@ informals = [
 ]
 
 damaging = wikipedia.page + \
-           mediawiki.wikitext + mediawiki.user_rights + \
+           wikitext.parent + wikitext.diff + mediawiki.user_rights + \
            mediawiki.protected_user + mediawiki.comment + \
            badwords + informals + \
            enwiki.badwords + enwiki.informals

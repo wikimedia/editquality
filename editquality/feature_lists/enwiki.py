@@ -1,8 +1,8 @@
-from revscoring.features import revision_oriented, wikitext
+from revscoring.features import revision_oriented, wikitext as wikitext_features
 from revscoring.features.modifiers import sub
 from revscoring.languages import english
 
-from . import mediawiki, wikipedia
+from . import mediawiki, wikipedia, wikitext
 
 local_wiki = [
     revision_oriented.revision.comment_matches(
@@ -14,8 +14,8 @@ local_wiki = [
         name="enwiki.revision.comment.is_aes"
     ),
     sub(
-        wikitext.revision.template_names_matching(r"^cite"),
-        wikitext.revision.parent.template_names_matching(r"^cite"),
+        wikitext_features.revision.template_names_matching(r"^cite"),
+        wikitext_features.revision.parent.template_names_matching(r"^cite"),
         name="enwiki.revision.diff.cite_templates_added"
     )
 ]
@@ -54,7 +54,7 @@ dict_words = [
 ]
 
 damaging = wikipedia.page + \
-           mediawiki.wikitext + mediawiki.user_rights + \
+           wikitext.parent + wikitext.diff + mediawiki.user_rights + \
            mediawiki.protected_user + mediawiki.comment + \
            badwords + informals + dict_words
 
