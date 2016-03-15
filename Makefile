@@ -1156,64 +1156,6 @@ datasets/jawiki.rev_reverted.20k_2015.tsv: \
 		--verbose > \
 	datasets/jawiki.rev_reverted.20k_2015.tsv
 
-datasets/jawiki.features_reverted.20k_2015.tsv: \
-		datasets/jawiki.rev_reverted.20k_2015.tsv
-	cat datasets/jawiki.rev_reverted.20k_2015.tsv | \
-	revscoring extract_features \
-		editquality.feature_lists.jawiki.reverted \
-		--host https://ja.wikipedia.org \
-		--include-revid \
-		--verbose > \
-	datasets/jawiki.features_reverted.20k_2015.tsv
-
-tuning_reports/jawiki.reverted.md: \
-		datasets/jawiki.features_reverted.20k_2015.tsv
-	cat datasets/jawiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.jawiki.reverted \
-		--cv-timeout=60 \
-		--debug \
-		--label-type=bool > \
-	tuning_reports/jawiki.reverted.md
-
-models/jawiki.reverted.gradient_boosting.model: \
-		datasets/jawiki.features_reverted.20k_2015.tsv
-	cat datasets/jawiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.GradientBoosting \
-		editquality.feature_lists.jawiki.reverted \
-		--version=0.1.0 \
-		-p 'max_depth=5' \
-		-p 'learning_rate=0.01' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		$(test_statistics) \
-		--balance-sample-weight \
-		--center --scale \
-		--label-type=bool > \
-	models/jawiki.reverted.gradient_boosting.model
-
-models/jawiki.reverted.linear_svc_balanced.model: \
-		datasets/jawiki.features_reverted.20k_2015.tsv
-	cat datasets/jawiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.jawiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/jawiki.reverted.linear_svc_balanced.model
-
-jawiki_models: \
-		models/jawiki.reverted.gradient_boosting.model
-
-jawiki_tuning_reports: \
-		tuning_reports/jawiki.reverted.md
 
 ############################### Dutch Wikipedia ###############################
 
@@ -1603,53 +1545,6 @@ datasets/ruwiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/ruwiki.prelabeled_revisions.20k_2015.tsv
 
-datasets/ruwiki.rev_reverted.20k_2015.tsv: \
-		datasets/ruwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/ruwiki.sampled_revisions.20k_2015.tsv | \
-	./utility label_reverted \
-		--host https://ru.wikipedia.org \
-		--revert-radius 3 \
-		--verbose > \
-	datasets/ruwiki.rev_reverted.20k_2015.tsv
-
-datasets/ruwiki.features_reverted.20k_2015.tsv: \
-		datasets/ruwiki.rev_reverted.20k_2015.tsv
-	cat datasets/ruwiki.rev_reverted.20k_2015.tsv | \
-	revscoring extract_features \
-		editquality.feature_lists.ruwiki.reverted \
-		--host https://ru.wikipedia.org \
-		--include-revid \
-		--verbose > \
-	datasets/ruwiki.features_reverted.20k_2015.tsv
-
-tuning_reports/ruwiki.reverted.md: \
-		datasets/ruwiki.features_reverted.20k_2015.tsv
-	cat datasets/ruwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.ruwiki.reverted \
-		--cv-timeout=60 \
-		--debug \
-		--label-type=bool > \
-	tuning_reports/ruwiki.reverted.md
-
-models/ruwiki.reverted.gradient_boosting.model: \
-		datasets/ruwiki.features_reverted.20k_2015.tsv
-	cut datasets/ruwiki.features_reverted.20k_2015.tsv -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.GradientBoosting \
-		editquality.feature_lists.ruwiki.reverted \
-		--version=0.1.0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		$(test_statistics) \
-		--balance-sample-weight \
-		--center --scale \
-		--label-type=bool > \
-	models/ruwiki.reverted.gradient_boosting.model
-
 ruwiki_models: \
 		models/ruwiki.reverted.gradient_boosting.model
 
@@ -1948,52 +1843,35 @@ datasets/urwiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/urwiki.prelabeled_revisions.20k_2015.tsv
 
-datasets/urwiki.rev_reverted.20k_2015.tsv: \
-		datasets/urwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/urwiki.sampled_revisions.20k_2015.tsv | \
-	./utility label_reverted \
-		--host https://ur.wikipedia.org \
-		--revert-radius 3 \
+datasets/urwiki.sampled_revisions.500k_2015.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/64277/output/0/tsv?download=true > \
+	datasets/urwiki.sampled_revisions.500k_2015.tsv
+
+datasets/urwiki.prelabeled_revisions.500k_2015.tsv: \
+		datasets/urwiki.sampled_revisions.500k_2015.tsv
+	cat datasets/urwiki.sampled_revisions.500k_2015.tsv | \
+	./utility prelabel https://ur.wikipedia.org \
+		--trusted-groups=bot,bureaucrat,sysop,rollbackers \
+		--trusted-edits=1000 \
 		--verbose > \
-	datasets/urwiki.rev_reverted.20k_2015.tsv
+	datasets/urwiki.prelabeled_revisions.500k_2015.tsv
 
-datasets/urwiki.features_reverted.20k_2015.tsv: \
-		datasets/urwiki.rev_reverted.20k_2015.tsv
-	cat datasets/urwiki.rev_reverted.20k_2015.tsv | \
-	revscoring extract_features \
-		editquality.feature_lists.urwiki.reverted \
-		--host https://ur.wikipedia.org \
-		--include-revid \
-		--verbose > \
-	datasets/urwiki.features_reverted.20k_2015.tsv
 
-tuning_reports/urwiki.reverted.md: \
-		datasets/urwiki.features_reverted.20k_2015.tsv
-	cat datasets/urwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.urwiki.reverted \
-		--cv-timeout=60 \
-		--debug \
-		--label-type=bool > \
-	tuning_reports/urwiki.reverted.md
+datasets/urwiki.revisions_for_review.5k_2015.tsv: \
+		datasets/urwiki.prelabeled_revisions.500k_2015.tsv
+	( \
+	  echo "rev_id\tneeds_review\treason"; \
+	  ( \
+	    cat datasets/urwiki.prelabeled_revisions.500k_2015.tsv | \
+	    grep "True" | \
+	    shuf -n 2500; \
+	    cat datasets/urwiki.prelabeled_revisions.500k_2015.tsv | \
+	    grep "False" | \
+	    shuf -n 2500 \
+	 ) | \
+	 shuf \
+	) > datasets/urwiki.revisions_for_review.5k_2015.tsv
 
-models/urwiki.reverted.gradient_boosting.model: \
-		datasets/urwiki.features_reverted.20k_2015.tsv
-	cut datasets/urwiki.features_reverted.20k_2015.tsv -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.GradientBoosting \
-		editquality.feature_lists.urwiki.reverted \
-		--version=0.1.0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		$(test_statistics) \
-		--balance-sample-weight \
-		--center --scale \
-		--label-type=bool > \
-	models/urwiki.reverted.gradient_boosting.model
 
 urwiki_models: \
 		models/urwiki.reverted.gradient_boosting.model
