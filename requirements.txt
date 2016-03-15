@@ -3,3 +3,4 @@ mwtypes
 mwreverts
 revscoring >= 0.7.11
 mysqltsv
+xgboost==0.4a30
