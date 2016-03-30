@@ -1,6 +1,6 @@
-mwapi
-mwtypes
-mwreverts
-revscoring >= 0.7.11
-mysqltsv
+mwapi >= 0.3.1, < 0.3.999
+mwtypes >= 0.2.0, < 0.2.999
+mwreverts >= 0.0.6, < 0.0.999
+revscoring >= 1.1.8, < 1.1.999
+mysqltsv >= 0.0.7, < 0.0.999
 xgboost==0.4a30
