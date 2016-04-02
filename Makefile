@@ -64,15 +64,15 @@ datasets/arwiki.prelabeled_revisions.20k_2016.tsv: \
 		--verbose > \
 	datasets/arwiki.prelabeled_revisions.20k_2016.tsv
 
-datasets/arwiki.revisions_for_review.5k_2015.tsv: \
-		datasets/arwiki.prelabeled_revisions.500k_2015.tsv
+datasets/arwiki.revisions_for_review.5k_2016.tsv: \
+		datasets/arwiki.prelabeled_revisions.20k_2016.tsv
 	( \
 	  echo "rev_id\tneeds_review\treason"; \
 	  ( \
-	    cat datasets/arwiki.prelabeled_revisions.500k_2015.tsv | \
+	    cat datasets/arwiki.prelabeled_revisions.20k_2016.tsv | \
 	    grep "True" | \
 	    shuf -n 2500; \
-	    cat datasets/arwiki.prelabeled_revisions.500k_2015.tsv | \
+	    cat datasets/arwiki.prelabeled_revisions.20k_2016.tsv | \
 	    grep "False" | \
 	    shuf -n 2500 \
 	 ) | \
