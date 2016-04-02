@@ -59,7 +59,7 @@ datasets/arwiki.prelabeled_revisions.20k_2016.tsv: \
 		datasets/arwiki.sampled_revisions.20k_2016.tsv
 	cat datasets/arwiki.sampled_revisions.20k_2016.tsv | \
 	./utility prelabel https://ar.wikipedia.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/arwiki.prelabeled_revisions.20k_2016.tsv
