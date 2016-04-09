@@ -14,6 +14,7 @@ models: \
 		nlwiki_models \
 		plwiki_models \
 		ptwiki_models \
+		ruwiki_models \
 		trwiki_models \
 		ukwiki_models \
 		viwiki_models \
@@ -57,12 +58,12 @@ tuning_reports: \
 		nlwiki_tuning_reports \
 		plwiki_tuning_reports \
 		ptwiki_tuning_reports \
+		ruwiki_tuning_reports \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
 		viwiki_tuning_reports \
 		wikidatawiki_tuning_reports
 		#jawiki_tuning_reports
-		#ruwiki_tuning_reports
 		#urwiki_tuning_reports
 
 test_statistics = \
@@ -1269,8 +1270,8 @@ datasets/nowiki.revisions_to_review.5k_2015.tsv: \
 ############################# Polish Wikipedia ############################
 
 datasets/plwiki.sampled_revisions.20k_2015.tsv:
-        wget -qO- http://quarry.wmflabs.org/run/65541/output/0/tsv?download=true > \
-        datasets/plwiki.sampled_revisions.20k_2015.tsv
+	wget -qO- http://quarry.wmflabs.org/run/65541/output/0/tsv?download=true > \
+	datasets/plwiki.sampled_revisions.20k_2015.tsv
 
 datasets/plwiki.prelabeled_revisions.20k_2015.tsv: \
 		datasets/plwiki.sampled_revisions.20k_2015.tsv
@@ -1533,7 +1534,7 @@ ptwiki_tuning_reports: \
 ############################### Russian Wikipedia ############################
 
 datasets/ruwiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/48649/output/0/tsv?download=true > \
+	wget -qO- http://quarry.wmflabs.org/run/78948/output/0/tsv?download=true > \
 	datasets/ruwiki.sampled_revisions.20k_2015.tsv
 
 datasets/ruwiki.prelabeled_revisions.20k_2015.tsv: \
@@ -1544,6 +1545,53 @@ datasets/ruwiki.prelabeled_revisions.20k_2015.tsv: \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/ruwiki.prelabeled_revisions.20k_2015.tsv
+
+datasets/ruwiki.rev_reverted.20k_2015.tsv: \
+		datasets/ruwiki.sampled_revisions.20k_2015.tsv
+	cat datasets/ruwiki.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://ru.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/ruwiki.rev_reverted.20k_2015.tsv
+
+datasets/ruwiki.features_reverted.20k_2015.tsv: \
+		datasets/ruwiki.rev_reverted.20k_2015.tsv
+	cat datasets/ruwiki.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.ruwiki.reverted \
+		--host https://ru.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/ruwiki.features_reverted.20k_2015.tsv
+
+tuning_reports/ruwiki.reverted.md: \
+		datasets/ruwiki.features_reverted.20k_2015.tsv
+	cat datasets/ruwiki.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ruwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/ruwiki.reverted.md
+
+models/ruwiki.reverted.gradient_boosting.model: \
+		datasets/ruwiki.features_reverted.20k_2015.tsv
+	cut datasets/ruwiki.features_reverted.20k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.ruwiki.reverted \
+		--version=0.0.1 \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/ruwiki.reverted.gradient_boosting.model
 
 ruwiki_models: \
 		models/ruwiki.reverted.gradient_boosting.model
