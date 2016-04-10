@@ -20,6 +20,7 @@ models: \
 		idwiki_models \
 		itwiki_models \
 		kowiki_models \
+		jawiki_models \
 		nlwiki_models \
 		nowiki_models \
 		plwiki_models \
@@ -52,6 +53,7 @@ tuning_reports: \
 		idwiki_tuning_reports \
 		itwiki_tuning_reports \
 		kowiki_tuning_reports \
+		jawiki_tuning_reports \
 		nlwiki_tuning_reports \
 		nowiki_tuning_reports \
 		plwiki_tuning_reports \
@@ -64,7 +66,6 @@ tuning_reports: \
 		ukwiki_tuning_reports \
 		viwiki_tuning_reports \
 		wikidatawiki_tuning_reports
-		#jawiki_tuning_reports
 		#urwiki_tuning_reports
 
 test_statistics = \
@@ -1689,16 +1690,71 @@ itwiki_tuning_reports: \
 
 ########################### Japanese Wikipedia ################################
 
-datasets/jawiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/50111/output/0/json-lines?download=true > $@
+datasets/jawiki.sampled_revisions.20k_2016.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/79004/output/0/tsv?download=true > \
+	datasets/jawiki.sampled_revisions.20k_2015.tsv
 
-datasets/jawiki.autolabeled_revisions.20k_2015.json: \
-		datasets/jawiki.sampled_revisions.20k_2015.json
-	cat $< | \
-	./utility autolabel --host=https://ja.wikipedia.org \
+datasets/jawiki.prelabeled_revisions.20k_2016.tsv: \
+		datasets/jawiki.sampled_revisions.20k_2016.tsv
+	cat datasets/jawiki.sampled_revisions.20k_2016.tsv | \
+	./utility prelabel https://ja.wikipedia.org \
 		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--verbose > $@
+		--verbose > \
+	datasets/jawiki.prelabeled_revisions.20k_2016.tsv
+
+datasets/jawiki.rev_reverted.20k_2016.tsv: \
+		datasets/jawiki.sampled_revisions.20k_2016.tsv
+	cat datasets/jawiki.sampled_revisions.20k_2016.tsv | \
+	./utility label_reverted \
+		--host https://ja.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/jawiki.rev_reverted.20k_2016.tsv
+
+datasets/jawiki.features_reverted.20k_2016.tsv: \
+		datasets/jawiki.rev_reverted.20k_2016.tsv
+	cat datasets/jawiki.rev_reverted.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.jawiki.reverted \
+		--host https://ja.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/jawiki.features_reverted.20k_2016.tsv
+
+tuning_reports/jawiki.reverted.md: \
+		datasets/jawiki.features_reverted.20k_2016.tsv
+	cat datasets/jawiki.features_reverted.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.jawiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/jawiki.reverted.md
+
+models/jawiki.reverted.gradient_boosting.model: \
+		datasets/jawiki.features_reverted.20k_2016.tsv
+	cut datasets/jawiki.features_reverted.20k_2016.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.jawiki.reverted \
+		--version 0.0.1 \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=1' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/jawiki.reverted.gradient_boosting.model
+
+jawiki_models: \
+	models/jawiki.reverted.gradient_boosting.model
+
+jawiki_tuning_reports: \
+	tuning_reports/jawiki.reverted.md
 
 
 ############################# Korean Wikipedia ################################
