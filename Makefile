@@ -20,30 +20,6 @@ models: \
 		viwiki_models \
 		wikidatawiki_models
 
-old_models: \
-    models/dewiki.reverted.linear_svc_balanced.model \
-    models/enwiki.reverted.linear_svc_balanced.model \
-    models/enwiki.damaging.linear_svc_balanced.model \
-    models/enwiki.goodfaith.linear_svc_balanced.model \
-    models/eswiki.reverted.linear_svc_balanced.model \
-    models/etwiki.reverted.linear_svc_balanced.model \
-    models/fawiki.reverted.linear_svc_balanced.model \
-    models/fawiki.damaging.linear_svc_balanced.model \
-    models/fawiki.goodfaith.linear_svc_balanced.model \
-    models/frwiki.reverted.linear_svc_balanced.model \
-    models/hewiki.reverted.linear_svc_balanced.model \
-    models/idwiki.reverted.linear_svc_balanced.model \
-    models/itwiki.reverted.linear_svc_balanced.model \
-    models/nlwiki.reverted.linear_svc_balanced.model \
-    models/ptwiki.reverted.linear_svc_balanced.model \
-    models/ptwiki.damaging.linear_svc_balanced.model \
-    models/ptwiki.goodfaith.linear_svc_balanced.model \
-    models/trwiki.reverted.linear_svc_balanced.model \
-    models/trwiki.damaging.linear_svc_balanced.model \
-    models/trwiki.goodfaith.linear_svc_balanced.model \
-    models/ukwiki.reverted.linear_svc_balanced.model \
-    models/viwiki.reverted.linear_svc_balanced.model
-
 tuning_reports: \
 		arwiki_tuning_reports \
 		dewiki_tuning_reports \
@@ -203,21 +179,6 @@ models/dewiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/dewiki.reverted.gradient_boosting.model
 
-models/dewiki.reverted.linear_svc_balanced.model: \
-		datasets/dewiki.features_reverted.20k_2015.tsv
-	cat datasets/dewiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.dewiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/dewiki.reverted.linear_svc_balanced.model
-
 dewiki_models: \
 		models/dewiki.reverted.gradient_boosting.model
 
@@ -273,21 +234,6 @@ models/enwiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/enwiki.reverted.gradient_boosting.model
 
-models/enwiki.reverted.linear_svc_balanced.model: \
-		datasets/enwiki.features_reverted.20k_2015.tsv
-	cat datasets/enwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.enwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/enwiki.reverted.linear_svc_balanced.model
-
 datasets/enwiki.rev_damaging.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ \
@@ -333,21 +279,6 @@ models/enwiki.damaging.gradient_boosting.model: \
 		--label-type=bool > \
 	models/enwiki.damaging.gradient_boosting.model
 
-models/enwiki.damaging.linear_svc_balanced.model: \
-		datasets/enwiki.features_damaging.20k_2015.tsv
-	cat datasets/enwiki.features_damaging.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.enwiki.damaging \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/enwiki.damaging.linear_svc_balanced.model
-
 datasets/enwiki.rev_goodfaith.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ \
@@ -392,21 +323,6 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/enwiki.goodfaith.gradient_boosting.model
-
-models/enwiki.goodfaith.linear_svc_balanced.model: \
-		datasets/enwiki.features_goodfaith.20k_2015.tsv
-	cat datasets/enwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.enwiki.goodfaith \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/enwiki.goodfaith.linear_svc_balanced.model
 
 enwiki_models: \
 		models/enwiki.reverted.gradient_boosting.model \
@@ -480,21 +396,6 @@ models/eswiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/eswiki.reverted.gradient_boosting.model
 
-models/eswiki.reverted.linear_svc_balanced.model: \
-		datasets/eswiki.features_reverted.20k_2015.tsv
-	cat datasets/eswiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.eswiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/eswiki.reverted.linear_svc_balanced.model
-
 eswiki_models: \
 		models/eswiki.reverted.gradient_boosting.model
 
@@ -562,21 +463,6 @@ models/etwiki.reverted.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/etwiki.reverted.gradient_boosting.model
-
-models/etwiki.reverted.linear_svc_balanced.model: \
-		datasets/etwiki.features_reverted.20k_2015.tsv
-	cat datasets/etwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.etwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/etwiki.reverted.linear_svc_balanced.model
 
 etwiki_models: \
 		models/etwiki.reverted.gradient_boosting.model
@@ -646,21 +532,6 @@ models/fawiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/fawiki.reverted.gradient_boosting.model
 
-models/fawiki.reverted.linear_svc_balanced.model: \
-		datasets/fawiki.features_reverted.20k_2015.tsv
-	cat datasets/fawiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.fawiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/fawiki.reverted.linear_svc_balanced.model
-
 datasets/fawiki.rev_damaging.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ \
@@ -706,21 +577,6 @@ models/fawiki.damaging.gradient_boosting.model: \
 		--label-type=bool > \
 	models/fawiki.damaging.gradient_boosting.model
 
-models/fawiki.damaging.linear_svc_balanced.model: \
-		datasets/fawiki.features_damaging.20k_2015.tsv
-	cat datasets/fawiki.features_damaging.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.fawiki.damaging \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/fawiki.damaging.linear_svc_balanced.model
-
 datasets/fawiki.rev_goodfaith.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ \
@@ -765,21 +621,6 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/fawiki.goodfaith.gradient_boosting.model
-
-models/fawiki.goodfaith.linear_svc_balanced.model: \
-		datasets/fawiki.features_goodfaith.20k_2015.tsv
-	cat datasets/fawiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.fawiki.goodfaith \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/fawiki.goodfaith.linear_svc_balanced.model
 
 fawiki_models: \
 		models/fawiki.reverted.gradient_boosting.model \
@@ -852,21 +693,6 @@ models/frwiki.reverted.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/frwiki.reverted.gradient_boosting.model
-
-models/frwiki.reverted.linear_svc_balanced.model: \
-		datasets/frwiki.features_reverted.20k_2015.tsv
-	cat datasets/frwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.frwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/frwiki.reverted.linear_svc_balanced.model
 
 frwiki_models: \
 		models/frwiki.reverted.gradient_boosting.model
@@ -946,21 +772,6 @@ models/hewiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/hewiki.reverted.gradient_boosting.model
 
-models/hewiki.reverted.linear_svc_balanced.model: \
-		datasets/hewiki.features_reverted.20k_2015.tsv
-	cat datasets/hewiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.hewiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/hewiki.reverted.linear_svc_balanced.model
-
 hewiki_models: \
 		models/hewiki.reverted.gradient_boosting.model
 
@@ -1029,21 +840,6 @@ models/idwiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/idwiki.reverted.gradient_boosting.model
 
-models/idwiki.reverted.linear_svc_balanced.model: \
-		datasets/idwiki.features_reverted.20k_2015.tsv
-	cat datasets/idwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.idwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/idwiki.reverted.linear_svc_balanced.model
-
 idwiki_models: \
 		models/idwiki.reverted.gradient_boosting.model
 
@@ -1111,21 +907,6 @@ models/itwiki.reverted.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/itwiki.reverted.gradient_boosting.model
-
-models/itwiki.reverted.linear_svc_balanced.model: \
-		datasets/itwiki.features_reverted.20k_2015.tsv
-	cat datasets/itwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.itwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/itwiki.reverted.linear_svc_balanced.model
 
 itwiki_models: \
 		models/itwiki.reverted.gradient_boosting.model
@@ -1219,21 +1000,6 @@ models/nlwiki.reverted.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/nlwiki.reverted.gradient_boosting.model
-
-models/nlwiki.reverted.linear_svc_balanced.model: \
-		datasets/nlwiki.features_reverted.20k_2015.tsv
-	cat datasets/nlwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.nlwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/nlwiki.reverted.linear_svc_balanced.model
 
 nlwiki_models: \
 		models/nlwiki.reverted.gradient_boosting.model
@@ -1385,21 +1151,6 @@ models/ptwiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/ptwiki.reverted.gradient_boosting.model
 
-models/ptwiki.reverted.linear_svc_balanced.model: \
-		datasets/ptwiki.features_reverted.20k_2015.tsv
-	cat datasets/ptwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.ptwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/ptwiki.reverted.linear_svc_balanced.model
-
 datasets/ptwiki.rev_damaging.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ \
@@ -1445,21 +1196,6 @@ models/ptwiki.damaging.gradient_boosting.model: \
 		--label-type=bool > \
 	models/ptwiki.damaging.gradient_boosting.model
 
-models/ptwiki.damaging.linear_svc_balanced.model: \
-		datasets/ptwiki.features_damaging.20k_2015.tsv
-	cat datasets/ptwiki.features_damaging.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.ptwiki.damaging \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/ptwiki.damaging.linear_svc_balanced.model
-
 datasets/ptwiki.rev_goodfaith.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ \
@@ -1504,21 +1240,6 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/ptwiki.goodfaith.gradient_boosting.model
-
-models/ptwiki.goodfaith.linear_svc_balanced.model: \
-		datasets/ptwiki.features_goodfaith.20k_2015.tsv
-	cat datasets/ptwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.ptwiki.goodfaith \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/ptwiki.goodfaith.linear_svc_balanced.model
 
 ptwiki_models: \
 		models/ptwiki.reverted.gradient_boosting.model \
@@ -1648,21 +1369,6 @@ models/trwiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/trwiki.reverted.gradient_boosting.model
 
-models/trwiki.reverted.linear_svc_balanced.model: \
-		datasets/trwiki.features_reverted.20k_2015.tsv
-	cat datasets/trwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.trwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/trwiki.reverted.linear_svc_balanced.model
-
 datasets/trwiki.rev_damaging.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ \
@@ -1708,21 +1414,6 @@ models/trwiki.damaging.gradient_boosting.model: \
 		--label-type=bool > \
 	models/trwiki.damaging.gradient_boosting.model
 
-models/trwiki.damaging.linear_svc_balanced.model: \
-		datasets/trwiki.features_damaging.20k_2015.tsv
-	cat datasets/trwiki.features_damaging.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.trwiki.damaging \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/trwiki.damaging.linear_svc_balanced.model
-
 datasets/trwiki.rev_goodfaith.20k_2015.tsv:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ \
@@ -1767,21 +1458,6 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/trwiki.goodfaith.gradient_boosting.model
-
-models/trwiki.goodfaith.linear_svc_balanced.model: \
-		datasets/trwiki.features_goodfaith.20k_2015.tsv
-	cat datasets/trwiki.features_goodfaith.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.trwiki.goodfaith \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/trwiki.goodfaith.linear_svc_balanced.model
 
 trwiki_models: \
 		models/trwiki.reverted.gradient_boosting.model \
@@ -1854,21 +1530,6 @@ models/ukwiki.reverted.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/ukwiki.reverted.gradient_boosting.model
-
-models/ukwiki.reverted.linear_svc_balanced.model: \
-		datasets/ukwiki.features_reverted.20k_2015.tsv
-	cat datasets/ukwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.ukwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/ukwiki.reverted.linear_svc_balanced.model
 
 ukwiki_models: \
 		models/ukwiki.reverted.gradient_boosting.model
@@ -2002,21 +1663,6 @@ models/viwiki.reverted.gradient_boosting.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/viwiki.reverted.gradient_boosting.model
-
-models/viwiki.reverted.linear_svc_balanced.model: \
-		datasets/viwiki.features_reverted.20k_2015.tsv
-	cat datasets/viwiki.features_reverted.20k_2015.tsv | cut -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.LinearSVC \
-		editquality.feature_lists.viwiki.reverted \
-		--version=0.1.0 \
-		-p 'cache_size=100000' \
-		-p 'C=0.1' \
-		$(test_statistics) \
-		--balance-sample \
-		--center --scale \
-		--label-type=bool > \
-	models/viwiki.reverted.linear_svc_balanced.model
 
 viwiki_models: \
 		models/viwiki.reverted.gradient_boosting.model
