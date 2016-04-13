@@ -59,10 +59,25 @@ datasets/arwiki.prelabeled_revisions.20k_2016.tsv: \
 		datasets/arwiki.sampled_revisions.20k_2016.tsv
 	cat datasets/arwiki.sampled_revisions.20k_2016.tsv | \
 	./utility prelabel https://ar.wikipedia.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/arwiki.prelabeled_revisions.20k_2016.tsv
+
+datasets/arwiki.revisions_for_review.5k_2016.tsv: \
+		datasets/arwiki.prelabeled_revisions.20k_2016.tsv
+	( \
+	  echo "rev_id\tneeds_review\treason"; \
+	  ( \
+	    cat datasets/arwiki.prelabeled_revisions.20k_2016.tsv | \
+	    grep "True" | \
+	    shuf -n 2500; \
+	    cat datasets/arwiki.prelabeled_revisions.20k_2016.tsv | \
+	    grep "False" | \
+	    shuf -n 2500 \
+	 ) | \
+	 shuf \
+	) > datasets/arwiki.revisions_for_review.5k_2016.tsv
 
 datasets/arwiki.rev_reverted.20k_2016.tsv: \
 		datasets/arwiki.sampled_revisions.20k_2016.tsv
@@ -778,6 +793,36 @@ hewiki_models: \
 hewiki_tuning_reports: \
 		tuning_reports/hewiki.reverted.md
 
+############################### Hungarian Wikipedia ###########################
+
+datasets/huwiki.sampled_revisions.40k_2016.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/79645/output/0/tsv?download=true > \
+	datasets/huwiki.sampled_revisions.40k_2016.tsv
+
+datasets/huwiki.prelabeled_revisions.40k_2016.tsv: \
+		datasets/huwiki.sampled_revisions.40k_2016.tsv
+	cat datasets/huwiki.sampled_revisions.40k_2016.tsv | \
+	./utility prelabel https://hu.wikipedia.org \
+		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/huwiki.prelabeled_revisions.40k_2016.tsv
+
+datasets/huwiki.revisions_for_review.5k_2016.tsv: \
+		datasets/huwiki.prelabeled_revisions.40k_2016.tsv
+	( \
+	  echo "rev_id\tneeds_review\treason"; \
+	  ( \
+	    cat datasets/huwiki.prelabeled_revisions.40k_2016.tsv | \
+	    grep "True" | \
+	    shuf -n 2500; \
+	    cat datasets/huwiki.prelabeled_revisions.40k_2016.tsv | \
+	    grep "False" | \
+	    shuf -n 2500 \
+	 ) | \
+	 shuf \
+	) > datasets/huwiki.revisions_for_review.5k_2016.tsv
+
 ############################### Indonesian Wikipedia ##########################
 
 datasets/idwiki.sampled_revisions.20k_2015.tsv:
@@ -1319,6 +1364,36 @@ ruwiki_models: \
 
 ruwiki_tuning_reports: \
 		tuning_reports/ruwiki.reverted.md
+
+################################# Swedish Wikipedia ###########################
+
+datasets/svwiki.sampled_revisions.40k_2016.tsv:
+	wget -qO- http://quarry.wmflabs.org/run/79646/output/0/tsv?download=true > \
+	datasets/svwiki.sampled_revisions.40k_2016.tsv
+
+datasets/svwiki.prelabeled_revisions.40k_2016.tsv: \
+		datasets/svwiki.sampled_revisions.40k_2016.tsv
+	cat datasets/svwiki.sampled_revisions.40k_2016.tsv | \
+	./utility prelabel https://sv.wikipedia.org \
+		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/svwiki.prelabeled_revisions.40k_2016.tsv
+
+datasets/svwiki.revisions_for_review.5k_2016.tsv: \
+		datasets/svwiki.prelabeled_revisions.40k_2016.tsv
+	( \
+	  echo "rev_id\tneeds_review\treason"; \
+	  ( \
+	    cat datasets/svwiki.prelabeled_revisions.40k_2016.tsv | \
+	    grep "True" | \
+	    shuf -n 2500; \
+	    cat datasets/svwiki.prelabeled_revisions.40k_2016.tsv | \
+	    grep "False" | \
+	    shuf -n 2500 \
+	 ) | \
+	 shuf \
+	) > datasets/svwiki.revisions_for_review.5k_2016.tsv
 
 ############################# Turkish Wikipedia ############################
 
