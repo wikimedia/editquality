@@ -718,11 +718,11 @@ datasets/hewiki.prelabeled_revisions.20k_2015.tsv: \
 datasets/hewiki.revisions_to_review.5k_2015.tsv: \
 		datasets/hewiki.prelabeled_revisions.20k_2015.tsv
 	(echo "rev_id\tneeds_review\treason"; \
-	 (cat datasets/hewiki.prelabeled_revisions.20k_2015.tsv | grep True | \
-	  shuf -n 2500; \
-	  cat datasets/hewiki.prelabeled_revisions.20k_2015.tsv | grep False | \
-	  shuf -n 2500 \
-	 ) | shuf \
+	(cat datasets/hewiki.prelabeled_revisions.20k_2015.tsv | grep True | \
+	 shuf -n 2500; \
+	 cat datasets/hewiki.prelabeled_revisions.20k_2015.tsv | grep False | \
+	 shuf -n 2500 \
+	) | shuf \
 	) > datasets/hewiki.revisions_to_review.5k_2015.tsv
 
 datasets/hewiki.rev_reverted.20k_2015.tsv: \
@@ -1025,11 +1025,11 @@ datasets/nowiki.prelabeled_revisions.20k_2015.tsv: \
 datasets/nowiki.revisions_to_review.5k_2015.tsv: \
 		datasets/nowiki.prelabeled_revisions.20k_2015.tsv
 	(echo "rev_id\tneeds_review\treason"; \
-	 (cat datasets/nowiki.prelabeled_revisions.20k_2015.tsv | grep True | \
-	  shuf -n 2500; \
-	  cat datasets/nowiki.prelabeled_revisions.20k_2015.tsv | grep False | \
-	  shuf -n 2500 \
-	 ) | shuf \
+	(cat datasets/nowiki.prelabeled_revisions.20k_2015.tsv | grep True | \
+	 shuf -n 2500; \
+	 cat datasets/nowiki.prelabeled_revisions.20k_2015.tsv | grep False | \
+	 shuf -n 2500 \
+	) | shuf \
 	) > datasets/nowiki.revisions_to_review.5k_2015.tsv
 
 
@@ -1314,11 +1314,118 @@ models/ruwiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/ruwiki.reverted.gradient_boosting.model
 
+datasets/ruwiki.rev_damaging.5k_2016.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/ruwiki/10/ \
+		damaging \
+		--default=False > \
+	datasets/ruwiki.rev_damaging.5k_2016.tsv
+
+datasets/ruwiki.rev_damaging.20k_2016.tsv: \
+		datasets/ruwiki.prelabeled_revisions.20k_2015.ts
+	cut datasets/ruwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
+		grep False | \
+		cat datasets/ruwiki.rev_damaging.5k_2016.tsv - | shuf > \
+	datasets/ruwiki.rev_damaging.20k_2016.tsv
+
+datasets/ruwiki.features_damaging.20k_2016.tsv: \
+		datasets/ruwiki.rev_damaging.20k_2016.tsv
+	cat datasets/ruwiki.rev_damaging.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.ruwiki.damaging \
+		--host https://ru.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/ruwiki.features_damaging.20k_2016.tsv
+
+tuning_reports/ruwiki.damaging.md: \
+		datasets/ruwiki.features_damaging.20k_2016.tsv
+	cat datasets/ruwiki.features_damaging.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ruwiki.damaging \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/ruwiki.damaging.md
+
+models/ruwiki.damaging.gradient_boosting.model: \
+		datasets/ruwiki.features_damaging.20k_2016.tsv
+	cat datasets/ruwiki.features_damaging.20k_2016.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.ruwiki.damaging \
+		--version=0.1.1 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/ruwiki.damaging.gradient_boosting.model
+
+datasets/ruwiki.rev_goodfaith.5k_2016.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/ruwiki/10/ \
+		goodfaith \
+		--default=False > \
+	datasets/ruwiki.rev_goodfaith.5k_2016.tsv
+
+datasets/ruwiki.rev_goodfaith.20k_2016.tsv: \
+		datasets/ruwiki.rev_goodfaith.5k_2016.tsv
+	cut datasets/ruwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
+		grep False | \
+		cat datasets/ruwiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+	datasets/ruwiki.rev_goodfaith.20k_2016.tsv
+
+datasets/ruwiki.features_goodfaith.20k_2016.tsv: \
+		datasets/ruwiki.rev_goodfaith.20k_2016.tsv
+	cat datasets/ruwiki.rev_goodfaith.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.ruwiki.goodfaith \
+		--host https://ru.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/ruwiki.features_goodfaith.20k_2016.tsv
+tuning_reports/ruwiki.goodfaith.md: \
+		datasets/ruwiki.features_goodfaith.20k_2016.tsv
+	cat datasets/ruwiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ruwiki.goodfaith \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/ruwiki.goodfaith.md
+
+models/ruwiki.goodfaith.gradient_boosting.model: \
+		datasets/ruwiki.features_goodfaith.20k_2016.tsv
+	cat datasets/ruwiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.ruwiki.goodfaith \
+		--version=0.1.1 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/ruwiki.goodfaith.gradient_boosting.model
+
 ruwiki_models: \
-		models/ruwiki.reverted.gradient_boosting.model
+		models/ruwiki.reverted.gradient_boosting.model \
+		models/ruwiki.damaging.gradient_boosting.model \
+		models/ruwiki.goodfaith.gradient_boosting.model
 
 ruwiki_tuning_reports: \
-		tuning_reports/ruwiki.reverted.md
+		tuning_reports/ruwiki.reverted.md \
+		tuning_reports/ruwiki.damaging.md \
+		tuning_reports/ruwiki.goodfaith.md
 
 ############################# Turkish Wikipedia ############################
 
@@ -1569,16 +1676,16 @@ datasets/urwiki.prelabeled_revisions.500k_2015.tsv: \
 datasets/urwiki.revisions_for_review.5k_2015.tsv: \
 		datasets/urwiki.prelabeled_revisions.500k_2015.tsv
 	( \
-	  echo "rev_id\tneeds_review\treason"; \
-	  ( \
-	    cat datasets/urwiki.prelabeled_revisions.500k_2015.tsv | \
-	    grep "True" | \
-	    shuf -n 2500; \
-	    cat datasets/urwiki.prelabeled_revisions.500k_2015.tsv | \
-	    grep "False" | \
-	    shuf -n 2500 \
-	 ) | \
-	 shuf \
+	 echo "rev_id\tneeds_review\treason"; \
+	 ( \
+	   cat datasets/urwiki.prelabeled_revisions.500k_2015.tsv | \
+	   grep "True" | \
+	   shuf -n 2500; \
+	   cat datasets/urwiki.prelabeled_revisions.500k_2015.tsv | \
+	   grep "False" | \
+	   shuf -n 2500 \
+	) | \
+	shuf \
 	) > datasets/urwiki.revisions_for_review.5k_2015.tsv
 
 
@@ -1610,11 +1717,11 @@ datasets/viwiki.prelabeled_revisions.500k_2015.tsv: \
 datasets/viwiki.revisions_to_review.5k_2015.tsv: \
 		datasets/viwiki.prelabeled_revisions.500k_2015.tsv
 	(echo "rev_id\tneeds_review\treason"; \
-	 (cat datasets/viwiki.prelabeled_revisions.500k_2015.tsv | grep True | \
-	  shuf -n 2500; \
-	  cat datasets/viwiki.prelabeled_revisions.500k_2015.tsv | grep False | \
-	  shuf -n 2500 \
-	 ) | shuf \
+	(cat datasets/viwiki.prelabeled_revisions.500k_2015.tsv | grep True | \
+	 shuf -n 2500; \
+	 cat datasets/viwiki.prelabeled_revisions.500k_2015.tsv | grep False | \
+	 shuf -n 2500 \
+	) | shuf \
 	) > datasets/viwiki.revisions_to_review.500k_2015.tsv
 
 datasets/viwiki.rev_reverted.20k_2015.tsv: \
