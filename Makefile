@@ -9,6 +9,7 @@ models: \
 		fawiki_models \
 		frwiki_models \
 		hewiki_models \
+		huwiki_models \
 		idwiki_models \
 		itwiki_models \
 		nlwiki_models \
@@ -29,6 +30,7 @@ tuning_reports: \
 		fawiki_tuning_reports \
 		frwiki_tuning_reports \
 		hewiki_tuning_reports \
+		huwiki_tuning_reports \
 		idwiki_tuning_reports \
 		itwiki_tuning_reports \
 		nlwiki_tuning_reports \
@@ -808,6 +810,53 @@ datasets/huwiki.prelabeled_revisions.40k_2016.tsv: \
 		--verbose > \
 	datasets/huwiki.prelabeled_revisions.40k_2016.tsv
 
+datasets/huwiki.rev_reverted.40k_2016.tsv: \
+		datasets/huwiki.sampled_revisions.40k_2016.tsv
+	cat datasets/huwiki.sampled_revisions.40k_2016.tsv | \
+	./utility label_reverted \
+		--host https://hu.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/huwiki.rev_reverted.40k_2016.tsv
+
+datasets/huwiki.features_reverted.40k_2016.tsv: \
+		datasets/huwiki.rev_reverted.40k_2016.tsv
+	cat datasets/huwiki.rev_reverted.40k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.huwiki.reverted \
+		--host https://hu.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/huwiki.features_reverted.40k_2016.tsv
+
+tuning_reports/huwiki.reverted.md: \
+		datasets/huwiki.features_reverted.40k_2016.tsv
+	cat datasets/huwiki.features_reverted.40k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.huwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/huwiki.reverted.md
+
+models/huwiki.reverted.rf.model: \
+		datasets/huwiki.features_reverted.40k_2016.tsv
+	cut datasets/huwiki.features_reverted.40k_2016.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.huwiki.reverted \
+		--version 0.0.1 \
+		-p 'criterion="entropy"' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=320' \
+		-p 'min_samples_leaf=13' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/huwiki.reverted.rf.model
+
 datasets/huwiki.revisions_for_review.5k_2016.tsv: \
 		datasets/huwiki.prelabeled_revisions.40k_2016.tsv
 	( \
@@ -822,6 +871,12 @@ datasets/huwiki.revisions_for_review.5k_2016.tsv: \
 	 ) | \
 	 shuf \
 	) > datasets/huwiki.revisions_for_review.5k_2016.tsv
+
+huwiki_models: \
+	models/huwiki.reverted.rf.model
+
+huwiki_tuning_reports: \
+	tuning_reports/huwiki.reverted.md
 
 ############################### Indonesian Wikipedia ##########################
 
