@@ -1101,11 +1101,119 @@ models/nlwiki.reverted.gradient_boosting.model: \
 		--label-type=bool > \
 	models/nlwiki.reverted.gradient_boosting.model
 
+datasets/nlwiki.rev_damaging.5k_2016.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/nlwiki/14/ \
+		damaging \
+		--default=False > \
+	datasets/nlwiki.rev_damaging.5k_2016.tsv
+
+datasets/nlwiki.rev_damaging.20k_2016.tsv: \
+		datasets/nlwiki.prelabeled_revisions.20k_2015.tsv
+	cut datasets/nlwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
+		grep False | \
+		cat datasets/nlwiki.rev_damaging.5k_2016.tsv - | shuf > \
+	datasets/nlwiki.rev_damaging.20k_2016.tsv
+
+datasets/nlwiki.features_damaging.20k_2016.tsv: \
+		datasets/nlwiki.rev_damaging.20k_2016.tsv
+	cat datasets/nlwiki.rev_damaging.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.nlwiki.damaging \
+		--host https://nl.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/nlwiki.features_damaging.20k_2016.tsv
+
+tuning_reports/nlwiki.damaging.md: \
+		datasets/nlwiki.features_damaging.20k_2016.tsv
+	cat datasets/nlwiki.features_damaging.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.nlwiki.damaging \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/nlwiki.damaging.md
+
+models/nlwiki.damaging.gradient_boosting.model: \
+		datasets/nlwiki.features_damaging.20k_2016.tsv
+	cat datasets/nlwiki.features_damaging.20k_2016.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.nlwiki.damaging \
+		--version=0.1.1 \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/nlwiki.damaging.gradient_boosting.model
+
+datasets/nlwiki.rev_goodfaith.5k_2016.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/nlwiki/14/ \
+		goodfaith \
+		--default=False > \
+	datasets/nlwiki.rev_goodfaith.5k_2016.tsv
+
+datasets/nlwiki.rev_goodfaith.20k_2016.tsv: \
+		datasets/nlwiki.rev_goodfaith.5k_2016.tsv
+	cut datasets/nlwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
+		grep False | sed -e 's/False/True/g' | \
+		cat datasets/nlwiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+	datasets/nlwiki.rev_goodfaith.20k_2016.tsv
+
+datasets/nlwiki.features_goodfaith.20k_2016.tsv: \
+		datasets/nlwiki.rev_goodfaith.20k_2016.tsv
+	cat datasets/nlwiki.rev_goodfaith.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.nlwiki.goodfaith \
+		--host https://nl.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/nlwiki.features_goodfaith.20k_2016.tsv
+
+tuning_reports/nlwiki.goodfaith.md: \
+		datasets/nlwiki.features_goodfaith.20k_2016.tsv
+	cat datasets/nlwiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.nlwiki.goodfaith \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/nlwiki.goodfaith.md
+
+models/nlwiki.goodfaith.gradient_boosting.model: \
+		datasets/nlwiki.features_goodfaith.20k_2016.tsv
+	cat datasets/nlwiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.nlwiki.goodfaith \
+		--version=0.1.1 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/nlwiki.goodfaith.gradient_boosting.model
+
 nlwiki_models: \
-		models/nlwiki.reverted.gradient_boosting.model
+		models/nlwiki.reverted.gradient_boosting.model \
+                models/nlwiki.damaging.gradient_boosting.model \
+                models/nlwiki.goodfaith.gradient_boosting.model
 
 nlwiki_tuning_reports: \
-		tuning_reports/nlwiki.reverted.md
+		tuning_reports/nlwiki.reverted.md \
+                tuning_reports/nlwiki.damaging.md \
+                tuning_reports/nlwiki.goodfaith.md
 
 ############################# Norwegian Wikipedia #############################
 
@@ -1422,7 +1530,7 @@ datasets/ruwiki.rev_damaging.5k_2016.tsv:
 	datasets/ruwiki.rev_damaging.5k_2016.tsv
 
 datasets/ruwiki.rev_damaging.20k_2016.tsv: \
-		datasets/ruwiki.prelabeled_revisions.20k_2015.ts
+		datasets/ruwiki.prelabeled_revisions.20k_2015.tsv
 	cut datasets/ruwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
 		grep False | \
 		cat datasets/ruwiki.rev_damaging.5k_2016.tsv - | shuf > \
@@ -1476,7 +1584,7 @@ datasets/ruwiki.rev_goodfaith.5k_2016.tsv:
 datasets/ruwiki.rev_goodfaith.20k_2016.tsv: \
 		datasets/ruwiki.rev_goodfaith.5k_2016.tsv
 	cut datasets/ruwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
-		grep False | \
+		grep False | sed -e 's/False/True/g' | \
 		cat datasets/ruwiki.rev_goodfaith.5k_2016.tsv - | shuf > \
 	datasets/ruwiki.rev_goodfaith.20k_2016.tsv
 
@@ -1507,7 +1615,7 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.goodfaith \
 		--version=0.1.1 \
-		-p 'max_depth=5' \
+		-p 'max_depth=3' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
