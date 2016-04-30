@@ -1207,13 +1207,13 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 
 nlwiki_models: \
 		models/nlwiki.reverted.gradient_boosting.model \
-                models/nlwiki.damaging.gradient_boosting.model \
-                models/nlwiki.goodfaith.gradient_boosting.model
+		models/nlwiki.damaging.gradient_boosting.model \
+		models/nlwiki.goodfaith.gradient_boosting.model
 
 nlwiki_tuning_reports: \
 		tuning_reports/nlwiki.reverted.md \
-                tuning_reports/nlwiki.damaging.md \
-                tuning_reports/nlwiki.goodfaith.md
+		tuning_reports/nlwiki.damaging.md \
+		tuning_reports/nlwiki.goodfaith.md
 
 ############################# Norwegian Wikipedia #############################
 
@@ -2035,6 +2035,18 @@ datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv: \
 		--include-revid > \
 	datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv
 
+tuning_reports/wikidatawiki.reverted.md: \
+		datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv
+	cat datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.wikidatawiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--scoring=roc_auc \
+		--label-type=bool > \
+	tuning_reports/wikidatawiki.reverted.md
+
 models/wikidatawiki.reverted.rf.model: \
 		datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv
 	cut datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv -f2- | \
@@ -2061,20 +2073,115 @@ datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv: \
 		--verbose > \
 	datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv
 
-tuning_reports/wikidatawiki.reverted.md: \
-		datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv
-	cat datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv | cut -f2- | \
+datasets/wikidatawiki.rev_damaging.5k_2016.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/wikidatawiki/19/ \
+		damaging \
+		--default=False > \
+	datasets/wikidatawiki.rev_damaging.5k_2016.tsv
+
+datasets/wikidatawiki.rev_damaging.20k_2016.tsv: \
+		datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv
+	cut datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv -f1,2 | \
+		grep False | \
+		cat datasets/wikidatawiki.rev_damaging.5k_2016.tsv - | shuf > \
+	datasets/wikidatawiki.rev_damaging.20k_2016.tsv
+
+datasets/wikidatawiki.features_damaging.20k_2016.tsv: \
+		datasets/wikidatawiki.rev_damaging.20k_2016.tsv
+	cat datasets/wikidatawiki.rev_damaging.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.wikidatawiki.damaging \
+		--host https://www.wikidata.org \
+		--include-revid \
+		--verbose > \
+	datasets/wikidatawiki.features_damaging.20k_2016.tsv
+
+tuning_reports/wikidatawiki.damaging.md: \
+		datasets/wikidatawiki.features_damaging.20k_2016.tsv
+	cat datasets/wikidatawiki.features_damaging.20k_2016.tsv | cut -f2- | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.wikidatawiki.reverted \
+		editquality.feature_lists.wikidatawiki.damaging \
 		--cv-timeout=60 \
 		--debug \
-		--scoring=roc_auc \
 		--label-type=bool > \
-	tuning_reports/wikidatawiki.reverted.md
+	tuning_reports/wikidatawiki.damaging.md
+
+models/wikidatawiki.damaging.gradient_boosting.model: \
+		datasets/wikidatawiki.features_damaging.20k_2016.tsv
+	cat datasets/wikidatawiki.features_damaging.20k_2016.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.wikidatawiki.damaging \
+		--version=0.1.1 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/wikidatawiki.damaging.gradient_boosting.model
+
+datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/wikidatawiki/19/ \
+		goodfaith \
+		--default=False > \
+	datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv
+
+datasets/wikidatawiki.rev_goodfaith.20k_2016.tsv: \
+		datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv
+	cut datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv -f1,2 | \
+		grep False | sed -e 's/False/True/g' | \
+		cat datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+	datasets/wikidatawiki.rev_goodfaith.20k_2016.tsv
+
+datasets/wikidatawiki.features_goodfaith.20k_2016.tsv: \
+		datasets/wikidatawiki.rev_goodfaith.20k_2016.tsv
+	cat datasets/wikidatawiki.rev_goodfaith.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.wikidatawiki.goodfaith \
+		--host https://www.wikidata.org \
+		--include-revid \
+		--verbose > \
+	datasets/wikidatawiki.features_goodfaith.20k_2016.tsv
+
+tuning_reports/wikidatawiki.goodfaith.md: \
+		datasets/wikidatawiki.features_goodfaith.20k_2016.tsv
+	cat datasets/wikidatawiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.wikidatawiki.goodfaith \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/wikidatawiki.goodfaith.md
+
+models/wikidatawiki.goodfaith.gradient_boosting.model: \
+		datasets/wikidatawiki.features_goodfaith.20k_2016.tsv
+	cat datasets/wikidatawiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.wikidatawiki.goodfaith \
+		--version=0.1.1 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/wikidatawiki.goodfaith.gradient_boosting.model
 
 wikidatawiki_models: \
 		models/wikidatawiki.reverted.rf.model
-
+		models/wikidatawiki.damaging.gradient_boosting.model
+		models/wikidatawiki.goodfaith.gradient_boosting.model
 wikidatawiki_tuning_reports: \
 		tuning_reports/wikidatawiki.reverted.md
+		tuning_reports/wikidatawiki.damaging.md
+		tuning_reports/wikidatawiki.goodfaith.md
