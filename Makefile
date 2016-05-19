@@ -16,6 +16,7 @@ models: \
 		plwiki_models \
 		ptwiki_models \
 		ruwiki_models \
+		svwiki_models \
 		trwiki_models \
 		ukwiki_models \
 		viwiki_models \
@@ -37,6 +38,7 @@ tuning_reports: \
 		plwiki_tuning_reports \
 		ptwiki_tuning_reports \
 		ruwiki_tuning_reports \
+		svwiki_tuning_reports \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
 		viwiki_tuning_reports \
@@ -1650,6 +1652,53 @@ datasets/svwiki.prelabeled_revisions.40k_2016.tsv: \
 		--verbose > \
 	datasets/svwiki.prelabeled_revisions.40k_2016.tsv
 
+datasets/svwiki.rev_reverted.40k_2016.tsv: \
+		datasets/svwiki.sampled_revisions.40k_2016.tsv
+	cat datasets/svwiki.sampled_revisions.40k_2016.tsv | \
+	./utility label_reverted \
+		--host https://sv.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/svwiki.rev_reverted.40k_2016.tsv
+
+datasets/svwiki.features_reverted.40k_2016.tsv: \
+		datasets/svwiki.rev_reverted.40k_2016.tsv
+	cat datasets/svwiki.rev_reverted.40k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.svwiki.reverted \
+		--host https://sv.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/svwiki.features_reverted.40k_2016.tsv
+
+tuning_reports/svwiki.reverted.md: \
+		datasets/svwiki.features_reverted.40k_2016.tsv
+	cat datasets/svwiki.features_reverted.40k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.svwiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/svwiki.reverted.md
+
+models/svwiki.reverted.rf.model: \
+		datasets/svwiki.features_reverted.40k_2016.tsv
+	cut datasets/svwiki.features_reverted.40k_2016.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.svwiki.reverted \
+		--version 0.0.1 \
+		-p 'criterion="entropy"' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=640' \
+		-p 'min_samples_leaf=3' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/svwiki.reverted.rf.model
+
 datasets/svwiki.revisions_for_review.5k_2016.tsv: \
 		datasets/svwiki.prelabeled_revisions.40k_2016.tsv
 	( \
@@ -1664,6 +1713,12 @@ datasets/svwiki.revisions_for_review.5k_2016.tsv: \
 	 ) | \
 	 shuf \
 	) > datasets/svwiki.revisions_for_review.5k_2016.tsv
+
+svwiki_models: \
+	models/svwiki.reverted.rf.model
+
+svwiki_tuning_reports: \
+	tuning_reports/svwiki.reverted.md
 
 ############################# Turkish Wikipedia ############################
 
