@@ -1219,25 +1219,25 @@ nlwiki_tuning_reports: \
 
 ############################# Norwegian Wikipedia #############################
 
-datasets/nowiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/67249/output/0/tsv?download=true > \
-	datasets/nowiki.sampled_revisions.20k_2015.tsv
+datasets/nowiki.sampled_revisions.100k_2015.tsv:
+	wget -qO- https://quarry.wmflabs.org/run/67250/output/0/tsv?download=true > \
+	datasets/nowiki.sampled_revisions.100k_2015.tsv
 
-datasets/nowiki.prelabeled_revisions.20k_2015.tsv: \
-		datasets/nowiki.sampled_revisions.20k_2015.tsv
-	cat datasets/nowiki.sampled_revisions.20k_2015.tsv | \
+datasets/nowiki.prelabeled_revisions.100k_2015.tsv: \
+		datasets/nowiki.sampled_revisions.100k_2015.tsv
+	cat datasets/nowiki.sampled_revisions.100k_2015.tsv | \
 	./utility prelabel https://no.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
-	datasets/nowiki.prelabeled_revisions.20k_2015.tsv
+	datasets/nowiki.prelabeled_revisions.100k_2015.tsv
 
 datasets/nowiki.revisions_to_review.5k_2015.tsv: \
-		datasets/nowiki.prelabeled_revisions.20k_2015.tsv
+		datasets/nowiki.prelabeled_revisions.100k_2015.tsv
 	(echo "rev_id\tneeds_review\treason"; \
-	(cat datasets/nowiki.prelabeled_revisions.20k_2015.tsv | grep True | \
+	(cat datasets/nowiki.prelabeled_revisions.100k_2015.tsv | grep True | \
 	 shuf -n 2500; \
-	 cat datasets/nowiki.prelabeled_revisions.20k_2015.tsv | grep False | \
+	 cat datasets/nowiki.prelabeled_revisions.100k_2015.tsv | grep False | \
 	 shuf -n 2500 \
 	) | shuf \
 	) > datasets/nowiki.revisions_to_review.5k_2015.tsv
