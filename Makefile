@@ -13,6 +13,7 @@ models: \
 		idwiki_models \
 		itwiki_models \
 		nlwiki_models \
+		nowiki_models \
 		plwiki_models \
 		ptwiki_models \
 		ruwiki_models \
@@ -35,6 +36,7 @@ tuning_reports: \
 		idwiki_tuning_reports \
 		itwiki_tuning_reports \
 		nlwiki_tuning_reports \
+		nowiki_tuning_reports \
 		plwiki_tuning_reports \
 		ptwiki_tuning_reports \
 		ruwiki_tuning_reports \
@@ -1242,6 +1244,65 @@ datasets/nowiki.revisions_to_review.5k_2015.tsv: \
 	) | shuf \
 	) > datasets/nowiki.revisions_to_review.5k_2015.tsv
 
+datasets/nowiki.sampled_revisions.40k_2015.tsv:
+		datasets/nowiki.sampled_revisions.100k_2015.tsv
+	(echo "rev_id";
+         tail --lines=+2 datasets/nowiki.sampled_revisions.100k_2015.tsv | \
+	 shuf -n 40000) > \
+	datasets/nowiki.sampled_revisions.40k_2015.tsv
+
+datasets/nowiki.rev_reverted.40k_2015.tsv: \
+		datasets/nowiki.sampled_revisions.40k_2015.tsv
+	cat datasets/nowiki.sampled_revisions.40k_2015.tsv | \
+	./utility label_reverted \
+		--host https://no.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/nowiki.rev_reverted.40k_2015.tsv
+
+datasets/nowiki.features_reverted.40k_2015.tsv: \
+		datasets/nowiki.rev_reverted.40k_2015.tsv
+	cat datasets/nowiki.rev_reverted.40k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.nowiki.reverted \
+		--host https://no.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/nowiki.features_reverted.40k_2015.tsv
+
+tuning_reports/nowiki.reverted.md: \
+		datasets/nowiki.features_reverted.40k_2015.tsv
+	cat datasets/nowiki.features_reverted.40k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.nowiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/nowiki.reverted.md
+
+models/nowiki.reverted.rf.model: \
+		datasets/nowiki.features_reverted.40k_2015.tsv
+	cut datasets/nowiki.features_reverted.40k_2015.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.nowiki.reverted \
+		--version 0.1.0 \
+		-p 'max_features="log2"' \
+		-p 'criterion="entropy"' \
+		-p 'min_samples_leaf=3' \
+		-p 'n_estimators=640' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/nowiki.reverted.rf.model
+
+nowiki_models: \
+		models/nowiki.reverted.rf.model
+
+nowiki_tuning_reports: \
+		tuning_reports/nowiki.reverted.md
 
 ############################# Polish Wikipedia ############################
 
