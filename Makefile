@@ -354,6 +354,29 @@ enwiki_tuning_reports: \
 		tuning_reports/enwiki.reverted.md \
 		tuning_reports/enwiki.damaging.md \
 		tuning_reports/enwiki.goodfaith.md
+############################# English Wiktionary ################################
+
+datasets/enwiktionary.sampled_revisions.40k_2016.tsv:
+	wget -qO- https://quarry.wmflabs.org/run/96182/output/0/tsv?download=true > \
+	datasets/enwiktionary.sampled_revisions.40k_2016.tsv
+
+datasets/enwiktionary.prelabeled_revisions.40k_2016.tsv: \
+		datasets/enwiktionary.sampled_revisions.40k_2015.tsv
+	cat datasets/enwiktionary.sampled_revisions.40k_2016.tsv | \
+	./utility prelabel https://en.wiktionary.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/enwiktionary.prelabeled_revisions.40k_2016.tsv
+
+datasets/enwiktionary.rev_reverted.40k_2016.tsv: \
+		datasets/enwiktionary.sampled_revisions.40k_2016.tsv
+	cat datasets/enwiktionary.sampled_revisions.40k_2016.tsv | \
+	./utility label_reverted \
+		--host https://en.wiktionary.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/enwiktionary.rev_reverted.40k_2016.tsv
 
 ############################# Spanish Wikipedia ################################
 
@@ -1247,7 +1270,7 @@ datasets/nowiki.revisions_to_review.5k_2015.tsv: \
 datasets/nowiki.sampled_revisions.40k_2015.tsv:
 		datasets/nowiki.sampled_revisions.100k_2015.tsv
 	(echo "rev_id";
-         tail --lines=+2 datasets/nowiki.sampled_revisions.100k_2015.tsv | \
+	 tail --lines=+2 datasets/nowiki.sampled_revisions.100k_2015.tsv | \
 	 shuf -n 40000) > \
 	datasets/nowiki.sampled_revisions.40k_2015.tsv
 
