@@ -2,6 +2,7 @@
 
 models: \
 		arwiki_models \
+		cswiki_models \
 		dewiki_models \
 		enwiki_models \
 		eswiki_models \
@@ -25,6 +26,7 @@ models: \
 
 tuning_reports: \
 		arwiki_tuning_reports \
+		cswiki_tuning_reports \
 		dewiki_tuning_reports \
 		enwiki_tuning_reports \
 		eswiki_tuning_reports \
@@ -137,6 +139,89 @@ arwiki_models: \
 
 arwiki_tuning_reports: \
 	tuning_reports/arwiki.reverted.md
+
+############################# Czech Wikipedia ################################
+
+datasets/cswiki.sampled_revisions.20k_2016.tsv:
+	wget -qO- https://quarry.wmflabs.org/run/97125/output/0/tsv?download=true > \
+	datasets/cswiki.sampled_revisions.20k_2016.tsv
+
+datasets/cswiki.prelabeled_revisions.20k_2016.tsv: \
+		datasets/cswiki.sampled_revisions.20k_2016.tsv
+	cat datasets/cswiki.sampled_revisions.20k_2016.tsv | \
+	./utility prelabel https://cs.wikipedia.org \
+		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/cswiki.prelabeled_revisions.20k_2016.tsv
+
+datasets/cswiki.revisions_for_review.5k_2016.tsv: \
+		datasets/cswiki.prelabeled_revisions.20k_2016.tsv
+	( \
+	  echo "rev_id\tneeds_review\treason"; \
+	  ( \
+	    cat datasets/cswiki.prelabeled_revisions.20k_2016.tsv | \
+	    grep "True" | \
+	    shuf -n 2500; \
+	    cat datasets/cswiki.prelabeled_revisions.20k_2016.tsv | \
+	    grep "False" | \
+	    shuf -n 2500 \
+	 ) | \
+	 shuf \
+	) > datasets/cswiki.revisions_for_review.5k_2016.tsv
+
+datasets/cswiki.rev_reverted.20k_2016.tsv: \
+		datasets/cswiki.sampled_revisions.20k_2016.tsv
+	cat datasets/cswiki.sampled_revisions.20k_2016.tsv | \
+	./utility label_reverted \
+		--host https://cs.wikipedia.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/cswiki.rev_reverted.20k_2016.tsv
+	
+datasets/cswiki.features_reverted.20k_2016.tsv: \
+		datasets/cswiki.rev_reverted.20k_2016.tsv
+	cat datasets/cswiki.rev_reverted.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.cswiki.reverted \
+		--host https://cs.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/cswiki.features_reverted.20k_2016.tsv
+
+tuning_reports/cswiki.reverted.md: \
+		datasets/cswiki.features_reverted.20k_2016.tsv
+	cat datasets/cswiki.features_reverted.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cswiki.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/cswiki.reverted.md
+
+models/cswiki.reverted.rf.model: \
+		datasets/cswiki.features_reverted.20k_2016.tsv
+	cut datasets/cswiki.features_reverted.20k_2016.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.cswiki.reverted \
+		--version 0.0.1 \
+		-p 'criterion="entropy"' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=640' \
+		-p 'min_samples_leaf=3' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/cswiki.reverted.rf.model
+
+cswiki_models: \
+	models/cswiki.reverted.rf.model
+
+cswiki_tuning_reports: \
+	tuning_reports/cswiki.reverted.md
 
 ############################# German Wikipedia ################################
 
@@ -1247,7 +1332,7 @@ datasets/nowiki.revisions_to_review.5k_2015.tsv: \
 datasets/nowiki.sampled_revisions.40k_2015.tsv:
 		datasets/nowiki.sampled_revisions.100k_2015.tsv
 	(echo "rev_id";
-         tail --lines=+2 datasets/nowiki.sampled_revisions.100k_2015.tsv | \
+	 tail --lines=+2 datasets/nowiki.sampled_revisions.100k_2015.tsv | \
 	 shuf -n 40000) > \
 	datasets/nowiki.sampled_revisions.40k_2015.tsv
 
