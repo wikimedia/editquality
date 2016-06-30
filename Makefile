@@ -4,6 +4,7 @@ models: \
 		arwiki_models \
 		dewiki_models \
 		enwiki_models \
+		enwiktionary_models \
 		eswiki_models \
 		etwiki_models \
 		fawiki_models \
@@ -27,6 +28,7 @@ tuning_reports: \
 		arwiki_tuning_reports \
 		dewiki_tuning_reports \
 		enwiki_tuning_reports \
+		enwiktionary_tuning_reports \
 		eswiki_tuning_reports \
 		etwiki_tuning_reports \
 		fawiki_tuning_reports \
@@ -354,6 +356,102 @@ enwiki_tuning_reports: \
 		tuning_reports/enwiki.reverted.md \
 		tuning_reports/enwiki.damaging.md \
 		tuning_reports/enwiki.goodfaith.md
+############################# English Wiktionary ################################
+
+datasets/enwiktionary.sampled_revisions.200k_2016.tsv:
+	wget -qO- https://quarry.wmflabs.org/run/97131/output/0/tsv?download=true > \
+	datasets/enwiktionary.sampled_revisions.200k_2016.tsv
+
+datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv: \
+		datasets/enwiktionary.sampled_revisions.200k_2016.tsv
+	cat datasets/enwiktionary.sampled_revisions.200k_2016.tsv | \
+	./utility prelabel https://en.wiktionary.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv
+
+datasets/enwiktionary.rev_reverted.200k_2016.tsv: \
+		datasets/enwiktionary.sampled_revisions.40k_2016.tsv
+	cat datasets/enwiktionary.sampled_revisions.200k_2016.tsv | \
+	./utility label_reverted \
+		--host https://en.wiktionary.org \
+		--revert-radius 5 \
+		--verbose > \
+	datasets/enwiktionary.rev_reverted.200k_2016.tsv
+
+datasets/enwiktionary.rev_reverted.20k_2016.tsv: \
+		datasets/enwiktionary.rev_reverted.200k_2016.tsv
+	( \
+	  echo "rev_id\treverted"; \
+	  ( \
+	    cat datasets/enwiktionary.rev_reverted.200k_2016.tsv | \
+	    grep "True" ; \
+	    cat datasets/enwiktionary.rev_reverted.200k_2016.tsv | \
+	    grep "False" | \
+	    shuf -n 20000 \
+	 ) | \
+	 shuf \
+	) > datasets/enwiktionary.rev_reverted.20k_2016.tsv
+
+datasets/enwiktionary.revisions_for_review.5k_2016.tsv: \
+		datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv
+	( \
+	  echo "rev_id\tneeds_review\treason"; \
+	  ( \
+	    cat datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv | \
+	    grep "True" | \
+	    shuf -n 2500; \
+	    cat datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv | \
+	    grep "False" | \
+	    shuf -n 2500 \
+	 ) | \
+	 shuf \
+	) > datasets/enwiktionary.revisions_for_review.5k_2016.tsv
+
+datasets/enwiktionary.features_reverted.20k_2016.tsv: \
+		datasets/enwiktionary.rev_reverted.20k_2016.tsv
+	cat datasets/enwiktionary.rev_reverted.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.enwiktionary.reverted \
+		--host https://en.wiktionary.org \
+		--include-revid \
+		--verbose > \
+	datasets/enwiktionary.features_reverted.20k_2016.tsv
+
+tuning_reports/enwiktionary.reverted.md: \
+		datasets/enwiktionary.features_reverted.20k_2016.tsv
+	cat datasets/enwiktionary.features_reverted.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiktionary.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/enwiktionary.reverted.md
+
+models/enwiktionary.reverted.rf.model: \
+		datasets/enwiktionary.features_reverted.20k_2016.tsv
+	cut datasets/enwiktionary.features_reverted.20k_2016.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.enwiktionary.reverted \
+		--version 0.0.1 \
+		-p 'criterion="entropy"' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=320' \
+		-p 'min_samples_leaf=3' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/enwiktionary.reverted.rf.model
+
+enwiktionary_models: \
+	models/enwiktionary.reverted.rf.model
+
+enwiktionary_tuning_reports: \
+	tuning_reports/enwiktionary.reverted.md
 
 ############################# Spanish Wikipedia ################################
 
@@ -1247,7 +1345,7 @@ datasets/nowiki.revisions_to_review.5k_2015.tsv: \
 datasets/nowiki.sampled_revisions.40k_2015.tsv:
 		datasets/nowiki.sampled_revisions.100k_2015.tsv
 	(echo "rev_id";
-         tail --lines=+2 datasets/nowiki.sampled_revisions.100k_2015.tsv | \
+	 tail --lines=+2 datasets/nowiki.sampled_revisions.100k_2015.tsv | \
 	 shuf -n 40000) > \
 	datasets/nowiki.sampled_revisions.40k_2015.tsv
 
