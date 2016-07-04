@@ -1490,7 +1490,7 @@ nowiki_tuning_reports: \
 ############################# Polish Wikipedia ############################
 
 datasets/plwiki.sampled_revisions.20k_2015.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/65541/output/0/tsv?download=true > \
+	wget -qO- http://quarry.wmflabs.org/run/97651/output/0/tsv?download=true > \
 	datasets/plwiki.sampled_revisions.20k_2015.tsv
 
 datasets/plwiki.prelabeled_revisions.20k_2015.tsv: \
@@ -1548,6 +1548,109 @@ models/plwiki.reverted.rf.model: \
 		--center --scale \
 		--label-type=bool > \
 	models/plwiki.reverted.rf.model
+
+datasets/plwiki.rev_damaging.5k_2016.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/plwiki/24/ \
+		damaging \
+		--default=False > \
+	datasets/plwiki.rev_damaging.5k_2016.tsv
+
+datasets/plwiki.rev_damaging.20k_2016.tsv: \
+		datasets/plwiki.prelabeled_revisions.20k_2015.tsv
+	cut datasets/plwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
+		grep False | \
+		cat datasets/plwiki.rev_damaging.5k_2016.tsv - | shuf > \
+	datasets/plwiki.rev_damaging.20k_2016.tsv
+
+datasets/plwiki.features_damaging.20k_2016.tsv: \
+		datasets/plwiki.rev_damaging.20k_2016.tsv
+	cat datasets/plwiki.rev_damaging.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.plwiki.damaging \
+		--host https://pl.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/plwiki.features_damaging.20k_2016.tsv
+
+tuning_reports/plwiki.damaging.md: \
+		datasets/plwiki.features_damaging.20k_2016.tsv
+	cat datasets/plwiki.features_damaging.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.plwiki.damaging \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/plwiki.damaging.md
+
+models/plwiki.damaging.gradient_boosting.model: \
+		datasets/plwiki.features_damaging.20k_2016.tsv
+	cat datasets/plwiki.features_damaging.20k_2016.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.plwiki.damaging \
+		--version=0.1.1 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/plwiki.damaging.gradient_boosting.model
+
+datasets/plwiki.rev_goodfaith.5k_2016.tsv:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/plwiki/24/ \
+		goodfaith \
+		--default=True > \
+	datasets/plwiki.rev_goodfaith.5k_2016.tsv
+
+datasets/plwiki.rev_goodfaith.20k_2016.tsv: \
+		datasets/plwiki.rev_goodfaith.5k_2016.tsv
+	cut datasets/plwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
+		grep False | sed -e 's/False/True/g' | \
+		cat datasets/plwiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+	datasets/plwiki.rev_goodfaith.20k_2016.tsv
+
+datasets/plwiki.features_goodfaith.20k_2016.tsv: \
+		datasets/plwiki.rev_goodfaith.20k_2016.tsv
+	cat datasets/plwiki.rev_goodfaith.20k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.plwiki.goodfaith \
+		--host https://pl.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/plwiki.features_goodfaith.20k_2016.tsv
+tuning_reports/plwiki.goodfaith.md: \
+		datasets/plwiki.features_goodfaith.20k_2016.tsv
+	cat datasets/plwiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.plwiki.goodfaith \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/plwiki.goodfaith.md
+
+models/plwiki.goodfaith.gradient_boosting.model: \
+		datasets/plwiki.features_goodfaith.20k_2016.tsv
+	cat datasets/plwiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.plwiki.goodfaith \
+		--version=0.1.1 \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/plwiki.goodfaith.gradient_boosting.model
 
 plwiki_models: \
 		models/plwiki.reverted.rf.model
