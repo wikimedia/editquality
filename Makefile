@@ -851,6 +851,21 @@ datasets/frwiki.prelabeled_revisions.20k_2015.tsv: \
 		--verbose > \
 	datasets/frwiki.prelabeled_revisions.20k_2015.tsv
 
+datasets/frwiki.revisions_for_review.5k_2015.tsv: \
+		datasets/frwiki.prelabeled_revisions.20k_2015.tsv
+	( \
+	  echo "rev_id\tneeds_review\treason"; \
+	  ( \
+	    cat datasets/frwiki.prelabeled_revisions.20k_2015.tsv | \
+	    grep "True" | \
+	    shuf -n 2500; \
+	    cat datasets/frwiki.prelabeled_revisions.20k_2015.tsv | \
+	    grep "False" | \
+	    shuf -n 2500 \
+	 ) | \
+	 shuf \
+	) > datasets/frwiki.revisions_for_review.5k_2015.tsv
+
 datasets/frwiki.rev_reverted.20k_2015.tsv: \
 		datasets/frwiki.sampled_revisions.20k_2015.tsv
 	cat datasets/frwiki.sampled_revisions.20k_2015.tsv | \
