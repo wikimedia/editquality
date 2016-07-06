@@ -842,29 +842,33 @@ datasets/frwiki.sampled_revisions.20k_2015.tsv:
 	wget -qO- http://quarry.wmflabs.org/run/48090/output/0/tsv?download=true > \
 	datasets/frwiki.sampled_revisions.20k_2015.tsv
 
-datasets/frwiki.prelabeled_revisions.20k_2015.tsv: \
-		datasets/frwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/frwiki.sampled_revisions.20k_2015.tsv | \
+datasets/frwiki.sampled_revisions.20k_2016.tsv:
+	wget -qO- https://quarry.wmflabs.org/run/98251/output/0/tsv?download=true > \
+        datasets/frwiki.sampled_revisions.20k_2016.tsv
+
+datasets/frwiki.prelabeled_revisions.20k_2016.tsv: \
+		datasets/frwiki.sampled_revisions.20k_2016.tsv
+	cat datasets/frwiki.sampled_revisions.20k_2016.tsv | \
 	./utility prelabel https://fr.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
-	datasets/frwiki.prelabeled_revisions.20k_2015.tsv
+	datasets/frwiki.prelabeled_revisions.20k_2016.tsv
 
-datasets/frwiki.revisions_for_review.5k_2015.tsv: \
-		datasets/frwiki.prelabeled_revisions.20k_2015.tsv
+datasets/frwiki.revisions_for_review.5k_2016.tsv: \
+		datasets/frwiki.prelabeled_revisions.20k_2016.tsv
 	( \
 	  echo "rev_id\tneeds_review\treason"; \
 	  ( \
-	    cat datasets/frwiki.prelabeled_revisions.20k_2015.tsv | \
+	    cat datasets/frwiki.prelabeled_revisions.20k_2016.tsv | \
 	    grep "True" | \
 	    shuf -n 2500; \
-	    cat datasets/frwiki.prelabeled_revisions.20k_2015.tsv | \
+	    cat datasets/frwiki.prelabeled_revisions.20k_2016.tsv | \
 	    grep "False" | \
 	    shuf -n 2500 \
 	 ) | \
 	 shuf \
-	) > datasets/frwiki.revisions_for_review.5k_2015.tsv
+	) > datasets/frwiki.revisions_for_review.5k_2016.tsv
 
 datasets/frwiki.rev_reverted.20k_2015.tsv: \
 		datasets/frwiki.sampled_revisions.20k_2015.tsv
