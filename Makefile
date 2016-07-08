@@ -180,7 +180,7 @@ datasets/cswiki.rev_reverted.20k_2016.tsv: \
 		--revert-radius 3 \
 		--verbose > \
 	datasets/cswiki.rev_reverted.20k_2016.tsv
-	
+
 datasets/cswiki.features_reverted.20k_2016.tsv: \
 		datasets/cswiki.rev_reverted.20k_2016.tsv
 	cat datasets/cswiki.rev_reverted.20k_2016.tsv | \
@@ -1554,26 +1554,27 @@ models/plwiki.reverted.rf.model: \
 		--label-type=bool > \
 	models/plwiki.reverted.rf.model
 
-datasets/plwiki.rev_damaging.5k_2016.tsv:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/plwiki/24/ \
-		damaging \
-		--default=False > \
-	datasets/plwiki.rev_damaging.5k_2016.tsv
+datasets/plwiki.rev_damaging.15k_2016.tsv:
+	(./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
+	 damaging --default=false --filter 'data.needs_review="True"'; \
+	 ./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
+	 damaging --default=false --filter 'data.needs_review="False"' | \
+	 shuf -r -n 12651) | shuf > \
+	datasets/plwiki.rev_damaging.15k_2016.tsv
 
-datasets/plwiki.features_damaging.5k_2016.tsv: \
-		datasets/plwiki.rev_damaging.5k_2016.tsv
-	cat datasets/plwiki.rev_damaging.5k_2016.tsv | \
+datasets/plwiki.features_damaging.15k_2016.tsv: \
+		datasets/plwiki.rev_damaging.15k_2016.tsv
+	cat datasets/plwiki.rev_damaging.15k_2016.tsv | \
 	revscoring extract_features \
 		editquality.feature_lists.plwiki.damaging \
 		--host https://pl.wikipedia.org \
 		--include-revid \
 		--verbose > \
-	datasets/plwiki.features_damaging.5k_2016.tsv
+	datasets/plwiki.features_damaging.15k_2016.tsv
 
 tuning_reports/plwiki.damaging.md: \
-		datasets/plwiki.features_damaging.5k_2016.tsv
-	cat datasets/plwiki.features_damaging.5k_2016.tsv | cut -f2- | \
+		datasets/plwiki.features_damaging.15k_2016.tsv
+	cat datasets/plwiki.features_damaging.15k_2016.tsv | cut -f2- | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.plwiki.damaging \
@@ -1583,8 +1584,8 @@ tuning_reports/plwiki.damaging.md: \
 	tuning_reports/plwiki.damaging.md
 
 models/plwiki.damaging.gradient_boosting.model: \
-		datasets/plwiki.features_damaging.5k_2016.tsv
-	cat datasets/plwiki.features_damaging.5k_2016.tsv | cut -f2- | \
+		datasets/plwiki.features_damaging.15k_2016.tsv
+	cat datasets/plwiki.features_damaging.15k_2016.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.damaging \
@@ -1599,26 +1600,27 @@ models/plwiki.damaging.gradient_boosting.model: \
 		--label-type=bool > \
 	models/plwiki.damaging.gradient_boosting.model
 
-datasets/plwiki.rev_goodfaith.5k_2016.tsv:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/plwiki/24/ \
-		goodfaith \
-		--default=True > \
-	datasets/plwiki.rev_goodfaith.5k_2016.tsv
+datasets/plwiki.rev_goodfaith.15k_2016.tsv:
+	(./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
+	 goodfaith --default=true --filter 'data.needs_review="True"'; \
+	 ./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
+	 goodfaith --default=true --filter 'data.needs_review="False"' | \
+	 shuf -r -n 12651) | shuf > \
+	datasets/plwiki.rev_goodfaith.15k_2016.tsv
 
-datasets/plwiki.features_goodfaith.5k_2016.tsv: \
-		datasets/plwiki.rev_goodfaith.5k_2016.tsv
-	cat datasets/plwiki.rev_goodfaith.5k_2016.tsv | \
+datasets/plwiki.features_goodfaith.15k_2016.tsv: \
+		datasets/plwiki.rev_goodfaith.15k_2016.tsv
+	cat datasets/plwiki.rev_goodfaith.15k_2016.tsv | \
 	revscoring extract_features \
 		editquality.feature_lists.plwiki.goodfaith \
 		--host https://pl.wikipedia.org \
 		--include-revid \
 		--verbose > \
-	datasets/plwiki.features_goodfaith.5k_2016.tsv
+	datasets/plwiki.features_goodfaith.15k_2016.tsv
 
 tuning_reports/plwiki.goodfaith.md: \
-		datasets/plwiki.features_goodfaith.5k_2016.tsv
-	cat datasets/plwiki.features_goodfaith.5k_2016.tsv | cut -f2- | \
+		datasets/plwiki.features_goodfaith.15k_2016.tsv
+	cat datasets/plwiki.features_goodfaith.15k_2016.tsv | cut -f2- | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.plwiki.goodfaith \
@@ -1628,8 +1630,8 @@ tuning_reports/plwiki.goodfaith.md: \
 	tuning_reports/plwiki.goodfaith.md
 
 models/plwiki.goodfaith.gradient_boosting.model: \
-		datasets/plwiki.features_goodfaith.5k_2016.tsv
-	cat datasets/plwiki.features_goodfaith.5k_2016.tsv | cut -f2- | \
+		datasets/plwiki.features_goodfaith.15k_2016.tsv
+	cat datasets/plwiki.features_goodfaith.15k_2016.tsv | cut -f2- | \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.goodfaith \
