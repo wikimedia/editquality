@@ -1583,22 +1583,22 @@ tuning_reports/plwiki.damaging.md: \
 		--label-type=bool > \
 	tuning_reports/plwiki.damaging.md
 
-models/plwiki.damaging.gradient_boosting.model: \
+models/plwiki.damaging.rf.model: \
 		datasets/plwiki.features_damaging.15k_2016.tsv
-	cat datasets/plwiki.features_damaging.15k_2016.tsv | cut -f2- | \
+	cut datasets/plwiki.features_damaging.15k_2016.tsv -f2- | \
 	revscoring train_test \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scorer_models.RF \
 		editquality.feature_lists.plwiki.damaging \
-		--version=0.1.1 \
-		-p 'max_depth=5' \
-		-p 'learning_rate=0.01' \
+		--version 0.1.0 \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'criterion="entropy"' \
+		-p 'min_samples_leaf=1' \
+		-p 'n_estimators=640' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
-	models/plwiki.damaging.gradient_boosting.model
+	models/plwiki.damaging.rf.model
 
 datasets/plwiki.rev_goodfaith.15k_2016.tsv:
 	(./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
@@ -1629,29 +1629,32 @@ tuning_reports/plwiki.goodfaith.md: \
 		--label-type=bool > \
 	tuning_reports/plwiki.goodfaith.md
 
-models/plwiki.goodfaith.gradient_boosting.model: \
+models/plwiki.goodfaith.rf.model: \
 		datasets/plwiki.features_goodfaith.15k_2016.tsv
-	cat datasets/plwiki.features_goodfaith.15k_2016.tsv | cut -f2- | \
+	cut datasets/plwiki.features_goodfaith.15k_2016.tsv -f2- | \
 	revscoring train_test \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scorer_models.RF \
 		editquality.feature_lists.plwiki.goodfaith \
-		--version=0.1.1 \
-		-p 'max_depth=3' \
-		-p 'learning_rate=0.01' \
+		--version 0.1.0 \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'criterion="entropy"' \
+		-p 'min_samples_leaf=1' \
+		-p 'n_estimators=320' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
-	models/plwiki.goodfaith.gradient_boosting.model
+	models/plwiki.goodfaith.rf.model
 
 plwiki_models: \
 		models/plwiki.reverted.rf.model
+		models/plwiki.damaging.rf.model
+		models/plwiki.goodfaith.rf.model
 
 plwiki_tuning_reports: \
 		tuning_reports/plwiki.reverted.md
-
+		tuning_reports/plwiki.damaging.md
+		tuning_reports/plwiki.goodfaith.md
 
 ############################# Portugueses Wikipedia ############################
 
