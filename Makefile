@@ -180,7 +180,7 @@ datasets/cswiki.rev_reverted.20k_2016.tsv: \
 		--revert-radius 3 \
 		--verbose > \
 	datasets/cswiki.rev_reverted.20k_2016.tsv
-	
+
 datasets/cswiki.features_reverted.20k_2016.tsv: \
 		datasets/cswiki.rev_reverted.20k_2016.tsv
 	cat datasets/cswiki.rev_reverted.20k_2016.tsv | \
@@ -1508,18 +1508,23 @@ nowiki_tuning_reports: \
 
 ############################# Polish Wikipedia ############################
 
-datasets/plwiki.sampled_revisions.20k_2015.tsv:
+datasets/plwiki.sampled_revisions.500k_2015.tsv:
 	wget -qO- http://quarry.wmflabs.org/run/65541/output/0/tsv?download=true > \
-	datasets/plwiki.sampled_revisions.20k_2015.tsv
+	datasets/plwiki.sampled_revisions.500k_2015.tsv
 
-datasets/plwiki.prelabeled_revisions.20k_2015.tsv: \
-		datasets/plwiki.sampled_revisions.20k_2015.tsv
-	cat datasets/plwiki.sampled_revisions.20k_2015.tsv | \
+datasets/plwiki.prelabeled_revisions.500k_2015.tsv: \
+		datasets/plwiki.sampled_revisions.500k_2015.tsv
+	cat datasets/plwiki.sampled_revisions.500k_2015.tsv | \
 	./utility prelabel https://pl.wikipedia.org \
 		--trusted-groups=bot,bureaucrat,sysop,rollbackers \
 		--trusted-edits=1000 \
 		--verbose > \
-	datasets/plwiki.prelabeled_revisions.20k_2015.tsv
+	datasets/plwiki.prelabeled_revisions.500k_2015.tsv
+
+datasets/plwiki.sampled_revisions.20k_2015.tsv: \
+		datasets/plwiki.sampled_revisions.500k_2015.tsv
+	cat datasets/plwiki.sampled_revisions.500k_2015.tsv | \
+	shuf -n 20000 > datasets/plwiki.sampled_revisions.20k_2015.tsv
 
 datasets/plwiki.rev_reverted.20k_2015.tsv: \
 		datasets/plwiki.sampled_revisions.20k_2015.tsv
@@ -1568,12 +1573,107 @@ models/plwiki.reverted.rf.model: \
 		--label-type=bool > \
 	models/plwiki.reverted.rf.model
 
+datasets/plwiki.rev_damaging.15k_2016.tsv:
+	(./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
+	 damaging --default=false --filter 'data.needs_review="True"'; \
+	 ./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
+	 damaging --default=false --filter 'data.needs_review="False"' | \
+	 shuf -r -n 12651) | shuf > \
+	datasets/plwiki.rev_damaging.15k_2016.tsv
+
+datasets/plwiki.features_damaging.15k_2016.tsv: \
+		datasets/plwiki.rev_damaging.15k_2016.tsv
+	cat datasets/plwiki.rev_damaging.15k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.plwiki.damaging \
+		--host https://pl.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/plwiki.features_damaging.15k_2016.tsv
+
+tuning_reports/plwiki.damaging.md: \
+		datasets/plwiki.features_damaging.15k_2016.tsv
+	cat datasets/plwiki.features_damaging.15k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.plwiki.damaging \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/plwiki.damaging.md
+
+models/plwiki.damaging.rf.model: \
+		datasets/plwiki.features_damaging.15k_2016.tsv
+	cut datasets/plwiki.features_damaging.15k_2016.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.plwiki.damaging \
+		--version 0.1.0 \
+		-p 'max_features="log2"' \
+		-p 'criterion="entropy"' \
+		-p 'min_samples_leaf=1' \
+		-p 'n_estimators=640' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/plwiki.damaging.rf.model
+
+datasets/plwiki.rev_goodfaith.15k_2016.tsv:
+	(./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
+	 goodfaith --default=true --filter 'data.needs_review="True"'; \
+	 ./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
+	 goodfaith --default=true --filter 'data.needs_review="False"' | \
+	 shuf -r -n 12651) | shuf > \
+	datasets/plwiki.rev_goodfaith.15k_2016.tsv
+
+datasets/plwiki.features_goodfaith.15k_2016.tsv: \
+		datasets/plwiki.rev_goodfaith.15k_2016.tsv
+	cat datasets/plwiki.rev_goodfaith.15k_2016.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.plwiki.goodfaith \
+		--host https://pl.wikipedia.org \
+		--include-revid \
+		--verbose > \
+	datasets/plwiki.features_goodfaith.15k_2016.tsv
+
+tuning_reports/plwiki.goodfaith.md: \
+		datasets/plwiki.features_goodfaith.15k_2016.tsv
+	cat datasets/plwiki.features_goodfaith.15k_2016.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.plwiki.goodfaith \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/plwiki.goodfaith.md
+
+models/plwiki.goodfaith.rf.model: \
+		datasets/plwiki.features_goodfaith.15k_2016.tsv
+	cut datasets/plwiki.features_goodfaith.15k_2016.tsv -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.plwiki.goodfaith \
+		--version 0.1.0 \
+		-p 'max_features="log2"' \
+		-p 'criterion="entropy"' \
+		-p 'min_samples_leaf=1' \
+		-p 'n_estimators=320' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/plwiki.goodfaith.rf.model
+
 plwiki_models: \
 		models/plwiki.reverted.rf.model
+		models/plwiki.damaging.rf.model
+		models/plwiki.goodfaith.rf.model
 
 plwiki_tuning_reports: \
 		tuning_reports/plwiki.reverted.md
-
+		tuning_reports/plwiki.damaging.md
+		tuning_reports/plwiki.goodfaith.md
 
 ############################# Portugueses Wikipedia ############################
 
