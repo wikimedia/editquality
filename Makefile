@@ -142,6 +142,36 @@ arwiki_models: \
 arwiki_tuning_reports: \
 	tuning_reports/arwiki.reverted.md
 
+############################# Azeri Wikipedia ################################
+
+datasets/azwiki.sampled_revisions.20k_2016.tsv:
+	wget -qO- https://quarry.wmflabs.org/run/99533/output/0/tsv?download=true > \
+	datasets/azwiki.sampled_revisions.20k_2016.tsv
+
+datasets/azwiki.prelabeled_revisions.20k_2016.tsv: \
+		datasets/azwiki.sampled_revisions.20k_2016.tsv
+	cat datasets/azwiki.sampled_revisions.20k_2016.tsv | \
+	./utility prelabel https://az.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/azwiki.prelabeled_revisions.20k_2016.tsv
+
+datasets/azwiki.revisions_for_review.5k_2016.tsv: \
+		datasets/azwiki.prelabeled_revisions.20k_2016.tsv
+	( \
+	  echo "rev_id\tneeds_review\treason"; \
+	  ( \
+	    cat datasets/azwiki.prelabeled_revisions.20k_2016.tsv | \
+	    grep "True" | \
+	    shuf -n 2500; \
+	    cat datasets/azwiki.prelabeled_revisions.20k_2016.tsv | \
+	    grep "False" | \
+	    shuf -n 2500 \
+	 ) | \
+	 shuf \
+	) > datasets/azwiki.revisions_for_review.5k_2016.tsv
+
 ############################# Czech Wikipedia ################################
 
 datasets/cswiki.sampled_revisions.20k_2016.tsv:
