@@ -1,0 +1,5001 @@
+rev_id	needs_review	reason
+3389774	False	trusted edits
+3548091	False	trusted edits
+3461552	False	trusted edits
+3376656	False	trusted edits
+3406773	False	trusted edits
+3352043	True	reverted edit
+3482574	False	trusted group
+3366731	False	trusted edits
+3491735	False	trusted group
+3408031	True	NULL
+3508320	False	trusted group
+3360276	False	trusted edits
+3444727	False	trusted edits
+3249987	False	trusted group
+3236154	False	trusted group
+3509827	False	trusted edits
+3505753	True	blocked user
+3245415	False	trusted group
+3293817	False	trusted edits
+3548177	False	trusted group
+3246112	True	NULL
+3365566	False	trusted group
+3459392	False	trusted edits
+3435051	False	trusted edits
+3403706	False	trusted group
+3385059	False	trusted edits
+3505744	True	blocked user
+3337107	True	NULL
+3348341	False	trusted group
+3519512	True	NULL
+3316102	False	trusted edits
+3308486	True	NULL
+3470243	True	reverted edit
+3315904	True	NULL
+3383292	False	trusted edits
+3460185	False	trusted edits
+3262441	False	trusted group
+3446230	False	trusted group
+3420440	False	trusted group
+3527019	False	trusted edits
+3376838	True	NULL
+3530372	False	trusted edits
+3285133	True	NULL
+3239973	True	NULL
+3435469	True	reverted edit
+3467961	True	NULL
+3525383	False	trusted edits
+3303486	True	reverted edit
+3246147	True	NULL
+3246555	False	trusted group
+3331359	False	trusted group
+3481693	True	NULL
+3519738	False	trusted edits
+3290915	True	NULL
+3503989	False	trusted group
+3380368	False	trusted group
+3378797	False	trusted group
+3275069	False	trusted group
+3358015	True	NULL
+3490439	True	NULL
+3392212	False	trusted group
+3506845	False	trusted edits
+3383198	True	reverted edit
+3434405	True	reverted edit
+3332175	False	trusted edits
+3363144	True	NULL
+3525750	True	NULL
+3412094	True	NULL
+3356571	True	NULL
+3434973	True	NULL
+3518196	True	NULL
+3326680	True	NULL
+3348840	True	reverted edit
+3510838	False	trusted group
+3371518	False	trusted group
+3522875	True	NULL
+3289203	True	NULL
+3523547	False	trusted group
+3309552	True	NULL
+3469402	False	trusted group
+3431768	True	NULL
+3379528	True	NULL
+3475083	True	NULL
+3467985	True	reverted edit
+3408381	True	reverted edit
+3503491	True	NULL
+3343730	False	trusted edits
+3517192	False	trusted group
+3331244	False	trusted group
+3520698	True	NULL
+3260194	True	reverted edit
+3406421	False	trusted group
+3297737	True	NULL
+3439056	False	trusted group
+3331403	True	NULL
+3282495	True	NULL
+3332658	True	reverted edit
+3475016	True	NULL
+3343439	False	trusted group
+3417598	True	reverted edit
+3288948	False	trusted group
+3247877	False	trusted group
+3260271	True	NULL
+3402468	False	trusted edits
+3244436	True	NULL
+3382724	True	NULL
+3352668	False	trusted group
+3491583	False	trusted edits
+3444414	False	trusted edits
+3398995	True	NULL
+3286179	False	trusted edits
+3477140	False	trusted edits
+3448331	False	trusted group
+3400677	False	trusted edits
+3294787	False	trusted edits
+3477372	True	NULL
+3455333	True	reverted edit
+3306133	False	trusted group
+3453098	True	NULL
+3408911	False	trusted edits
+3274621	False	trusted edits
+3366942	True	NULL
+3494602	False	trusted edits
+3285967	False	trusted edits
+3304331	False	trusted group
+3444018	True	NULL
+3477612	True	NULL
+3400665	False	trusted group
+3515454	False	trusted edits
+3340151	True	reverted edit
+3323796	False	trusted group
+3234908	True	NULL
+3269413	True	NULL
+3353700	False	trusted edits
+3345705	False	trusted edits
+3525553	False	trusted group
+3346596	True	reverted edit
+3462302	False	trusted edits
+3372431	False	trusted group
+3330220	False	trusted group
+3365946	True	NULL
+3257718	True	reverted edit
+3250471	False	trusted group
+3346555	True	NULL
+3536996	False	trusted group
+3278874	False	trusted edits
+3248608	False	trusted group
+3512062	True	NULL
+3466832	False	trusted edits
+3421209	False	trusted edits
+3337968	True	NULL
+3473784	True	NULL
+3508548	True	NULL
+3370612	False	trusted edits
+3525199	True	reverted edit
+3254291	False	trusted group
+3465190	True	NULL
+3517147	True	NULL
+3308469	False	trusted group
+3463945	True	NULL
+3268871	True	NULL
+3281795	False	trusted edits
+3499876	False	trusted edits
+3446470	True	reverted edit
+3418481	False	trusted edits
+3383267	True	NULL
+3535828	False	trusted edits
+3327503	True	NULL
+3450927	True	reverted edit
+3440220	False	trusted edits
+3493350	True	NULL
+3238229	False	trusted edits
+3328724	True	NULL
+3435395	True	NULL
+3288769	True	NULL
+3515112	True	NULL
+3409047	False	trusted group
+3424778	False	trusted edits
+3400585	True	reverted edit
+3403483	True	NULL
+3332028	True	NULL
+3429390	False	trusted edits
+3417304	False	trusted edits
+3386335	True	reverted edit
+3314429	True	NULL
+3474133	True	NULL
+3359181	False	trusted edits
+3325505	True	reverted edit
+3287525	True	NULL
+3368186	False	trusted edits
+3348693	False	trusted group
+3378331	False	trusted group
+3363063	False	trusted group
+3241338	False	trusted edits
+3540573	False	trusted group
+3333189	True	NULL
+3338213	True	NULL
+3437157	False	trusted edits
+3465927	True	NULL
+3379672	True	NULL
+3265466	False	trusted edits
+3531775	True	NULL
+3497356	False	trusted group
+3439137	False	trusted edits
+3535460	True	NULL
+3400523	True	NULL
+3443943	True	NULL
+3473285	True	NULL
+3276136	False	trusted edits
+3412169	True	NULL
+3382068	True	NULL
+3540361	True	NULL
+3364408	True	reverted edit
+3439745	False	trusted edits
+3531299	True	NULL
+3293681	False	trusted group
+3465667	False	trusted group
+3295207	True	NULL
+3290825	True	reverted edit
+3393167	False	trusted edits
+3535660	False	trusted edits
+3529738	False	trusted group
+3443056	False	trusted edits
+3328026	False	trusted group
+3426116	False	trusted edits
+3305578	False	trusted group
+3476391	True	NULL
+3341638	False	trusted group
+3274957	False	trusted edits
+3522165	True	reverted edit
+3442755	True	NULL
+3392073	True	NULL
+3420007	True	NULL
+3292440	True	NULL
+3440947	False	trusted edits
+3488188	True	NULL
+3365692	False	trusted edits
+3518150	False	trusted group
+3483341	False	trusted edits
+3248820	False	trusted group
+3514028	False	trusted group
+3486437	False	trusted edits
+3310936	False	trusted group
+3516114	True	NULL
+3500878	False	trusted edits
+3533627	True	NULL
+3495278	False	trusted edits
+3525541	False	trusted edits
+3438132	True	NULL
+3394852	True	NULL
+3334250	True	reverted edit
+3511768	False	trusted edits
+3279578	False	trusted edits
+3295936	True	NULL
+3258374	False	trusted edits
+3522256	True	reverted edit
+3474167	False	trusted edits
+3490399	False	trusted edits
+3445172	False	trusted group
+3529769	False	trusted group
+3482868	True	NULL
+3362411	False	trusted group
+3335703	True	NULL
+3341237	True	NULL
+3505970	True	NULL
+3443796	True	NULL
+3468262	True	reverted edit
+3516152	True	NULL
+3345032	False	trusted edits
+3476318	False	trusted group
+3521592	True	NULL
+3397567	True	NULL
+3247170	False	trusted group
+3381408	True	NULL
+3277031	True	NULL
+3497448	True	reverted edit
+3522901	True	NULL
+3388449	True	NULL
+3521153	False	trusted edits
+3273645	False	trusted edits
+3538934	True	reverted edit
+3326346	True	NULL
+3345559	True	NULL
+3432032	True	NULL
+3399121	True	reverted edit
+3423236	False	trusted edits
+3252092	True	NULL
+3509472	False	trusted edits
+3398174	True	NULL
+3539169	True	NULL
+3480533	True	NULL
+3449823	True	NULL
+3453590	True	NULL
+3265917	False	trusted group
+3269970	True	NULL
+3267282	False	trusted edits
+3465621	False	trusted group
+3251745	True	NULL
+3415663	False	trusted edits
+3453019	True	NULL
+3456238	False	trusted group
+3346462	False	trusted edits
+3459589	False	trusted edits
+3271300	False	trusted group
+3526806	False	trusted edits
+3456761	True	NULL
+3395955	False	trusted edits
+3337072	True	NULL
+3514393	False	trusted edits
+3313011	True	NULL
+3478544	False	trusted edits
+3471697	False	trusted edits
+3450834	True	reverted edit
+3433911	False	trusted group
+3235113	False	trusted edits
+3356585	False	trusted group
+3463512	False	trusted group
+3288409	True	NULL
+3492697	True	NULL
+3544922	False	trusted edits
+3465471	False	trusted edits
+3359766	False	trusted group
+3437233	True	NULL
+3384955	False	trusted group
+3277159	True	NULL
+3343232	True	NULL
+3538527	True	NULL
+3396800	True	NULL
+3258532	True	NULL
+3479121	False	trusted edits
+3355519	True	NULL
+3290488	True	NULL
+3515210	False	trusted edits
+3511524	False	trusted edits
+3339966	True	NULL
+3477830	True	reverted edit
+3258273	True	NULL
+3336612	True	NULL
+3241198	False	trusted edits
+3285704	False	trusted group
+3424528	False	trusted group
+3341662	True	NULL
+3296302	False	trusted edits
+3322029	True	blocked user
+3315966	True	NULL
+3419177	False	trusted edits
+3391645	True	NULL
+3529610	False	trusted group
+3397675	False	trusted edits
+3505766	False	trusted edits
+3541088	True	NULL
+3341657	True	NULL
+3445851	False	trusted edits
+3541676	False	trusted edits
+3245288	False	trusted edits
+3359480	True	NULL
+3406961	True	NULL
+3466791	False	trusted edits
+3357738	True	NULL
+3439948	False	trusted edits
+3428458	False	trusted edits
+3446537	True	NULL
+3342179	True	NULL
+3429738	True	NULL
+3440270	False	trusted edits
+3454187	True	NULL
+3409587	True	NULL
+3287300	True	NULL
+3483372	False	trusted edits
+3360285	True	NULL
+3520798	False	trusted group
+3356929	False	trusted group
+3255313	False	trusted group
+3453751	True	NULL
+3285250	True	blocked user
+3285951	True	reverted edit
+3320887	False	trusted group
+3508859	False	trusted edits
+3321439	True	NULL
+3542292	False	trusted edits
+3505578	True	reverted edit
+3297027	False	trusted edits
+3468672	False	trusted edits
+3284606	True	NULL
+3250900	False	trusted group
+3340009	True	NULL
+3499667	True	NULL
+3498262	False	trusted edits
+3527440	True	NULL
+3367755	False	trusted edits
+3241690	True	NULL
+3241628	True	NULL
+3500264	True	NULL
+3333954	False	trusted group
+3319340	False	trusted group
+3379069	False	trusted group
+3432471	False	trusted edits
+3429827	True	NULL
+3409775	True	NULL
+3261534	True	NULL
+3370378	True	NULL
+3446377	True	NULL
+3453755	False	trusted edits
+3373311	False	trusted group
+3239844	False	trusted edits
+3454970	True	NULL
+3298571	False	trusted group
+3325079	False	trusted group
+3494892	False	trusted edits
+3536304	True	NULL
+3534089	True	NULL
+3526326	True	NULL
+3423946	False	trusted group
+3328237	False	trusted edits
+3519796	True	NULL
+3464138	False	trusted group
+3534117	True	NULL
+3277041	False	trusted group
+3239814	False	trusted edits
+3499522	True	NULL
+3482605	False	trusted edits
+3287550	True	NULL
+3453826	True	NULL
+3408258	False	trusted edits
+3525435	False	trusted edits
+3314238	False	trusted edits
+3346614	False	trusted edits
+3395096	True	NULL
+3288679	True	NULL
+3428967	True	NULL
+3545964	True	reverted edit
+3308582	False	trusted edits
+3492079	False	trusted group
+3265679	True	NULL
+3458423	False	trusted edits
+3300099	False	trusted edits
+3492540	True	NULL
+3546697	True	blocked user
+3417740	False	trusted edits
+3482849	True	NULL
+3269432	False	trusted group
+3284043	True	reverted edit
+3513713	False	trusted edits
+3287108	False	trusted edits
+3363060	True	NULL
+3251883	True	NULL
+3532036	False	trusted group
+3524608	False	trusted edits
+3312338	False	trusted group
+3437702	False	trusted edits
+3434327	True	NULL
+3490650	True	NULL
+3431503	True	NULL
+3342510	False	trusted group
+3307524	False	trusted group
+3237427	False	trusted edits
+3485511	False	trusted group
+3502386	False	trusted group
+3340049	True	NULL
+3255030	False	trusted group
+3442968	False	trusted group
+3293147	False	trusted edits
+3314212	True	NULL
+3312977	False	trusted group
+3361190	False	trusted group
+3530663	True	NULL
+3356341	True	NULL
+3383325	False	trusted group
+3307909	False	trusted edits
+3463524	False	trusted edits
+3256310	False	trusted group
+3379595	False	trusted edits
+3323097	False	trusted edits
+3310053	True	reverted edit
+3408509	False	trusted edits
+3498792	True	reverted edit
+3385321	False	trusted group
+3360774	True	NULL
+3261623	True	reverted edit
+3369889	False	trusted edits
+3460843	False	trusted edits
+3304169	True	NULL
+3375882	False	trusted edits
+3298068	False	trusted group
+3383757	True	NULL
+3235138	False	trusted edits
+3428811	False	trusted edits
+3380697	True	reverted edit
+3399066	True	NULL
+3274772	True	NULL
+3352882	False	trusted group
+3316281	True	NULL
+3298145	False	trusted edits
+3349947	False	trusted group
+3268562	True	reverted edit
+3332171	True	NULL
+3530860	False	trusted edits
+3504779	True	NULL
+3430372	False	trusted edits
+3325516	True	reverted edit
+3311137	False	trusted group
+3288818	False	trusted group
+3437622	False	trusted group
+3492712	False	trusted group
+3329263	True	NULL
+3463132	True	reverted edit
+3428795	False	trusted edits
+3363074	False	trusted group
+3547973	False	trusted group
+3326133	False	trusted group
+3382575	False	trusted edits
+3250403	False	trusted group
+3448070	True	NULL
+3313203	False	trusted group
+3318887	True	NULL
+3268416	False	trusted group
+3445045	False	trusted group
+3275318	True	NULL
+3431485	True	NULL
+3513178	False	trusted edits
+3314399	True	NULL
+3480552	False	trusted group
+3255591	False	trusted group
+3290534	False	trusted edits
+3345781	True	NULL
+3523509	False	trusted group
+3397410	False	trusted edits
+3312107	False	trusted group
+3409009	True	NULL
+3322808	False	trusted group
+3321147	True	reverted edit
+3285070	True	reverted edit
+3237440	True	reverted edit
+3424103	True	NULL
+3323199	False	trusted edits
+3283563	True	NULL
+3522498	True	NULL
+3458769	False	trusted group
+3316877	True	NULL
+3249523	False	trusted group
+3262788	True	NULL
+3293299	True	NULL
+3425546	True	NULL
+3343469	True	NULL
+3518587	True	NULL
+3288740	False	trusted edits
+3341013	False	trusted group
+3415577	False	trusted group
+3326520	True	reverted edit
+3547796	True	reverted edit
+3360516	False	trusted edits
+3295829	True	NULL
+3506317	True	NULL
+3475805	True	NULL
+3488714	False	trusted group
+3422742	True	NULL
+3339569	True	NULL
+3235066	False	trusted edits
+3333566	True	NULL
+3249415	False	trusted group
+3375413	True	NULL
+3335379	True	NULL
+3497944	False	trusted group
+3400163	False	trusted edits
+3299853	False	trusted edits
+3332622	True	NULL
+3508769	False	trusted edits
+3290535	False	trusted group
+3417434	False	trusted edits
+3540306	True	NULL
+3368104	False	trusted group
+3466952	True	NULL
+3530719	True	NULL
+3421147	True	NULL
+3534104	True	NULL
+3263767	True	reverted edit
+3275287	False	trusted group
+3244388	True	reverted edit
+3391599	True	NULL
+3358924	True	NULL
+3239783	False	trusted edits
+3529920	True	NULL
+3232876	False	trusted edits
+3356094	True	NULL
+3273627	True	NULL
+3363763	True	NULL
+3539999	True	NULL
+3544226	False	trusted group
+3525436	True	reverted edit
+3317327	False	trusted edits
+3523152	False	trusted group
+3364540	True	NULL
+3463457	True	NULL
+3507909	True	NULL
+3488498	True	NULL
+3391569	False	trusted group
+3485870	True	NULL
+3255320	False	trusted group
+3264345	True	NULL
+3367243	False	trusted edits
+3255754	False	trusted group
+3425014	False	trusted edits
+3445273	False	trusted group
+3499484	True	NULL
+3269308	False	trusted edits
+3491429	False	trusted edits
+3308423	False	trusted group
+3262512	False	trusted edits
+3417488	True	NULL
+3319779	False	trusted group
+3384731	False	trusted edits
+3287020	True	NULL
+3499707	True	reverted edit
+3438851	True	reverted edit
+3324882	False	trusted group
+3266975	False	trusted group
+3318604	False	trusted group
+3402676	False	trusted edits
+3455745	False	trusted edits
+3535489	True	NULL
+3265022	True	NULL
+3425290	True	NULL
+3494828	False	trusted group
+3264046	True	NULL
+3378046	False	trusted edits
+3321838	False	trusted group
+3318174	True	NULL
+3451846	True	NULL
+3278375	True	NULL
+3514208	False	trusted group
+3244040	False	trusted group
+3388746	True	NULL
+3545144	True	NULL
+3300738	True	reverted edit
+3354056	False	trusted group
+3331437	True	NULL
+3423623	False	trusted edits
+3345379	False	trusted group
+3240934	True	NULL
+3269733	False	trusted edits
+3404936	True	NULL
+3404640	False	trusted edits
+3468133	True	reverted edit
+3355407	True	NULL
+3438757	True	reverted edit
+3264599	False	trusted group
+3358130	True	reverted edit
+3460139	True	NULL
+3407338	True	NULL
+3427618	False	trusted group
+3436870	True	NULL
+3503606	True	NULL
+3459279	False	trusted edits
+3266387	False	trusted edits
+3356955	True	NULL
+3432299	False	trusted edits
+3239552	True	NULL
+3293811	True	NULL
+3497118	False	trusted edits
+3414981	False	trusted edits
+3346650	True	NULL
+3508289	False	trusted edits
+3351004	True	NULL
+3368467	True	NULL
+3537494	False	trusted edits
+3240109	True	reverted edit
+3296069	False	trusted group
+3366736	True	NULL
+3354775	True	NULL
+3351297	True	NULL
+3336548	False	trusted edits
+3490339	False	trusted group
+3401683	False	trusted edits
+3380696	True	reverted edit
+3538514	True	NULL
+3244410	True	reverted edit
+3458908	True	NULL
+3541335	True	NULL
+3319164	True	NULL
+3452842	False	trusted edits
+3503929	False	trusted edits
+3298455	True	NULL
+3277149	True	NULL
+3327664	True	blocked user
+3309760	False	trusted edits
+3455390	False	trusted group
+3359179	True	NULL
+3397912	True	NULL
+3510299	True	NULL
+3383829	True	NULL
+3448053	False	trusted edits
+3394366	True	NULL
+3467475	False	trusted edits
+3519528	False	trusted edits
+3326660	True	reverted edit
+3381694	True	NULL
+3361582	False	trusted group
+3402875	False	trusted edits
+3449238	False	trusted edits
+3287378	False	trusted group
+3242386	False	trusted group
+3309555	True	NULL
+3278789	False	trusted edits
+3304665	False	trusted group
+3487451	False	trusted group
+3504479	True	blocked user
+3521432	False	trusted group
+3289194	True	NULL
+3360117	True	NULL
+3360698	True	NULL
+3455495	True	NULL
+3489901	True	NULL
+3333015	True	NULL
+3338918	False	trusted edits
+3468131	False	trusted edits
+3297425	False	trusted edits
+3515945	True	NULL
+3414076	False	trusted edits
+3349968	True	reverted edit
+3271753	True	NULL
+3534320	True	NULL
+3434010	True	NULL
+3440030	True	reverted edit
+3328723	True	NULL
+3503867	False	trusted edits
+3392416	True	NULL
+3435494	True	NULL
+3241942	False	trusted edits
+3503124	False	trusted edits
+3298812	True	NULL
+3345343	True	NULL
+3485361	True	NULL
+3242019	False	trusted group
+3449374	True	NULL
+3516326	True	NULL
+3373725	False	trusted edits
+3305218	False	trusted edits
+3340793	False	trusted edits
+3534205	False	trusted edits
+3485542	True	reverted edit
+3474655	True	NULL
+3235584	True	NULL
+3235822	True	NULL
+3404830	False	trusted edits
+3332623	True	NULL
+3480710	True	reverted edit
+3348316	True	NULL
+3407464	True	NULL
+3234433	False	trusted edits
+3371101	False	trusted edits
+3485818	True	NULL
+3535434	True	NULL
+3247262	False	trusted group
+3308639	True	NULL
+3513337	True	reverted edit
+3379905	True	NULL
+3243745	False	trusted group
+3307462	True	NULL
+3237562	True	reverted edit
+3459381	True	NULL
+3433396	False	trusted group
+3262411	False	trusted group
+3270109	False	trusted edits
+3342134	False	trusted edits
+3323077	False	trusted edits
+3391500	False	trusted edits
+3340363	True	NULL
+3481018	True	NULL
+3370520	True	NULL
+3239195	True	reverted edit
+3297481	False	trusted edits
+3355372	False	trusted group
+3446538	True	NULL
+3267784	True	reverted edit
+3517737	False	trusted edits
+3338091	True	NULL
+3438036	False	trusted group
+3515443	False	trusted edits
+3389556	False	trusted edits
+3355289	True	NULL
+3389460	True	reverted edit
+3469910	True	NULL
+3363317	True	reverted edit
+3486213	False	trusted group
+3294304	False	trusted group
+3496024	False	trusted group
+3476195	False	trusted edits
+3427452	False	trusted edits
+3537845	True	NULL
+3265023	True	NULL
+3389897	False	trusted edits
+3375477	True	NULL
+3248019	False	trusted group
+3543814	True	NULL
+3422941	False	trusted group
+3334760	False	trusted edits
+3335035	False	trusted group
+3284615	False	trusted edits
+3365097	False	trusted group
+3419358	False	trusted edits
+3323835	True	NULL
+3371168	True	NULL
+3438204	False	trusted edits
+3272101	False	trusted edits
+3426534	False	trusted edits
+3404152	False	trusted edits
+3508481	False	trusted edits
+3455836	True	NULL
+3245436	False	trusted group
+3377319	False	trusted edits
+3315772	True	NULL
+3519942	True	reverted edit
+3307267	False	trusted group
+3521104	True	NULL
+3342961	True	NULL
+3504716	False	trusted group
+3391369	True	NULL
+3346229	True	NULL
+3330663	True	NULL
+3255009	False	trusted group
+3363140	True	NULL
+3261449	True	reverted edit
+3358038	True	reverted edit
+3324383	True	NULL
+3468289	True	NULL
+3410133	False	trusted edits
+3236369	False	trusted group
+3539711	True	NULL
+3276241	True	NULL
+3291426	True	reverted edit
+3459847	False	trusted group
+3417470	False	trusted edits
+3494437	True	NULL
+3504214	False	trusted group
+3380801	False	trusted group
+3516769	False	trusted group
+3482823	True	NULL
+3378464	True	NULL
+3396903	False	trusted edits
+3421696	True	NULL
+3501340	True	NULL
+3302486	True	NULL
+3398381	True	NULL
+3449880	False	trusted edits
+3339097	False	trusted edits
+3360171	True	reverted edit
+3429123	False	trusted edits
+3500253	True	NULL
+3358139	True	reverted edit
+3419867	False	trusted group
+3391003	True	NULL
+3305834	True	NULL
+3463765	False	trusted group
+3248656	False	trusted group
+3494351	True	NULL
+3485189	False	trusted edits
+3299991	False	trusted edits
+3292603	False	trusted edits
+3413729	False	trusted edits
+3311687	False	trusted edits
+3451496	True	reverted edit
+3365242	True	NULL
+3480515	True	NULL
+3322638	True	NULL
+3516093	False	trusted group
+3495824	False	trusted edits
+3349162	True	NULL
+3449064	True	NULL
+3262561	True	NULL
+3542603	True	NULL
+3517533	True	NULL
+3274909	True	NULL
+3506453	True	NULL
+3240272	True	NULL
+3519005	False	trusted group
+3531712	True	NULL
+3377133	True	NULL
+3265575	False	trusted edits
+3331793	True	NULL
+3311062	True	NULL
+3485696	True	NULL
+3331996	True	NULL
+3382909	True	reverted edit
+3241213	True	NULL
+3294130	False	trusted edits
+3370236	False	trusted edits
+3259724	True	reverted edit
+3364734	True	blocked user
+3313021	True	NULL
+3340602	False	trusted group
+3374112	True	reverted edit
+3531276	False	trusted group
+3484429	True	NULL
+3477695	False	trusted group
+3522534	False	trusted edits
+3315444	False	trusted edits
+3293970	True	NULL
+3477528	True	NULL
+3396801	True	NULL
+3400130	False	trusted group
+3502108	True	reverted edit
+3384658	False	trusted edits
+3432076	False	trusted edits
+3346039	False	trusted edits
+3519252	False	trusted group
+3368226	True	reverted edit
+3419674	True	NULL
+3527759	True	NULL
+3360567	True	NULL
+3478235	False	trusted edits
+3305699	True	NULL
+3496997	True	NULL
+3356470	False	trusted edits
+3410954	True	NULL
+3325390	True	NULL
+3530097	True	NULL
+3488486	False	trusted group
+3465065	False	trusted edits
+3500012	True	NULL
+3486250	False	trusted edits
+3406026	True	reverted edit
+3239936	False	trusted edits
+3521215	False	trusted edits
+3507283	False	trusted edits
+3273870	False	trusted edits
+3282822	True	NULL
+3320129	False	trusted edits
+3285219	True	NULL
+3434782	False	trusted edits
+3468905	False	trusted group
+3548045	False	trusted edits
+3448780	True	NULL
+3506797	False	trusted edits
+3361785	False	trusted edits
+3267666	False	trusted edits
+3264797	True	NULL
+3470106	False	trusted edits
+3282440	False	trusted group
+3351284	True	NULL
+3396587	True	NULL
+3476902	False	trusted edits
+3451460	True	reverted edit
+3520479	True	NULL
+3285892	True	NULL
+3376583	True	NULL
+3514274	True	NULL
+3360743	True	NULL
+3424239	False	trusted edits
+3462314	True	NULL
+3418514	True	reverted edit
+3434558	False	trusted edits
+3362639	False	trusted group
+3414818	True	NULL
+3465404	False	trusted edits
+3471521	True	NULL
+3357122	True	NULL
+3256128	False	trusted group
+3240846	False	trusted edits
+3504460	True	NULL
+3380495	True	NULL
+3546416	False	trusted edits
+3335470	False	trusted group
+3296487	False	trusted edits
+3461264	False	trusted edits
+3241639	False	trusted edits
+3531805	False	trusted edits
+3266198	True	reverted edit
+3303238	False	trusted edits
+3527808	False	trusted group
+3457854	True	NULL
+3426289	False	trusted edits
+3363142	True	NULL
+3332292	True	NULL
+3519341	True	NULL
+3300737	False	trusted group
+3283604	True	NULL
+3437292	False	trusted edits
+3273405	False	trusted edits
+3312094	True	NULL
+3330760	False	trusted group
+3541858	False	trusted edits
+3544705	True	NULL
+3415682	False	trusted edits
+3489737	False	trusted edits
+3533791	False	trusted group
+3395355	True	NULL
+3262466	True	NULL
+3325594	False	trusted group
+3525543	False	trusted edits
+3354687	True	NULL
+3439621	False	trusted edits
+3304934	True	NULL
+3476105	False	trusted group
+3291557	True	NULL
+3378631	True	NULL
+3280124	True	NULL
+3359069	False	trusted group
+3516622	True	NULL
+3522456	True	NULL
+3511200	True	NULL
+3516600	True	NULL
+3443226	True	NULL
+3394234	True	NULL
+3488824	False	trusted edits
+3528572	True	NULL
+3295144	False	trusted group
+3409018	True	NULL
+3419962	False	trusted edits
+3453414	False	trusted group
+3251702	True	NULL
+3501959	False	trusted edits
+3241298	False	trusted edits
+3542113	True	NULL
+3246213	True	NULL
+3414307	False	trusted group
+3301481	False	trusted group
+3388465	False	trusted group
+3525707	True	NULL
+3429343	True	reverted edit
+3286719	True	NULL
+3357705	False	trusted edits
+3378728	False	trusted group
+3311635	True	NULL
+3346736	False	trusted edits
+3484323	True	NULL
+3539236	True	NULL
+3428060	False	trusted edits
+3313283	False	trusted edits
+3387753	False	trusted edits
+3346907	True	NULL
+3372347	True	NULL
+3269770	True	NULL
+3512896	True	NULL
+3355811	True	NULL
+3287259	False	trusted edits
+3244183	False	trusted edits
+3477194	True	NULL
+3375161	False	trusted edits
+3300108	False	trusted edits
+3458452	False	trusted edits
+3517168	False	trusted group
+3453407	True	NULL
+3418821	True	NULL
+3538776	True	NULL
+3345327	True	reverted edit
+3530246	True	NULL
+3453914	True	NULL
+3525665	True	reverted edit
+3259138	True	reverted edit
+3262339	True	NULL
+3455701	False	trusted group
+3250083	False	trusted group
+3279118	False	trusted group
+3437431	True	reverted edit
+3327032	False	trusted edits
+3249166	False	trusted group
+3456481	True	reverted edit
+3446460	True	reverted edit
+3319861	True	NULL
+3352236	False	trusted edits
+3456232	False	trusted group
+3403874	False	trusted group
+3330114	False	trusted group
+3242414	True	reverted edit
+3276561	False	trusted group
+3357885	True	NULL
+3326681	True	NULL
+3513112	True	NULL
+3309933	True	NULL
+3382027	False	trusted edits
+3323719	False	trusted edits
+3533437	False	trusted group
+3523112	True	NULL
+3500721	True	NULL
+3288576	False	trusted edits
+3259494	True	NULL
+3425307	False	trusted group
+3377946	False	trusted group
+3273218	False	trusted group
+3328011	True	reverted edit
+3423832	False	trusted group
+3467059	True	NULL
+3456367	True	reverted edit
+3285259	True	NULL
+3269699	False	trusted group
+3243882	True	NULL
+3321873	False	trusted edits
+3543446	True	reverted edit
+3367389	True	NULL
+3525106	False	trusted edits
+3417824	False	trusted group
+3449655	False	trusted edits
+3348760	True	NULL
+3328387	True	blocked user
+3243287	False	trusted edits
+3492417	True	NULL
+3381572	True	NULL
+3420685	True	NULL
+3486639	False	trusted edits
+3280810	True	reverted edit
+3356096	True	NULL
+3361744	False	trusted edits
+3361930	True	NULL
+3494144	True	NULL
+3441052	False	trusted edits
+3382929	True	reverted edit
+3498928	False	trusted edits
+3428820	False	trusted edits
+3362851	True	NULL
+3348884	True	NULL
+3336118	False	trusted edits
+3506329	False	trusted group
+3521492	True	NULL
+3510118	False	trusted group
+3305833	True	NULL
+3445884	True	reverted edit
+3533715	True	NULL
+3526371	False	trusted edits
+3405437	False	trusted edits
+3510836	False	trusted edits
+3393937	False	trusted edits
+3236263	False	trusted group
+3398418	True	NULL
+3491602	False	trusted edits
+3363719	True	NULL
+3263098	False	trusted group
+3293897	False	trusted edits
+3360440	True	NULL
+3417847	True	NULL
+3472961	True	NULL
+3390152	True	NULL
+3299799	False	trusted group
+3367085	False	trusted edits
+3396893	True	NULL
+3469739	False	trusted group
+3535954	False	trusted group
+3507968	True	NULL
+3517828	True	NULL
+3326311	False	trusted edits
+3296109	True	NULL
+3517118	False	trusted edits
+3519290	True	NULL
+3435259	True	blocked user
+3391146	False	trusted edits
+3469992	True	NULL
+3348041	True	NULL
+3236562	True	NULL
+3238663	True	NULL
+3539841	True	NULL
+3446628	True	blocked user
+3268697	False	trusted edits
+3520888	True	NULL
+3535150	False	trusted edits
+3388288	False	trusted group
+3394653	True	NULL
+3250938	False	trusted group
+3235364	True	NULL
+3273682	True	reverted edit
+3254834	False	trusted group
+3334427	False	trusted edits
+3340753	False	trusted edits
+3427173	True	NULL
+3336976	True	NULL
+3483001	True	NULL
+3279294	True	NULL
+3424504	True	NULL
+3523714	False	trusted group
+3270493	False	trusted group
+3426630	False	trusted edits
+3428395	False	trusted edits
+3276593	True	NULL
+3542539	True	NULL
+3457834	False	trusted edits
+3358909	True	NULL
+3236592	True	reverted edit
+3526315	True	NULL
+3439521	False	trusted edits
+3348254	False	trusted edits
+3331508	True	NULL
+3370246	False	trusted edits
+3356994	False	trusted group
+3439846	False	trusted group
+3392958	False	trusted edits
+3283880	False	trusted group
+3414829	False	trusted group
+3322895	False	trusted group
+3458148	False	trusted edits
+3292752	False	trusted edits
+3346747	True	NULL
+3269664	False	trusted group
+3545643	False	trusted edits
+3303569	False	trusted group
+3496361	True	NULL
+3397734	False	trusted edits
+3290746	False	trusted edits
+3406430	False	trusted edits
+3396103	False	trusted group
+3449306	True	NULL
+3514606	True	NULL
+3504484	True	NULL
+3279075	False	trusted group
+3422992	False	trusted group
+3543997	True	reverted edit
+3265181	True	NULL
+3418579	True	reverted edit
+3384039	False	trusted edits
+3302265	True	NULL
+3291656	False	trusted edits
+3270693	False	trusted edits
+3403473	True	NULL
+3425158	False	trusted edits
+3392126	True	reverted edit
+3261746	True	reverted edit
+3529134	False	trusted edits
+3357954	False	trusted edits
+3358036	False	trusted edits
+3500682	True	NULL
+3523048	True	NULL
+3246770	True	NULL
+3541011	True	NULL
+3270007	True	NULL
+3312740	False	trusted group
+3459809	False	trusted edits
+3338349	True	NULL
+3466957	True	NULL
+3497768	True	NULL
+3511032	False	trusted edits
+3361471	True	NULL
+3393068	False	trusted group
+3246505	False	trusted edits
+3337787	True	NULL
+3397816	False	trusted edits
+3496903	False	trusted edits
+3513133	True	NULL
+3357114	False	trusted edits
+3243602	False	trusted edits
+3382597	False	trusted edits
+3530710	True	NULL
+3305056	False	trusted group
+3519814	True	NULL
+3451399	False	trusted edits
+3428262	False	trusted group
+3508083	False	trusted edits
+3322620	True	NULL
+3454706	False	trusted group
+3534985	True	NULL
+3363122	True	NULL
+3232971	True	reverted edit
+3531693	True	NULL
+3326275	True	NULL
+3271214	False	trusted edits
+3361053	True	NULL
+3461777	True	reverted edit
+3266905	False	trusted group
+3488866	True	NULL
+3507312	False	trusted group
+3491582	False	trusted edits
+3407744	False	trusted group
+3501860	True	NULL
+3301564	False	trusted group
+3491845	False	trusted group
+3313963	True	NULL
+3303948	False	trusted group
+3424128	True	NULL
+3542913	True	NULL
+3469207	True	NULL
+3452916	True	NULL
+3516767	True	NULL
+3241327	True	reverted edit
+3334368	True	NULL
+3306994	True	NULL
+3471696	False	trusted group
+3263851	False	trusted edits
+3272832	True	NULL
+3351132	True	NULL
+3274071	True	reverted edit
+3267049	True	reverted edit
+3271469	False	trusted edits
+3282114	False	trusted edits
+3537927	True	NULL
+3333683	True	NULL
+3547947	True	NULL
+3355260	True	NULL
+3249919	False	trusted group
+3481283	True	NULL
+3376597	False	trusted edits
+3424669	False	trusted edits
+3523006	False	trusted edits
+3354814	False	trusted edits
+3508679	True	NULL
+3505757	True	NULL
+3381198	True	NULL
+3312772	False	trusted group
+3339046	True	NULL
+3293245	True	NULL
+3523553	True	NULL
+3285053	True	NULL
+3512311	True	NULL
+3386744	True	NULL
+3405793	True	reverted edit
+3458830	False	trusted group
+3369542	True	NULL
+3461988	False	trusted group
+3519732	False	trusted edits
+3427767	True	NULL
+3503014	True	NULL
+3491701	True	reverted edit
+3443940	False	trusted edits
+3425846	False	trusted edits
+3429713	False	trusted edits
+3519213	True	NULL
+3370307	False	trusted group
+3274580	False	trusted edits
+3401685	False	trusted edits
+3493906	True	NULL
+3400058	False	trusted edits
+3331401	True	NULL
+3259723	True	reverted edit
+3512807	True	NULL
+3370640	True	NULL
+3497264	True	NULL
+3462249	True	NULL
+3235922	False	trusted group
+3422234	False	trusted edits
+3257495	False	trusted group
+3538371	False	trusted group
+3359652	True	NULL
+3360006	True	NULL
+3473971	False	trusted edits
+3448902	False	trusted edits
+3274366	False	trusted group
+3367953	False	trusted edits
+3285276	True	NULL
+3474336	False	trusted edits
+3280999	True	reverted edit
+3421503	False	trusted edits
+3515466	True	NULL
+3354460	False	trusted group
+3451647	False	trusted edits
+3271142	False	trusted edits
+3470423	True	NULL
+3534960	False	trusted edits
+3540495	True	NULL
+3441150	True	reverted edit
+3272063	False	trusted edits
+3480292	False	trusted edits
+3286047	True	NULL
+3253482	False	trusted group
+3486113	False	trusted group
+3234808	False	trusted group
+3383419	True	reverted edit
+3509196	False	trusted group
+3382433	False	trusted edits
+3542187	False	trusted group
+3310827	True	reverted edit
+3392521	True	NULL
+3361503	True	NULL
+3243592	False	trusted edits
+3482532	False	trusted edits
+3346357	True	reverted edit
+3345985	True	NULL
+3488705	False	trusted group
+3354309	False	trusted edits
+3526860	True	NULL
+3233454	False	trusted edits
+3239806	False	trusted edits
+3260949	True	NULL
+3260991	False	trusted group
+3502406	False	trusted edits
+3276214	True	NULL
+3377970	False	trusted group
+3420161	True	NULL
+3241611	False	trusted edits
+3245978	False	trusted edits
+3241367	False	trusted group
+3343739	False	trusted edits
+3293053	False	trusted group
+3450303	False	trusted group
+3344825	True	NULL
+3364838	True	NULL
+3528564	False	trusted edits
+3250615	False	trusted group
+3288175	True	NULL
+3322745	True	reverted edit
+3386729	False	trusted group
+3463954	False	trusted edits
+3392247	True	reverted edit
+3457401	True	NULL
+3484963	True	NULL
+3509704	True	NULL
+3323713	False	trusted group
+3381375	True	NULL
+3461939	False	trusted group
+3425399	False	trusted edits
+3455181	True	NULL
+3488590	False	trusted group
+3362987	True	NULL
+3530616	False	trusted edits
+3316285	True	NULL
+3536439	False	trusted group
+3529506	True	NULL
+3537202	False	trusted edits
+3338633	False	trusted edits
+3408511	True	NULL
+3306232	False	trusted group
+3315214	True	NULL
+3360049	False	trusted edits
+3335767	True	NULL
+3350159	False	trusted edits
+3306849	True	NULL
+3362487	True	reverted edit
+3510851	True	blocked user
+3457544	True	NULL
+3505802	False	trusted group
+3315343	False	trusted group
+3396415	True	NULL
+3249798	False	trusted group
+3259930	False	trusted group
+3455299	True	NULL
+3260928	True	NULL
+3530673	False	trusted group
+3304081	False	trusted group
+3347410	True	NULL
+3428674	False	trusted group
+3322940	True	NULL
+3394801	True	reverted edit
+3297084	False	trusted group
+3318217	True	NULL
+3258940	True	reverted edit
+3506750	False	trusted edits
+3501598	True	reverted edit
+3241480	False	trusted group
+3368419	True	blocked user
+3540710	True	NULL
+3325330	True	NULL
+3421908	False	trusted group
+3505747	True	blocked user
+3367297	False	trusted edits
+3519958	False	trusted edits
+3350031	True	NULL
+3533484	False	trusted group
+3456438	True	NULL
+3453879	True	reverted edit
+3479080	False	trusted edits
+3507658	True	NULL
+3488627	False	trusted edits
+3458384	False	trusted edits
+3328815	False	trusted edits
+3383628	False	trusted edits
+3390503	True	reverted edit
+3299139	True	NULL
+3445153	False	trusted edits
+3446612	True	reverted edit
+3501123	True	NULL
+3257134	False	trusted group
+3307222	False	trusted group
+3418873	True	reverted edit
+3402472	True	NULL
+3294241	False	trusted edits
+3505543	False	trusted edits
+3475709	False	trusted edits
+3492217	True	NULL
+3519360	True	NULL
+3325414	False	trusted group
+3276879	True	NULL
+3500624	False	trusted group
+3308875	False	trusted group
+3278650	False	trusted group
+3513008	False	trusted edits
+3246307	False	trusted group
+3285521	True	blocked user
+3274247	False	trusted group
+3472880	True	NULL
+3514852	False	trusted edits
+3286258	True	NULL
+3266827	False	trusted edits
+3499828	False	trusted edits
+3464396	True	NULL
+3392794	False	trusted group
+3410760	False	trusted edits
+3355415	False	trusted group
+3526217	True	NULL
+3508770	True	reverted edit
+3533314	True	NULL
+3249433	False	trusted group
+3360310	True	NULL
+3547248	False	trusted group
+3305964	False	trusted edits
+3242625	True	NULL
+3360988	True	reverted edit
+3399388	False	trusted edits
+3376006	False	trusted edits
+3292105	False	trusted edits
+3543731	True	reverted edit
+3304196	False	trusted edits
+3395227	True	NULL
+3341552	False	trusted group
+3236363	True	NULL
+3367319	True	NULL
+3454551	True	reverted edit
+3363923	False	trusted group
+3482536	False	trusted edits
+3297543	False	trusted group
+3502860	True	NULL
+3483352	False	trusted edits
+3331563	False	trusted edits
+3460172	False	trusted group
+3288466	True	NULL
+3287768	False	trusted edits
+3517624	True	NULL
+3300253	False	trusted edits
+3511461	False	trusted group
+3460297	True	NULL
+3475162	False	trusted edits
+3306918	True	NULL
+3258098	True	NULL
+3324600	True	reverted edit
+3284874	True	NULL
+3424593	False	trusted edits
+3260986	True	reverted edit
+3454979	True	NULL
+3434632	True	NULL
+3523183	True	NULL
+3475557	True	NULL
+3534372	True	NULL
+3468521	True	reverted edit
+3350301	True	NULL
+3448686	False	trusted edits
+3241902	False	trusted edits
+3300679	False	trusted group
+3546507	True	NULL
+3311973	True	NULL
+3542126	True	NULL
+3452577	False	trusted edits
+3414655	True	NULL
+3531701	True	NULL
+3477433	False	trusted edits
+3271330	True	reverted edit
+3516299	True	reverted edit
+3497591	True	NULL
+3376702	False	trusted group
+3382142	True	NULL
+3286269	True	NULL
+3430149	True	NULL
+3425395	False	trusted edits
+3284137	False	trusted edits
+3290818	True	reverted edit
+3495555	False	trusted group
+3514037	False	trusted edits
+3328848	True	NULL
+3541884	False	trusted edits
+3301176	True	NULL
+3393980	True	NULL
+3242284	False	trusted group
+3482789	True	NULL
+3307781	False	trusted group
+3545359	True	NULL
+3432836	True	reverted edit
+3431059	False	trusted group
+3371212	False	trusted group
+3491436	True	NULL
+3245973	False	trusted edits
+3493055	False	trusted edits
+3467957	True	NULL
+3524954	True	NULL
+3379063	False	trusted edits
+3283987	False	trusted group
+3238367	False	trusted group
+3400721	False	trusted edits
+3500481	False	trusted group
+3444820	False	trusted group
+3243116	True	NULL
+3359645	False	trusted edits
+3346053	False	trusted edits
+3418495	False	trusted group
+3361169	True	NULL
+3318420	False	trusted edits
+3523706	False	trusted edits
+3447882	False	trusted edits
+3315961	True	NULL
+3404031	True	reverted edit
+3436188	False	trusted group
+3239918	True	NULL
+3479946	False	trusted edits
+3533669	True	NULL
+3356829	False	trusted edits
+3397798	True	NULL
+3239897	False	trusted group
+3342218	True	NULL
+3374103	False	trusted edits
+3321132	True	NULL
+3532179	False	trusted group
+3475149	True	NULL
+3406222	False	trusted edits
+3493630	True	NULL
+3351472	False	trusted edits
+3511916	True	reverted edit
+3524095	True	NULL
+3396620	True	reverted edit
+3242932	False	trusted edits
+3250408	False	trusted group
+3345918	False	trusted edits
+3290542	True	NULL
+3541735	True	NULL
+3503149	False	trusted edits
+3547068	True	blocked user
+3396534	False	trusted edits
+3343247	True	NULL
+3360177	True	NULL
+3287718	False	trusted group
+3455534	True	reverted edit
+3296417	False	trusted edits
+3366259	False	trusted edits
+3289785	False	trusted edits
+3302619	True	NULL
+3364907	False	trusted edits
+3235774	False	trusted group
+3368564	True	NULL
+3297195	True	NULL
+3233117	False	trusted edits
+3248223	False	trusted group
+3453125	True	NULL
+3233981	False	trusted edits
+3344182	False	trusted edits
+3345521	True	NULL
+3377769	True	NULL
+3539256	True	NULL
+3544284	True	NULL
+3265855	True	reverted edit
+3310372	False	trusted edits
+3313749	True	NULL
+3417616	True	NULL
+3378623	True	NULL
+3512705	False	trusted edits
+3418938	False	trusted edits
+3430301	True	NULL
+3267652	False	trusted edits
+3324514	False	trusted edits
+3509801	True	NULL
+3261089	True	NULL
+3292337	False	trusted edits
+3545491	True	reverted edit
+3333768	True	NULL
+3411883	False	trusted edits
+3261141	False	trusted edits
+3532368	True	NULL
+3323182	False	trusted group
+3336731	True	NULL
+3232929	True	NULL
+3440736	True	NULL
+3521619	True	NULL
+3345693	False	trusted edits
+3268142	False	trusted edits
+3260629	False	trusted edits
+3332498	False	trusted edits
+3469464	True	NULL
+3322958	True	NULL
+3502021	False	trusted edits
+3357039	False	trusted group
+3444073	True	NULL
+3448681	False	trusted edits
+3548072	True	NULL
+3420536	False	trusted edits
+3429832	True	NULL
+3432722	False	trusted edits
+3389858	False	trusted group
+3412008	False	trusted edits
+3302330	True	reverted edit
+3329590	False	trusted edits
+3491699	True	reverted edit
+3270944	True	reverted edit
+3509225	False	trusted edits
+3342445	True	NULL
+3291740	True	NULL
+3535961	True	NULL
+3362146	True	NULL
+3525748	True	NULL
+3453561	True	NULL
+3293727	False	trusted group
+3269378	False	trusted edits
+3535914	True	NULL
+3374291	False	trusted edits
+3345529	True	NULL
+3417346	False	trusted edits
+3251315	False	trusted group
+3261487	True	NULL
+3377739	False	trusted group
+3493281	False	trusted edits
+3543162	True	NULL
+3395043	True	reverted edit
+3272310	True	reverted edit
+3367075	False	trusted edits
+3308437	False	trusted edits
+3399443	True	NULL
+3339313	False	trusted group
+3276699	True	NULL
+3473365	False	trusted edits
+3544868	False	trusted edits
+3418925	False	trusted edits
+3538288	True	NULL
+3543208	True	blocked user
+3430572	True	reverted edit
+3471879	False	trusted edits
+3430746	False	trusted edits
+3358931	True	NULL
+3420230	True	NULL
+3518696	True	NULL
+3245730	False	trusted edits
+3445380	True	NULL
+3306990	True	reverted edit
+3453067	False	trusted edits
+3544761	False	trusted group
+3312626	True	NULL
+3531619	False	trusted edits
+3245085	True	reverted edit
+3406181	False	trusted group
+3373228	False	trusted group
+3422988	True	NULL
+3455080	False	trusted group
+3482500	True	NULL
+3486209	True	NULL
+3509203	False	trusted group
+3386762	True	NULL
+3442068	False	trusted group
+3476034	False	trusted edits
+3428225	False	trusted edits
+3430457	False	trusted group
+3465131	True	NULL
+3386635	True	NULL
+3535381	True	NULL
+3402349	False	trusted edits
+3449488	True	reverted edit
+3362355	True	NULL
+3296823	False	trusted group
+3521034	False	trusted edits
+3245974	True	NULL
+3312124	False	trusted group
+3366229	False	trusted edits
+3387832	False	trusted edits
+3446988	True	NULL
+3296023	False	trusted group
+3278785	False	trusted group
+3515039	False	trusted edits
+3285457	False	trusted edits
+3255818	False	trusted group
+3357662	True	NULL
+3359697	False	trusted group
+3421578	False	trusted edits
+3271154	False	trusted group
+3513076	False	trusted edits
+3512205	False	trusted edits
+3446544	True	NULL
+3466017	True	reverted edit
+3521771	True	reverted edit
+3345762	True	NULL
+3349783	True	NULL
+3533538	True	NULL
+3328610	False	trusted group
+3361418	True	NULL
+3266435	False	trusted group
+3341926	False	trusted edits
+3370450	False	trusted group
+3361849	True	NULL
+3517792	True	NULL
+3383500	True	NULL
+3423564	False	trusted edits
+3440816	False	trusted group
+3292612	True	NULL
+3323980	False	trusted edits
+3440596	False	trusted edits
+3325332	True	NULL
+3462639	True	NULL
+3362462	False	trusted edits
+3431463	True	NULL
+3239595	False	trusted edits
+3233967	False	trusted edits
+3314700	False	trusted group
+3406043	False	trusted group
+3542737	False	trusted edits
+3442098	False	trusted group
+3236662	True	NULL
+3408986	False	trusted group
+3459421	False	trusted edits
+3427228	True	NULL
+3309603	True	NULL
+3433000	True	NULL
+3292070	False	trusted edits
+3272494	False	trusted edits
+3264571	False	trusted edits
+3500093	True	NULL
+3254896	False	trusted group
+3424473	True	NULL
+3468526	True	reverted edit
+3502673	True	NULL
+3283816	False	trusted group
+3534218	False	trusted edits
+3294143	False	trusted group
+3441942	True	reverted edit
+3330847	False	trusted edits
+3310512	True	NULL
+3237758	False	trusted edits
+3530455	True	NULL
+3470848	True	NULL
+3472906	True	NULL
+3523535	True	NULL
+3305928	False	trusted edits
+3497747	True	NULL
+3530037	True	NULL
+3477705	False	trusted group
+3443391	True	NULL
+3244744	True	reverted edit
+3312256	True	reverted edit
+3397065	True	NULL
+3383144	True	NULL
+3266238	False	trusted group
+3525772	True	reverted edit
+3314613	True	NULL
+3324148	True	NULL
+3326502	False	trusted group
+3420293	True	reverted edit
+3367056	True	NULL
+3521470	True	NULL
+3357127	True	NULL
+3486449	False	trusted group
+3530135	True	reverted edit
+3281519	False	trusted group
+3509879	True	NULL
+3531121	False	trusted edits
+3245527	True	NULL
+3542911	True	NULL
+3434164	False	trusted group
+3477737	False	trusted group
+3489905	True	NULL
+3534834	False	trusted edits
+3422165	False	trusted group
+3458898	True	NULL
+3383545	True	NULL
+3244840	False	trusted group
+3409341	False	trusted edits
+3319745	False	trusted group
+3488478	False	trusted group
+3335784	False	trusted edits
+3402806	False	trusted edits
+3237662	False	trusted edits
+3540066	True	NULL
+3339741	False	trusted group
+3263279	False	trusted edits
+3533190	True	NULL
+3389380	False	trusted group
+3389147	False	trusted edits
+3499633	False	trusted group
+3475017	True	NULL
+3301183	False	trusted edits
+3334519	True	NULL
+3232984	True	NULL
+3387255	True	NULL
+3428126	False	trusted group
+3544763	False	trusted group
+3429943	False	trusted edits
+3405484	False	trusted edits
+3359947	True	NULL
+3398471	False	trusted edits
+3446800	False	trusted edits
+3284695	False	trusted edits
+3384444	True	NULL
+3288527	False	trusted edits
+3391896	False	trusted edits
+3307860	True	NULL
+3517396	True	NULL
+3354640	False	trusted group
+3420008	True	NULL
+3519473	True	NULL
+3490635	False	trusted group
+3347219	False	trusted edits
+3438314	True	NULL
+3376735	True	NULL
+3376337	True	NULL
+3323995	False	trusted group
+3361673	False	trusted edits
+3537528	False	trusted group
+3439034	False	trusted group
+3375724	False	trusted edits
+3382188	False	trusted group
+3526087	True	reverted edit
+3420312	True	NULL
+3445104	True	NULL
+3275963	True	NULL
+3234257	True	reverted edit
+3353823	True	NULL
+3515745	False	trusted group
+3408623	True	NULL
+3264869	False	trusted edits
+3521862	False	trusted edits
+3291472	False	trusted edits
+3447764	True	NULL
+3344093	False	trusted edits
+3507596	False	trusted group
+3485473	True	NULL
+3542421	False	trusted edits
+3260968	False	trusted group
+3339759	False	trusted edits
+3444338	True	NULL
+3529341	True	reverted edit
+3491392	False	trusted group
+3475858	False	trusted group
+3251863	False	trusted edits
+3272852	True	NULL
+3260180	True	NULL
+3405225	False	trusted group
+3471358	False	trusted edits
+3532481	True	NULL
+3480327	True	reverted edit
+3421524	True	NULL
+3327556	False	trusted group
+3522414	True	NULL
+3508103	True	NULL
+3283040	True	NULL
+3363893	True	NULL
+3456369	False	trusted group
+3492127	True	NULL
+3421525	True	NULL
+3433386	False	trusted group
+3367111	False	trusted edits
+3267099	False	trusted edits
+3419684	True	reverted edit
+3261030	False	trusted group
+3301122	True	reverted edit
+3307517	True	NULL
+3510307	True	NULL
+3282583	False	trusted edits
+3268628	False	trusted group
+3310735	False	trusted group
+3427885	False	trusted group
+3338596	False	trusted edits
+3286189	True	NULL
+3524395	True	NULL
+3450179	True	reverted edit
+3484453	False	trusted group
+3475961	True	NULL
+3394502	False	trusted edits
+3538969	True	NULL
+3482569	False	trusted edits
+3285389	True	NULL
+3454489	False	trusted group
+3435263	True	blocked user
+3435725	False	trusted edits
+3360024	False	trusted edits
+3436445	False	trusted group
+3348867	False	trusted group
+3327992	False	trusted edits
+3329005	False	trusted group
+3331775	False	trusted group
+3515236	True	NULL
+3326620	False	trusted edits
+3394296	True	NULL
+3364234	False	trusted group
+3392445	True	NULL
+3444869	False	trusted group
+3340315	True	NULL
+3460069	False	trusted group
+3280199	True	NULL
+3336529	True	NULL
+3275946	False	trusted edits
+3507409	False	trusted group
+3484793	True	NULL
+3385359	False	trusted group
+3532464	True	NULL
+3391164	True	reverted edit
+3328240	True	NULL
+3284218	False	trusted edits
+3536976	False	trusted edits
+3485384	False	trusted group
+3267713	False	trusted group
+3265139	True	NULL
+3252496	False	trusted group
+3323916	True	NULL
+3391553	False	trusted edits
+3327521	False	trusted group
+3547894	False	trusted group
+3327629	False	trusted group
+3307650	False	trusted edits
+3438316	True	NULL
+3368520	True	NULL
+3317618	True	NULL
+3517109	True	NULL
+3498427	True	NULL
+3451531	False	trusted edits
+3545517	True	NULL
+3468890	False	trusted edits
+3361682	False	trusted edits
+3242672	False	trusted edits
+3260676	True	NULL
+3331943	True	NULL
+3469084	True	NULL
+3510829	False	trusted edits
+3535758	False	trusted edits
+3401076	False	trusted edits
+3483804	False	trusted edits
+3446100	True	reverted edit
+3511161	True	NULL
+3477722	False	trusted group
+3275386	True	NULL
+3484031	False	trusted edits
+3312237	True	reverted edit
+3429775	True	NULL
+3485155	False	trusted group
+3372783	True	NULL
+3528003	False	trusted edits
+3540588	True	NULL
+3503299	True	NULL
+3407158	False	trusted edits
+3327982	False	trusted group
+3395791	False	trusted edits
+3303494	False	trusted edits
+3342634	False	trusted group
+3352323	True	NULL
+3299738	False	trusted group
+3439454	True	NULL
+3276633	False	trusted edits
+3489784	True	NULL
+3441321	True	NULL
+3474660	True	reverted edit
+3405814	True	NULL
+3301029	True	NULL
+3260290	True	NULL
+3366507	True	NULL
+3376796	True	NULL
+3244696	False	trusted group
+3475898	True	reverted edit
+3395354	True	NULL
+3521998	True	blocked user
+3490047	True	NULL
+3507510	False	trusted group
+3430543	True	NULL
+3534134	False	trusted group
+3508155	True	NULL
+3251599	False	trusted group
+3304264	True	NULL
+3266669	False	trusted group
+3244763	True	NULL
+3406924	True	NULL
+3522352	True	NULL
+3483582	False	trusted group
+3315562	False	trusted edits
+3338728	False	trusted edits
+3459713	True	reverted edit
+3308172	False	trusted edits
+3439551	False	trusted edits
+3521489	True	NULL
+3403311	True	NULL
+3525312	False	trusted edits
+3398393	True	NULL
+3500885	False	trusted edits
+3401589	False	trusted edits
+3488639	False	trusted edits
+3529054	True	NULL
+3384031	False	trusted edits
+3241599	False	trusted edits
+3334387	False	trusted group
+3456161	True	NULL
+3351373	True	NULL
+3303831	True	reverted edit
+3532051	False	trusted group
+3468598	False	trusted group
+3532373	False	trusted group
+3456343	True	NULL
+3349938	True	reverted edit
+3396449	True	NULL
+3434550	True	reverted edit
+3514133	True	NULL
+3479773	False	trusted edits
+3424422	False	trusted edits
+3513030	False	trusted edits
+3271917	True	NULL
+3278188	False	trusted group
+3250149	False	trusted group
+3512221	True	NULL
+3380009	False	trusted edits
+3295496	False	trusted edits
+3320051	True	NULL
+3491928	True	NULL
+3395855	False	trusted group
+3500770	True	NULL
+3353609	False	trusted group
+3547049	False	trusted group
+3372598	True	NULL
+3450610	True	NULL
+3470249	True	NULL
+3538655	False	trusted group
+3405636	False	trusted edits
+3378066	False	trusted group
+3386333	True	reverted edit
+3493053	False	trusted group
+3489746	True	NULL
+3411550	False	trusted edits
+3361276	False	trusted edits
+3354308	True	NULL
+3530264	True	NULL
+3237647	True	reverted edit
+3275561	True	NULL
+3429128	True	NULL
+3516717	False	trusted group
+3236664	True	NULL
+3397399	True	NULL
+3238499	True	reverted edit
+3434021	False	trusted group
+3277713	False	trusted group
+3304438	False	trusted edits
+3479466	False	trusted group
+3396202	True	reverted edit
+3349223	False	trusted group
+3402897	True	NULL
+3439114	False	trusted edits
+3337325	True	NULL
+3406281	False	trusted group
+3317525	True	NULL
+3435936	False	trusted group
+3542156	True	NULL
+3397249	True	NULL
+3535634	True	NULL
+3405119	False	trusted edits
+3544673	True	NULL
+3480837	True	reverted edit
+3488288	True	NULL
+3348186	True	reverted edit
+3401897	False	trusted edits
+3328948	False	trusted edits
+3335853	True	NULL
+3364281	False	trusted group
+3481158	True	NULL
+3370834	True	NULL
+3483321	False	trusted group
+3362274	False	trusted edits
+3330068	True	NULL
+3478770	False	trusted edits
+3527081	False	trusted edits
+3289640	True	NULL
+3292010	False	trusted edits
+3301853	True	NULL
+3300660	False	trusted group
+3427288	True	NULL
+3438746	True	reverted edit
+3483934	True	NULL
+3456809	False	trusted edits
+3247367	False	trusted group
+3340406	True	NULL
+3522320	True	NULL
+3394543	False	trusted edits
+3292821	False	trusted edits
+3285220	True	NULL
+3423405	False	trusted edits
+3233794	False	trusted edits
+3472510	False	trusted group
+3545018	True	NULL
+3333791	True	NULL
+3263329	True	reverted edit
+3296079	False	trusted group
+3412388	False	trusted group
+3454633	True	NULL
+3236161	False	trusted group
+3510943	True	NULL
+3484942	True	NULL
+3249310	False	trusted group
+3305545	True	NULL
+3305918	False	trusted edits
+3515089	False	trusted group
+3354526	True	NULL
+3456409	True	NULL
+3238811	True	NULL
+3370962	True	NULL
+3379160	True	NULL
+3326446	False	trusted edits
+3525771	False	trusted group
+3277591	True	NULL
+3403811	False	trusted edits
+3277292	True	NULL
+3501208	True	NULL
+3393259	False	trusted edits
+3301620	False	trusted edits
+3357650	True	NULL
+3234352	True	NULL
+3440321	False	trusted edits
+3512943	False	trusted group
+3303547	True	NULL
+3528498	True	blocked user
+3313018	True	NULL
+3526868	False	trusted edits
+3400909	False	trusted edits
+3509511	True	NULL
+3502419	True	NULL
+3419590	False	trusted group
+3280088	True	reverted edit
+3300530	False	trusted edits
+3247830	False	trusted group
+3377048	True	NULL
+3467482	True	NULL
+3523255	True	NULL
+3306874	True	NULL
+3465309	False	trusted group
+3280206	True	NULL
+3285530	True	NULL
+3477678	True	NULL
+3383102	True	reverted edit
+3541821	False	trusted edits
+3414663	False	trusted group
+3513836	True	NULL
+3316115	False	trusted edits
+3285437	False	trusted edits
+3435350	True	reverted edit
+3284810	True	NULL
+3543663	True	NULL
+3453729	True	NULL
+3392110	False	trusted edits
+3299140	True	NULL
+3543454	False	trusted edits
+3527250	True	NULL
+3385418	True	NULL
+3522108	True	NULL
+3532526	True	NULL
+3525939	True	NULL
+3338169	True	NULL
+3256446	False	trusted group
+3488890	True	NULL
+3476952	True	NULL
+3504357	False	trusted edits
+3444621	True	NULL
+3536184	False	trusted group
+3356331	True	NULL
+3342560	False	trusted group
+3317193	False	trusted group
+3478109	True	NULL
+3393086	True	reverted edit
+3443128	True	NULL
+3305017	False	trusted edits
+3321137	True	NULL
+3463004	False	trusted group
+3280331	True	NULL
+3545000	True	NULL
+3324413	True	NULL
+3459027	False	trusted edits
+3363888	True	NULL
+3544363	False	trusted edits
+3432418	True	reverted edit
+3532190	True	NULL
+3383519	True	NULL
+3238090	False	trusted edits
+3288949	False	trusted edits
+3406039	False	trusted group
+3376465	True	NULL
+3410329	False	trusted edits
+3390058	False	trusted group
+3533607	True	NULL
+3435408	True	NULL
+3256542	False	trusted group
+3430552	True	NULL
+3517507	True	NULL
+3443818	False	trusted edits
+3315358	False	trusted edits
+3539972	False	trusted group
+3411861	True	reverted edit
+3350781	False	trusted edits
+3425491	False	trusted edits
+3393474	False	trusted edits
+3496728	True	NULL
+3297204	True	NULL
+3522871	True	NULL
+3404642	False	trusted edits
+3442372	True	reverted edit
+3261594	True	NULL
+3243345	False	trusted edits
+3401037	True	NULL
+3296732	True	NULL
+3391485	True	NULL
+3542986	False	trusted group
+3241350	True	reverted edit
+3385968	False	trusted edits
+3324029	True	NULL
+3300025	True	NULL
+3306997	False	trusted group
+3337037	True	reverted edit
+3337891	True	NULL
+3542748	True	NULL
+3477512	False	trusted group
+3445157	True	blocked user
+3373011	True	blocked user
+3507613	True	reverted edit
+3290213	True	reverted edit
+3270186	False	trusted group
+3482192	True	NULL
+3249106	False	trusted group
+3353635	True	NULL
+3470598	False	trusted edits
+3478984	False	trusted edits
+3403726	True	NULL
+3303038	False	trusted edits
+3468423	True	NULL
+3460590	False	trusted edits
+3294202	False	trusted edits
+3326926	False	trusted edits
+3289329	True	NULL
+3297329	False	trusted edits
+3491847	True	NULL
+3317934	False	trusted edits
+3532716	True	NULL
+3455775	False	trusted group
+3309990	False	trusted edits
+3277521	True	NULL
+3308788	False	trusted edits
+3258446	True	NULL
+3517136	True	NULL
+3260306	True	NULL
+3288390	False	trusted group
+3508572	False	trusted group
+3503643	True	reverted edit
+3328409	True	NULL
+3341493	True	reverted edit
+3322107	True	reverted edit
+3398336	True	NULL
+3253542	False	trusted group
+3455170	True	reverted edit
+3235114	False	trusted group
+3393695	True	reverted edit
+3274119	False	trusted edits
+3379683	False	trusted group
+3478732	False	trusted edits
+3489747	False	trusted edits
+3291385	True	NULL
+3436146	False	trusted edits
+3402842	False	trusted edits
+3383594	False	trusted group
+3545174	False	trusted edits
+3347688	False	trusted edits
+3381276	False	trusted group
+3324035	True	NULL
+3436080	True	reverted edit
+3519947	False	trusted edits
+3534436	False	trusted group
+3474318	False	trusted edits
+3292845	False	trusted group
+3532665	False	trusted edits
+3444610	False	trusted edits
+3406973	True	NULL
+3274414	False	trusted edits
+3352132	False	trusted edits
+3410864	False	trusted group
+3367979	False	trusted edits
+3245249	True	NULL
+3431910	True	NULL
+3498046	True	NULL
+3523109	False	trusted group
+3467724	False	trusted edits
+3481385	False	trusted edits
+3358209	True	NULL
+3289225	False	trusted group
+3511439	True	NULL
+3331897	True	NULL
+3342492	True	NULL
+3526758	True	NULL
+3320221	True	NULL
+3428809	False	trusted edits
+3451788	True	NULL
+3473106	False	trusted edits
+3311957	False	trusted edits
+3536330	True	NULL
+3404872	True	NULL
+3367943	True	reverted edit
+3239925	True	NULL
+3494530	False	trusted edits
+3323635	False	trusted group
+3509666	False	trusted edits
+3334151	True	NULL
+3282240	True	NULL
+3530426	True	NULL
+3387083	False	trusted edits
+3403707	False	trusted edits
+3520936	False	trusted group
+3367033	True	NULL
+3254873	False	trusted group
+3352792	False	trusted edits
+3320183	False	trusted group
+3314444	True	reverted edit
+3521650	True	NULL
+3419473	False	trusted edits
+3424675	False	trusted group
+3406036	True	reverted edit
+3351042	True	NULL
+3273004	False	trusted group
+3538981	False	trusted edits
+3418707	True	NULL
+3383568	True	NULL
+3527507	True	NULL
+3469855	True	NULL
+3521735	True	NULL
+3237454	True	NULL
+3429460	False	trusted group
+3340072	True	NULL
+3515137	False	trusted group
+3455011	True	NULL
+3421980	False	trusted edits
+3403227	True	NULL
+3536156	True	NULL
+3235854	True	NULL
+3245545	False	trusted group
+3520991	False	trusted group
+3338124	True	NULL
+3548059	False	trusted edits
+3240923	False	trusted group
+3252537	True	NULL
+3322221	True	NULL
+3443772	True	NULL
+3267611	False	trusted group
+3517073	False	trusted edits
+3371025	False	trusted group
+3311987	False	trusted edits
+3411327	False	trusted edits
+3360769	False	trusted edits
+3307146	True	NULL
+3261352	True	reverted edit
+3358151	True	NULL
+3324135	True	NULL
+3234701	True	NULL
+3338360	False	trusted group
+3307313	True	NULL
+3472734	False	trusted group
+3275884	False	trusted edits
+3452811	False	trusted edits
+3299897	False	trusted edits
+3289307	True	NULL
+3405116	False	trusted group
+3269280	False	trusted edits
+3349829	True	reverted edit
+3319635	False	trusted group
+3540943	False	trusted group
+3301303	True	NULL
+3364491	True	NULL
+3406348	True	reverted edit
+3456167	True	NULL
+3305197	False	trusted group
+3377452	True	NULL
+3545817	True	reverted edit
+3467387	True	NULL
+3450483	False	trusted edits
+3237534	True	reverted edit
+3471185	False	trusted group
+3527915	True	NULL
+3429561	True	NULL
+3266098	False	trusted edits
+3517199	False	trusted edits
+3329286	False	trusted group
+3442991	False	trusted edits
+3288825	False	trusted group
+3434767	True	reverted edit
+3515607	True	NULL
+3274275	False	trusted group
+3437482	False	trusted edits
+3501196	True	reverted edit
+3485538	True	reverted edit
+3523538	True	NULL
+3434998	True	NULL
+3356912	False	trusted group
+3297661	True	NULL
+3471204	True	NULL
+3277918	False	trusted edits
+3356634	False	trusted edits
+3516639	False	trusted edits
+3327114	False	trusted edits
+3410583	True	NULL
+3487788	False	trusted group
+3501408	True	reverted edit
+3281459	True	reverted edit
+3285118	True	NULL
+3404670	True	NULL
+3479008	True	NULL
+3253406	False	trusted group
+3508359	False	trusted edits
+3486021	False	trusted edits
+3528664	True	NULL
+3235146	True	NULL
+3379633	False	trusted edits
+3305523	True	NULL
+3540961	True	NULL
+3289713	False	trusted group
+3512091	True	NULL
+3374674	True	NULL
+3475697	True	reverted edit
+3239238	True	NULL
+3429891	False	trusted edits
+3449598	False	trusted edits
+3528844	False	trusted group
+3300956	False	trusted edits
+3333435	False	trusted edits
+3299084	False	trusted edits
+3337625	True	NULL
+3296001	True	NULL
+3233276	False	trusted edits
+3330777	False	trusted group
+3537979	True	NULL
+3283106	False	trusted group
+3508907	False	trusted group
+3497676	False	trusted edits
+3290011	False	trusted edits
+3387984	False	trusted group
+3447055	False	trusted group
+3539217	True	NULL
+3463017	False	trusted edits
+3234899	False	trusted edits
+3418613	True	NULL
+3547600	True	NULL
+3285535	False	trusted group
+3545944	False	trusted group
+3395114	False	trusted edits
+3449251	False	trusted edits
+3420362	False	trusted edits
+3515361	True	reverted edit
+3275528	False	trusted edits
+3511572	False	trusted edits
+3276870	True	NULL
+3408353	True	NULL
+3445184	False	trusted edits
+3345560	True	NULL
+3255380	False	trusted group
+3423785	True	NULL
+3399376	True	NULL
+3356169	False	trusted group
+3388879	False	trusted edits
+3364714	True	blocked user
+3239990	True	NULL
+3436091	False	trusted group
+3467813	False	trusted group
+3317806	True	NULL
+3338007	True	NULL
+3403361	False	trusted edits
+3278472	False	trusted group
+3381477	True	NULL
+3525224	True	NULL
+3379466	False	trusted group
+3464973	True	NULL
+3290357	False	trusted edits
+3452585	False	trusted edits
+3512396	False	trusted edits
+3371004	True	NULL
+3373052	False	trusted group
+3331620	False	trusted edits
+3524476	True	NULL
+3486879	False	trusted group
+3331610	False	trusted group
+3282848	True	NULL
+3366540	False	trusted group
+3428326	True	reverted edit
+3247617	False	trusted group
+3484471	False	trusted group
+3273904	False	trusted edits
+3233731	True	NULL
+3519488	True	NULL
+3367317	False	trusted edits
+3316947	True	NULL
+3424430	True	NULL
+3547034	False	trusted edits
+3500238	True	NULL
+3401698	False	trusted edits
+3481197	False	trusted edits
+3404556	True	NULL
+3288659	True	NULL
+3255959	False	trusted group
+3437411	True	NULL
+3404559	True	reverted edit
+3276175	True	reverted edit
+3246691	True	NULL
+3260266	True	reverted edit
+3236773	False	trusted group
+3455723	False	trusted edits
+3472702	False	trusted group
+3407375	True	NULL
+3441831	True	NULL
+3334172	True	NULL
+3335980	True	reverted edit
+3544115	False	trusted group
+3235697	True	NULL
+3447675	False	trusted group
+3325928	False	trusted group
+3326028	True	NULL
+3404329	False	trusted edits
+3505637	True	NULL
+3248380	False	trusted group
+3248202	False	trusted group
+3477627	True	reverted edit
+3293488	False	trusted group
+3385433	True	NULL
+3294384	True	NULL
+3524426	True	NULL
+3447867	False	trusted edits
+3456868	True	NULL
+3421056	True	NULL
+3459283	False	trusted group
+3521970	True	NULL
+3321479	False	trusted group
+3471099	False	trusted edits
+3330071	True	NULL
+3391921	True	NULL
+3237260	True	NULL
+3357353	True	NULL
+3427139	True	reverted edit
+3288401	False	trusted group
+3263652	False	trusted group
+3331338	True	reverted edit
+3523192	True	NULL
+3312685	False	trusted group
+3359754	True	reverted edit
+3363851	False	trusted edits
+3433762	False	trusted edits
+3400296	True	NULL
+3397758	False	trusted edits
+3274113	True	reverted edit
+3434404	True	reverted edit
+3407092	False	trusted edits
+3342602	True	NULL
+3547555	False	trusted edits
+3308375	False	trusted edits
+3381371	True	NULL
+3543976	True	NULL
+3261904	True	NULL
+3270511	True	reverted edit
+3474989	True	reverted edit
+3538575	False	trusted edits
+3519484	True	NULL
+3501109	False	trusted edits
+3274641	True	NULL
+3531518	True	NULL
+3470181	True	NULL
+3398100	True	NULL
+3472650	False	trusted group
+3448294	False	trusted edits
+3370192	True	NULL
+3389659	False	trusted group
+3489762	True	NULL
+3455690	True	NULL
+3295557	False	trusted group
+3519675	False	trusted edits
+3303552	True	NULL
+3525527	True	reverted edit
+3284016	False	trusted edits
+3245228	False	trusted edits
+3288475	False	trusted edits
+3468896	False	trusted group
+3327398	True	NULL
+3514396	True	NULL
+3535342	False	trusted edits
+3311962	True	NULL
+3528707	True	NULL
+3459101	False	trusted group
+3469889	True	NULL
+3341039	False	trusted edits
+3247138	False	trusted group
+3511721	False	trusted edits
+3335782	True	NULL
+3273445	True	NULL
+3418216	True	NULL
+3499585	True	NULL
+3505076	False	trusted group
+3331982	True	NULL
+3495572	True	NULL
+3449436	True	NULL
+3419086	True	NULL
+3295079	True	NULL
+3323572	True	NULL
+3475025	True	NULL
+3259424	True	reverted edit
+3292898	False	trusted edits
+3322540	False	trusted group
+3329486	False	trusted edits
+3414830	True	NULL
+3541874	True	NULL
+3243935	False	trusted edits
+3306346	False	trusted edits
+3531469	False	trusted edits
+3292388	False	trusted edits
+3275281	False	trusted group
+3266000	True	NULL
+3368062	False	trusted edits
+3477831	False	trusted edits
+3533683	True	NULL
+3336135	True	NULL
+3367878	True	NULL
+3440356	True	NULL
+3441248	False	trusted group
+3237796	False	trusted edits
+3538791	False	trusted edits
+3542881	False	trusted edits
+3376739	False	trusted group
+3513210	False	trusted group
+3482454	False	trusted edits
+3518359	True	NULL
+3306790	False	trusted edits
+3542377	True	NULL
+3332110	False	trusted group
+3410495	False	trusted edits
+3318115	True	reverted edit
+3296584	False	trusted group
+3239871	True	NULL
+3312756	False	trusted group
+3311662	False	trusted edits
+3410202	True	NULL
+3469669	False	trusted group
+3412184	True	NULL
+3297468	False	trusted edits
+3455329	True	NULL
+3433332	False	trusted group
+3487018	True	NULL
+3390353	False	trusted edits
+3321928	False	trusted group
+3332847	False	trusted edits
+3328919	False	trusted edits
+3288860	True	NULL
+3287510	False	trusted edits
+3349864	True	reverted edit
+3396910	True	NULL
+3495541	True	NULL
+3490786	True	NULL
+3369107	False	trusted group
+3378736	False	trusted group
+3502416	False	trusted edits
+3495488	True	NULL
+3324744	False	trusted group
+3301259	False	trusted edits
+3421261	False	trusted edits
+3338733	True	NULL
+3313755	False	trusted edits
+3279279	True	NULL
+3470781	False	trusted edits
+3452313	True	NULL
+3358113	True	reverted edit
+3427159	False	trusted edits
+3322033	False	trusted group
+3429825	True	NULL
+3303128	True	NULL
+3244963	False	trusted edits
+3422928	False	trusted edits
+3389107	False	trusted group
+3359851	False	trusted edits
+3510698	False	trusted group
+3493517	False	trusted group
+3478624	True	NULL
+3384041	True	reverted edit
+3372804	False	trusted edits
+3311059	False	trusted edits
+3290682	True	reverted edit
+3404066	False	trusted group
+3242189	True	reverted edit
+3501013	True	NULL
+3396982	True	NULL
+3450499	True	NULL
+3377116	False	trusted edits
+3291159	False	trusted group
+3493693	True	NULL
+3288295	False	trusted edits
+3510630	True	reverted edit
+3320948	True	NULL
+3242579	False	trusted edits
+3449679	True	NULL
+3473345	False	trusted edits
+3496586	False	trusted group
+3392245	True	NULL
+3395311	False	trusted edits
+3249642	False	trusted group
+3335361	True	NULL
+3299606	True	reverted edit
+3479672	False	trusted edits
+3412802	False	trusted group
+3451027	False	trusted edits
+3432975	True	NULL
+3235520	True	NULL
+3412211	True	reverted edit
+3521176	True	NULL
+3319444	True	reverted edit
+3429970	False	trusted edits
+3545955	True	NULL
+3404394	False	trusted edits
+3249078	False	trusted group
+3417652	True	NULL
+3411542	False	trusted edits
+3331460	True	NULL
+3471842	False	trusted edits
+3306159	False	trusted edits
+3312350	False	trusted group
+3279210	False	trusted group
+3323580	True	NULL
+3242357	True	reverted edit
+3535787	True	NULL
+3517214	False	trusted edits
+3287158	False	trusted group
+3291937	False	trusted edits
+3249840	False	trusted group
+3524440	True	NULL
+3526815	False	trusted group
+3525187	True	NULL
+3321238	False	trusted group
+3455788	False	trusted edits
+3287212	True	NULL
+3336078	True	NULL
+3527686	False	trusted edits
+3411091	False	trusted edits
+3474888	False	trusted edits
+3473680	True	reverted edit
+3290291	True	NULL
+3244921	True	NULL
+3547770	True	blocked user
+3528343	True	NULL
+3509635	True	NULL
+3297964	False	trusted group
+3330768	False	trusted group
+3309268	False	trusted group
+3521297	False	trusted edits
+3541741	True	NULL
+3480840	True	reverted edit
+3239400	True	NULL
+3333931	True	NULL
+3518503	False	trusted edits
+3545945	True	NULL
+3536829	True	NULL
+3315288	False	trusted group
+3393883	False	trusted edits
+3444687	False	trusted edits
+3545796	True	reverted edit
+3400953	False	trusted edits
+3513069	True	NULL
+3334335	True	NULL
+3439668	True	NULL
+3462745	True	NULL
+3358903	True	reverted edit
+3292878	False	trusted edits
+3517781	True	reverted edit
+3545799	True	NULL
+3468538	True	NULL
+3269538	False	trusted group
+3520296	True	NULL
+3412220	True	reverted edit
+3450438	False	trusted group
+3446679	True	NULL
+3383877	False	trusted edits
+3291719	False	trusted edits
+3349205	True	NULL
+3335672	False	trusted edits
+3389063	True	NULL
+3252642	False	trusted group
+3332635	True	NULL
+3311656	False	trusted group
+3388420	False	trusted group
+3380060	True	NULL
+3386853	False	trusted group
+3421958	False	trusted group
+3303162	True	NULL
+3526568	True	NULL
+3526615	False	trusted group
+3334894	False	trusted edits
+3259844	True	NULL
+3384040	True	reverted edit
+3468203	True	NULL
+3382337	True	reverted edit
+3279405	False	trusted edits
+3492371	True	NULL
+3236168	False	trusted group
+3301047	False	trusted group
+3531740	False	trusted edits
+3477908	False	trusted edits
+3383409	True	reverted edit
+3545098	True	NULL
+3481855	False	trusted group
+3500207	True	NULL
+3339548	False	trusted group
+3461381	False	trusted edits
+3287890	True	NULL
+3366832	False	trusted edits
+3374073	False	trusted edits
+3469382	False	trusted edits
+3533426	True	NULL
+3429175	False	trusted edits
+3456403	False	trusted group
+3267480	False	trusted edits
+3355034	True	NULL
+3541417	False	trusted edits
+3507030	False	trusted group
+3545747	True	NULL
+3324308	False	trusted edits
+3439248	False	trusted group
+3348880	True	NULL
+3407441	True	NULL
+3469860	True	NULL
+3369128	False	trusted group
+3454746	True	NULL
+3531151	False	trusted edits
+3369365	True	NULL
+3301640	False	trusted group
+3402974	True	NULL
+3535749	True	NULL
+3347475	False	trusted group
+3293138	True	NULL
+3510334	False	trusted group
+3265117	True	NULL
+3454223	False	trusted edits
+3352907	False	trusted group
+3534821	False	trusted group
+3513450	False	trusted group
+3503509	True	NULL
+3545133	True	NULL
+3531651	False	trusted edits
+3516727	False	trusted group
+3306685	True	NULL
+3375260	True	NULL
+3545087	True	NULL
+3478427	False	trusted edits
+3345089	True	NULL
+3234455	True	NULL
+3479078	True	NULL
+3272628	True	NULL
+3293413	True	NULL
+3366173	False	trusted edits
+3321997	False	trusted group
+3328063	False	trusted group
+3460831	False	trusted edits
+3312472	False	trusted edits
+3519498	True	NULL
+3455856	True	NULL
+3510624	False	trusted group
+3253813	False	trusted group
+3431903	True	reverted edit
+3239701	True	NULL
+3401196	True	NULL
+3233869	True	NULL
+3333867	True	reverted edit
+3282249	True	NULL
+3253939	False	trusted group
+3442357	False	trusted group
+3317892	True	NULL
+3287489	True	NULL
+3400056	True	NULL
+3370511	True	NULL
+3465096	True	NULL
+3541094	True	blocked user
+3328427	False	trusted edits
+3281867	True	NULL
+3260451	True	reverted edit
+3293243	True	NULL
+3420282	True	NULL
+3281993	True	NULL
+3496687	False	trusted edits
+3426427	False	trusted group
+3373960	False	trusted edits
+3460124	False	trusted edits
+3468596	False	trusted group
+3292556	False	trusted group
+3419232	True	NULL
+3531671	False	trusted edits
+3412542	False	trusted group
+3390440	False	trusted edits
+3303296	True	NULL
+3486251	True	NULL
+3368652	False	trusted edits
+3259111	True	NULL
+3529070	False	trusted edits
+3365807	False	trusted group
+3255853	False	trusted group
+3354145	True	NULL
+3488870	True	NULL
+3327929	False	trusted group
+3457581	False	trusted edits
+3347647	True	NULL
+3461957	False	trusted group
+3464352	False	trusted edits
+3286279	True	NULL
+3324061	True	NULL
+3279428	True	NULL
+3305090	True	NULL
+3492323	True	NULL
+3269034	True	NULL
+3280043	False	trusted edits
+3531887	False	trusted edits
+3382444	True	NULL
+3345653	True	NULL
+3420806	False	trusted group
+3478801	False	trusted edits
+3500342	False	trusted edits
+3528231	True	NULL
+3508978	False	trusted group
+3297828	True	NULL
+3439609	False	trusted edits
+3278982	True	NULL
+3415238	False	trusted edits
+3547011	False	trusted group
+3296508	False	trusted edits
+3322683	True	NULL
+3256115	False	trusted group
+3546354	False	trusted edits
+3422344	False	trusted group
+3540455	False	trusted edits
+3527077	True	NULL
+3418471	True	NULL
+3513155	True	NULL
+3486201	True	NULL
+3314467	False	trusted edits
+3392600	False	trusted edits
+3255820	False	trusted group
+3289878	True	NULL
+3504291	True	NULL
+3361591	False	trusted edits
+3374366	False	trusted group
+3240836	True	NULL
+3535202	False	trusted group
+3363486	True	reverted edit
+3304359	True	NULL
+3441023	False	trusted edits
+3400336	False	trusted edits
+3545493	True	NULL
+3319438	False	trusted group
+3486141	True	NULL
+3405913	False	trusted edits
+3333439	False	trusted edits
+3323416	False	trusted edits
+3440096	False	trusted group
+3431137	True	reverted edit
+3392927	False	trusted edits
+3366913	False	trusted group
+3354736	True	NULL
+3316919	True	reverted edit
+3380456	True	NULL
+3360325	True	NULL
+3467851	True	NULL
+3291206	False	trusted edits
+3233450	True	reverted edit
+3405813	True	NULL
+3323389	True	NULL
+3337675	True	NULL
+3535333	True	NULL
+3402708	True	NULL
+3326234	False	trusted edits
+3293392	True	NULL
+3511558	True	NULL
+3372545	True	NULL
+3417143	False	trusted group
+3468975	False	trusted edits
+3392713	False	trusted edits
+3440332	True	NULL
+3273531	False	trusted edits
+3324043	True	NULL
+3451452	True	NULL
+3510465	False	trusted edits
+3343114	False	trusted edits
+3272416	False	trusted group
+3258658	False	trusted edits
+3328342	True	reverted edit
+3382975	False	trusted group
+3450678	False	trusted group
+3358609	True	reverted edit
+3351254	True	NULL
+3275297	True	NULL
+3501729	False	trusted edits
+3469054	True	NULL
+3305526	True	reverted edit
+3347533	True	NULL
+3436913	True	NULL
+3505660	True	NULL
+3508060	True	NULL
+3305824	False	trusted edits
+3293991	False	trusted edits
+3310520	False	trusted edits
+3241381	False	trusted edits
+3492003	False	trusted edits
+3363390	False	trusted group
+3537050	False	trusted edits
+3468544	False	trusted group
+3519492	False	trusted group
+3445887	True	reverted edit
+3481418	True	reverted edit
+3309606	True	reverted edit
+3345581	False	trusted group
+3490174	False	trusted group
+3328537	True	reverted edit
+3417665	False	trusted edits
+3533198	True	NULL
+3482521	False	trusted edits
+3538970	True	NULL
+3512758	True	NULL
+3451857	True	NULL
+3326910	False	trusted edits
+3468038	True	NULL
+3451688	True	NULL
+3240837	False	trusted group
+3444711	False	trusted edits
+3381884	True	NULL
+3534857	False	trusted edits
+3478697	False	trusted edits
+3334726	True	NULL
+3528642	False	trusted edits
+3369162	True	NULL
+3508736	False	trusted group
+3521206	False	trusted edits
+3495096	True	NULL
+3433371	False	trusted edits
+3288015	False	trusted group
+3280817	True	reverted edit
+3543110	False	trusted edits
+3350951	True	NULL
+3264984	True	NULL
+3480030	False	trusted edits
+3287813	True	NULL
+3391840	True	NULL
+3541123	False	trusted edits
+3352676	True	NULL
+3335167	True	NULL
+3431535	True	NULL
+3399148	False	trusted edits
+3404911	True	NULL
+3249915	False	trusted group
+3369308	False	trusted edits
+3278680	True	reverted edit
+3335333	True	NULL
+3264962	False	trusted group
+3490858	True	NULL
+3297641	True	reverted edit
+3511194	True	NULL
+3453918	True	reverted edit
+3399882	False	trusted edits
+3485292	False	trusted edits
+3492700	True	NULL
+3359081	False	trusted edits
+3514485	True	NULL
+3331479	True	NULL
+3444887	True	NULL
+3358973	False	trusted edits
+3456340	True	NULL
+3334514	False	trusted group
+3461510	False	trusted edits
+3438252	False	trusted edits
+3267248	False	trusted group
+3346097	False	trusted edits
+3448503	True	reverted edit
+3451390	True	NULL
+3242760	False	trusted group
+3423131	False	trusted group
+3392010	True	reverted edit
+3492390	False	trusted edits
+3512198	True	NULL
+3364799	True	NULL
+3315922	True	NULL
+3484734	True	NULL
+3413158	False	trusted edits
+3441891	True	NULL
+3342790	False	trusted group
+3505652	False	trusted edits
+3368549	True	NULL
+3526340	False	trusted edits
+3361870	True	NULL
+3328564	True	NULL
+3453121	True	reverted edit
+3546089	True	NULL
+3358061	True	NULL
+3343685	True	NULL
+3447802	True	NULL
+3279141	True	NULL
+3240963	False	trusted edits
+3254228	False	trusted group
+3528943	True	NULL
+3274379	False	trusted edits
+3453229	False	trusted edits
+3546607	True	reverted edit
+3471396	False	trusted edits
+3283954	True	NULL
+3545924	True	NULL
+3237585	False	trusted edits
+3317076	False	trusted group
+3347376	False	trusted edits
+3308252	True	NULL
+3282293	True	NULL
+3320879	False	trusted group
+3252805	False	trusted edits
+3360522	False	trusted edits
+3543753	False	trusted edits
+3280231	True	NULL
+3462051	False	trusted group
+3451392	True	reverted edit
+3491777	False	trusted edits
+3504051	False	trusted group
+3414504	True	NULL
+3333347	True	NULL
+3322543	True	NULL
+3491485	True	NULL
+3277358	True	NULL
+3421815	True	NULL
+3437060	False	trusted group
+3383713	True	reverted edit
+3246660	True	NULL
+3303236	False	trusted edits
+3394047	False	trusted edits
+3372959	False	trusted edits
+3441459	True	NULL
+3301490	False	trusted edits
+3488083	False	trusted group
+3288742	True	NULL
+3436671	True	reverted edit
+3514670	False	trusted group
+3371116	False	trusted group
+3352309	True	NULL
+3448122	True	reverted edit
+3442438	False	trusted edits
+3291813	False	trusted edits
+3472895	False	trusted group
+3513960	True	reverted edit
+3470901	False	trusted edits
+3541800	True	NULL
+3259946	False	trusted edits
+3252371	True	NULL
+3318099	True	reverted edit
+3508866	False	trusted group
+3510412	False	trusted edits
+3338604	False	trusted group
+3400870	False	trusted edits
+3541848	True	NULL
+3468041	True	NULL
+3469446	False	trusted edits
+3470849	True	NULL
+3497932	False	trusted edits
+3302426	False	trusted group
+3361215	True	NULL
+3536669	False	trusted group
+3329265	False	trusted edits
+3374802	True	reverted edit
+3353016	True	NULL
+3398380	True	NULL
+3431943	False	trusted group
+3502421	True	NULL
+3519079	True	NULL
+3320326	False	trusted group
+3464260	False	trusted group
+3306917	True	NULL
+3364890	True	NULL
+3433524	False	trusted group
+3263916	True	NULL
+3455901	True	reverted edit
+3357350	False	trusted group
+3421217	False	trusted edits
+3526079	True	reverted edit
+3351386	False	trusted group
+3235897	True	reverted edit
+3259360	True	NULL
+3327613	True	reverted edit
+3314581	False	trusted group
+3380869	False	trusted edits
+3316007	True	reverted edit
+3301724	True	NULL
+3439471	True	NULL
+3267805	False	trusted edits
+3410292	False	trusted group
+3436657	False	trusted edits
+3379286	True	NULL
+3417535	False	trusted edits
+3269481	False	trusted edits
+3465192	True	NULL
+3387861	False	trusted edits
+3277937	True	NULL
+3532909	False	trusted edits
+3260931	False	trusted edits
+3277378	False	trusted group
+3427791	False	trusted group
+3364149	False	trusted edits
+3405877	False	trusted edits
+3498042	True	NULL
+3444448	False	trusted group
+3393490	False	trusted edits
+3342892	False	trusted group
+3342262	False	trusted edits
+3472213	False	trusted edits
+3284066	False	trusted group
+3534211	True	NULL
+3307440	False	trusted group
+3525290	False	trusted edits
+3302621	True	NULL
+3494149	True	NULL
+3501283	False	trusted edits
+3478806	False	trusted edits
+3340438	True	reverted edit
+3449425	False	trusted edits
+3526993	False	trusted group
+3239159	False	trusted edits
+3456824	False	trusted edits
+3330480	False	trusted edits
+3422450	True	NULL
+3400274	True	NULL
+3342350	False	trusted edits
+3398590	False	trusted group
+3363320	True	reverted edit
+3303482	True	NULL
+3267276	True	NULL
+3418884	True	reverted edit
+3378332	False	trusted group
+3521283	False	trusted edits
+3340572	True	NULL
+3529333	False	trusted group
+3274793	True	NULL
+3387324	False	trusted edits
+3503050	False	trusted edits
+3531908	False	trusted group
+3455248	True	NULL
+3464004	True	NULL
+3440766	False	trusted edits
+3545525	True	NULL
+3424378	True	NULL
+3450154	False	trusted group
+3537857	True	NULL
+3317607	False	trusted edits
+3497093	True	reverted edit
+3400830	False	trusted edits
+3469524	True	reverted edit
+3520999	False	trusted edits
+3432114	False	trusted edits
+3294950	True	NULL
+3268057	False	trusted edits
+3356930	False	trusted group
+3418172	False	trusted group
+3535868	False	trusted group
+3545534	False	trusted group
+3324622	False	trusted edits
+3355719	False	trusted edits
+3499380	True	NULL
+3245652	True	NULL
+3443789	True	NULL
+3399195	False	trusted edits
+3416487	True	NULL
+3377952	False	trusted edits
+3447889	False	trusted edits
+3317369	False	trusted edits
+3420299	True	NULL
+3486597	False	trusted edits
+3471890	True	NULL
+3404243	False	trusted edits
+3375228	True	reverted edit
+3416563	False	trusted group
+3270814	False	trusted group
+3495956	True	NULL
+3254266	False	trusted group
+3437871	False	trusted group
+3469997	True	NULL
+3294761	True	reverted edit
+3270600	False	trusted group
+3281400	False	trusted edits
+3344575	False	trusted group
+3527736	False	trusted edits
+3440978	True	reverted edit
+3337776	True	NULL
+3403839	False	trusted edits
+3399039	False	trusted group
+3310633	True	NULL
+3486490	True	NULL
+3442079	True	NULL
+3341551	True	NULL
+3530716	True	NULL
+3264731	True	NULL
+3320371	True	reverted edit
+3364384	True	NULL
+3359763	False	trusted edits
+3523269	True	NULL
+3454640	True	NULL
+3293623	False	trusted group
+3470080	True	NULL
+3306883	True	NULL
+3362442	False	trusted edits
+3416890	False	trusted group
+3379258	True	NULL
+3323123	True	reverted edit
+3376494	True	NULL
+3335561	True	NULL
+3238409	False	trusted group
+3359318	False	trusted group
+3257714	True	reverted edit
+3283724	False	trusted group
+3547791	True	reverted edit
+3261480	True	NULL
+3474149	True	NULL
+3416090	True	NULL
+3425693	False	trusted edits
+3514851	True	NULL
+3272368	False	trusted edits
+3505875	False	trusted group
+3530727	True	NULL
+3249065	False	trusted group
+3410180	False	trusted edits
+3261384	False	trusted edits
+3361393	False	trusted edits
+3366355	False	trusted edits
+3312849	True	reverted edit
+3474995	False	trusted group
+3299454	True	NULL
+3299898	False	trusted edits
+3357078	True	NULL
+3494128	True	NULL
+3357345	True	NULL
+3320671	False	trusted group
+3383486	True	reverted edit
+3237899	False	trusted edits
+3352111	False	trusted edits
+3403505	True	NULL
+3240875	True	NULL
+3499230	True	NULL
+3449108	True	reverted edit
+3496174	True	NULL
+3533285	True	reverted edit
+3344520	False	trusted edits
+3350345	True	NULL
+3324332	True	reverted edit
+3488496	False	trusted group
+3338274	True	reverted edit
+3343180	False	trusted edits
+3321758	False	trusted group
+3422315	False	trusted group
+3392433	True	reverted edit
+3390697	False	trusted group
+3532477	False	trusted edits
+3269395	False	trusted edits
+3390383	False	trusted group
+3440359	True	reverted edit
+3357758	False	trusted group
+3479722	True	NULL
+3367981	False	trusted group
+3411903	True	reverted edit
+3261538	True	NULL
+3502191	True	NULL
+3313771	False	trusted group
+3501302	True	NULL
+3335182	False	trusted edits
+3248038	False	trusted group
+3493017	True	NULL
+3245576	True	NULL
+3237822	False	trusted edits
+3416702	False	trusted edits
+3401003	True	NULL
+3301398	False	trusted group
+3481828	False	trusted edits
+3507120	False	trusted group
+3342519	True	NULL
+3459997	True	NULL
+3298302	False	trusted group
+3535604	False	trusted group
+3530624	False	trusted edits
+3354548	True	NULL
+3487510	False	trusted group
+3242198	True	reverted edit
+3306478	False	trusted edits
+3454933	True	NULL
+3304700	False	trusted group
+3281011	True	reverted edit
+3464871	False	trusted edits
+3526426	False	trusted edits
+3535295	True	NULL
+3470002	False	trusted edits
+3378659	False	trusted group
+3301885	False	trusted group
+3359306	False	trusted group
+3354108	True	NULL
+3355337	True	reverted edit
+3410316	True	reverted edit
+3435135	True	NULL
+3253374	False	trusted group
+3505848	True	NULL
+3444069	False	trusted group
+3433246	True	reverted edit
+3488842	True	NULL
+3477098	False	trusted edits
+3381346	True	reverted edit
+3350574	True	reverted edit
+3512833	True	blocked user
+3450008	True	NULL
+3299795	False	trusted edits
+3542304	False	trusted edits
+3419581	False	trusted edits
+3382888	True	NULL
+3493377	False	trusted group
+3510746	False	trusted edits
+3465526	False	trusted edits
+3413145	True	reverted edit
+3547586	False	trusted edits
+3253649	False	trusted group
+3494677	True	NULL
+3320548	False	trusted edits
+3396633	True	NULL
+3274362	True	NULL
+3246796	True	reverted edit
+3438304	False	trusted edits
+3370342	False	trusted group
+3522509	True	reverted edit
+3486874	True	NULL
+3303949	False	trusted group
+3403092	False	trusted edits
+3377434	False	trusted group
+3539540	True	reverted edit
+3404029	True	reverted edit
+3369332	False	trusted edits
+3364417	False	trusted edits
+3457548	True	NULL
+3520584	True	NULL
+3489006	True	NULL
+3357239	True	NULL
+3543054	True	NULL
+3484586	True	NULL
+3300707	True	NULL
+3337407	True	NULL
+3521304	True	NULL
+3513658	False	trusted group
+3479083	False	trusted edits
+3280815	True	NULL
+3420585	True	NULL
+3543120	True	NULL
+3519419	False	trusted edits
+3315063	False	trusted edits
+3396577	False	trusted edits
+3300930	True	NULL
+3459186	True	reverted edit
+3236147	False	trusted group
+3341724	False	trusted edits
+3233243	False	trusted edits
+3247188	False	trusted group
+3355710	True	NULL
+3241603	True	NULL
+3452998	True	NULL
+3247776	False	trusted group
+3420950	True	NULL
+3329545	False	trusted edits
+3353838	True	NULL
+3431719	False	trusted edits
+3286736	False	trusted edits
+3425379	True	NULL
+3365730	False	trusted group
+3435506	False	trusted edits
+3316313	False	trusted edits
+3239283	True	reverted edit
+3461780	True	reverted edit
+3257135	False	trusted group
+3473935	False	trusted group
+3473458	True	NULL
+3521640	False	trusted edits
+3455904	True	reverted edit
+3411832	False	trusted edits
+3507601	False	trusted group
+3456404	True	NULL
+3314388	False	trusted edits
+3507918	True	NULL
+3305198	False	trusted edits
+3517812	False	trusted group
+3378312	True	reverted edit
+3518213	True	NULL
+3485685	True	NULL
+3412638	True	NULL
+3399811	False	trusted edits
+3474419	False	trusted edits
+3287570	True	NULL
+3335604	True	NULL
+3473565	False	trusted edits
+3331735	False	trusted group
+3236800	False	trusted group
+3267091	True	reverted edit
+3450495	False	trusted group
+3235149	True	NULL
+3289796	True	NULL
+3409380	False	trusted edits
+3412772	False	trusted edits
+3547658	True	NULL
+3337413	True	NULL
+3460153	False	trusted edits
+3361754	False	trusted edits
+3489321	False	trusted edits
+3386645	False	trusted group
+3247556	False	trusted group
+3380851	True	NULL
+3337606	True	NULL
+3517736	False	trusted edits
+3458240	True	NULL
+3234568	False	trusted group
+3352279	False	trusted group
+3244558	False	trusted group
+3479814	False	trusted group
+3316063	True	NULL
+3459624	False	trusted edits
+3547322	False	trusted group
+3530349	False	trusted group
+3298447	False	trusted edits
+3351357	True	NULL
+3358079	False	trusted group
+3269417	False	trusted edits
+3518380	False	trusted edits
+3304674	False	trusted group
+3396032	False	trusted edits
+3538136	False	trusted group
+3380301	True	NULL
+3334020	False	trusted group
+3380269	True	NULL
+3261536	True	NULL
+3480424	False	trusted group
+3472477	True	NULL
+3446936	True	NULL
+3374942	True	NULL
+3476569	True	NULL
+3503547	True	reverted edit
+3537773	False	trusted group
+3287302	True	NULL
+3346808	False	trusted edits
+3328847	True	NULL
+3400292	False	trusted edits
+3433169	True	reverted edit
+3498083	True	NULL
+3332030	True	NULL
+3408903	False	trusted edits
+3511979	False	trusted edits
+3468541	True	NULL
+3500055	False	trusted edits
+3419089	False	trusted group
+3280118	True	NULL
+3429082	True	reverted edit
+3364111	False	trusted edits
+3412590	True	NULL
+3408504	False	trusted edits
+3355224	True	NULL
+3357849	True	NULL
+3429549	False	trusted edits
+3348054	True	NULL
+3531027	False	trusted edits
+3531135	False	trusted edits
+3436367	True	NULL
+3297835	True	NULL
+3250359	False	trusted group
+3479439	False	trusted group
+3325388	True	NULL
+3387657	False	trusted group
+3506138	True	NULL
+3533902	False	trusted edits
+3361951	True	NULL
+3345943	True	NULL
+3252436	True	NULL
+3372001	False	trusted group
+3504492	True	NULL
+3382018	False	trusted edits
+3519212	True	NULL
+3546913	False	trusted edits
+3303888	False	trusted edits
+3480325	True	NULL
+3260191	False	trusted edits
+3539789	True	NULL
+3440002	True	NULL
+3312432	False	trusted group
+3332800	False	trusted group
+3497060	False	trusted edits
+3427130	False	trusted group
+3314955	True	reverted edit
+3547142	True	NULL
+3330357	True	NULL
+3438074	True	NULL
+3491925	True	NULL
+3373896	True	NULL
+3350920	True	NULL
+3512271	False	trusted group
+3259885	True	reverted edit
+3537861	True	NULL
+3488222	True	NULL
+3245481	False	trusted edits
+3266524	False	trusted group
+3304973	False	trusted group
+3413669	False	trusted edits
+3406714	True	NULL
+3480320	True	NULL
+3458571	False	trusted group
+3329781	True	blocked user
+3446619	True	NULL
+3484250	True	reverted edit
+3270877	True	NULL
+3381741	True	NULL
+3503247	True	reverted edit
+3361451	False	trusted edits
+3284190	False	trusted edits
+3543233	True	NULL
+3467960	True	NULL
+3431112	True	NULL
+3286101	True	NULL
+3354041	True	NULL
+3342462	True	NULL
+3280845	True	NULL
+3393407	False	trusted edits
+3428704	False	trusted edits
+3545073	True	NULL
+3537556	False	trusted edits
+3270404	False	trusted group
+3321935	False	trusted group
+3337890	True	NULL
+3481684	False	trusted edits
+3313638	False	trusted edits
+3411544	False	trusted edits
+3274395	False	trusted edits
+3486284	True	reverted edit
+3526274	True	NULL
+3380469	True	NULL
+3489688	False	trusted edits
+3407626	False	trusted group
+3270781	False	trusted group
+3352739	False	trusted edits
+3393729	False	trusted edits
+3304128	False	trusted edits
+3432858	True	NULL
+3516810	True	NULL
+3422978	False	trusted edits
+3508683	False	trusted group
+3373539	True	reverted edit
+3335115	False	trusted edits
+3400351	True	NULL
+3459811	False	trusted edits
+3533631	True	NULL
+3264435	True	NULL
+3503604	True	reverted edit
+3481685	True	NULL
+3522343	True	NULL
+3359748	True	NULL
+3387917	False	trusted edits
+3237653	False	trusted edits
+3530295	False	trusted edits
+3385064	False	trusted edits
+3477697	False	trusted edits
+3319910	True	NULL
+3260336	False	trusted edits
+3364675	False	trusted edits
+3402594	False	trusted edits
+3489076	False	trusted edits
+3452589	True	NULL
+3338495	True	reverted edit
+3524842	True	NULL
+3372212	True	NULL
+3316304	False	trusted edits
+3410594	True	NULL
+3290795	True	NULL
+3508771	True	NULL
+3280746	False	trusted group
+3429241	False	trusted group
+3333326	True	reverted edit
+3479875	False	trusted edits
+3296747	True	reverted edit
+3354734	False	trusted edits
+3287720	False	trusted group
+3397446	True	NULL
+3238468	False	trusted edits
+3321855	False	trusted group
+3546651	False	trusted edits
+3313326	True	NULL
+3428619	True	NULL
+3449796	False	trusted edits
+3454514	False	trusted group
+3488191	False	trusted group
+3479517	True	reverted edit
+3539424	True	NULL
+3246765	False	trusted group
+3366427	False	trusted group
+3355579	False	trusted edits
+3391538	True	NULL
+3264096	False	trusted group
+3508803	False	trusted edits
+3426803	True	NULL
+3260894	True	reverted edit
+3297153	True	NULL
+3296993	False	trusted edits
+3438745	True	reverted edit
+3437493	False	trusted edits
+3518237	False	trusted group
+3377374	True	NULL
+3414695	False	trusted edits
+3405542	False	trusted edits
+3259000	True	NULL
+3290610	True	NULL
+3512641	False	trusted group
+3302364	False	trusted edits
+3368544	True	NULL
+3365240	True	NULL
+3473351	False	trusted edits
+3468486	True	reverted edit
+3314096	False	trusted edits
+3342849	True	NULL
+3402605	False	trusted edits
+3522221	False	trusted edits
+3243901	True	NULL
+3277848	False	trusted group
+3466831	False	trusted edits
+3546221	True	blocked user
+3252440	True	NULL
+3500865	True	NULL
+3401579	False	trusted group
+3236085	True	NULL
+3365850	False	trusted group
+3420456	False	trusted edits
+3249478	False	trusted group
+3401167	False	trusted group
+3288059	False	trusted edits
+3409524	False	trusted group
+3450801	False	trusted edits
+3493945	False	trusted group
+3545574	True	NULL
+3489545	True	NULL
+3366904	False	trusted edits
+3381613	False	trusted group
+3337209	True	reverted edit
+3413574	False	trusted edits
+3495069	False	trusted group
+3540154	True	NULL
+3492201	False	trusted edits
+3435813	True	NULL
+3418527	True	reverted edit
+3519863	False	trusted edits
+3534512	False	trusted group
+3260634	True	NULL
+3316010	False	trusted edits
+3440720	False	trusted edits
+3539351	True	NULL
+3451849	True	NULL
+3327752	True	NULL
+3507321	False	trusted group
+3288889	True	NULL
+3327551	True	NULL
+3476412	True	reverted edit
+3541823	False	trusted edits
+3471233	True	NULL
+3289495	False	trusted group
+3283999	True	NULL
+3278424	False	trusted group
+3252999	False	trusted group
+3437191	False	trusted edits
+3361620	True	NULL
+3349973	True	reverted edit
+3487746	False	trusted group
+3386890	False	trusted edits
+3522838	True	NULL
+3508110	True	NULL
+3505146	False	trusted group
+3398314	True	NULL
+3273664	False	trusted edits
+3416760	False	trusted group
+3475508	True	NULL
+3529317	True	NULL
+3430536	True	NULL
+3287675	False	trusted group
+3264814	False	trusted edits
+3284620	False	trusted group
+3280324	True	NULL
+3393345	False	trusted group
+3518718	True	NULL
+3263030	False	trusted edits
+3442582	True	NULL
+3427655	True	NULL
+3397629	False	trusted edits
+3486398	True	NULL
+3348380	False	trusted edits
+3538625	True	NULL
+3347455	False	trusted edits
+3541113	False	trusted edits
+3492328	False	trusted group
+3513910	False	trusted group
+3546599	True	reverted edit
+3282135	False	trusted group
+3267732	False	trusted group
+3524447	True	NULL
+3333897	True	reverted edit
+3427154	False	trusted edits
+3307509	False	trusted edits
+3354069	True	NULL
+3308684	False	trusted group
+3496398	False	trusted edits
+3506050	True	blocked user
+3439472	True	NULL
+3441009	False	trusted group
+3451742	True	NULL
+3241095	True	NULL
+3331333	True	NULL
+3456479	False	trusted edits
+3457650	False	trusted group
+3522440	True	NULL
+3458136	True	NULL
+3239725	False	trusted edits
+3265809	True	NULL
+3466286	False	trusted edits
+3503608	False	trusted edits
+3266493	False	trusted group
+3464891	True	NULL
+3413813	False	trusted edits
+3287593	False	trusted edits
+3300197	False	trusted group
+3335352	False	trusted group
+3312172	False	trusted group
+3508218	True	NULL
+3424540	False	trusted group
+3436742	False	trusted edits
+3466950	False	trusted group
+3506370	True	NULL
+3294829	True	NULL
+3449224	False	trusted edits
+3507320	True	NULL
+3436749	True	NULL
+3350742	False	trusted edits
+3268548	False	trusted edits
+3537781	False	trusted group
+3514496	True	NULL
+3271045	True	NULL
+3351031	True	NULL
+3397440	True	NULL
+3274445	True	reverted edit
+3292632	True	NULL
+3327166	False	trusted edits
+3332923	True	NULL
+3386947	True	reverted edit
+3252113	False	trusted edits
+3471478	True	NULL
+3424878	True	NULL
+3291624	True	NULL
+3361615	False	trusted group
+3483223	True	NULL
+3364538	True	NULL
+3441157	True	reverted edit
+3258720	True	reverted edit
+3272000	True	NULL
+3433307	False	trusted edits
+3508523	True	reverted edit
+3518510	True	NULL
+3515383	True	NULL
+3388041	False	trusted group
+3303978	True	NULL
+3278491	False	trusted edits
+3329842	True	NULL
+3540398	False	trusted group
+3547621	False	trusted edits
+3479515	True	reverted edit
+3236084	True	NULL
+3452058	False	trusted edits
+3416208	False	trusted edits
+3374228	False	trusted edits
+3508913	False	trusted group
+3387186	True	NULL
+3486733	True	NULL
+3360712	True	NULL
+3542149	True	NULL
+3320549	False	trusted edits
+3528753	False	trusted edits
+3333139	True	NULL
+3357939	True	NULL
+3312403	True	NULL
+3522726	False	trusted edits
+3401764	False	trusted edits
+3245024	False	trusted group
+3359478	True	NULL
+3378993	True	NULL
+3452670	False	trusted group
+3234259	True	NULL
+3397319	True	NULL
+3521842	False	trusted edits
+3355856	True	NULL
+3517883	True	NULL
+3359671	True	NULL
+3233542	True	NULL
+3272141	True	NULL
+3303362	False	trusted group
+3438918	False	trusted group
+3415637	False	trusted group
+3449895	True	reverted edit
+3311358	False	trusted edits
+3470057	False	trusted edits
+3441749	False	trusted group
+3465729	True	NULL
+3287427	False	trusted group
+3368704	False	trusted edits
+3486491	False	trusted group
+3245557	True	NULL
+3508995	True	reverted edit
+3336751	True	NULL
+3288672	False	trusted edits
+3546552	True	NULL
+3401779	True	NULL
+3371113	True	NULL
+3244461	True	NULL
+3243240	False	trusted group
+3245575	True	NULL
+3464410	False	trusted edits
+3387982	True	reverted edit
+3368162	True	NULL
+3384299	True	NULL
+3421735	False	trusted edits
+3483754	True	NULL
+3339256	True	reverted edit
+3302480	True	NULL
+3254875	False	trusted group
+3507853	False	trusted edits
+3318691	True	NULL
+3485984	False	trusted edits
+3471792	False	trusted edits
+3232680	False	trusted edits
+3539833	False	trusted group
+3388335	False	trusted group
+3233166	True	NULL
+3347722	False	trusted group
+3510799	False	trusted edits
+3415399	True	NULL
+3421843	False	trusted edits
+3401587	False	trusted edits
+3546643	False	trusted edits
+3242086	False	trusted edits
+3430166	False	trusted edits
+3379872	True	NULL
+3234574	False	trusted group
+3324498	False	trusted group
+3437049	True	reverted edit
+3386690	False	trusted edits
+3338465	True	reverted edit
+3234693	True	reverted edit
+3315141	False	trusted edits
+3430197	False	trusted edits
+3527281	False	trusted group
+3535349	False	trusted group
+3509087	True	NULL
+3323304	False	trusted edits
+3517709	False	trusted edits
+3525047	True	NULL
+3391945	True	NULL
+3405137	True	NULL
+3512225	False	trusted group
+3527272	False	trusted group
+3406713	True	NULL
+3240751	True	NULL
+3524855	True	NULL
+3297580	False	trusted edits
+3460242	False	trusted edits
+3481038	False	trusted edits
+3304417	True	NULL
+3418313	False	trusted group
+3309840	True	NULL
+3331757	True	NULL
+3329817	True	NULL
+3299066	False	trusted edits
+3280233	True	NULL
+3416338	False	trusted edits
+3241633	True	NULL
+3317218	True	NULL
+3457392	False	trusted group
+3435346	False	trusted edits
+3367221	True	NULL
+3432073	False	trusted group
+3524751	False	trusted edits
+3335508	False	trusted edits
+3327512	False	trusted group
+3479298	True	NULL
+3409685	True	NULL
+3343797	False	trusted group
+3319317	True	NULL
+3321181	False	trusted edits
+3523863	True	NULL
+3442598	True	NULL
+3301143	True	NULL
+3506172	True	NULL
+3547703	False	trusted group
+3468964	False	trusted group
+3381759	False	trusted edits
+3255817	False	trusted group
+3283075	True	NULL
+3274285	False	trusted group
+3281577	False	trusted edits
+3452793	False	trusted edits
+3367324	True	NULL
+3396091	False	trusted group
+3459473	False	trusted group
+3459552	True	NULL
+3497883	True	NULL
+3475387	False	trusted edits
+3529932	True	NULL
+3474541	True	NULL
+3501325	True	NULL
+3356318	True	NULL
+3321265	False	trusted group
+3289345	True	NULL
+3351538	True	NULL
+3382080	True	NULL
+3334496	True	NULL
+3472897	False	trusted edits
+3348155	True	NULL
+3286865	False	trusted edits
+3523603	True	NULL
+3387833	False	trusted edits
+3329883	False	trusted group
+3308637	True	NULL
+3476077	False	trusted edits
+3451202	True	NULL
+3531709	True	NULL
+3337688	True	NULL
+3389035	True	NULL
+3456248	True	reverted edit
+3367837	True	NULL
+3341898	False	trusted group
+3333552	True	reverted edit
+3332022	True	NULL
+3268833	False	trusted group
+3234649	True	NULL
+3358326	True	reverted edit
+3436757	False	trusted edits
+3471303	False	trusted group
+3334162	True	NULL
+3265454	True	reverted edit
+3491080	True	NULL
+3354040	True	NULL
+3261266	True	reverted edit
+3338621	False	trusted group
+3541355	True	NULL
+3286398	True	NULL
+3341127	True	NULL
+3543818	True	NULL
+3381340	True	reverted edit
+3375996	False	trusted edits
+3400950	False	trusted edits
+3478014	True	NULL
+3236282	False	trusted group
+3516634	True	NULL
+3354397	True	NULL
+3312847	True	NULL
+3287649	False	trusted group
+3525649	True	NULL
+3486249	True	NULL
+3335569	True	NULL
+3537935	True	NULL
+3292481	True	reverted edit
+3515596	True	NULL
+3340187	True	NULL
+3250345	False	trusted group
+3472587	False	trusted group
+3456350	True	NULL
+3460136	False	trusted edits
+3480597	False	trusted edits
+3529737	True	reverted edit
+3434864	False	trusted group
+3518474	True	NULL
+3521052	False	trusted edits
+3473129	True	NULL
+3295483	True	NULL
+3291608	True	reverted edit
+3376555	True	NULL
+3423731	True	reverted edit
+3355285	True	NULL
+3530569	False	trusted edits
+3385449	False	trusted edits
+3319862	False	trusted group
+3427412	False	trusted edits
+3530655	False	trusted edits
+3420470	False	trusted edits
+3402728	False	trusted group
+3452261	True	NULL
+3396133	True	reverted edit
+3343560	False	trusted edits
+3267472	True	NULL
+3520011	True	NULL
+3248349	False	trusted group
+3348975	True	NULL
+3318938	False	trusted group
+3308799	False	trusted edits
+3248887	False	trusted group
+3326273	True	NULL
+3529652	False	trusted edits
+3393132	True	NULL
+3248103	False	trusted group
+3513313	False	trusted edits
+3365600	False	trusted group
+3476395	False	trusted group
+3468752	False	trusted group
+3385984	True	reverted edit
+3472567	False	trusted edits
+3324363	False	trusted group
+3405477	False	trusted edits
+3242234	False	trusted group
+3532626	True	NULL
+3436521	False	trusted group
+3288344	False	trusted group
+3234532	False	trusted group
+3503222	True	NULL
+3412106	False	trusted edits
+3490984	False	trusted group
+3299787	False	trusted group
+3460410	True	NULL
+3449606	False	trusted edits
+3486081	False	trusted edits
+3292678	False	trusted group
+3400189	True	NULL
+3385669	False	trusted group
+3348374	False	trusted edits
+3477944	False	trusted edits
+3359222	True	NULL
+3439378	True	NULL
+3395633	False	trusted edits
+3359017	True	NULL
+3329130	False	trusted edits
+3250610	False	trusted group
+3544065	False	trusted group
+3416204	False	trusted edits
+3467621	False	trusted edits
+3474101	True	NULL
+3391900	False	trusted group
+3349928	True	reverted edit
+3374363	True	NULL
+3393237	False	trusted group
+3311051	True	NULL
+3450186	True	NULL
+3369702	False	trusted edits
+3305372	True	NULL
+3538485	True	NULL
+3333174	False	trusted group
+3481201	True	NULL
+3381358	False	trusted group
+3424949	False	trusted edits
+3496853	True	NULL
+3251174	False	trusted group
+3431415	True	NULL
+3274891	False	trusted edits
+3236331	False	trusted edits
+3355783	True	NULL
+3316389	False	trusted edits
+3317493	False	trusted group
+3341196	False	trusted group
+3253079	False	trusted group
+3534815	False	trusted edits
+3303531	False	trusted group
+3281379	True	NULL
+3543002	False	trusted edits
+3311510	True	NULL
+3500153	False	trusted edits
+3523052	True	reverted edit
+3443241	False	trusted edits
+3507668	True	NULL
+3292495	False	trusted edits
+3437066	False	trusted group
+3236465	True	NULL
+3537854	True	NULL
+3269434	True	NULL
+3296453	False	trusted group
+3331425	True	NULL
+3316585	False	trusted edits
+3269155	True	NULL
+3377261	True	reverted edit
+3472471	True	NULL
+3386069	False	trusted group
+3416499	True	NULL
+3234134	True	NULL
+3320982	False	trusted group
+3371352	True	NULL
+3504599	True	NULL
+3329227	True	NULL
+3483862	False	trusted edits
+3407105	True	NULL
+3278969	False	trusted group
+3383848	True	NULL
+3397161	True	NULL
+3338801	False	trusted edits
+3490657	True	NULL
+3345002	True	NULL
+3362454	True	reverted edit
+3390505	False	trusted group
+3244926	False	trusted edits
+3360537	False	trusted edits
+3450067	False	trusted edits
+3240213	False	trusted edits
+3266954	False	trusted group
+3254362	False	trusted group
+3241052	True	NULL
+3279480	True	NULL
+3457235	True	NULL
+3440424	False	trusted edits
+3269544	False	trusted group
+3525129	False	trusted edits
+3464890	False	trusted edits
+3300205	True	NULL
+3475065	True	reverted edit
+3501324	False	trusted edits
+3417554	True	NULL
+3481134	False	trusted edits
+3470218	True	reverted edit
+3364707	False	trusted edits
+3331143	True	NULL
+3284211	True	NULL
+3458258	True	NULL
+3290669	True	NULL
+3542761	True	reverted edit
+3323887	True	reverted edit
+3381745	False	trusted group
+3285091	False	trusted edits
+3510471	False	trusted edits
+3378546	False	trusted group
+3315442	False	trusted edits
+3499180	False	trusted group
+3507464	False	trusted group
+3357823	True	NULL
+3497770	True	NULL
+3430110	False	trusted edits
+3257591	True	NULL
+3540979	True	NULL
+3350954	True	NULL
+3394397	False	trusted group
+3253481	False	trusted group
+3363228	True	NULL
+3409602	True	NULL
+3357991	True	NULL
+3394849	True	NULL
+3273855	False	trusted edits
+3395528	False	trusted edits
+3469920	True	NULL
+3272737	True	reverted edit
+3303843	False	trusted group
+3405475	False	trusted group
+3481399	True	NULL
+3506052	True	blocked user
+3284858	False	trusted group
+3546503	True	NULL
+3529713	False	trusted group
+3328273	False	trusted edits
+3494646	True	NULL
+3383406	True	reverted edit
+3544014	True	NULL
+3380581	True	NULL
+3519096	False	trusted edits
+3390056	False	trusted group
+3529299	False	trusted edits
+3452449	False	trusted group
+3290113	False	trusted group
+3278904	False	trusted edits
+3384764	False	trusted edits
+3506193	False	trusted edits
+3329078	False	trusted edits
+3274048	True	NULL
+3300999	True	NULL
+3480224	False	trusted group
+3232828	False	trusted group
+3459161	True	reverted edit
+3302670	True	NULL
+3483661	False	trusted edits
+3324858	False	trusted edits
+3252049	False	trusted edits
+3278174	True	NULL
+3251701	False	trusted group
+3379735	False	trusted edits
+3456652	False	trusted group
+3243765	False	trusted group
+3545400	False	trusted edits
+3486899	False	trusted edits
+3300336	False	trusted group
+3347472	True	NULL
+3493639	False	trusted edits
+3303823	False	trusted group
+3359716	True	NULL
+3511659	False	trusted edits
+3346894	True	NULL
+3459452	False	trusted group
+3364066	False	trusted edits
+3499118	False	trusted group
+3382699	False	trusted group
+3398852	False	trusted edits
+3363357	True	NULL
+3453213	False	trusted group
+3468137	True	blocked user
+3238454	False	trusted group
+3432492	True	NULL
+3545569	True	NULL
+3516807	True	NULL
+3517856	True	NULL
+3469550	True	reverted edit
+3257663	False	trusted group
+3497429	True	NULL
+3326997	True	NULL
+3405646	True	NULL
+3313386	True	NULL
+3420050	True	NULL
+3397028	True	NULL
+3350971	True	NULL
+3370162	False	trusted edits
+3264873	False	trusted group
+3393231	True	NULL
+3309056	True	NULL
+3281288	False	trusted group
+3491152	False	trusted group
+3469871	True	NULL
+3343961	False	trusted edits
+3347272	True	NULL
+3381172	True	NULL
+3388341	False	trusted group
+3525300	True	NULL
+3331069	True	NULL
+3358295	False	trusted edits
+3269092	False	trusted edits
+3465978	True	NULL
+3359686	True	NULL
+3501614	False	trusted edits
+3334095	False	trusted edits
+3491322	True	NULL
+3313346	True	NULL
+3425519	True	NULL
+3251841	False	trusted edits
+3235722	True	NULL
+3465107	False	trusted edits
+3435230	False	trusted group
+3498398	True	NULL
+3357688	True	NULL
+3271228	True	NULL
+3384809	True	reverted edit
+3482815	False	trusted edits
+3363891	True	NULL
+3439500	False	trusted edits
+3500187	False	trusted edits
+3368205	False	trusted edits
+3321123	False	trusted group
+3294827	True	NULL
+3235077	False	trusted edits
+3343770	False	trusted group
+3516774	False	trusted group
+3543404	False	trusted group
+3478248	False	trusted edits
+3540935	False	trusted group
+3290458	False	trusted group
+3536026	True	NULL
+3349858	True	reverted edit
+3522243	True	NULL
+3458437	True	NULL
+3317608	False	trusted group
+3547474	False	trusted edits
+3432808	True	NULL
+3354382	True	NULL
+3277786	False	trusted group
+3249547	False	trusted group
+3326375	False	trusted group
+3397255	True	NULL
+3535217	False	trusted group
+3408762	False	trusted group
+3517030	True	NULL
+3357533	True	NULL
+3515553	False	trusted edits
+3530661	False	trusted edits
+3535682	True	NULL
+3321760	False	trusted group
+3368107	False	trusted group
+3280979	False	trusted group
+3527975	False	trusted edits
+3324156	False	trusted group
+3395936	False	trusted edits
+3294819	True	NULL
+3397582	True	NULL
+3244873	True	NULL
+3391844	False	trusted group
+3480161	True	reverted edit
+3475598	True	NULL
+3393093	False	trusted edits
+3479622	False	trusted group
+3451776	True	NULL
+3518922	False	trusted edits
+3470607	True	NULL
+3328291	True	blocked user
+3277703	True	NULL
+3304906	False	trusted edits
+3295445	True	NULL
+3402258	False	trusted edits
+3363073	True	NULL
+3358288	False	trusted edits
+3463411	True	NULL
+3348019	True	NULL
+3385838	True	reverted edit
+3245556	True	NULL
+3346453	True	NULL
+3404941	False	trusted group
+3488556	False	trusted edits
+3530236	False	trusted edits
+3483472	True	NULL
+3362237	True	NULL
+3522196	False	trusted edits
+3391278	False	trusted group
+3236481	True	NULL
+3236584	False	trusted group
+3381757	True	NULL
+3539053	True	NULL
+3287062	True	NULL
+3327181	True	reverted edit
+3344401	False	trusted group
+3284304	True	NULL
+3368781	False	trusted group
+3341781	False	trusted edits
+3415195	False	trusted edits
+3497066	True	NULL
+3463492	True	NULL
+3431993	True	blocked user
+3241958	False	trusted edits
+3336626	True	NULL
+3483817	True	NULL
+3261272	True	reverted edit
+3471018	False	trusted group
+3300576	True	NULL
+3490978	True	NULL
+3293871	True	NULL
+3344546	False	trusted group
+3428168	True	NULL
+3308507	False	trusted group
+3469109	False	trusted group
+3308604	True	reverted edit
+3272637	True	NULL
+3531103	True	NULL
+3350606	True	NULL
+3247205	False	trusted group
+3426064	False	trusted edits
+3388133	True	reverted edit
+3341348	True	NULL
+3465106	True	NULL
+3441554	True	NULL
+3331217	False	trusted edits
+3326707	True	NULL
+3317211	True	NULL
+3292574	False	trusted group
+3312825	True	reverted edit
+3444080	False	trusted edits
+3497090	True	NULL
+3310662	True	reverted edit
+3352944	False	trusted edits
+3460707	False	trusted edits
+3235143	True	NULL
+3351586	True	NULL
+3389495	False	trusted edits
+3317977	True	NULL
+3402285	False	trusted edits
+3376546	True	NULL
+3504575	True	reverted edit
+3351903	False	trusted edits
+3485577	True	NULL
+3286302	False	trusted edits
+3353995	False	trusted group
+3343675	False	trusted edits
+3395498	True	NULL
+3364750	False	trusted group
+3495235	False	trusted group
+3453731	False	trusted edits
+3307402	False	trusted group
+3419298	False	trusted edits
+3299767	False	trusted group
+3347821	False	trusted edits
+3375622	False	trusted edits
+3288936	True	NULL
+3321894	False	trusted group
+3357503	True	NULL
+3412474	False	trusted edits
+3446257	False	trusted group
+3510268	True	reverted edit
+3439873	False	trusted edits
+3373581	True	NULL
+3296484	False	trusted edits
+3380943	True	NULL
+3301469	False	trusted edits
+3322769	False	trusted group
+3334108	True	NULL
+3365426	False	trusted group
+3419188	False	trusted group
+3285459	True	NULL
+3282727	True	NULL
+3365156	True	NULL
+3501462	True	NULL
+3401636	False	trusted edits
+3446969	True	NULL
+3492154	False	trusted edits
+3525709	True	NULL
+3445367	True	NULL
+3544503	False	trusted edits
+3244695	False	trusted group
+3377140	False	trusted group
+3466120	True	NULL
+3364916	False	trusted edits
+3373540	True	reverted edit
+3259823	True	NULL
+3291404	True	NULL
+3499595	False	trusted group
+3325611	False	trusted group
+3477666	True	NULL
+3325173	False	trusted edits
+3243424	False	trusted edits
+3408232	True	NULL
+3374523	False	trusted edits
+3242457	False	trusted group
+3474204	True	NULL
+3281455	False	trusted group
+3386892	False	trusted edits
+3543700	True	NULL
+3474887	True	reverted edit
+3278616	True	reverted edit
+3338141	True	NULL
+3350464	False	trusted group
+3293558	True	NULL
+3280825	False	trusted group
+3438209	True	NULL
+3368022	True	NULL
+3463027	False	trusted edits
+3295536	False	trusted edits
+3246203	True	NULL
+3534185	True	NULL
+3420525	True	NULL
+3284722	False	trusted edits
+3385283	True	NULL
+3396558	True	NULL
+3238298	False	trusted group
+3318117	True	reverted edit
+3312153	False	trusted edits
+3314267	False	trusted edits
+3531708	True	NULL
+3316523	True	NULL
+3518668	True	NULL
+3329907	False	trusted group
+3248750	False	trusted group
+3327061	False	trusted edits
+3544492	True	NULL
+3497838	False	trusted group
+3318242	False	trusted group
+3233031	True	NULL
+3279526	True	reverted edit
+3539995	False	trusted edits
+3449316	True	NULL
+3438392	False	trusted edits
+3510131	False	trusted group
+3390052	True	NULL
+3489357	False	trusted edits
+3343860	True	NULL
+3401434	False	trusted group
+3530537	True	blocked user
+3253002	False	trusted group
+3233036	True	NULL
+3500994	True	NULL
+3547080	False	trusted group
+3543004	False	trusted group
+3442295	False	trusted group
+3319638	False	trusted group
+3485089	True	NULL
+3397031	False	trusted edits
+3363524	False	trusted edits
+3540387	False	trusted group
+3474477	False	trusted edits
+3455267	True	NULL
+3251380	False	trusted group
+3285588	False	trusted edits
+3499433	False	trusted group
+3531815	True	NULL
+3498643	False	trusted edits
+3301800	True	NULL
+3417114	True	NULL
+3377704	True	NULL
+3366703	False	trusted edits
+3373994	False	trusted edits
+3470288	False	trusted group
+3496697	False	trusted group
+3449748	False	trusted edits
+3353574	False	trusted group
+3535470	True	NULL
+3442546	False	trusted group
+3240630	False	trusted group
+3271624	False	trusted edits
+3505438	False	trusted edits
+3346953	True	NULL
+3541896	False	trusted group
+3357446	False	trusted group
+3346723	False	trusted edits
+3452860	True	NULL
+3317175	False	trusted group
+3319824	False	trusted group
+3446815	False	trusted edits
+3521369	False	trusted edits
+3503348	False	trusted edits
+3398788	True	reverted edit
+3358219	True	NULL
+3386367	True	reverted edit
+3544683	True	reverted edit
+3542567	False	trusted edits
+3306784	False	trusted group
+3360588	False	trusted edits
+3255390	False	trusted group
+3380247	True	NULL
+3376488	False	trusted group
+3535577	False	trusted edits
+3257747	False	trusted edits
+3432182	False	trusted group
+3244196	False	trusted edits
+3300540	False	trusted edits
+3300076	False	trusted group
+3335488	False	trusted group
+3516819	False	trusted group
+3480990	False	trusted group
+3508442	False	trusted group
+3350169	False	trusted group
+3489282	True	NULL
+3423514	True	reverted edit
+3396249	False	trusted edits
+3244360	False	trusted edits
+3343863	False	trusted group
+3353167	True	NULL
+3442832	True	reverted edit
+3484654	True	NULL
+3327754	True	NULL
+3412295	False	trusted edits
+3503316	False	trusted edits
+3468617	False	trusted edits
+3309639	False	trusted group
+3451698	False	trusted edits
+3279974	True	NULL
+3472888	True	NULL
+3386848	True	NULL
+3353726	True	NULL
+3444103	True	NULL
+3297037	True	NULL
+3383113	True	NULL
+3499680	True	NULL
+3479282	False	trusted edits
+3358495	True	reverted edit
+3412524	False	trusted edits
+3449859	False	trusted edits
+3315518	False	trusted group
+3367065	True	NULL
+3435272	True	blocked user
+3318383	False	trusted group
+3331352	False	trusted edits
+3262470	True	reverted edit
+3496860	True	NULL
+3502207	True	NULL
+3480667	True	NULL
+3515494	True	NULL
+3472061	False	trusted group
+3543568	False	trusted group
+3439534	False	trusted edits
+3419508	True	NULL
+3416491	True	NULL
+3541440	True	reverted edit
+3504820	True	reverted edit
+3393020	True	NULL
+3467666	False	trusted group
+3451576	False	trusted edits
+3313671	False	trusted edits
+3531599	True	NULL
+3418101	False	trusted edits
+3306974	False	trusted group
+3447068	True	NULL
+3534147	True	NULL
+3542214	True	NULL
+3513382	False	trusted edits
+3425709	True	NULL
+3483765	True	NULL
+3266214	False	trusted edits
+3234646	True	NULL
+3241606	True	NULL
+3254393	False	trusted group
+3343930	False	trusted edits
+3477248	False	trusted group
+3445649	False	trusted edits
+3527227	False	trusted group
+3500701	True	reverted edit
+3527097	True	NULL
+3426104	False	trusted edits
+3334689	True	NULL
+3433496	True	reverted edit
+3453747	True	NULL
+3412232	True	NULL
+3449733	False	trusted edits
+3371256	False	trusted group
+3513512	False	trusted group
+3326514	True	reverted edit
+3525119	False	trusted group
+3539253	False	trusted edits
+3538978	True	NULL
+3457397	True	NULL
+3470227	True	NULL
+3384884	False	trusted group
+3377759	True	NULL
+3323821	True	reverted edit
+3336705	False	trusted edits
+3515951	True	NULL
+3340211	True	NULL
+3355105	True	reverted edit
+3261688	False	trusted edits
+3300661	True	NULL
+3363504	True	NULL
+3417139	False	trusted group
+3522265	True	reverted edit
+3290820	True	reverted edit
+3306705	True	NULL
+3273766	True	NULL
+3415223	False	trusted edits
+3360739	True	NULL
+3388773	False	trusted edits
+3357029	True	reverted edit
+3439945	False	trusted edits
+3540017	False	trusted edits
+3331423	True	NULL
+3233119	True	NULL
+3485420	False	trusted group
+3382127	False	trusted group
+3269392	True	NULL
+3390041	True	NULL
+3319358	False	trusted group
+3455635	False	trusted group
+3288864	True	NULL
+3309713	True	NULL
+3306395	True	NULL
+3282670	True	NULL
+3509533	True	NULL
+3335567	True	NULL
+3506898	False	trusted edits
+3296387	False	trusted group
+3259875	True	reverted edit
+3467668	False	trusted edits
+3334411	True	NULL
+3401412	False	trusted edits
+3407822	False	trusted group
+3516866	True	NULL
+3449592	True	reverted edit
+3325595	False	trusted group
+3463111	True	NULL
+3427380	False	trusted edits
+3242005	False	trusted edits
+3538106	False	trusted edits
+3293473	True	NULL
+3416524	False	trusted edits
+3340020	False	trusted group
+3339091	False	trusted group
+3411611	True	NULL
+3463605	False	trusted edits
+3276459	True	reverted edit
+3326099	False	trusted group
+3237279	True	NULL
+3236648	True	NULL
+3447981	False	trusted edits
+3445609	True	reverted edit
+3286954	True	NULL
+3351799	False	trusted edits
+3541287	False	trusted group
+3516826	True	NULL
+3321286	False	trusted group
+3462635	False	trusted edits
+3503464	False	trusted group
+3278569	True	NULL
+3510613	True	NULL
+3385287	True	NULL
+3509373	False	trusted edits
+3233083	True	reverted edit
+3513625	False	trusted group
+3380491	True	NULL
+3447876	False	trusted edits
+3315556	False	trusted edits
+3428605	False	trusted edits
+3253346	False	trusted group
+3493912	False	trusted group
+3264608	False	trusted edits
+3518941	False	trusted edits
+3503646	False	trusted group
+3465992	True	NULL
+3546161	True	reverted edit
+3406940	True	NULL
+3359795	False	trusted edits
+3312845	True	NULL
+3395250	False	trusted edits
+3460331	False	trusted edits
+3260963	False	trusted group
+3317886	True	NULL
+3405044	False	trusted group
+3446301	True	NULL
+3510405	False	trusted group
+3496474	False	trusted edits
+3284596	True	blocked user
+3366636	True	NULL
+3383745	True	NULL
+3266456	True	reverted edit
+3274768	True	NULL
+3519601	True	reverted edit
+3433008	True	reverted edit
+3294591	False	trusted group
+3291707	False	trusted edits
+3507032	True	NULL
+3239149	True	NULL
+3411182	True	NULL
+3264667	True	reverted edit
+3235218	True	NULL
+3483250	True	NULL
+3542325	True	NULL
+3348124	True	NULL
+3334408	True	NULL
+3525596	True	NULL
+3490927	True	NULL
+3424171	True	reverted edit
+3491299	False	trusted group
+3547465	True	reverted edit
+3397354	True	NULL
+3329409	True	NULL
+3464651	False	trusted edits
+3245658	True	NULL
+3440841	False	trusted group
+3351863	False	trusted edits
+3295872	True	NULL
+3389558	False	trusted edits
+3514892	True	NULL
+3476884	False	trusted edits
+3525437	True	NULL
+3500456	False	trusted group
+3515251	False	trusted edits
+3392869	True	NULL
+3523806	True	NULL
+3350744	True	NULL
+3357561	False	trusted edits
+3482890	True	NULL
+3248179	False	trusted group
+3253736	False	trusted group
+3239024	True	NULL
+3501251	True	NULL
+3542619	False	trusted edits
+3452914	True	reverted edit
+3274114	True	reverted edit
+3337212	True	NULL
+3407367	True	NULL
+3337955	True	NULL
+3438960	False	trusted edits
+3254861	False	trusted group
+3476321	False	trusted edits
+3269101	True	reverted edit
+3476838	True	NULL
+3333167	False	trusted group
+3360725	True	NULL
+3348308	False	trusted edits
+3487078	False	trusted edits
+3243058	False	trusted edits
+3376475	True	NULL
+3539402	False	trusted edits
+3444413	False	trusted edits
+3294579	False	trusted group
+3334521	False	trusted group
+3417611	False	trusted edits
+3338189	True	NULL
+3242690	False	trusted edits
+3261361	False	trusted edits
+3445418	False	trusted edits
+3297581	False	trusted edits
+3370735	False	trusted edits
+3456570	True	NULL
+3367852	False	trusted group
+3278900	True	NULL
+3396815	False	trusted edits
+3535657	False	trusted edits
+3341114	True	NULL
+3432780	False	trusted edits
+3350770	True	NULL
+3543927	True	NULL
+3370187	True	NULL
+3264967	False	trusted group
+3396425	False	trusted group
+3258030	True	NULL
+3243446	True	NULL
+3291050	True	NULL
+3390323	False	trusted group
+3475565	True	NULL
+3451810	True	NULL
+3419015	True	NULL
+3266695	False	trusted group
+3535159	False	trusted group
+3299426	True	NULL
+3510141	True	NULL
+3256663	False	trusted group
+3340787	True	NULL
+3507870	True	NULL
+3300967	True	NULL
+3484731	False	trusted group
+3318100	True	NULL
+3259691	False	trusted group
+3503088	False	trusted group
+3293066	False	trusted group
+3494306	False	trusted edits
+3467296	False	trusted edits
+3369106	True	NULL
+3391233	True	NULL
+3235614	True	NULL
+3251949	False	trusted group
+3454709	False	trusted edits
+3536044	True	NULL
+3235672	False	trusted group
+3469743	True	NULL
+3442798	False	trusted edits
+3470953	True	NULL
+3433017	False	trusted group
+3524816	True	NULL
+3305636	False	trusted edits
+3269730	False	trusted edits
+3319946	False	trusted edits
+3261676	False	trusted edits
+3259406	False	trusted edits
+3251398	False	trusted group
+3320260	False	trusted edits
+3413760	True	reverted edit
+3335771	True	NULL
+3445296	True	NULL
+3234497	False	trusted edits
+3481587	True	NULL
+3268152	False	trusted edits
+3446028	True	reverted edit
+3464107	False	trusted group
+3495693	False	trusted edits
+3409540	False	trusted edits
+3375080	False	trusted edits
+3478863	False	trusted group
+3354536	True	NULL
+3400688	True	NULL
+3265858	True	reverted edit
