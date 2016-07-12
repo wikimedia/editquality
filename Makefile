@@ -1379,10 +1379,10 @@ models/nlwiki.damaging.gradient_boosting.model: \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.damaging \
 		--version=0.1.1 \
-		-p 'max_depth=3' \
-		-p 'learning_rate=0.1' \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=300' \
+		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
