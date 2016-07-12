@@ -119,22 +119,22 @@ tuning_reports/arwiki.reverted.md: \
 		--label-type=bool > \
 	tuning_reports/arwiki.reverted.md
 
-models/arwiki.reverted.rf.model: \
+models/arwiki.reverted.gradient_boosting.model: \
 		datasets/arwiki.features_reverted.20k_2016.tsv
-	cut datasets/arwiki.features_reverted.20k_2016.tsv -f2- | \
+	cat datasets/arwiki.features_reverted.20k_2016.tsv | cut -f2- | \
 	revscoring train_test \
-		revscoring.scorer_models.RF \
+		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.arwiki.reverted \
-		--version 0.0.1 \
-		-p 'criterion="entropy"' \
+		--version=0.2.1 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=640' \
-		-p 'min_samples_leaf=5' \
+		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
-	models/arwiki.reverted.rf.model
+	models/arwiki.reverted.gradient_boosting.model
 
 arwiki_models: \
 	models/arwiki.reverted.rf.model
@@ -232,22 +232,22 @@ tuning_reports/cswiki.reverted.md: \
 		--label-type=bool > \
 	tuning_reports/cswiki.reverted.md
 
-models/cswiki.reverted.rf.model: \
+models/cswiki.reverted.gradient_boosting.model: \
 		datasets/cswiki.features_reverted.20k_2016.tsv
-	cut datasets/cswiki.features_reverted.20k_2016.tsv -f2- | \
+	cat datasets/cswiki.features_reverted.20k_2016.tsv | cut -f2- | \
 	revscoring train_test \
-		revscoring.scorer_models.RF \
+		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.cswiki.reverted \
-		--version 0.0.1 \
-		-p 'criterion="entropy"' \
+		--version=0.2.1 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=640' \
-		-p 'min_samples_leaf=3' \
+		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
-	models/cswiki.reverted.rf.model
+	models/cswiki.reverted.gradient_boosting.model
 
 cswiki_models: \
 	models/cswiki.reverted.rf.model
@@ -1513,22 +1513,22 @@ tuning_reports/nowiki.reverted.md: \
 		--label-type=bool > \
 	tuning_reports/nowiki.reverted.md
 
-models/nowiki.reverted.rf.model: \
+models/nowiki.reverted.gradient_boosting.model: \
 		datasets/nowiki.features_reverted.40k_2015.tsv
-	cut datasets/nowiki.features_reverted.40k_2015.tsv -f2- | \
+	cat datasets/nowiki.features_reverted.40k_2015.tsv | cut -f2- | \
 	revscoring train_test \
-		revscoring.scorer_models.RF \
+		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nowiki.reverted \
-		--version 0.1.0 \
+		--version=0.2.1 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
-		-p 'criterion="entropy"' \
-		-p 'min_samples_leaf=3' \
-		-p 'n_estimators=640' \
+		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
-	models/nowiki.reverted.rf.model
+	models/nowiki.reverted.gradient_boosting.model
 
 nowiki_models: \
 		models/nowiki.reverted.rf.model
@@ -1586,22 +1586,22 @@ tuning_reports/plwiki.reverted.md: \
 		--label-type=bool > \
 	tuning_reports/plwiki.reverted.md
 
-models/plwiki.reverted.rf.model: \
+models/plwiki.reverted.gradient_boosting.model: \
 		datasets/plwiki.features_reverted.20k_2015.tsv
-	cut datasets/plwiki.features_reverted.20k_2015.tsv -f2- | \
+	cat datasets/plwiki.features_reverted.20k_2015.tsv | cut -f2- | \
 	revscoring train_test \
-		revscoring.scorer_models.RF \
+		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.reverted \
-		--version 0.1.0 \
+		--version=0.2.1 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
-		-p 'criterion="entropy"' \
-		-p 'min_samples_leaf=7' \
-		-p 'n_estimators=640' \
+		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
-	models/plwiki.reverted.rf.model
+	models/plwiki.reverted.gradient_boosting.model
 
 datasets/plwiki.rev_damaging.15k_2016.tsv:
 	(./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
@@ -1632,22 +1632,22 @@ tuning_reports/plwiki.damaging.md: \
 		--label-type=bool > \
 	tuning_reports/plwiki.damaging.md
 
-models/plwiki.damaging.rf.model: \
+models/plwiki.damaging.gradient_boosting.model: \
 		datasets/plwiki.features_damaging.15k_2016.tsv
-	cut datasets/plwiki.features_damaging.15k_2016.tsv -f2- | \
+	cat datasets/plwiki.features_damaging.15k_2016.tsv | cut -f2- | \
 	revscoring train_test \
-		revscoring.scorer_models.RF \
+		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.damaging \
-		--version 0.1.0 \
+		--version=0.2.1 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
-		-p 'criterion="entropy"' \
-		-p 'min_samples_leaf=1' \
-		-p 'n_estimators=640' \
+		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
-	models/plwiki.damaging.rf.model
+	models/plwiki.damaging.gradient_boosting.model
 
 datasets/plwiki.rev_goodfaith.15k_2016.tsv:
 	(./utility fetch_labels https://labels.wmflabs.org/campaigns/plwiki/24?tasks \
@@ -2075,22 +2075,22 @@ tuning_reports/svwiki.reverted.md: \
 		--label-type=bool > \
 	tuning_reports/svwiki.reverted.md
 
-models/svwiki.reverted.rf.model: \
+models/svwiki.reverted.gradient_boosting.model: \
 		datasets/svwiki.features_reverted.40k_2016.tsv
-	cut datasets/svwiki.features_reverted.40k_2016.tsv -f2- | \
+	cat datasets/svwiki.features_reverted.40k_2016.tsv | cut -f2- | \
 	revscoring train_test \
-		revscoring.scorer_models.RF \
+		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.svwiki.reverted \
-		--version 0.0.1 \
-		-p 'criterion="entropy"' \
+		--version=0.2.1 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=640' \
-		-p 'min_samples_leaf=3' \
+		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
-	models/svwiki.reverted.rf.model
+	models/svwiki.reverted.gradient_boosting.model
 
 datasets/svwiki.revisions_for_review.5k_2016.tsv: \
 		datasets/svwiki.prelabeled_revisions.40k_2016.tsv
@@ -2495,22 +2495,22 @@ tuning_reports/wikidatawiki.reverted.md: \
 		--label-type=bool > \
 	tuning_reports/wikidatawiki.reverted.md
 
-models/wikidatawiki.reverted.rf.model: \
+models/wikidatawiki.reverted.gradient_boosting.model: \
 		datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv
-	cut datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv -f2- | \
+	cat datasets/wikidatawiki.features_reverted.20k_balanced_2015.tsv | cut -f2- | \
 	revscoring train_test \
-		revscoring.scorer_models.RF \
+		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.reverted \
-		--version 0.1.0 \
+		--version=0.2.1 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
-		-p 'criterion="entropy"' \
-		-p 'min_samples_leaf=1' \
-		-p 'n_estimators=80' \
+		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale \
 		--label-type=bool > \
-	models/wikidatawiki.reverted.rf.model
+	models/wikidatawiki.reverted.gradient_boosting.model
 
 datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv: \
 		datasets/wikidatawiki.sampled_revisions.20k_balanced_2015.tsv
