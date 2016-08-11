@@ -137,7 +137,7 @@ models/arwiki.reverted.gradient_boosting.model: \
 	models/arwiki.reverted.gradient_boosting.model
 
 arwiki_models: \
-	models/arwiki.reverted.rf.model
+	models/arwiki.reverted.gradient_boosting.model
 
 arwiki_tuning_reports: \
 	tuning_reports/arwiki.reverted.md
@@ -250,7 +250,7 @@ models/cswiki.reverted.gradient_boosting.model: \
 	models/cswiki.reverted.gradient_boosting.model
 
 cswiki_models: \
-	models/cswiki.reverted.rf.model
+	models/cswiki.reverted.gradient_boosting.model
 
 cswiki_tuning_reports: \
 	tuning_reports/cswiki.reverted.md
@@ -327,7 +327,7 @@ dewiki_tuning_reports: \
 
 datasets/enwiki.rev_reverted.20k_2015.tsv: \
 		datasets/enwiki.rev_damaging.20k_2015.tsv
-	cut datasets/enwiki.rev_damaging.20k_2015.tsv -f1 | \
+	(echo "rev_id"; cut datasets/enwiki.rev_damaging.20k_2015.tsv -f1) | \
 	./utility label_reverted \
 		--host https://en.wikipedia.org \
 		--revert-radius 3 \
@@ -486,28 +486,19 @@ datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv: \
 		--verbose > \
 	datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv
 
-datasets/enwiktionary.rev_reverted.200k_2016.tsv: \
-		datasets/enwiktionary.sampled_revisions.40k_2016.tsv
-	cat datasets/enwiktionary.sampled_revisions.200k_2016.tsv | \
+datasets/enwiktionary.sampled_revisions.20k_2016.tsv: \
+		datasets/enwiktionary.sampled_revisions.200k_2016.tsv
+	shuf -n 20000 datasets/enwiktionary.sampled_revisions.200k_2016.tsv > \
+	datasets/enwiktionary.sampled_revisions.20k_2016.tsv
+
+datasets/enwiktionary.rev_reverted.20k_2016.tsv: \
+		datasets/enwiktionary.sampled_revisions.20k_2016.tsv
+	cat datasets/enwiktionary.sampled_revisions.20k_2016.tsv | \
 	./utility label_reverted \
 		--host https://en.wiktionary.org \
 		--revert-radius 5 \
 		--verbose > \
-	datasets/enwiktionary.rev_reverted.200k_2016.tsv
-
-datasets/enwiktionary.rev_reverted.20k_2016.tsv: \
-		datasets/enwiktionary.rev_reverted.200k_2016.tsv
-	( \
-	  echo "rev_id\treverted"; \
-	  ( \
-	    cat datasets/enwiktionary.rev_reverted.200k_2016.tsv | \
-	    grep "True" ; \
-	    cat datasets/enwiktionary.rev_reverted.200k_2016.tsv | \
-	    grep "False" | \
-	    shuf -n 20000 \
-	 ) | \
-	 shuf \
-	) > datasets/enwiktionary.rev_reverted.20k_2016.tsv
+	datasets/enwiktionary.rev_reverted.20k_2016.tsv
 
 datasets/enwiktionary.revisions_for_review.5k_2016.tsv: \
 		datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv
@@ -721,7 +712,7 @@ datasets/fawiki.prelabeled_revisions.2.20k_2015.tsv: \
 
 datasets/fawiki.rev_reverted.20k_2015.tsv: \
 		datasets/fawiki.rev_damaging.20k_2015.tsv
-	cut datasets/fawiki.rev_damaging.20k_2015.tsv -f1 | \
+	(echo "rev_id"; cut datasets/fawiki.rev_damaging.20k_2015.tsv -f1) | \
 	./utility label_reverted \
 		--host https://fa.wikipedia.org \
 		--revert-radius 3 \
@@ -1531,7 +1522,7 @@ models/nowiki.reverted.gradient_boosting.model: \
 	models/nowiki.reverted.gradient_boosting.model
 
 nowiki_models: \
-		models/nowiki.reverted.rf.model
+		models/nowiki.reverted.gradient_boosting.model
 
 nowiki_tuning_reports: \
 		tuning_reports/nowiki.reverted.md
@@ -1696,20 +1687,20 @@ models/plwiki.goodfaith.rf.model: \
 	models/plwiki.goodfaith.rf.model
 
 plwiki_models: \
-		models/plwiki.reverted.rf.model
-		models/plwiki.damaging.rf.model
+		models/plwiki.reverted.gradient_boosting.model \
+		models/plwiki.damaging.gradient_boosting.model \
 		models/plwiki.goodfaith.rf.model
 
 plwiki_tuning_reports: \
-		tuning_reports/plwiki.reverted.md
-		tuning_reports/plwiki.damaging.md
+		tuning_reports/plwiki.reverted.md \
+		tuning_reports/plwiki.damaging.md \
 		tuning_reports/plwiki.goodfaith.md
 
 ############################# Portugueses Wikipedia ############################
 
 datasets/ptwiki.rev_reverted.20k_2015.tsv: \
 		datasets/ptwiki.rev_damaging.20k_2015.tsv
-	cut datasets/ptwiki.rev_damaging.20k_2015.tsv -f1 | \
+	(echo "rev_id"; cut datasets/ptwiki.rev_damaging.20k_2015.tsv -f1) | \
 	./utility label_reverted \
 		--host https://pt.wikipedia.org \
 		--revert-radius 3 \
@@ -2108,7 +2099,7 @@ datasets/svwiki.revisions_for_review.5k_2016.tsv: \
 	) > datasets/svwiki.revisions_for_review.5k_2016.tsv
 
 svwiki_models: \
-	models/svwiki.reverted.rf.model
+	models/svwiki.reverted.gradient_boosting.model
 
 svwiki_tuning_reports: \
 	tuning_reports/svwiki.reverted.md
@@ -2117,7 +2108,7 @@ svwiki_tuning_reports: \
 
 datasets/trwiki.rev_reverted.20k_2015.tsv: \
 		datasets/trwiki.rev_damaging.20k_2015.tsv
-	cut datasets/trwiki.rev_damaging.20k_2015.tsv -f1 | \
+	(echo "rev_id"; cut datasets/trwiki.rev_damaging.20k_2015.tsv -f1) | \
 	./utility label_reverted \
 		--host https://tr.wikipedia.org \
 		--revert-radius 3 \
@@ -2626,10 +2617,11 @@ models/wikidatawiki.goodfaith.gradient_boosting.model: \
 	models/wikidatawiki.goodfaith.gradient_boosting.model
 
 wikidatawiki_models: \
-		models/wikidatawiki.reverted.rf.model
-		models/wikidatawiki.damaging.gradient_boosting.model
+		models/wikidatawiki.reverted.gradient_boosting.model \
+		models/wikidatawiki.damaging.gradient_boosting.model \
 		models/wikidatawiki.goodfaith.gradient_boosting.model
+
 wikidatawiki_tuning_reports: \
-		tuning_reports/wikidatawiki.reverted.md
-		tuning_reports/wikidatawiki.damaging.md
+		tuning_reports/wikidatawiki.reverted.md \
+		tuning_reports/wikidatawiki.damaging.md \
 		tuning_reports/wikidatawiki.goodfaith.md
