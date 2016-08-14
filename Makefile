@@ -488,7 +488,9 @@ datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv: \
 
 datasets/enwiktionary.sampled_revisions.20k_2016.tsv: \
 		datasets/enwiktionary.sampled_revisions.200k_2016.tsv
-	shuf -n 20000 datasets/enwiktionary.sampled_revisions.200k_2016.tsv > \
+	(head -n 1 datasets/enwiktionary.sampled_revisions.200k_2016.tsv; \
+	 tail -n+2 datasets/enwiktionary.sampled_revisions.200k_2016.tsv | \
+	 shuf -n 20000) > \
 	datasets/enwiktionary.sampled_revisions.20k_2016.tsv
 
 datasets/enwiktionary.rev_reverted.20k_2016.tsv: \
@@ -1336,10 +1338,10 @@ datasets/nlwiki.rev_damaging.5k_2016.tsv:
 	datasets/nlwiki.rev_damaging.5k_2016.tsv
 
 datasets/nlwiki.rev_damaging.20k_2016.tsv: \
+		datasets/nlwiki.rev_damaging.5k_2016.tsv \
 		datasets/nlwiki.prelabeled_revisions.20k_2015.tsv
-	cut datasets/nlwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
-		grep False | \
-		cat datasets/nlwiki.rev_damaging.5k_2016.tsv - | shuf > \
+	(tail -n+2 datasets/nlwiki.prelabeled_revisions.20k_2015.tsv | cut -f1,2 | grep False; \
+	 cat datasets/nlwiki.rev_damaging.5k_2016.tsv) | shuf > \
 	datasets/nlwiki.rev_damaging.20k_2016.tsv
 
 datasets/nlwiki.features_damaging.20k_2016.tsv: \
@@ -1388,10 +1390,10 @@ datasets/nlwiki.rev_goodfaith.5k_2016.tsv:
 	datasets/nlwiki.rev_goodfaith.5k_2016.tsv
 
 datasets/nlwiki.rev_goodfaith.20k_2016.tsv: \
+		datasets/nlwiki.prelabeled_revisions.20k_2015.tsv \
 		datasets/nlwiki.rev_goodfaith.5k_2016.tsv
-	cut datasets/nlwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
-		grep False | sed -e 's/False/True/g' | \
-		cat datasets/nlwiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+	(tail -n+2 datasets/nlwiki.prelabeled_revisions.20k_2015.tsv | cut -f1,2 | grep False | sed -e 's/False/True/g'; \
+	 cat datasets/nlwiki.rev_goodfaith.5k_2016.tsv) | shuf > \
 	datasets/nlwiki.rev_goodfaith.20k_2016.tsv
 
 datasets/nlwiki.features_goodfaith.20k_2016.tsv: \
