@@ -1916,10 +1916,10 @@ datasets/ruwiki.rev_damaging.5k_2016.tsv:
 	datasets/ruwiki.rev_damaging.5k_2016.tsv
 
 datasets/ruwiki.rev_damaging.20k_2016.tsv: \
-		datasets/ruwiki.prelabeled_revisions.20k_2015.tsv
-	cut datasets/ruwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
-		grep False | \
-		cat datasets/ruwiki.rev_damaging.5k_2016.tsv - | shuf > \
+		datasets/ruwiki.prelabeled_revisions.20k_2015.tsv \
+		datasets/ruwiki.rev_damaging.5k_2016.tsv
+	(tail -n+2 datasets/ruwiki.prelabeled_revisions.20k_2015.tsv | cut -f1,2 | grep False;
+	 cat datasets/ruwiki.rev_damaging.5k_2016.tsv) | shuf > \
 	datasets/ruwiki.rev_damaging.20k_2016.tsv
 
 datasets/ruwiki.features_damaging.20k_2016.tsv: \
@@ -1968,10 +1968,10 @@ datasets/ruwiki.rev_goodfaith.5k_2016.tsv:
 	datasets/ruwiki.rev_goodfaith.5k_2016.tsv
 
 datasets/ruwiki.rev_goodfaith.20k_2016.tsv: \
-		datasets/ruwiki.rev_goodfaith.5k_2016.tsv
-	cut datasets/ruwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
-		grep False | sed -e 's/False/True/g' | \
-		cat datasets/ruwiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+		datasets/ruwiki.rev_goodfaith.5k_2016.tsv \
+		datasets/ruwiki.prelabeled_revisions.20k_2015.tsv
+	(tail -n+2 datasets/ruwiki.prelabeled_revisions.20k_2015.tsv | cut -f1,2 | grep False | sed -e 's/False/True/g'; \
+	 cat datasets/ruwiki.rev_goodfaith.5k_2016.tsv) | shuf > \
 	datasets/ruwiki.rev_goodfaith.20k_2016.tsv
 
 datasets/ruwiki.features_goodfaith.20k_2016.tsv: \
@@ -1983,6 +1983,7 @@ datasets/ruwiki.features_goodfaith.20k_2016.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/ruwiki.features_goodfaith.20k_2016.tsv
+
 tuning_reports/ruwiki.goodfaith.md: \
 		datasets/ruwiki.features_goodfaith.20k_2016.tsv
 	cat datasets/ruwiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
@@ -2520,10 +2521,10 @@ datasets/wikidatawiki.rev_damaging.5k_2016.tsv:
 	datasets/wikidatawiki.rev_damaging.5k_2016.tsv
 
 datasets/wikidatawiki.rev_damaging.20k_2016.tsv: \
-		datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv
-	cut datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv -f1,2 | \
-		grep False | \
-		cat datasets/wikidatawiki.rev_damaging.5k_2016.tsv - | shuf > \
+		datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv \
+		datasets/wikidatawiki.rev_damaging.5k_2016.tsv
+	(tail -n+1 datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv | cut -f1,2 | grep False; \
+	 cat datasets/wikidatawiki.rev_damaging.5k_2016.tsv) | shuf > \
 	datasets/wikidatawiki.rev_damaging.20k_2016.tsv
 
 datasets/wikidatawiki.features_damaging.20k_2016.tsv: \
@@ -2572,10 +2573,10 @@ datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv:
 	datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv
 
 datasets/wikidatawiki.rev_goodfaith.20k_2016.tsv: \
-		datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv
-	cut datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv -f1,2 | \
-		grep False | sed -e 's/False/True/g' | \
-		cat datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+		datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv \
+		datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv
+	(tail -n+2 datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv | cut -f1,2 | grep False | sed -e 's/False/True/g'; \
+	 cat datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv) | shuf > \
 	datasets/wikidatawiki.rev_goodfaith.20k_2016.tsv
 
 datasets/wikidatawiki.features_goodfaith.20k_2016.tsv: \
