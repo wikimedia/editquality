@@ -125,7 +125,7 @@ models/arwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.arwiki.reverted \
-		--version=0.2.1 \
+		--version=0.2.2 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -137,7 +137,7 @@ models/arwiki.reverted.gradient_boosting.model: \
 	models/arwiki.reverted.gradient_boosting.model
 
 arwiki_models: \
-	models/arwiki.reverted.rf.model
+	models/arwiki.reverted.gradient_boosting.model
 
 arwiki_tuning_reports: \
 	tuning_reports/arwiki.reverted.md
@@ -238,7 +238,7 @@ models/cswiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.cswiki.reverted \
-		--version=0.2.1 \
+		--version=0.2.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -250,7 +250,7 @@ models/cswiki.reverted.gradient_boosting.model: \
 	models/cswiki.reverted.gradient_boosting.model
 
 cswiki_models: \
-	models/cswiki.reverted.rf.model
+	models/cswiki.reverted.gradient_boosting.model
 
 cswiki_tuning_reports: \
 	tuning_reports/cswiki.reverted.md
@@ -306,7 +306,7 @@ models/dewiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.dewiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		-p 'learning_rate=0.1' \
@@ -327,7 +327,7 @@ dewiki_tuning_reports: \
 
 datasets/enwiki.rev_reverted.20k_2015.tsv: \
 		datasets/enwiki.rev_damaging.20k_2015.tsv
-	cut datasets/enwiki.rev_damaging.20k_2015.tsv -f1 | \
+	(echo "rev_id"; cut datasets/enwiki.rev_damaging.20k_2015.tsv -f1) | \
 	./utility label_reverted \
 		--host https://en.wikipedia.org \
 		--revert-radius 3 \
@@ -361,7 +361,7 @@ models/enwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.enwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -406,7 +406,7 @@ models/enwiki.damaging.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.enwiki.damaging \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -451,7 +451,7 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.enwiki.goodfaith \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -486,28 +486,21 @@ datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv: \
 		--verbose > \
 	datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv
 
-datasets/enwiktionary.rev_reverted.200k_2016.tsv: \
-		datasets/enwiktionary.sampled_revisions.40k_2016.tsv
-	cat datasets/enwiktionary.sampled_revisions.200k_2016.tsv | \
+datasets/enwiktionary.sampled_revisions.20k_2016.tsv: \
+		datasets/enwiktionary.sampled_revisions.200k_2016.tsv
+	(head -n 1 datasets/enwiktionary.sampled_revisions.200k_2016.tsv; \
+	 tail -n+2 datasets/enwiktionary.sampled_revisions.200k_2016.tsv | \
+	 shuf -n 20000) > \
+	datasets/enwiktionary.sampled_revisions.20k_2016.tsv
+
+datasets/enwiktionary.rev_reverted.20k_2016.tsv: \
+		datasets/enwiktionary.sampled_revisions.20k_2016.tsv
+	cat datasets/enwiktionary.sampled_revisions.20k_2016.tsv | \
 	./utility label_reverted \
 		--host https://en.wiktionary.org \
 		--revert-radius 5 \
 		--verbose > \
-	datasets/enwiktionary.rev_reverted.200k_2016.tsv
-
-datasets/enwiktionary.rev_reverted.20k_2016.tsv: \
-		datasets/enwiktionary.rev_reverted.200k_2016.tsv
-	( \
-	  echo "rev_id\treverted"; \
-	  ( \
-	    cat datasets/enwiktionary.rev_reverted.200k_2016.tsv | \
-	    grep "True" ; \
-	    cat datasets/enwiktionary.rev_reverted.200k_2016.tsv | \
-	    grep "False" | \
-	    shuf -n 20000 \
-	 ) | \
-	 shuf \
-	) > datasets/enwiktionary.rev_reverted.20k_2016.tsv
+	datasets/enwiktionary.rev_reverted.20k_2016.tsv
 
 datasets/enwiktionary.revisions_for_review.5k_2016.tsv: \
 		datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv
@@ -551,7 +544,7 @@ models/enwiktionary.reverted.rf.model: \
 	revscoring train_test \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.enwiktionary.reverted \
-		--version 0.0.1 \
+		--version 0.0.2 \
 		-p 'criterion="entropy"' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=320' \
@@ -619,7 +612,7 @@ models/eswiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.eswiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -687,7 +680,7 @@ models/etwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.etwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -721,7 +714,7 @@ datasets/fawiki.prelabeled_revisions.2.20k_2015.tsv: \
 
 datasets/fawiki.rev_reverted.20k_2015.tsv: \
 		datasets/fawiki.rev_damaging.20k_2015.tsv
-	cut datasets/fawiki.rev_damaging.20k_2015.tsv -f1 | \
+	(echo "rev_id"; cut datasets/fawiki.rev_damaging.20k_2015.tsv -f1) | \
 	./utility label_reverted \
 		--host https://fa.wikipedia.org \
 		--revert-radius 3 \
@@ -755,7 +748,7 @@ models/fawiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -800,7 +793,7 @@ models/fawiki.damaging.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.damaging \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -845,7 +838,7 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.damaging \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -936,7 +929,7 @@ models/frwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.frwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1014,7 +1007,7 @@ models/hewiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.hewiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1082,7 +1075,7 @@ models/huwiki.reverted.rf.model: \
 	revscoring train_test \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.huwiki.reverted \
-		--version 0.0.1 \
+		--version 0.0.2 \
 		-p 'criterion="entropy"' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=320' \
@@ -1165,7 +1158,7 @@ models/idwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.idwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1233,7 +1226,7 @@ models/itwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.itwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1326,7 +1319,7 @@ models/nlwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1345,10 +1338,10 @@ datasets/nlwiki.rev_damaging.5k_2016.tsv:
 	datasets/nlwiki.rev_damaging.5k_2016.tsv
 
 datasets/nlwiki.rev_damaging.20k_2016.tsv: \
+		datasets/nlwiki.rev_damaging.5k_2016.tsv \
 		datasets/nlwiki.prelabeled_revisions.20k_2015.tsv
-	cut datasets/nlwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
-		grep False | \
-		cat datasets/nlwiki.rev_damaging.5k_2016.tsv - | shuf > \
+	(tail -n+2 datasets/nlwiki.prelabeled_revisions.20k_2015.tsv | cut -f1,2 | grep False; \
+	 cat datasets/nlwiki.rev_damaging.5k_2016.tsv) | shuf > \
 	datasets/nlwiki.rev_damaging.20k_2016.tsv
 
 datasets/nlwiki.features_damaging.20k_2016.tsv: \
@@ -1378,7 +1371,7 @@ models/nlwiki.damaging.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.damaging \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1397,10 +1390,10 @@ datasets/nlwiki.rev_goodfaith.5k_2016.tsv:
 	datasets/nlwiki.rev_goodfaith.5k_2016.tsv
 
 datasets/nlwiki.rev_goodfaith.20k_2016.tsv: \
+		datasets/nlwiki.prelabeled_revisions.20k_2015.tsv \
 		datasets/nlwiki.rev_goodfaith.5k_2016.tsv
-	cut datasets/nlwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
-		grep False | sed -e 's/False/True/g' | \
-		cat datasets/nlwiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+	(tail -n+2 datasets/nlwiki.prelabeled_revisions.20k_2015.tsv | cut -f1,2 | grep False | sed -e 's/False/True/g'; \
+	 cat datasets/nlwiki.rev_goodfaith.5k_2016.tsv) | shuf > \
 	datasets/nlwiki.rev_goodfaith.20k_2016.tsv
 
 datasets/nlwiki.features_goodfaith.20k_2016.tsv: \
@@ -1430,7 +1423,7 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.goodfaith \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1519,7 +1512,7 @@ models/nowiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nowiki.reverted \
-		--version=0.2.1 \
+		--version=0.2.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1531,7 +1524,7 @@ models/nowiki.reverted.gradient_boosting.model: \
 	models/nowiki.reverted.gradient_boosting.model
 
 nowiki_models: \
-		models/nowiki.reverted.rf.model
+		models/nowiki.reverted.gradient_boosting.model
 
 nowiki_tuning_reports: \
 		tuning_reports/nowiki.reverted.md
@@ -1592,7 +1585,7 @@ models/plwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.reverted \
-		--version=0.2.1 \
+		--version=0.2.2 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1638,7 +1631,7 @@ models/plwiki.damaging.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.damaging \
-		--version=0.2.1 \
+		--version=0.2.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1684,7 +1677,7 @@ models/plwiki.goodfaith.rf.model: \
 	revscoring train_test \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.plwiki.goodfaith \
-		--version 0.1.0 \
+		--version 0.1.1 \
 		-p 'max_features="log2"' \
 		-p 'criterion="entropy"' \
 		-p 'min_samples_leaf=1' \
@@ -1696,20 +1689,20 @@ models/plwiki.goodfaith.rf.model: \
 	models/plwiki.goodfaith.rf.model
 
 plwiki_models: \
-		models/plwiki.reverted.rf.model
-		models/plwiki.damaging.rf.model
+		models/plwiki.reverted.gradient_boosting.model \
+		models/plwiki.damaging.gradient_boosting.model \
 		models/plwiki.goodfaith.rf.model
 
 plwiki_tuning_reports: \
-		tuning_reports/plwiki.reverted.md
-		tuning_reports/plwiki.damaging.md
+		tuning_reports/plwiki.reverted.md \
+		tuning_reports/plwiki.damaging.md \
 		tuning_reports/plwiki.goodfaith.md
 
 ############################# Portugueses Wikipedia ############################
 
 datasets/ptwiki.rev_reverted.20k_2015.tsv: \
 		datasets/ptwiki.rev_damaging.20k_2015.tsv
-	cut datasets/ptwiki.rev_damaging.20k_2015.tsv -f1 | \
+	(echo "rev_id"; cut datasets/ptwiki.rev_damaging.20k_2015.tsv -f1) | \
 	./utility label_reverted \
 		--host https://pt.wikipedia.org \
 		--revert-radius 3 \
@@ -1743,7 +1736,7 @@ models/ptwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ptwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1788,7 +1781,7 @@ models/ptwiki.damaging.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ptwiki.damaging \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1833,7 +1826,7 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ptwiki.goodfaith \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1906,7 +1899,7 @@ models/ruwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.reverted \
-		--version=0.0.1 \
+		--version=0.0.2 \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		-p 'learning_rate=0.01' \
@@ -1925,10 +1918,10 @@ datasets/ruwiki.rev_damaging.5k_2016.tsv:
 	datasets/ruwiki.rev_damaging.5k_2016.tsv
 
 datasets/ruwiki.rev_damaging.20k_2016.tsv: \
-		datasets/ruwiki.prelabeled_revisions.20k_2015.tsv
-	cut datasets/ruwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
-		grep False | \
-		cat datasets/ruwiki.rev_damaging.5k_2016.tsv - | shuf > \
+		datasets/ruwiki.prelabeled_revisions.20k_2015.tsv \
+		datasets/ruwiki.rev_damaging.5k_2016.tsv
+	(tail -n+2 datasets/ruwiki.prelabeled_revisions.20k_2015.tsv | cut -f1,2 | grep False;
+	 cat datasets/ruwiki.rev_damaging.5k_2016.tsv) | shuf > \
 	datasets/ruwiki.rev_damaging.20k_2016.tsv
 
 datasets/ruwiki.features_damaging.20k_2016.tsv: \
@@ -1958,7 +1951,7 @@ models/ruwiki.damaging.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.damaging \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1977,10 +1970,10 @@ datasets/ruwiki.rev_goodfaith.5k_2016.tsv:
 	datasets/ruwiki.rev_goodfaith.5k_2016.tsv
 
 datasets/ruwiki.rev_goodfaith.20k_2016.tsv: \
-		datasets/ruwiki.rev_goodfaith.5k_2016.tsv
-	cut datasets/ruwiki.prelabeled_revisions.20k_2015.tsv -f1,2 | \
-		grep False | sed -e 's/False/True/g' | \
-		cat datasets/ruwiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+		datasets/ruwiki.rev_goodfaith.5k_2016.tsv \
+		datasets/ruwiki.prelabeled_revisions.20k_2015.tsv
+	(tail -n+2 datasets/ruwiki.prelabeled_revisions.20k_2015.tsv | cut -f1,2 | grep False | sed -e 's/False/True/g'; \
+	 cat datasets/ruwiki.rev_goodfaith.5k_2016.tsv) | shuf > \
 	datasets/ruwiki.rev_goodfaith.20k_2016.tsv
 
 datasets/ruwiki.features_goodfaith.20k_2016.tsv: \
@@ -1992,6 +1985,7 @@ datasets/ruwiki.features_goodfaith.20k_2016.tsv: \
 		--include-revid \
 		--verbose > \
 	datasets/ruwiki.features_goodfaith.20k_2016.tsv
+
 tuning_reports/ruwiki.goodfaith.md: \
 		datasets/ruwiki.features_goodfaith.20k_2016.tsv
 	cat datasets/ruwiki.features_goodfaith.20k_2016.tsv | cut -f2- | \
@@ -2009,7 +2003,7 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.goodfaith \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=3' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
@@ -2081,7 +2075,7 @@ models/svwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.svwiki.reverted \
-		--version=0.2.1 \
+		--version=0.2.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2108,7 +2102,7 @@ datasets/svwiki.revisions_for_review.5k_2016.tsv: \
 	) > datasets/svwiki.revisions_for_review.5k_2016.tsv
 
 svwiki_models: \
-	models/svwiki.reverted.rf.model
+	models/svwiki.reverted.gradient_boosting.model
 
 svwiki_tuning_reports: \
 	tuning_reports/svwiki.reverted.md
@@ -2117,7 +2111,7 @@ svwiki_tuning_reports: \
 
 datasets/trwiki.rev_reverted.20k_2015.tsv: \
 		datasets/trwiki.rev_damaging.20k_2015.tsv
-	cut datasets/trwiki.rev_damaging.20k_2015.tsv -f1 | \
+	(echo "rev_id"; cut datasets/trwiki.rev_damaging.20k_2015.tsv -f1) | \
 	./utility label_reverted \
 		--host https://tr.wikipedia.org \
 		--revert-radius 3 \
@@ -2151,7 +2145,7 @@ models/trwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2196,7 +2190,7 @@ models/trwiki.damaging.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.damaging \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2241,7 +2235,7 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.goodfaith \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2313,7 +2307,7 @@ models/ukwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ukwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2446,7 +2440,7 @@ models/viwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.viwiki.reverted \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2501,7 +2495,7 @@ models/wikidatawiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.reverted \
-		--version=0.2.1 \
+		--version=0.2.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
@@ -2529,10 +2523,10 @@ datasets/wikidatawiki.rev_damaging.5k_2016.tsv:
 	datasets/wikidatawiki.rev_damaging.5k_2016.tsv
 
 datasets/wikidatawiki.rev_damaging.20k_2016.tsv: \
-		datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv
-	cut datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv -f1,2 | \
-		grep False | \
-		cat datasets/wikidatawiki.rev_damaging.5k_2016.tsv - | shuf > \
+		datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv \
+		datasets/wikidatawiki.rev_damaging.5k_2016.tsv
+	(tail -n+1 datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv | cut -f1,2 | grep False; \
+	 cat datasets/wikidatawiki.rev_damaging.5k_2016.tsv) | shuf > \
 	datasets/wikidatawiki.rev_damaging.20k_2016.tsv
 
 datasets/wikidatawiki.features_damaging.20k_2016.tsv: \
@@ -2562,7 +2556,7 @@ models/wikidatawiki.damaging.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.damaging \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2581,10 +2575,10 @@ datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv:
 	datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv
 
 datasets/wikidatawiki.rev_goodfaith.20k_2016.tsv: \
-		datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv
-	cut datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv -f1,2 | \
-		grep False | sed -e 's/False/True/g' | \
-		cat datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv - | shuf > \
+		datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv \
+		datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv
+	(tail -n+2 datasets/wikidatawiki.prelabeled_revisions.20k_balanced_2015.tsv | cut -f1,2 | grep False | sed -e 's/False/True/g'; \
+	 cat datasets/wikidatawiki.rev_goodfaith.5k_2016.tsv) | shuf > \
 	datasets/wikidatawiki.rev_goodfaith.20k_2016.tsv
 
 datasets/wikidatawiki.features_goodfaith.20k_2016.tsv: \
@@ -2614,7 +2608,7 @@ models/wikidatawiki.goodfaith.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.goodfaith \
-		--version=0.1.1 \
+		--version=0.1.2 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
@@ -2626,10 +2620,11 @@ models/wikidatawiki.goodfaith.gradient_boosting.model: \
 	models/wikidatawiki.goodfaith.gradient_boosting.model
 
 wikidatawiki_models: \
-		models/wikidatawiki.reverted.rf.model
-		models/wikidatawiki.damaging.gradient_boosting.model
+		models/wikidatawiki.reverted.gradient_boosting.model \
+		models/wikidatawiki.damaging.gradient_boosting.model \
 		models/wikidatawiki.goodfaith.gradient_boosting.model
+
 wikidatawiki_tuning_reports: \
-		tuning_reports/wikidatawiki.reverted.md
-		tuning_reports/wikidatawiki.damaging.md
+		tuning_reports/wikidatawiki.reverted.md \
+		tuning_reports/wikidatawiki.damaging.md \
 		tuning_reports/wikidatawiki.goodfaith.md
