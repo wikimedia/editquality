@@ -1,4 +1,5 @@
 from revscoring.languages import turkish
+from revscoring.features import revision_oriented
 
 from . import enwiki, mediawiki, wikipedia, wikitext
 
@@ -20,11 +21,19 @@ informals = [
     turkish.informals.revision.diff.match_prop_delta_decrease
 ]
 
+trwiki_user_rights = [
+    revision_oriented.revision.user.in_group(
+        {'autoreview'}, name="revision.user.is_autoreview"),
+    revision_oriented.revision.user.in_group(
+        {'patroller'}, name="revision.user.is_patroller")
+]
+
 damaging = wikipedia.page + \
            wikitext.parent + wikitext.diff + mediawiki.user_rights + \
            mediawiki.protected_user + mediawiki.comment + \
            badwords + informals + \
-           enwiki.badwords + enwiki.informals
+           enwiki.badwords + enwiki.informals + \
+           trwiki_user_rights
 
 reverted = damaging
 goodfaith = damaging
