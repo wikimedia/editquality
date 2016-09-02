@@ -486,46 +486,50 @@ datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv: \
 		--verbose > \
 	datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv
 
-datasets/enwiktionary.sampled_revisions.20k_2016.tsv: \
-		datasets/enwiktionary.sampled_revisions.200k_2016.tsv
-	(head -n 1 datasets/enwiktionary.sampled_revisions.200k_2016.tsv; \
-	 tail -n+2 datasets/enwiktionary.sampled_revisions.200k_2016.tsv | \
-	 shuf -n 20000) > \
-	datasets/enwiktionary.sampled_revisions.20k_2016.tsv
-
-datasets/enwiktionary.rev_reverted.20k_2016.tsv: \
-		datasets/enwiktionary.sampled_revisions.20k_2016.tsv
-	cat datasets/enwiktionary.sampled_revisions.20k_2016.tsv | \
-	./utility label_reverted \
-		--host https://en.wiktionary.org \
-		--revert-radius 5 \
-		--verbose > \
-	datasets/enwiktionary.rev_reverted.20k_2016.tsv
-
 datasets/enwiktionary.revisions_for_review.5k_2016.tsv: \
 		datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv
 	( \
 	  echo "rev_id\tneeds_review\treason"; \
 	  ( \
 	    cat datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv | \
-	    grep "True" | \
-	    shuf -n 2500; \
+	    grep "True" | shuf -n 2500; \
 	    cat datasets/enwiktionary.prelabeled_revisions.200k_2016.tsv | \
-	    grep "False" | \
-	    shuf -n 2500 \
+	    grep "False" | shuf -n 2500 \
 	 ) | \
 	 shuf \
 	) > datasets/enwiktionary.revisions_for_review.5k_2016.tsv
 
 datasets/enwiktionary.features_reverted.20k_2016.tsv: \
-		datasets/enwiktionary.rev_reverted.20k_2016.tsv
-	cat datasets/enwiktionary.rev_reverted.20k_2016.tsv | \
+		datasets/enwiktionary.rev_reverted.weighted.20k_2016.tsv
+	cat datasets/enwiktionary.rev_reverted.weighted.20k_2016.tsv | \
 	revscoring extract_features \
 		editquality.feature_lists.enwiktionary.reverted \
 		--host https://en.wiktionary.org \
 		--include-revid \
 		--verbose > \
 	datasets/enwiktionary.features_reverted.20k_2016.tsv
+
+datasets/enwiktionary.rev_reverted.200k_2016.tsv: \
+		datasets/enwiktionary.sampled_revisions.200k_2016.tsv
+	cat datasets/enwiktionary.sampled_revisions.200k_2016.tsv | \
+	./utility label_reverted \
+		--host https://en.wiktionary.org \
+		--revert-radius 5 \
+		--verbose > \
+	datasets/enwiktionary.rev_reverted.200k_2016.tsv
+
+datasets/enwiktionary.rev_reverted.weighted.20k_2016.tsv: \
+		datasets/enwiktionary.rev_reverted.200k_2016.tsv
+	( \
+          head -n1 datasets/enwiktionary.rev_reverted.200k_2016.tsv; \
+	  ( \
+	    tail -n+2 datasets/enwiktionary.rev_reverted.200k_2016.tsv | \
+	      grep "False" | shuf -n 20000; \
+	    tail -n+2 datasets/enwiktionary.rev_reverted.200k_2016.tsv | \
+	      grep "True" \
+	  ) | shuf; \
+	) > \
+	datasets/enwiktionary.rev_reverted.weighted.20k_2016.tsv
 
 tuning_reports/enwiktionary.reverted.md: \
 		datasets/enwiktionary.features_reverted.20k_2016.tsv
