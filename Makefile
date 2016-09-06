@@ -1903,7 +1903,7 @@ models/ruwiki.reverted.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.reverted \
-		--version=0.0.2 \
+		--version=0.0.3 \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		-p 'learning_rate=0.01' \
@@ -1955,7 +1955,7 @@ models/ruwiki.damaging.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.damaging \
-		--version=0.1.2 \
+		--version=0.1.3 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2007,7 +2007,7 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 	revscoring train_test \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.goodfaith \
-		--version=0.1.2 \
+		--version=0.1.3 \
 		-p 'max_depth=3' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
