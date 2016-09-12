@@ -633,6 +633,74 @@ eswiki_models: \
 eswiki_tuning_reports: \
 		tuning_reports/eswiki.reverted.md
 
+############################# Spanish Wikibooks ################################
+
+datasets/eswikibooks.sampled_revisions.20k_2015.tsv:
+	wget -qO- https://quarry.wmflabs.org/run/113419/output/0/tsv?download=true > \
+	datasets/eswikibooks.sampled_revisions.20k_2015.tsv
+
+datasets/eswikibooks.prelabeled_revisions.20k_2015.tsv: \
+		datasets/eswikibooks.sampled_revisions.20k_2015.tsv
+	cat datasets/eswikibooks.sampled_revisions.20k_2015.tsv | \
+	./utility prelabel https://es.wikibooks.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/eswikibooks.prelabeled_revisions.20k_2015.tsv
+
+datasets/eswikibooks.rev_reverted.20k_2015.tsv: \
+		datasets/eswikibooks.sampled_revisions.20k_2015.tsv
+	cat datasets/eswikibooks.sampled_revisions.20k_2015.tsv | \
+	./utility label_reverted \
+		--host https://es.wikibooks.org \
+		--revert-radius 3 \
+		--verbose > \
+	datasets/eswikibooks.rev_reverted.20k_2015.tsv
+
+datasets/eswikibooks.features_reverted.20k_2015.tsv: \
+		datasets/eswikibooks.rev_reverted.20k_2015.tsv
+	cat datasets/eswikibooks.rev_reverted.20k_2015.tsv | \
+	revscoring extract_features \
+		editquality.feature_lists.eswikibooks.reverted \
+		--host https://es.wikibooks.org \
+		--include-revid \
+		--verbose > \
+	datasets/eswikibooks.features_reverted.20k_2015.tsv
+
+tuning_reports/eswikibooks.reverted.md: \
+		datasets/eswikibooks.features_reverted.20k_2015.tsv
+	cat datasets/eswikibooks.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswikibooks.reverted \
+		--cv-timeout=60 \
+		--debug \
+		--label-type=bool > \
+	tuning_reports/eswikibooks.reverted.md
+
+models/eswikibooks.reverted.gradient_boosting.model: \
+		datasets/eswikibooks.features_reverted.20k_2015.tsv
+	cat datasets/eswikibooks.features_reverted.20k_2015.tsv | cut -f2- | \
+	revscoring train_test \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.eswikibooks.reverted \
+		--version=0.1.2 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale \
+		--label-type=bool > \
+	models/eswikibooks.reverted.gradient_boosting.model
+
+eswikibooks_models: \
+		models/eswikibooks.reverted.gradient_boosting.model
+
+eswikibooks_tuning_reports: \
+		tuning_reports/eswikibooks.reverted.md
+
 ########################### Estonian Wikipedia ################################
 
 datasets/etwiki.sampled_revisions.20k_2015.tsv:
