@@ -59,6 +59,12 @@ test_statistics = \
 		-s 'filter_rate_at_recall(min_recall=0.90)' \
 		-s 'filter_rate_at_recall(min_recall=0.75)'
 
+major_minor = 0.3
+reverted_major_minor = $(major_minor)
+damaging_major_minor = $(major_minor)
+goodfaith_major_minor = $(major_minor)
+
+
 ############################# Arabic Wikipedia ################################
 
 datasets/arwiki.sampled_revisions.20k_2016.json:
@@ -102,7 +108,7 @@ tuning_reports/arwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.arwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/arwiki.reverted.md
@@ -113,8 +119,8 @@ models/arwiki.reverted.gradient_boosting.model: \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.arwiki.reverted \
-		damaging_reverted \
-		--version=0.2.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -197,7 +203,7 @@ tuning_reports/cswiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/cswiki.reverted.md
@@ -208,8 +214,8 @@ models/cswiki.reverted.gradient_boosting.model: \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.cswiki.reverted \
-		damaging_reverted \
-		--version=0.2.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -255,7 +261,7 @@ tuning_reports/dewiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.dewiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/dewiki.reverted.md
@@ -263,11 +269,11 @@ tuning_reports/dewiki.reverted.md: \
 models/dewiki.reverted.gradient_boosting.model: \
 		datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.dewiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		-p 'learning_rate=0.1' \
@@ -284,50 +290,50 @@ dewiki_tuning_reports: \
 		tuning_reports/dewiki.reverted.md
 
 ############################# English Wikipedia ###############################
-datasets/enwiki.labeled_revisions.20k_2015.json
+datasets/enwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ > \
-	datasets/enwiki.labeled_revisions.20k_2015.json
+	datasets/enwiki.human_labeled_revisions.20k_2015.json
 
-datasets/enwiki.autolabeled_revisions.20k_2015.json: \
-		datasets/enwiki.sampled_revisions.20k_2015.json
-	cat datasets/enwiki.sampled_revisions.20k_2015.json | \
+datasets/enwiki.labeled_revisions.20k_2015.json: \
+		datasets/enwiki.human_labeled_revisions.20k_2015.json
+	cat datasets/enwiki.human_labeled_revisions.20k_2015.json | \
 	./utility autolabel --host=https://en.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--verbose > \
-	datasets/enwiki.autolabeled_revisions.20k_2015.json
+	datasets/enwiki.labeled_revisions.20k_2015.json
 
-datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/enwiki.autolabeled_revisions.20k_2015.json
-	cat datasets/enwiki.autolabeled_revisions.20k_2015.json | \
+datasets/enwiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/enwiki.labeled_revisions.20k_2015.json
+	cat datasets/enwiki.labeled_revisions.20k_2015.json | \
 	revscoring extract \
 		editquality.feature_lists.enwiki.reverted \
 		editquality.feature_lists.enwiki.goodfaith \
 		editquality.feature_lists.enwiki.damaging \
 		--host https://en.wikipedia.org \
 		--verbose > \
-	datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
+	datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
 
 tuning_reports/enwiki.reverted.md: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/enwiki.reverted.md
 
 models/enwiki.reverted.gradient_boosting.model: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.enwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -339,8 +345,8 @@ models/enwiki.reverted.gradient_boosting.model: \
 
 
 tuning_reports/enwiki.damaging.md: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.damaging \
@@ -350,13 +356,13 @@ tuning_reports/enwiki.damaging.md: \
 	tuning_reports/enwiki.damaging.md
 
 models/enwiki.damaging.gradient_boosting.model: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.enwiki.damaging \
 		damaging \
-		--version=0.1.2 \
+		--version=$(damaging_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -367,8 +373,8 @@ models/enwiki.damaging.gradient_boosting.model: \
 	models/enwiki.damaging.gradient_boosting.model
 
 tuning_reports/enwiki.goodfaith.md: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.goodfaith \
@@ -377,13 +383,13 @@ tuning_reports/enwiki.goodfaith.md: \
 	tuning_reports/enwiki.goodfaith.md
 
 models/enwiki.goodfaith.gradient_boosting.model: \
-		datasets/enwiki.features_goodfaith.20k_2015.json
-	cat datasets/enwiki.features_goodfaith.20k_2015.json | \
-	revscoring cv_test \
+		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.enwiki.goodfaith \
 		goodfaith \
-		--version=0.1.2 \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -441,9 +447,9 @@ datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json: \
 		datasets/enwiktionary.autolabeled_revisions.200k_2016.json
 	( \
 	  cat datasets/enwiktionary.autolabeled_revisions.200k_2016.json | \
-	    grep '"damaging_reverted": false' | shuf -n 20000; \
+	    grep '"reverted_for_damage": false' | shuf -n 20000; \
 	  cat datasets/enwiktionary.autolabeled_revisions.200k_2016.json | \
-	    grep '"damaging_reverted": true' \
+	    grep '"reverted_for_damage": true' \
 	) | shuf > \
 	datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json
 
@@ -453,7 +459,7 @@ tuning_reports/enwiktionary.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiktionary.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/enwiktionary.reverted.md
@@ -461,11 +467,11 @@ tuning_reports/enwiktionary.reverted.md: \
 models/enwiktionary.reverted.rf.model: \
 		datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json
 	cat datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.enwiktionary.reverted \
-		damaging_reverted \
-		--version 0.0.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'criterion="entropy"' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=320' \
@@ -511,7 +517,7 @@ tuning_reports/eswiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/eswiki.reverted.md
@@ -519,11 +525,11 @@ tuning_reports/eswiki.reverted.md: \
 models/eswiki.reverted.gradient_boosting.model: \
 		datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.eswiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -569,7 +575,7 @@ tuning_reports/eswikibooks.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswikibooks.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/eswikibooks.reverted.md
@@ -577,11 +583,11 @@ tuning_reports/eswikibooks.reverted.md: \
 models/eswikibooks.reverted.gradient_boosting.model: \
 		datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json
 	cat datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.eswikibooks.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -627,7 +633,7 @@ tuning_reports/etwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug  > \
 	tuning_reports/etwiki.reverted.md
@@ -635,11 +641,11 @@ tuning_reports/etwiki.reverted.md: \
 models/etwiki.reverted.gradient_boosting.model: \
 		datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.etwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -656,7 +662,7 @@ etwiki_tuning_reports: \
 		tuning_reports/etwiki.reverted.md
 
 ############################# Persian Wikipedia ################################
-datasets/fawiki.human_labeled_revisions.20k_2015.json
+datasets/fawiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ > \
 	datasets/fawiki.human_labeled_revisions.20k_2015.json
@@ -677,7 +683,6 @@ datasets/fawiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.fawiki.reverted \
 		editquality.feature_lists.fawiki.damaging \
 		editquality.feature_lists.fawiki.goodfaith \
-		damaging_reverted \
 		--host https://fa.wikipedia.org \
 		--verbose > \
 	datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
@@ -701,7 +706,7 @@ tuning_reports/fawiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug  > \
 	tuning_reports/fawiki.reverted.md
@@ -709,11 +714,11 @@ tuning_reports/fawiki.reverted.md: \
 models/fawiki.reverted.gradient_boosting.model: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/fawiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -737,11 +742,11 @@ tuning_reports/fawiki.damaging.md: \
 models/fawiki.damaging.gradient_boosting.model: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/fawiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.damaging \
 		damaging \
-		--version=0.1.2 \
+		--version=$(damaging_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -763,13 +768,13 @@ tuning_reports/fawiki.goodfaith.md: \
 	tuning_reports/fawiki.goodfaith.md
 
 models/fawiki.goodfaith.gradient_boosting.model: \
-		datasets/fawiki.labeled_revisions.20k_2015.json
-	cat datasets/fawiki.labeled_revisions.20k_2015.json | \
-	revscoring cv_test \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/fawiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.goodfaith \
 		goodfaith \
-		--version=0.1.2 \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -819,34 +824,34 @@ datasets/frwiki.revisions_for_review.5k_2016.json: \
 	  shuf -n 2500 \
 	 ) | shuf > datasets/frwiki.revisions_for_review.5k_2016.json
 
-datasets/frwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/frwiki.autolabeled_revisions.20k_2015.json
-	cat datasets/frwiki.autolabeled_revisions.20k_2015.json | \
+datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/frwiki.autolabeled_revisions.20k_2016.json
+	cat datasets/frwiki.autolabeled_revisions.20k_2016.json | \
 	revscoring extract \
 		editquality.feature_lists.frwiki.reverted \
 		--host https://fr.wikipedia.org \
 		--verbose > \
-	datasets/frwiki.autolabeled_revisions.w_cache.20k_2015.json
+	datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json
 
 tuning_reports/frwiki.reverted.md: \
-		datasets/frwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/frwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.frwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/frwiki.reverted.md
 
 models/frwiki.reverted.gradient_boosting.model: \
-		datasets/frwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/frwiki.autolabeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+		datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.frwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -903,19 +908,19 @@ tuning_reports/hewiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/hewiki.reverted.md
 
 models/hewiki.reverted.gradient_boosting.model: \
 		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
-	cut datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json -f2- | \
-	revscoring cv_test \
+	cat datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.hewiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -961,19 +966,19 @@ tuning_reports/huwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.huwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/huwiki.reverted.md
 
 models/huwiki.reverted.rf.model: \
 		datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json
-	cut datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json -f2- | \
-	revscoring cv_test \
+	cat datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.huwiki.reverted \
-		damaging_reverted \
-		--version 0.0.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'criterion="entropy"' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=320' \
@@ -1030,19 +1035,19 @@ tuning_reports/idwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.idwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/idwiki.reverted.md
 
 models/idwiki.reverted.gradient_boosting.model: \
 		datasets/idwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cut datasets/idwiki.autolabeled_revisions.w_cache.20k_2015.json -f2- | \
-	revscoring cv_test \
+	cat datasets/idwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.idwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1088,7 +1093,7 @@ tuning_reports/itwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.itwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/itwiki.reverted.md
@@ -1096,11 +1101,11 @@ tuning_reports/itwiki.reverted.md: \
 models/itwiki.reverted.gradient_boosting.model: \
 		datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.itwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1148,24 +1153,24 @@ datasets/nlwiki.autolabeled_revisions.20k_2016.json: \
 	datasets/nlwiki.autolabeled_revisions.20k_2016.json
 
 tuning_reports/nlwiki.reverted.md: \
-		datasets/nlwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2015.json | \
+		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nlwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/nlwiki.reverted.md
 
 models/nlwiki.reverted.gradient_boosting.model: \
-		datasets/nlwiki.labeled_revisions.w_cache.20k_2015.json
-	cut datasets/nlwiki.labeled_revisions.w_cache.20k_2015.json -f2- | \
-	revscoring cv_test \
+		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1180,10 +1185,12 @@ datasets/nlwiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/nlwiki/14/ > \
 	datasets/nlwiki.human_labeled_revisions.5k_2016.json
 
-datasets/nlwiki.labeled_revisions.20k_2016.json:
+datasets/nlwiki.labeled_revisions.20k_2016.json: \
+		datasets/nlwiki.human_labeled_revisions.5k_2016.json \
+		datasets/nlwiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels \
 		datasets/nlwiki.human_labeled_revisions.5k_2016.json \
-		datasets/nlwiki.autolabeled_revisions.20k_2015.json > \
+		datasets/nlwiki.autolabeled_revisions.20k_2016.json > \
 	datasets/nlwiki.labeled_revisions.20k_2016.json
 
 datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -1211,11 +1218,11 @@ tuning_reports/nlwiki.damaging.md: \
 models/nlwiki.damaging.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
 	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.damaging \
 		damaging \
-		--version=0.1.2 \
+		--version=$(damaging_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1239,11 +1246,11 @@ tuning_reports/nlwiki.goodfaith.md: \
 models/nlwiki.goodfaith.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
 	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.goodfaith \
 		goodfaith \
-		--version=0.1.2 \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1292,7 +1299,7 @@ datasets/nowiki.revisions_to_review.5k_2015.json: \
 
 datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json: \
 		datasets/nowiki.autolabeled_revisions.100k_2015.json
-	shuf -n 40000 datasets/nowiki.sampled_revisions.100k_2015.json | \
+	shuf -n 40000 datasets/nowiki.autolabeled_revisions.100k_2015.json | \
 	revscoring extract \
 		editquality.feature_lists.nowiki.reverted \
 		--host https://no.wikipedia.org \
@@ -1305,7 +1312,7 @@ tuning_reports/nowiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nowiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/nowiki.reverted.md
@@ -1313,11 +1320,11 @@ tuning_reports/nowiki.reverted.md: \
 models/nowiki.reverted.gradient_boosting.model: \
 		datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
 	cat datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nowiki.reverted \
-		damaging_reverted \
-		--version=0.2.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1348,39 +1355,39 @@ datasets/plwiki.autolabeled_revisions.500k_2015.json: \
 		--verbose > \
 	datasets/plwiki.autolabeled_revisions.500k_2015.json
 
-datasets/plwiki.sampled_revisions.20k_2015.json: \
-		datasets/plwiki.sampled_revisions.500k_2015.json
-	cat datasets/plwiki.sampled_revisions.500k_2015.json | \
-	shuf -n 20000 > datasets/plwiki.sampled_revisions.20k_2015.json
+datasets/plwiki.autolabeled_revisions.40k_2015.json: \
+		datasets/plwiki.autolabeled_revisions.500k_2015.json
+	cat datasets/plwiki.autolabeled_revisions.500k_2015.json | \
+	shuf -n 40000 > datasets/plwiki.autolabeled_revisions.40k_2015.json
 
-datasets/plwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/plwiki.autolabeled_revisions.20k_2015.json
-	cat datasets/plwiki.autolabeled_revisions.20k_2015.json | \
+datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json: \
+		datasets/plwiki.autolabeled_revisions.40k_2015.json
+	cat datasets/plwiki.autolabeled_revisions.40k_2015.json | \
 	revscoring extract \
 		editquality.feature_lists.plwiki.reverted \
 		--host https://pl.wikipedia.org \
 		--verbose > \
-	datasets/plwiki.autolabeled_revisions.w_cache.20k_2015.json
+	datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json
 
 tuning_reports/plwiki.reverted.md: \
-		datasets/plwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/plwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json
+	cat datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.plwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/plwiki.reverted.md
 
 models/plwiki.reverted.gradient_boosting.model: \
-		datasets/plwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/plwiki.autolabeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+		datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json
+	cat datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.reverted \
-		damaging_reverted \
-		--version=0.2.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1430,11 +1437,11 @@ tuning_reports/plwiki.damaging.md: \
 models/plwiki.damaging.gradient_boosting.model: \
 		datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json
 	cat datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.damaging \
 		damaging \
-		--version=0.2.2 \
+		--version=$(damaging_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1459,11 +1466,11 @@ tuning_reports/plwiki.goodfaith.md: \
 models/plwiki.goodfaith.rf.model: \
 		datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json
 	cat datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.plwiki.goodfaith \
 		goodfaith \
-		--version 0.1.1 \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'max_features="log2"' \
 		-p 'criterion="entropy"' \
 		-p 'min_samples_leaf=1' \
@@ -1484,7 +1491,7 @@ plwiki_tuning_reports: \
 		tuning_reports/plwiki.goodfaith.md
 
 ############################# Portugueses Wikipedia ############################
-datasets/ptwiki.human_labeled_revisions.20k_2015.json
+datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ > \
 	datasets/ptwiki.human_labeled_revisions.20k_2015.json
@@ -1513,7 +1520,7 @@ tuning_reports/ptwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ptwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/ptwiki.reverted.md
@@ -1521,11 +1528,11 @@ tuning_reports/ptwiki.reverted.md: \
 models/ptwiki.reverted.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ptwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1549,11 +1556,11 @@ tuning_reports/ptwiki.damaging.md: \
 models/ptwiki.damaging.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ptwiki.damaging \
 		damaging \
-		--version=0.1.2 \
+		--version=$(damaging_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1577,11 +1584,11 @@ tuning_reports/ptwiki.goodfaith.md: \
 models/ptwiki.goodfaith.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ptwiki.goodfaith \
-		goofaith \
-		--version=0.1.2 \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1605,7 +1612,7 @@ ptwiki_tuning_reports: \
 ############################### Russian Wikipedia ############################
 
 datasets/ruwiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/78948/output/0/json-lines?download=true > \
+	wget -qO- https://quarry.wmflabs.org/run/48649/output/0/json-lines?download=true > \
 	datasets/ruwiki.sampled_revisions.20k_2015.json
 
 datasets/ruwiki.autolabeled_revisions.20k_2015.json: \
@@ -1617,20 +1624,21 @@ datasets/ruwiki.autolabeled_revisions.20k_2015.json: \
 		--verbose > \
 	datasets/ruwiki.autolabeled_revisions.20k_2015.json
 
-datasets/ruwiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels
+datasets/ruwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ruwiki/10/ > \
-	datasets/ruwiki.human_labeled_revisions.5k_2016.json
+	datasets/ruwiki.human_labeled_revisions.5k_2015.json
 
-datasets/ruwiki.labeled_revisions.20k_2016.json: \
-		datasets/ruwiki.human_labeled_revisions.5k_2016.json
+datasets/ruwiki.labeled_revisions.20k_2015.json: \
+		datasets/ruwiki.human_labeled_revisions.5k_2015.json \
+		datasets/ruwiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels \
-		datasets/ruwiki.human_labeled_revisions.5k_2016.json \
-		datasets/ruwiki.autolabeled_revisions.20k_2015.json >
-	datasets/ruwiki.labeled_revisions.20k_2016.json
-
+		datasets/ruwiki.human_labeled_revisions.5k_2015.json \
+		datasets/ruwiki.autolabeled_revisions.20k_2015.json > \
+	datasets/ruwiki.labeled_revisions.20k_2015.json
+		
 datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
-		datasets/ruwiki.labeled_revisions.20k_2016.json
+		datasets/ruwiki.labeled_revisions.20k_2015.json
 	cat datasets/ruwiki.labeled_revisions.20k_2015.json | \
 	revscoring extract \
 		editquality.feature_lists.ruwiki.reverted \
@@ -1646,20 +1654,19 @@ tuning_reports/ruwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ruwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/ruwiki.reverted.md
 
 models/ruwiki.reverted.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
-	cut datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json -f2- | \
-	revscoring cv_test \
+	cat datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.reverted \
-		damaging_reverted \
-		damaging_reverted \
-		--version=0.0.3 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		-p 'learning_rate=0.01' \
@@ -1683,11 +1690,11 @@ tuning_reports/ruwiki.damaging.md: \
 models/ruwiki.damaging.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.damaging \
 		damaging \
-		--version=0.1.3 \
+		--version=$(damaging_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1711,11 +1718,11 @@ tuning_reports/ruwiki.goodfaith.md: \
 models/ruwiki.goodfaith.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.goodfaith \
 		goodfaith \
-		--version=0.1.3 \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'max_depth=3' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
@@ -1765,7 +1772,7 @@ tuning_reports/svwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.svwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/svwiki.reverted.md
@@ -1773,11 +1780,11 @@ tuning_reports/svwiki.reverted.md: \
 models/svwiki.reverted.gradient_boosting.model: \
 		datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json
 	cat datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.svwiki.reverted \
-		damaging_reverted \
-		--version=0.2.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1836,7 +1843,7 @@ tuning_reports/trwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.trwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/trwiki.reverted.md
@@ -1844,11 +1851,11 @@ tuning_reports/trwiki.reverted.md: \
 models/trwiki.reverted.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1872,11 +1879,11 @@ tuning_reports/trwiki.damaging.md: \
 models/trwiki.damaging.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.damaging \
 		damaging \
-		--version=0.1.2 \
+		--version=$(damaging_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1900,11 +1907,11 @@ tuning_reports/trwiki.goodfaith.md: \
 models/trwiki.goodfaith.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.goodfaith \
 		goodfaith \
-		--version=0.1.2 \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1954,19 +1961,19 @@ tuning_reports/ukwiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ukwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/ukwiki.reverted.md
 
 models/ukwiki.reverted.gradient_boosting.model: \
 		datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cut datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json -f2- | \
-	revscoring cv_test \
+	cat datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ukwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2033,42 +2040,40 @@ datasets/viwiki.autolabeled_revisions.500k_2015.json: \
 
 datasets/viwiki.revisions_to_review.5k_2015.json: \
 		datasets/viwiki.autolabeled_revisions.500k_2015.json
-	(echo "rev_id\tneeds_review\treason"; \
 	(cat datasets/viwiki.autolabeled_revisions.500k_2015.json | grep True | \
 	 shuf -n 2500; \
 	 cat datasets/viwiki.autolabeled_revisions.500k_2015.json | grep False | \
 	 shuf -n 2500 \
-	) | shuf \
-	) > datasets/viwiki.revisions_to_review.500k_2015.json
+	) | shuf > datasets/viwiki.revisions_to_review.500k_2015.json
 
-datasets/viwiki.autolabeled_revisions.w_cache.500k_2015.json: \
+datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json: \
 		datasets/viwiki.autolabeled_revisions.500k_2015.json
-	cat datasets/viwiki.autolabeled_revisions.500k_2015.json | \
+	cat datasets/viwiki.autolabeled_revisions.500k_2015.json | shuf -n 100000 | \
 	revscoring extract \
 		editquality.feature_lists.viwiki.reverted \
 		--host https://vi.wikipedia.org \
 		--verbose > \
-	datasets/viwiki.autolabeled_revisions.w_cache.500k_2015.json
+	datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
 
 tuning_reports/viwiki.reverted.md: \
-		datasets/viwiki.autolabeled_revisions.w_cache.500k_2015.json
-	cat datasets/viwiki.autolabeled_revisions.w_cache.500k_2015.json | \
+		datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
+	cat datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.viwiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug > \
 	tuning_reports/viwiki.reverted.md
 
 models/viwiki.reverted.gradient_boosting.model: \
-		datasets/viwiki.autolabeled_revisions.w_cache.500k_2015.json
-	cut datasets/viwiki.autolabeled_revisions.w_cache.500k_2015.json -f2- | \
-	revscoring cv_test \
+		datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
+	cat datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.viwiki.reverted \
-		damaging_reverted \
-		--version=0.1.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2091,7 +2096,7 @@ viwiki_tuning_reports: \
 datasets/wikidatawiki.autolabeled_revisions.20k_2015.json: \
 		datasets/wikidatawiki.balanced_revisions.20k_2015.json
 	cat datasets/wikidatawiki.balanced_revisions.20k_2015.json | \
-	editquality autolabel --host=https://wikidata.org \
+	./utility autolabel --host=https://wikidata.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
 		--verbose > \
@@ -2127,7 +2132,7 @@ tuning_reports/wikidatawiki.reverted.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.reverted \
-		damaging_reverted \
+		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug \
 		--scoring=roc_auc > \
@@ -2136,11 +2141,11 @@ tuning_reports/wikidatawiki.reverted.md: \
 models/wikidatawiki.reverted.gradient_boosting.model: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
-	revscoring cv_test \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.reverted \
-		damaging_reverted \
-		--version=0.2.2 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
@@ -2151,8 +2156,8 @@ models/wikidatawiki.reverted.gradient_boosting.model: \
 	models/wikidatawiki.reverted.gradient_boosting.model
 
 tuning_reports/wikidatawiki.damaging.md: \
-		datasets/wikidatawiki.labeled_revisions.20k_2016.json
-	cat datasets/wikidatawiki.labeled_revisions.20k_2016.json | \
+		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.damaging \
@@ -2162,13 +2167,13 @@ tuning_reports/wikidatawiki.damaging.md: \
 	tuning_reports/wikidatawiki.damaging.md
 
 models/wikidatawiki.damaging.gradient_boosting.model: \
-		datasets/wikidatawiki.labeled_revisions.20k_2016.json
-	cat datasets/wikidatawiki.labeled_revisions.20k_2016.json | \
-	revscoring cv_test \
+		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.damaging \
 		damaging \
-		--version=0.1.2 \
+		--version=$(damaging_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2179,8 +2184,8 @@ models/wikidatawiki.damaging.gradient_boosting.model: \
 	models/wikidatawiki.damaging.gradient_boosting.model
 
 tuning_reports/wikidatawiki.goodfaith.md: \
-		datasets/wikidatawiki.labeled_revisions.20k_2016.json
-	cat datasets/wikidatawiki.labeled_revisions.20k_2016.json | \
+		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.goodfaith \
@@ -2190,13 +2195,13 @@ tuning_reports/wikidatawiki.goodfaith.md: \
 	tuning_reports/wikidatawiki.goodfaith.md
 
 models/wikidatawiki.goodfaith.gradient_boosting.model: \
-		datasets/wikidatawiki.labeled_revisions.20k_2016.json
-	cat datasets/wikidatawiki.labeled_revisions.20k_2016.json | \
-	revscoring cv_test \
+		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		goodfaith \
-		--version=0.1.2 \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
