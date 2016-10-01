@@ -7,6 +7,7 @@ models: \
 		enwiki_models \
 		enwiktionary_models \
 		eswiki_models \
+		eswikibooks_models \
 		etwiki_models \
 		fawiki_models \
 		frwiki_models \
@@ -32,6 +33,7 @@ tuning_reports: \
 		enwiki_tuning_reports \
 		enwiktionary_tuning_reports \
 		eswiki_tuning_reports \
+		eswikibooks_tuning_reports \
 		etwiki_tuning_reports \
 		fawiki_tuning_reports \
 		frwiki_tuning_reports \
