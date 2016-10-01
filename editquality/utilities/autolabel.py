@@ -169,10 +169,14 @@ def autolabeler(session, trusted_groups, trusted_edits,
                 user_id, user_text = rev_doc.get('userid'), rev_doc.get('user')
                 revision = rev_map[rev_id]
 
-                reverted_at_all, reverted_for_damage = \
-                    check_reverted_status(session, rev_id, page_id,
-                                          revert_radius, revert_window,
-                                          exclude_reverted, exclude_reverting)
+                
+                reverted_at_all, reverted_for_damage = check_reverted_status(
+                    session, rev_id, page_id, revert_radius, revert_window,
+                    exclude_reverted, exclude_reverting)
+
+                if reverted_at_all is None:
+                    # Couldn't find the edit!
+                    continue
 
                 revision['reverted_for_damage'] = reverted_for_damage
 
@@ -226,7 +230,7 @@ def check_reverted_status(session, rev_id, page_id,
                                     window=revert_window,
                                     rvprop={'user', 'comment', 'ids'})
         except KeyError:
-            None, None
+            return None, None
         else:
             was_reverted_at_all = reverted is not None
             was_reverted_for_damage = False
