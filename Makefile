@@ -1638,7 +1638,7 @@ datasets/ruwiki.labeled_revisions.20k_2015.json: \
 		datasets/ruwiki.human_labeled_revisions.5k_2015.json \
 		datasets/ruwiki.autolabeled_revisions.20k_2015.json > \
 	datasets/ruwiki.labeled_revisions.20k_2015.json
-		
+
 datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/ruwiki.labeled_revisions.20k_2015.json
 	cat datasets/ruwiki.labeled_revisions.20k_2015.json | \
@@ -2222,3 +2222,28 @@ wikidatawiki_tuning_reports: \
 		tuning_reports/wikidatawiki.reverted.md \
 		tuning_reports/wikidatawiki.damaging.md \
 		tuning_reports/wikidatawiki.goodfaith.md
+
+############################### Chinese Wikipedia #############################
+
+datasets/zhwiki.sampled_revisions.100k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true > \
+	datasets/zhwiki.sampled_revisions.100k_2016.json
+
+datasets/zhwiki.autolabeled_revisions.100k_2016.json: \
+		datasets/zhwiki.sampled_revisions.100k_2016.json
+	cat datasets/zhwiki.sampled_revisions.100k_2016.json | \
+	./utility autolabel --host=https://zh.wikipedia.org \
+		--trusted-groups=checkuser,bureaucrat,sysop,eliminator,bot \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/zhwiki.autolabeled_revisions.100k_2016.json
+
+datasets/zhwiki.revisions_to_review.5k_2016.json: \
+		datasets/zhwiki.autolabeled_revisions.100k_2016.json
+	(cat datasets/zhwiki.autolabeled_revisions.100k_2016.json | \
+	 grep '"needs_review": true' | \
+	 shuf -n 2500; \
+	 cat datasets/zhwiki.autolabeled_revisions.100k_2016.json | \
+	 grep '"needs_review": false' | \
+	 shuf -n 2500 \
+	) | shuf > datasets/zhwiki.revisions_to_review.5k_2016.json
