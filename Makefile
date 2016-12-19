@@ -1009,31 +1009,31 @@ huwiki_tuning_reports: \
 
 ############################### Indonesian Wikipedia ##########################
 
-datasets/idwiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/45271/output/0/json-lines?download=true > \
-	datasets/idwiki.sampled_revisions.20k_2015.json
+datasets/idwiki.sampled_revisions.100k_2016.json:
+	wget -qO- http://quarry.wmflabs.org/run/135748/output/0/json-lines?download=true > \
+	datasets/idwiki.sampled_revisions.100k_2016.json
 
-datasets/idwiki.autolabeled_revisions.20k_2015.json: \
-		datasets/idwiki.sampled_revisions.20k_2015.json
-	cat datasets/idwiki.sampled_revisions.20k_2015.json | \
+datasets/idwiki.autolabeled_revisions.100k_2016.json: \
+		datasets/idwiki.sampled_revisions.100k_2016.json
+	cat datasets/idwiki.sampled_revisions.100k_2016.json | \
 	./utility autolabel --host=https://id.wikipedia.org \
 		--trusted-groups=autoreview,bot,bureaucrat,checkuser,editor,flow-bot,oversight,reviewer,rollbacker,sysop \
 		--trusted-edits=1000 \
 		--verbose > \
-	datasets/idwiki.autolabeled_revisions.20k_2015.json
+	datasets/idwiki.autolabeled_revisions.100k_2016.json
 
-datasets/idwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/idwiki.autolabeled_revisions.20k_2015.json
-	cat datasets/idwiki.autolabeled_revisions.20k_2015.json | \
+datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json: \
+		datasets/idwiki.autolabeled_revisions.100k_2016.json
+	cat datasets/idwiki.autolabeled_revisions.100k_2016.json | \
 	revscoring extract \
 		editquality.feature_lists.idwiki.reverted \
 		--host https://id.wikipedia.org \
 		--verbose > \
-	datasets/idwiki.autolabeled_revisions.w_cache.20k_2015.json
+	datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
 
 tuning_reports/idwiki.reverted.md: \
-		datasets/idwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/idwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
+	cat datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.idwiki.reverted \
@@ -1043,8 +1043,8 @@ tuning_reports/idwiki.reverted.md: \
 	tuning_reports/idwiki.reverted.md
 
 models/idwiki.reverted.gradient_boosting.model: \
-		datasets/idwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/idwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
+	cat datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.idwiki.reverted \
