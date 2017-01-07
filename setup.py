@@ -21,7 +21,7 @@ setup(
     author_email=__author_email__,  # noqa
     description=__description__,  # noqa
     url=__url__,  # noqa
-    license=read('LICENSE'),
+    license=__license__, # noqa
     packages=find_packages(),
     entry_points={
         'console_scripts': [
