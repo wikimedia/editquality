@@ -1651,12 +1651,28 @@ tuning_reports/rowiki.reverted.md: \
 		--debug > \
 	tuning_reports/rowiki.reverted.md
 
+models/rowiki.reverted.gradient_boosting.model: \
+		datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.rowiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/rowiki.reverted.gradient_boosting.model
 
-ptwiki_models: \
-		models/ptwiki.reverted.gradient_boosting.model
+rowiki_models: \
+		models/rowiki.reverted.gradient_boosting.model
 
-ptwiki_tuning_reports: \
-		tuning_reports/ptwiki.reverted.md
+rowiki_tuning_reports: \
+		tuning_reports/rowiki.reverted.md
 
 ############################### Russian Wikipedia ############################
 
