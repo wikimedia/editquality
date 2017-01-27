@@ -19,6 +19,7 @@ models: \
 		nowiki_models \
 		plwiki_models \
 		ptwiki_models \
+		rowiki_models \
 		ruwiki_models \
 		svwiki_models \
 		trwiki_models \
@@ -45,6 +46,7 @@ tuning_reports: \
 		nowiki_tuning_reports \
 		plwiki_tuning_reports \
 		ptwiki_tuning_reports \
+		rowiki_tuning_reports \
 		ruwiki_tuning_reports \
 		svwiki_tuning_reports \
 		trwiki_tuning_reports \
@@ -1612,6 +1614,49 @@ ptwiki_tuning_reports: \
 		tuning_reports/ptwiki.damaging.md \
 		tuning_reports/ptwiki.goodfaith.md
 
+
+############################### Romanian Wikipedia ############################
+
+datasets/rowiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/146926/output/0/json-lines?download=true > \
+	datasets/rowiki.sampled_revisions.20k_2016.json
+
+datasets/rowiki.autolabeled_revisions.20k_2016.json: \
+		datasets/rowiki.sampled_revisions.20k_2016.json
+	cat datasets/rowiki.sampled_revisions.20k_2016.json | \
+	./utility autolabel --host=https://ro.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot,templateeditor,patroller,autopatrolled \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/rowiki.autolabeled_revisions.20k_2016.json
+
+datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/rowiki.autolabeled_revisions.20k_2016.json
+	cat datasets/rowiki.autolabeled_revisions.20k_2016.json | \
+	revscoring extract \
+		editquality.feature_lists.rowiki.reverted \
+		--host https://ro.wikipedia.org \
+		--verbose > \
+	datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json
+
+
+tuning_reports/rowiki.reverted.md: \
+		datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.rowiki.reverted \
+		reverted_for_damage \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/rowiki.reverted.md
+
+
+ptwiki_models: \
+		models/ptwiki.reverted.gradient_boosting.model
+
+ptwiki_tuning_reports: \
+		tuning_reports/ptwiki.reverted.md
 
 ############################### Russian Wikipedia ############################
 
