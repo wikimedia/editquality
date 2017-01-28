@@ -299,8 +299,8 @@ models/cswiki.damaging.gradient_boosting.model: \
 	models/cswiki.damaging.gradient_boosting.model
 
 tuning_reports/cswiki.goodfaith.md: \
-		datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
-	cat datasets/cswiki.labeled_revisions.w_cache.5k_2016.json | \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/cswiki.labeled_revisions.w_cache.20k_2016.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.goodfaith \
@@ -310,8 +310,8 @@ tuning_reports/cswiki.goodfaith.md: \
 	tuning_reports/cswiki.goodfaith.md
 
 models/cswiki.goodfaith.gradient_boosting.model: \
-		datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
-	cat datasets/cswiki.labeled_revisions.w_cache.5k_2016.json | \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/cswiki.labeled_revisions.w_cache.20k_2016.json | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.cswiki.goodfaith \
