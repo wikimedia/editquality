@@ -199,15 +199,39 @@ datasets/cswiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/cswiki/44/ > \
 	datasets/cswiki.human_labeled_revisions.5k_2016.json
 
-datasets/cswiki.labeled_revisions.w_cache.5k_2016.json: \
+datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json: \
 		datasets/cswiki.human_labeled_revisions.5k_2016.json
 	cat datasets/cswiki.human_labeled_revisions.5k_2016.json | \
+	grep '"needs_review": false' > \
+	datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json
+
+datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json: \
+		datasets/cswiki.autolabeled_revisions.20k_2016.json
+	cat datasets/cswiki.autolabeled_revisions.20k_2016.json | \
+	grep '"needs_review": false' > \
+	datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json
+
+datasets/cswiki.labeled_revisions.20k_2016.json: \
+		datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json \
+		datasets/cswiki.human_labeled_revisions.5k_2016.json
+	( \
+	  ./utility merge_labels \
+	    datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json \
+	    datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json; \
+	  cat datasets/cswiki.human_labeled_revisions.5k_2016.json | \
+	  grep '"needs_review": true' | shuf -rn 4558 \
+	) > datasets/cswiki.labeled_revisions.20k_2016.json
+
+datasets/cswiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/cswiki.labeled_revisions.20k_2016.json
+	cat datasets/cswiki.labeled_revisions.20k_2016.json | \
 	revscoring extract \
 		editquality.feature_lists.cswiki.damaging \
 		editquality.feature_lists.cswiki.goodfaith \
 		--host https://cs.wikipedia.org \
 		--verbose > \
-	datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
+	datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
 
 datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/cswiki.autolabeled_revisions.20k_2016.json
@@ -247,8 +271,8 @@ models/cswiki.reverted.gradient_boosting.model: \
 	models/cswiki.reverted.gradient_boosting.model
 
 tuning_reports/cswiki.damaging.md: \
-		datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
-	cat datasets/cswiki.labeled_revisions.w_cache.5k_2016.json | \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/cswiki.labeled_revisions.w_cache.20k_2016.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.damaging \
@@ -258,8 +282,8 @@ tuning_reports/cswiki.damaging.md: \
 	tuning_reports/cswiki.damaging.md
 
 models/cswiki.damaging.gradient_boosting.model: \
-		datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
-	cat datasets/cswiki.labeled_revisions.w_cache.5k_2016.json | \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/cswiki.labeled_revisions.w_cache.20k_2016.json | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.cswiki.damaging \
