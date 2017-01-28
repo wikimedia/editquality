@@ -194,6 +194,21 @@ datasets/cswiki.revisions_for_review.5k_2016.json: \
 	  shuf -n 2500 \
 	 ) | shuf > datasets/cswiki.revisions_for_review.5k_2016.json
 
+datasets/cswiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/cswiki/44/ > \
+	datasets/cswiki.human_labeled_revisions.5k_2016.json
+
+datasets/cswiki.labeled_revisions.w_cache.5k_2016.json: \
+		datasets/cswiki.human_labeled_revisions.5k_2016.json
+	cat datasets/cswiki.human_labeled_revisions.5k_2016.json | \
+	revscoring extract \
+		editquality.feature_lists.cswiki.damaging \
+		editquality.feature_lists.cswiki.goodfaith \
+		--host https://cs.wikipedia.org \
+		--verbose > \
+	datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
+
 datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/cswiki.autolabeled_revisions.20k_2016.json
 	cat datasets/cswiki.autolabeled_revisions.20k_2016.json | \
@@ -231,11 +246,71 @@ models/cswiki.reverted.gradient_boosting.model: \
 		--center --scale > \
 	models/cswiki.reverted.gradient_boosting.model
 
+tuning_reports/cswiki.damaging.md: \
+		datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
+	cat datasets/cswiki.labeled_revisions.w_cache.5k_2016.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cswiki.damaging \
+		damaging \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/cswiki.damaging.md
+
+models/cswiki.damaging.gradient_boosting.model: \
+		datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
+	cat datasets/cswiki.labeled_revisions.w_cache.5k_2016.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.cswiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/cswiki.damaging.gradient_boosting.model
+
+tuning_reports/cswiki.goodfaith.md: \
+		datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
+	cat datasets/cswiki.labeled_revisions.w_cache.5k_2016.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cswiki.goodfaith \
+		goodfaith \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/cswiki.goodfaith.md
+
+models/cswiki.goodfaith.gradient_boosting.model: \
+		datasets/cswiki.labeled_revisions.w_cache.5k_2016.json
+	cat datasets/cswiki.labeled_revisions.w_cache.5k_2016.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.cswiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/cswiki.goodfaith.gradient_boosting.model
+
 cswiki_models: \
 	models/cswiki.reverted.gradient_boosting.model
+	models/cswiki.damaging.gradient_boosting.model \
+	models/cswiki.goodfaith.gradient_boosting.model
 
 cswiki_tuning_reports: \
 	tuning_reports/cswiki.reverted.md
+	tuning_reports/cswiki.damaging.md \
+	tuning_reports/cswiki.goodfaith.md
 
 ############################# German Wikipedia ################################
 
