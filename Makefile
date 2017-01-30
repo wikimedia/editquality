@@ -60,6 +60,8 @@ test_statistics = \
 		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
 		-s 'pr' -s 'roc' \
 		-s 'recall_at_fpr(max_fpr=0.10)' \
+		-s 'filter_rate_at_recall(min_recall=0.9)' \
+		-s 'filter_rate_at_recall(min_recall=0.75)' \
 		-s 'recall_at_precision(min_precision=0.98)' \
 		-s 'recall_at_precision(min_precision=0.90)' \
 		-s 'recall_at_precision(min_precision=0.45)' \
