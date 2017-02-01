@@ -329,12 +329,12 @@ models/cswiki.goodfaith.gradient_boosting.model: \
 	models/cswiki.goodfaith.gradient_boosting.model
 
 cswiki_models: \
-	models/cswiki.reverted.gradient_boosting.model
+	models/cswiki.reverted.gradient_boosting.model \
 	models/cswiki.damaging.gradient_boosting.model \
 	models/cswiki.goodfaith.gradient_boosting.model
 
 cswiki_tuning_reports: \
-	tuning_reports/cswiki.reverted.md
+	tuning_reports/cswiki.reverted.md \
 	tuning_reports/cswiki.damaging.md \
 	tuning_reports/cswiki.goodfaith.md
 
