@@ -725,18 +725,33 @@ datasets/etwiki.autolabeled_revisions.20k_2015.json: \
 		--verbose > \
 	datasets/etwiki.autolabeled_revisions.20k_2015.json
 
-datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json: \
+datasets/etwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/etwiki/17/ > \
+	datasets/etwiki.human_labeled_revisions.5k_2015.json
+
+datasets/etwiki.labeled_revisions.20k_2015.json: \
+		datasets/etwiki.human_labeled_revisions.5k_2015.json \
 		datasets/etwiki.autolabeled_revisions.20k_2015.json
-	cat datasets/etwiki.autolabeled_revisions.20k_2015.json | \
+	./utility merge_labels \
+		datasets/etwiki.human_labeled_revisions.5k_2015.json \
+		datasets/etwiki.autolabeled_revisions.20k_2015.json > \
+	datasets/etwiki.labeled_revisions.20k_2015.json
+
+datasets/etwiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/etwiki.labeled_revisions.20k_2015.json
+	cat datasets/etwiki.labeled_revisions.20k_2015.json | \
 	revscoring extract \
 		editquality.feature_lists.etwiki.reverted \
+		editquality.feature_lists.etwiki.damaging \
+		editquality.feature_lists.etwiki.goodfaith \
 		--host https://et.wikipedia.org \
 		--verbose > \
-	datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json
+	datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
 
 tuning_reports/etwiki.reverted.md: \
-		datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.reverted \
@@ -745,9 +760,31 @@ tuning_reports/etwiki.reverted.md: \
 		--debug  > \
 	tuning_reports/etwiki.reverted.md
 
+tuning_reports/etwiki.damaging.md: \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.etwiki.damaging \
+		damaging \
+		--cv-timeout=60 \
+		--debug  > \
+	tuning_reports/etwiki.damaging.md
+
+tuning_reports/etwiki.goodfaith.md: \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.etwiki.goodfaith \
+		goodfaith \
+		--cv-timeout=60 \
+		--debug  > \
+	tuning_reports/etwiki.goodfaith.md
+
 models/etwiki.reverted.gradient_boosting.model: \
-		datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.etwiki.reverted \
@@ -762,11 +799,49 @@ models/etwiki.reverted.gradient_boosting.model: \
 		--center --scale  > \
 	models/etwiki.reverted.gradient_boosting.model
 
+models/etwiki.damaging.gradient_boosting.model: \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.etwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale  > \
+	models/etwiki.damaging.gradient_boosting.model
+
+models/etwiki.goodfaith.gradient_boosting.model: \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.etwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale  > \
+	models/etwiki.goodfaith.gradient_boosting.model
+
 etwiki_models: \
-		models/etwiki.reverted.gradient_boosting.model
+		models/etwiki.reverted.gradient_boosting.model \
+		models/etwiki.damaging.gradient_boosting.model \
+		models/etwiki.goodfaith.gradient_boosting.model
 
 etwiki_tuning_reports: \
-		tuning_reports/etwiki.reverted.md
+		tuning_reports/etwiki.reverted.md \
+		tuning_reports/etwiki.damaging.md \
+		tuning_reports/etwiki.goodfaith.md
 
 ############################# Persian Wikipedia ################################
 datasets/fawiki.human_labeled_revisions.20k_2015.json:
