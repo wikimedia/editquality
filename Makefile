@@ -10,6 +10,7 @@ models: \
 		eswikibooks_models \
 		etwiki_models \
 		fawiki_models \
+		fiwiki_models \
 		frwiki_models \
 		hewiki_models \
 		huwiki_models \
@@ -37,6 +38,7 @@ tuning_reports: \
 		eswikibooks_tuning_reports \
 		etwiki_tuning_reports \
 		fawiki_tuning_reports \
+		fiwiki_tuning_reports \
 		frwiki_tuning_reports \
 		hewiki_tuning_reports \
 		huwiki_tuning_reports \
@@ -901,10 +903,68 @@ fawiki_tuning_reports: \
 		tuning_reports/fawiki.damaging.md \
 		tuning_reports/fawiki.goodfaith.md
 
+############################# Finnish Wikipedia ################################
+
+datasets/fiwiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/161254/output/0/json-lines?download=true > \
+	datasets/fiwiki.sampled_revisions.20k_2016.json
+
+datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/fiwiki.sampled_revisions.20k_2016.json
+	cat datasets/fiwiki.sampled_revisions.20k_2016.json | \
+	./utility autolabel --host=https://fi.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,autoreview,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/fiwiki.autolabeled_revisions.20k_2016.json
+
+datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/fiwiki.autolabeled_revisions.20k_2016.json
+	cat datasets/fiwiki.autolabeled_revisions.20k_2016.json | \
+	revscoring extract \
+		editquality.feature_lists.fiwiki.reverted \
+		--host https://fi.wikipedia.org \
+		--verbose > \
+	datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json
+
+tuning_reports/fiwiki.reverted.md: \
+		datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fiwiki.reverted \
+		reverted_for_damage \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/fiwiki.reverted.md
+
+models/fiwiki.reverted.gradient_boosting.model: \
+		datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.fiwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/fiwiki.reverted.gradient_boosting.model
+
+fiwiki_models: \
+		models/fiwiki.reverted.gradient_boosting.model
+
+fiwiki_tuning_reports: \
+		tuning_reports/fiwiki.reverted.md
+
 ############################# French Wikipedia ################################
 
 datasets/frwiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/48090/output/0/json-lines?download=true > \
+	wget -qO- https://quarry.wmflabs.org/run/48090/output/0/json-lines?download=true > \
 	datasets/frwiki.sampled_revisions.20k_2015.json
 
 datasets/frwiki.sampled_revisions.20k_2016.json:
