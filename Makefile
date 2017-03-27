@@ -1135,6 +1135,45 @@ datasets/hewiki.revisions_to_review.5k_2015.json: \
 	  shuf -n 2500 \
 	) | shuf > datasets/hewiki.revisions_for_review.5k_2016.json
 
+datasets/hewiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/hewiki/25/ > \
+	datasets/hewiki.human_labeled_revisions.5k_2015.json
+
+datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json: \
+		datasets/hewiki.human_labeled_revisions.5k_2015.json
+	cat datasets/hewiki.human_labeled_revisions.5k_2015.json | \
+	grep '"needs_review": false' > \
+	datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json
+
+datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json: \
+		datasets/hewiki.autolabeled_revisions.20k_2015.json
+	cat datasets/hewiki.autolabeled_revisions.20k_2015.json | \
+	grep '"needs_review": false' > \
+	datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json
+
+datasets/hewiki.labeled_revisions.20k_2015.json: \
+		datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json \
+		datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json \
+		datasets/hewiki.human_labeled_revisions.5k_2015.json
+	( \
+	  ./utility merge_labels \
+	    datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json \
+	    datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json; \
+	  cat datasets/hewiki.human_labeled_revisions.5k_2015.json | \
+	  grep '"needs_review": true' | shuf -rn 4603 \
+	) > datasets/hewiki.labeled_revisions.20k_2015.json
+
+datasets/hewiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/hewiki.labeled_revisions.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.20k_2015.json | \
+	revscoring extract \
+		editquality.feature_lists.hewiki.damaging \
+		editquality.feature_lists.hewiki.goodfaith \
+		--host https://he.wikipedia.org \
+		--verbose > \
+	datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+
 datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/hewiki.autolabeled_revisions.20k_2015.json
 	cat datasets/hewiki.autolabeled_revisions.20k_2015.json | \
@@ -1155,6 +1194,29 @@ tuning_reports/hewiki.reverted.md: \
 		--debug > \
 	tuning_reports/hewiki.reverted.md
 
+tuning_reports/hewiki.damaging.md: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hewiki.damaging \
+		damaging \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/hewiki.damaging.md
+
+tuning_reports/hewiki.goodfaith.md: \
+		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hewiki.goodfaith \
+		goodfaith \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/hewiki.goodfaith.md
+
+
 models/hewiki.reverted.gradient_boosting.model: \
 		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json | \
@@ -1172,11 +1234,51 @@ models/hewiki.reverted.gradient_boosting.model: \
 		--center --scale > \
 	models/hewiki.reverted.gradient_boosting.model
 
+
+models/hewiki.damaging.gradient_boosting.model: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.hewiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/hewiki.damaging.gradient_boosting.model
+
+
+models/hewiki.goodfaith.gradient_boosting.model: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.hewiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/hewiki.goodfaith.gradient_boosting.model
+
 hewiki_models: \
-		models/hewiki.reverted.gradient_boosting.model
+		models/hewiki.reverted.gradient_boosting.model \
+		models/hewiki.damaging.gradient_boosting.model \
+		models/hewiki.goodfaith.gradient_boosting.model
 
 hewiki_tuning_reports: \
-		tuning_reports/hewiki.reverted.md
+		tuning_reports/hewiki.reverted.md \
+		tuning_reports/hewiki.damaging.md \
+		tuning_reports/hewiki.goodfaith.md
 
 ############################### Hungarian Wikipedia ###########################
 
