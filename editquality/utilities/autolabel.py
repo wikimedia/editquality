@@ -58,7 +58,6 @@ import mwapi
 import mwreverts.api
 import para
 
-HEADERS = ['rev_id', 'needs_review', 'reason']
 logger = logging.getLogger(__name__)
 
 
@@ -80,7 +79,7 @@ def main(argv=None):
     if args['--output'] == "<stdout>":
         labels_f = sys.stdout
     else:
-        labels_f = open(args['--labels'], 'w')
+        labels_f = open(args['--output'], 'w')
 
     trusted_groups = set(args['--trusted-groups'].strip().split(",")) \
                      if args['--trusted-groups'] is not None else None
@@ -119,7 +118,7 @@ def run(api_host, revisions, labels_f, trusted_groups, trusted_edits,
 
     # Construct our API session
     session = mwapi.Session(
-        api_host, user_agent="editquality -- prelabeling script.")
+        api_host, user_agent="wiki-ai/editquality -- autolabel script")
 
     autolabel = autolabeler(session, trusted_groups, trusted_edits,
                             revert_radius, revert_window, exclude_reverted,
@@ -169,7 +168,6 @@ def autolabeler(session, trusted_groups, trusted_edits,
                 user_id, user_text = rev_doc.get('userid'), rev_doc.get('user')
                 revision = rev_map[rev_id]
 
-                
                 reverted_at_all, reverted_for_damage = check_reverted_status(
                     session, rev_id, page_id, revert_radius, revert_window,
                     exclude_reverted, exclude_reverting)
