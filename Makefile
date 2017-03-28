@@ -16,6 +16,7 @@ models: \
 		huwiki_models \
 		idwiki_models \
 		itwiki_models \
+		kowiki_models \
 		nlwiki_models \
 		nowiki_models \
 		plwiki_models \
@@ -44,6 +45,7 @@ tuning_reports: \
 		huwiki_tuning_reports \
 		idwiki_tuning_reports \
 		itwiki_tuning_reports \
+		kowiki_tuning_reports \
 		nlwiki_tuning_reports \
 		nowiki_tuning_reports \
 		plwiki_tuning_reports \
@@ -1135,6 +1137,45 @@ datasets/hewiki.revisions_to_review.5k_2015.json: \
 	  shuf -n 2500 \
 	) | shuf > datasets/hewiki.revisions_for_review.5k_2016.json
 
+datasets/hewiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/hewiki/25/ > \
+	datasets/hewiki.human_labeled_revisions.5k_2015.json
+
+datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json: \
+		datasets/hewiki.human_labeled_revisions.5k_2015.json
+	cat datasets/hewiki.human_labeled_revisions.5k_2015.json | \
+	grep '"needs_review": false' > \
+	datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json
+
+datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json: \
+		datasets/hewiki.autolabeled_revisions.20k_2015.json
+	cat datasets/hewiki.autolabeled_revisions.20k_2015.json | \
+	grep '"needs_review": false' > \
+	datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json
+
+datasets/hewiki.labeled_revisions.20k_2015.json: \
+		datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json \
+		datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json \
+		datasets/hewiki.human_labeled_revisions.5k_2015.json
+	( \
+	  ./utility merge_labels \
+	    datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json \
+	    datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json; \
+	  cat datasets/hewiki.human_labeled_revisions.5k_2015.json | \
+	  grep '"needs_review": true' | shuf -rn 4603 \
+	) > datasets/hewiki.labeled_revisions.20k_2015.json
+
+datasets/hewiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/hewiki.labeled_revisions.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.20k_2015.json | \
+	revscoring extract \
+		editquality.feature_lists.hewiki.damaging \
+		editquality.feature_lists.hewiki.goodfaith \
+		--host https://he.wikipedia.org \
+		--verbose > \
+	datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+
 datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/hewiki.autolabeled_revisions.20k_2015.json
 	cat datasets/hewiki.autolabeled_revisions.20k_2015.json | \
@@ -1155,6 +1196,29 @@ tuning_reports/hewiki.reverted.md: \
 		--debug > \
 	tuning_reports/hewiki.reverted.md
 
+tuning_reports/hewiki.damaging.md: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hewiki.damaging \
+		damaging \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/hewiki.damaging.md
+
+tuning_reports/hewiki.goodfaith.md: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hewiki.goodfaith \
+		goodfaith \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/hewiki.goodfaith.md
+
+
 models/hewiki.reverted.gradient_boosting.model: \
 		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json | \
@@ -1172,11 +1236,51 @@ models/hewiki.reverted.gradient_boosting.model: \
 		--center --scale > \
 	models/hewiki.reverted.gradient_boosting.model
 
+
+models/hewiki.damaging.rf.model: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.RF \
+		editquality.feature_lists.hewiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'criterion="entropy"' \
+		-p 'min_samples_leaf=1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=320' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/hewiki.damaging.rf.model
+
+
+models/hewiki.goodfaith.gradient_boosting.model: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.hewiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		-p 'max_depth=7' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/hewiki.goodfaith.gradient_boosting.model
+
 hewiki_models: \
-		models/hewiki.reverted.gradient_boosting.model
+		models/hewiki.reverted.gradient_boosting.model \
+		models/hewiki.damaging.rf.model \
+		models/hewiki.goodfaith.gradient_boosting.model
 
 hewiki_tuning_reports: \
-		tuning_reports/hewiki.reverted.md
+		tuning_reports/hewiki.reverted.md \
+		tuning_reports/hewiki.damaging.md \
+		tuning_reports/hewiki.goodfaith.md
 
 ############################### Hungarian Wikipedia ###########################
 
@@ -1377,6 +1481,66 @@ datasets/jawiki.autolabeled_revisions.20k_2015.json: \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/jawiki.autolabeled_revisions.20k_2015.json
+
+
+############################# Korean Wikipedia ################################
+
+# from https://quarry.wmflabs.org/query/17645
+datasets/kowiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/165613/output/0/json-lines?download=true > \
+	datasets/kowiki.sampled_revisions.20k_2016.json
+
+datasets/kowiki.autolabeled_revisions.20k_2016.json: \
+		datasets/kowiki.sampled_revisions.20k_2016.json
+	cat datasets/kowiki.sampled_revisions.20k_2016.json | \
+	./utility autolabel --host=https://ko.wikipedia.org \
+		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/kowiki.autolabeled_revisions.20k_2016.json
+
+datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/kowiki.autolabeled_revisions.20k_2016.json
+	cat datasets/kowiki.autolabeled_revisions.20k_2016.json | \
+	revscoring extract \
+		editquality.feature_lists.kowiki.reverted \
+		--host https://ko.wikipedia.org \
+		--verbose > \
+	datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+
+tuning_reports/kowiki.reverted.md: \
+		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.kowiki.reverted \
+		reverted_for_damage \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/kowiki.reverted.md
+
+models/kowiki.reverted.gradient_boosting.model: \
+		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.kowiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/kowiki.reverted.gradient_boosting.model
+
+kowiki_models: \
+	models/kowiki.reverted.gradient_boosting.model
+
+kowiki_tuning_reports: \
+	tuning_reports/kowiki.reverted.md
 
 
 ############################### Dutch Wikipedia ###############################
