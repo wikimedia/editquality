@@ -16,6 +16,7 @@ models: \
 		huwiki_models \
 		idwiki_models \
 		itwiki_models \
+		kowiki_models \
 		nlwiki_models \
 		nowiki_models \
 		plwiki_models \
@@ -44,6 +45,7 @@ tuning_reports: \
 		huwiki_tuning_reports \
 		idwiki_tuning_reports \
 		itwiki_tuning_reports \
+		kowiki_tuning_reports \
 		nlwiki_tuning_reports \
 		nowiki_tuning_reports \
 		plwiki_tuning_reports \
@@ -1497,9 +1499,18 @@ datasets/kowiki.autolabeled_revisions.20k_2016.json: \
 		--verbose > \
 	datasets/kowiki.autolabeled_revisions.20k_2016.json
 
+datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/kowiki.autolabeled_revisions.20k_2016.json
+	cat datasets/kowiki.autolabeled_revisions.20k_2016.json | \
+	revscoring extract \
+		editquality.feature_lists.kowiki.reverted \
+		--host https://ko.wikipedia.org \
+		--verbose > \
+	datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+
 tuning_reports/kowiki.reverted.md: \
-		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/kowiki.labeled_revisions.w_cache.20k_2016.json | \
+		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.kowiki.reverted \
@@ -1509,8 +1520,8 @@ tuning_reports/kowiki.reverted.md: \
 	tuning_reports/kowiki.reverted.md
 
 models/kowiki.reverted.gradient_boosting.model: \
-		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/kowiki.labeled_revisions.w_cache.20k_2016.json | \
+		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.kowiki.reverted \
@@ -1524,6 +1535,13 @@ models/kowiki.reverted.gradient_boosting.model: \
 		--balance-sample-weight \
 		--center --scale > \
 	models/kowiki.reverted.gradient_boosting.model
+
+kowiki_models: \
+	models/kowiki.reverted.gradient_boosting.model
+
+kowiki_tuning_reports: \
+	tuning_reports/kowiki.reverted.md
+
 
 ############################### Dutch Wikipedia ###############################
 
