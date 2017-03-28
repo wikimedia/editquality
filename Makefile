@@ -1206,8 +1206,8 @@ tuning_reports/hewiki.damaging.md: \
 	tuning_reports/hewiki.damaging.md
 
 tuning_reports/hewiki.goodfaith.md: \
-		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json | \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.goodfaith \
@@ -1235,22 +1235,22 @@ models/hewiki.reverted.gradient_boosting.model: \
 	models/hewiki.reverted.gradient_boosting.model
 
 
-models/hewiki.damaging.gradient_boosting.model: \
+models/hewiki.damaging.rf.model: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scorer_models.RF \
 		editquality.feature_lists.hewiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
+		-p 'criterion="entropy"' \
+		-p 'min_samples_leaf=1' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
+		-p 'n_estimators=320' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale > \
-	models/hewiki.damaging.gradient_boosting.model
+	models/hewiki.damaging.rf.model
 
 
 models/hewiki.goodfaith.gradient_boosting.model: \
@@ -1261,10 +1261,10 @@ models/hewiki.goodfaith.gradient_boosting.model: \
 		editquality.feature_lists.hewiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
+		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
+		-p 'n_estimators=300' \
+		-p 'max_depth=7' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale > \
@@ -1272,7 +1272,7 @@ models/hewiki.goodfaith.gradient_boosting.model: \
 
 hewiki_models: \
 		models/hewiki.reverted.gradient_boosting.model \
-		models/hewiki.damaging.gradient_boosting.model \
+		models/hewiki.damaging.rf.model \
 		models/hewiki.goodfaith.gradient_boosting.model
 
 hewiki_tuning_reports: \
