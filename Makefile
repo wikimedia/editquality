@@ -1481,6 +1481,50 @@ datasets/jawiki.autolabeled_revisions.20k_2015.json: \
 	datasets/jawiki.autolabeled_revisions.20k_2015.json
 
 
+############################# Korean Wikipedia ################################
+
+# from https://quarry.wmflabs.org/query/17645
+datasets/kowiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/165613/output/0/json-lines?download=true > \
+	datasets/kowiki.sampled_revisions.20k_2016.json
+
+datasets/kowiki.autolabeled_revisions.20k_2016.json: \
+		datasets/kowiki.sampled_revisions.20k_2016.json
+	cat datasets/kowiki.sampled_revisions.20k_2016.json | \
+	./utility autolabel --host=https://ko.wikipedia.org \
+		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/kowiki.autolabeled_revisions.20k_2016.json
+
+tuning_reports/kowiki.reverted.md: \
+		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/kowiki.labeled_revisions.w_cache.20k_2016.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.kowiki.reverted \
+		reverted_for_damage \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/kowiki.reverted.md
+
+models/kowiki.reverted.gradient_boosting.model: \
+		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/kowiki.labeled_revisions.w_cache.20k_2016.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.kowiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/kowiki.reverted.gradient_boosting.model
+
 ############################### Dutch Wikipedia ###############################
 
 datasets/nlwiki.sampled_revisions.20k_2016.json:
