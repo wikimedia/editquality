@@ -2306,6 +2306,33 @@ datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
 		--verbose > \
 	datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 
+datasets/trwiki.sampled_revisions.20k_2016.json:
+	wget -qO- http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true > \
+	datasets/trwiki.sampled_revisions.20k_2016.json
+
+datasets/trwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/trwiki.sampled_revisions.20k_2016.json
+	cat datasets/trwiki.sampled_revisions.20k_2016.json | \
+	./utility autolabel --host=https://tr.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/trwiki.autolabeled_revisions.20k_2016.json
+
+datasets/trwiki.revisions_to_review.20k_2016.json: \
+		datasets/trwiki.autolabeled_revisions.20k_2016.json
+	cat datasets/trwiki.autolabeled_revisions.20k_2016.json | \
+	grep '"needs_review": true' > datasets/trwiki.revisions_for_review.20k_2016.json
+
+datasets/trwiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/trwiki.autolabeled_revisions.20k_2016.json
+	cat datasets/trwiki.autolabeled_revisions.20k_2016.json | \
+	revscoring extract \
+		editquality.feature_lists.trwiki.reverted \
+		--host https://tr.wikipedia.org \
+		--verbose > \
+	datasets/trwiki.autolabeled_revisions.w_cache.20k_2016.json
+
 tuning_reports/trwiki.reverted.md: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
