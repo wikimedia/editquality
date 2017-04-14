@@ -1547,6 +1547,23 @@ kowiki_tuning_reports: \
 	tuning_reports/kowiki.reverted.md
 
 
+################################# Latvian Wikipedia ############################
+
+# From https://quarry.wmflabs.org/query/17989
+datasets/lvwiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/169100/output/0/json-lines?download=true > \
+	datasets/lvwiki.sampled_revisions.20k_2016.json
+
+datasets/lvwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/lvwiki.sampled_revisions.20k_2016.json
+	cat datasets/lvwiki.sampled_revisions.20k_2016.json | \
+	./utility autolabel --host=https://lv.wikipedia.org \
+		--trusted-groups=sysop,bureaucrat,bot,oversight,checkuser,patroller,autopatrolled \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/lvwiki.autolabeled_revisions.20k_2016.json
+
+
 ############################### Dutch Wikipedia ###############################
 
 datasets/nlwiki.sampled_revisions.20k_2016.json:
