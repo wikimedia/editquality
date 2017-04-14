@@ -2211,6 +2211,22 @@ ruwiki_tuning_reports: \
 		tuning_reports/ruwiki.damaging.md \
 		tuning_reports/ruwiki.goodfaith.md
 
+################################# Albanian Wikipedia ###########################
+
+# From https://quarry.wmflabs.org/query/17988
+datasets/sqwiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/169099/output/0/json-lines?download=true > \
+	datasets/sqwiki.sampled_revisions.20k_2016.json
+
+datasets/sqwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/sqwiki.sampled_revisions.20k_2016.json
+	cat datasets/sqwiki.sampled_revisions.20k_2016.json | \
+	./utility autolabel --host=https://sq.wikipedia.org \
+		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/sqwiki.autolabeled_revisions.20k_2016.json
+
 ################################# Swedish Wikipedia ###########################
 
 datasets/svwiki.sampled_revisions.40k_2016.json:
