@@ -999,18 +999,33 @@ datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
 		--verbose > \
 	datasets/fiwiki.autolabeled_revisions.20k_2016.json
 
-datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json: \
+datasets/fiwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/fiwiki/55/ > \
+	datasets/fiwiki.human_labeled_revisions.5k_2016.json
+
+datasets/fiwiki.labeled_revisions.20k_2016.json: \
+		datasets/fiwiki.human_labeled_revisions.5k_2016.json \
 		datasets/fiwiki.autolabeled_revisions.20k_2016.json
-	cat datasets/fiwiki.autolabeled_revisions.20k_2016.json | \
+	./utility merge_labels \
+		datasets/fiwiki.human_labeled_revisions.5k_2016.json \
+		datasets/fiwiki.autolabeled_revisions.20k_2016.json > \
+	datasets/fiwiki.labeled_revisions.20k_2016.json
+
+datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/fiwiki.labeled_revisions.20k_2016.json
+	cat datasets/fiwiki.labeled_revisions.20k_2016.json | \
 	revscoring extract \
 		editquality.feature_lists.fiwiki.reverted \
+		editquality.feature_lists.fiwiki.damaging \
+		editquality.feature_lists.fiwiki.goodfaith \
 		--host https://fi.wikipedia.org \
 		--verbose > \
-	datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json
+	datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
 
 tuning_reports/fiwiki.reverted.md: \
-		datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json | \
+		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fiwiki.reverted \
@@ -1019,9 +1034,31 @@ tuning_reports/fiwiki.reverted.md: \
 		--debug > \
 	tuning_reports/fiwiki.reverted.md
 
+tuning_reports/fiwiki.damaging.md: \
+		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fiwiki.damaging \
+		damaging \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/fiwiki.damaging.md
+
+tuning_reports/fiwiki.goodfaith.md: \
+		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fiwiki.goodfaith \
+		goodfaith \
+		--cv-timeout=60 \
+		--debug > \
+	tuning_reports/fiwiki.goodfaith.md
+
 models/fiwiki.reverted.gradient_boosting.model: \
-		datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json | \
+		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fiwiki.reverted \
@@ -1036,11 +1073,49 @@ models/fiwiki.reverted.gradient_boosting.model: \
 		--center --scale > \
 	models/fiwiki.reverted.gradient_boosting.model
 
+models/fiwiki.damaging.gradient_boosting.model: \
+		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.fiwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/fiwiki.damaging.gradient_boosting.model
+
+models/fiwiki.goodfaith.gradient_boosting.model: \
+		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
+	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.fiwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > \
+	models/fiwiki.goodfaith.gradient_boosting.model
+
 fiwiki_models: \
-		models/fiwiki.reverted.gradient_boosting.model
+		models/fiwiki.reverted.gradient_boosting.model \
+		models/fiwiki.damaging.gradient_boosting.model \
+		models/fiwiki.goodfaith.gradient_boosting.model
 
 fiwiki_tuning_reports: \
-		tuning_reports/fiwiki.reverted.md
+		tuning_reports/fiwiki.reverted.md \
+		tuning_reports/fiwiki.damaging.md \
+		tuning_reports/fiwiki.goodfaith.md
 
 ############################# French Wikipedia ################################
 
