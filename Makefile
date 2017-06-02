@@ -540,14 +540,11 @@ datasets/enwiktionary.autolabeled_revisions.200k_2016.json: \
 		--verbose > \
 	datasets/enwiktionary.autolabeled_revisions.200k_2016.json
 
-datasets/enwiktionary.revisions_for_review.5k_2016.json: \
+datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json: \
 		datasets/enwiktionary.autolabeled_revisions.200k_2016.json
-	( \
-	  cat datasets/enwiktionary.autolabeled_revisions.200k_2016.json | \
-	  grep '"needs_review": true' | shuf -n 2500; \
-	  cat datasets/enwiktionary.autolabeled_revisions.200k_2016.json | \
-	  grep '"needs_review": false' | shuf -n 2500 \
-	) | shuf > datasets/enwiktionary.revisions_for_review.5k_2016.json
+	cat datasets/enwiktionary.autolabeled_revisions.200k_2016.json | \
+	grep -P '"rev_id": [0-9]+[02468],' > \
+	datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json
 
 datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json
@@ -990,6 +987,11 @@ datasets/fiwiki.sampled_revisions.20k_2016.json:
 	wget -qO- https://quarry.wmflabs.org/run/161254/output/0/json-lines?download=true > \
 	datasets/fiwiki.sampled_revisions.20k_2016.json
 
+# From https://quarry.wmflabs.org/query/19212
+datasets/fiwiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/181764/output/0/json-lines?download=true > \
+	datasets/fiwiki.sampled_revisions.20k_2017.json
+
 datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/fiwiki.sampled_revisions.20k_2016.json
 	cat datasets/fiwiki.sampled_revisions.20k_2016.json | \
@@ -998,6 +1000,15 @@ datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
 		--trusted-edits=1000 \
 		--verbose > \
 	datasets/fiwiki.autolabeled_revisions.20k_2016.json
+
+datasets/fiwiki.autolabeled_revisions.20k_2017.json: \
+		datasets/fiwiki.sampled_revisions.20k_2017.json
+	cat datasets/fiwiki.sampled_revisions.20k_2017.json | \
+	./utility autolabel --host=https://fi.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,autoreview,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > \
+	datasets/fiwiki.autolabeled_revisions.20k_2017.json
 
 datasets/fiwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
