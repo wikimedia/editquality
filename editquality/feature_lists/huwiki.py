@@ -17,7 +17,8 @@ informals = [
     hungarian.informals.revision.diff.match_delta_decrease,
     hungarian.informals.revision.diff.match_prop_delta_sum,
     hungarian.informals.revision.diff.match_prop_delta_increase,
-    hungarian.informals.revision.diff.match_prop_delta_decrease
+    hungarian.informals.revision.diff.match_prop_delta_decreas
+    informals_no_ha = english.informals.excluding(["ha"])
 ]
 
 dict_words = [
@@ -39,7 +40,7 @@ damaging = wikipedia.page + \
            wikitext.parent + wikitext.diff + mediawiki.user_rights + \
            mediawiki.protected_user + mediawiki.comment + \
            badwords + informals + dict_words + \
-           enwiki.badwords + enwiki.informals_no_ha
+           enwiki.badwords + informals_no_ha
 
 reverted = damaging
 goodfaith = damaging
