@@ -21,7 +21,10 @@ informals = [
     hungarian.informals.revision.diff.match_prop_delta_decrease,
     hungarian.informals_no_ha.revision.diff.match_prop_delta_increase,
     hungarian.informals_no_ha.revision.diff.match_prop_delta_decrease,
-    hungarian.informals_no_ha.revision.diff.match_prop_delta_sum
+    hungarian.informals_no_ha.revision.diff.match_prop_delta_sum,
+    hungarian.informals_no_ha.revision.diff.match_delta_sum,
+    hungarian.informals_no_ha.revision.diff.match_delta_increase,
+    hungarian.informals_no_ha.revision.diff.match_delta_decrease
 ]
 
 dict_words = [
