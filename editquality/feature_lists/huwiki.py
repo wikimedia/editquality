@@ -11,6 +11,7 @@ badwords = [
     hungarian.badwords.revision.diff.match_prop_delta_decrease
 ]
 
+informals_no_ha = english.informals.excluding(["ha"]) 
 informals = [
     hungarian.informals.revision.diff.match_delta_sum,
     hungarian.informals.revision.diff.match_delta_increase,
@@ -18,7 +19,9 @@ informals = [
     hungarian.informals.revision.diff.match_prop_delta_sum,
     hungarian.informals.revision.diff.match_prop_delta_increase,
     hungarian.informals.revision.diff.match_prop_delta_decrease,
-    informals_no_ha = english.informals.excluding(["ha"])
+    hungarian.informals_no_ha.revision.diff.match_prop_delta_increase,
+    hungarian.informals_no_ha.revision.diff.match_prop_delta_decrease,
+    hungarian.informals_no_ha.revision.diff.match_prop_delta_sum
 ]
 
 dict_words = [
