@@ -36,7 +36,6 @@ informals = [
     english.informals.revision.diff.match_prop_delta_sum,
     english.informals.revision.diff.match_prop_delta_increase,
     english.informals.revision.diff.match_prop_delta_decrease
-    informals_no_ha = english.informals.excluding(["ha"])
 ]
 
 dict_words = [
