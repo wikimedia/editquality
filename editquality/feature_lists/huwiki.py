@@ -1,17 +1,26 @@
-from revscoring.languages import hungarian, english
+from revscoring.languages import english, hungarian
 
-from . import enwiki, mediawiki, wikipedia, wikitext
+from . import mediawiki, wikipedia, wikitext
 
+english_badwords_safe = english.badwords.excluding(
+    [r"fartő\w*"])
 badwords = [
     hungarian.badwords.revision.diff.match_delta_sum,
     hungarian.badwords.revision.diff.match_delta_increase,
     hungarian.badwords.revision.diff.match_delta_decrease,
     hungarian.badwords.revision.diff.match_prop_delta_sum,
     hungarian.badwords.revision.diff.match_prop_delta_increase,
-    hungarian.badwords.revision.diff.match_prop_delta_decrease
+    hungarian.badwords.revision.diff.match_prop_delta_decrease,
+    english_badwords_safe.revision.diff.match_prop_delta_increase,
+    english_badwords_safe.revision.diff.match_prop_delta_decrease,
+    english_badwords_safe.revision.diff.match_prop_delta_sum,
+    english_badwords_safe.revision.diff.match_delta_sum,
+    english_badwords_safe.revision.diff.match_delta_increase,
+    english_badwords_safe.revision.diff.match_delta_decrease
 ]
 
-informals_no_ha = english.informals.excluding(["ha"]) 
+english_informals_safe = english.informals.excluding(
+    ["ha", "dada", "ok"])
 informals = [
     hungarian.informals.revision.diff.match_delta_sum,
     hungarian.informals.revision.diff.match_delta_increase,
@@ -19,12 +28,12 @@ informals = [
     hungarian.informals.revision.diff.match_prop_delta_sum,
     hungarian.informals.revision.diff.match_prop_delta_increase,
     hungarian.informals.revision.diff.match_prop_delta_decrease,
-    informals_no_ha.revision.diff.match_prop_delta_increase,
-    informals_no_ha.revision.diff.match_prop_delta_decrease,
-    informals_no_ha.revision.diff.match_prop_delta_sum,
-    informals_no_ha.revision.diff.match_delta_sum,
-    informals_no_ha.revision.diff.match_delta_increase,
-    informals_no_ha.revision.diff.match_delta_decrease
+    english_informals_safe.revision.diff.match_prop_delta_increase,
+    english_informals_safe.revision.diff.match_prop_delta_decrease,
+    english_informals_safe.revision.diff.match_prop_delta_sum,
+    english_informals_safe.revision.diff.match_delta_sum,
+    english_informals_safe.revision.diff.match_delta_increase,
+    english_informals_safe.revision.diff.match_delta_decrease
 ]
 
 dict_words = [
@@ -45,8 +54,7 @@ dict_words = [
 damaging = wikipedia.page + \
            wikitext.parent + wikitext.diff + mediawiki.user_rights + \
            mediawiki.protected_user + mediawiki.comment + \
-           badwords + informals + dict_words + \
-           enwiki.badwords 
+           badwords + informals + dict_words
 
 reverted = damaging
 goodfaith = damaging
