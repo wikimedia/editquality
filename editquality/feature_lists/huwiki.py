@@ -1,4 +1,4 @@
-from revscoring.languages import hungarian
+from revscoring.languages import hungarian, english
 
 from . import enwiki, mediawiki, wikipedia, wikitext
 
@@ -19,12 +19,12 @@ informals = [
     hungarian.informals.revision.diff.match_prop_delta_sum,
     hungarian.informals.revision.diff.match_prop_delta_increase,
     hungarian.informals.revision.diff.match_prop_delta_decrease,
-    hungarian.informals_no_ha.revision.diff.match_prop_delta_increase,
-    hungarian.informals_no_ha.revision.diff.match_prop_delta_decrease,
-    hungarian.informals_no_ha.revision.diff.match_prop_delta_sum,
-    hungarian.informals_no_ha.revision.diff.match_delta_sum,
-    hungarian.informals_no_ha.revision.diff.match_delta_increase,
-    hungarian.informals_no_ha.revision.diff.match_delta_decrease
+    informals_no_ha.revision.diff.match_prop_delta_increase,
+    informals_no_ha.revision.diff.match_prop_delta_decrease,
+    informals_no_ha.revision.diff.match_prop_delta_sum,
+    informals_no_ha.revision.diff.match_delta_sum,
+    informals_no_ha.revision.diff.match_delta_increase,
+    informals_no_ha.revision.diff.match_delta_decrease
 ]
 
 dict_words = [
