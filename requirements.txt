@@ -3,5 +3,6 @@ mwapi >= 0.5.1, < 0.5.999
 mwtypes >= 0.2.0, < 0.2.999
 mwreverts >= 0.0.6, < 0.0.999
 revscoring >= 1.3.12, < 1.3.999
+statistics >= 1.0.3, < 1.0.999
 mysqltsv >= 0.0.7, < 0.0.999
 para==0.0.5
