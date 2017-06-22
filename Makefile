@@ -2440,7 +2440,7 @@ datasets/sqwiki.labeled_revisions.20k_2016.json: \
 	    datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json \
 	    datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json; \
 	  cat datasets/sqwiki.human_labeled_revisions.5k_2016.json | \
-	  grep '"needs_review": true' | shuf -rn 4558 \
+	  grep '"needs_review": true' | head -n 20000 | shuf \
 	) > datasets/sqwiki.labeled_revisions.20k_2016.json
 
 datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
