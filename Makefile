@@ -89,49 +89,46 @@ datasets/arwiki.sampled_revisions.20k_2016.json:
 
 datasets/arwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/arwiki.sampled_revisions.20k_2016.json
-	cat datasets/arwiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host https://ar.wikipedia.org \
 		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--revert-radius=3 \
 		--revert-window=48 \
-		--verbose > \
-	datasets/arwiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 datasets/arwiki.revisions_for_review.5k_2016.json: \
 		datasets/arwiki.autolabeled_revisions.20k_2016.json
 	( \
-	 cat datasets/arwiki.autolabeled_revisions.20k_2016.json | \
+	 cat $< | \
 	 grep '"needs_review": true' | \
 	 shuf -n 2500; \
-	 cat datasets/arwiki.autolabeled_revisions.20k_2016.json | \
+	 cat $< | \
 	 grep '"needs_review": false' | \
 	 shuf -n 2500 \
-	) | shuf > datasets/arwiki.revisions_for_review.5k_2016.json
+	) | shuf > $@
 
 datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/arwiki.autolabeled_revisions.20k_2016.json
-	cat datasets/arwiki.autolabeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.arwiki.reverted \
 		--host https://ar.wikipedia.org \
-		--verbose > \
-	datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 tuning_reports/arwiki.reverted.md: \
 		datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.arwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/arwiki.reverted.md
+		--debug > $@
 
 models/arwiki.reverted.gradient_boosting.model: \
 		datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.arwiki.reverted \
@@ -143,8 +140,7 @@ models/arwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/arwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 arwiki_models: \
 	models/arwiki.reverted.gradient_boosting.model
@@ -155,28 +151,26 @@ arwiki_tuning_reports: \
 ############################# Azeri Wikipedia ################################
 
 datasets/azwiki.sampled_revisions.20k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/99533/output/0/json-lines?download=true > \
-	datasets/azwiki.sampled_revisions.20k_2016.json
+	wget -qO- https://quarry.wmflabs.org/run/99533/output/0/json-lines?download=true > $@
 
 datasets/azwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/azwiki.sampled_revisions.20k_2016.json
-	cat datasets/azwiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://az.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/azwiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 datasets/azwiki.revisions_for_review.5k_2016.json: \
 		datasets/azwiki.autolabeled_revisions.20k_2016.json
 	( \
-	  cat datasets/azwiki.autolabeled_revisions.20k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": true' | \
 	  shuf -n 2500; \
-	  cat datasets/azwiki.autolabeled_revisions.20k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": false' | \
 	  shuf -n 2500 \
-	) | shuf > datasets/azwiki.revisions_for_review.5k_2016.json
+	) | shuf > $@
 
 ############################# Czech Wikipedia ################################
 
@@ -186,40 +180,36 @@ datasets/cswiki.sampled_revisions.20k_2016.json:
 
 datasets/cswiki.autolabeled_revisions.20k_2016.json: \
 		datasets/cswiki.sampled_revisions.20k_2016.json
-	cat datasets/cswiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://cs.wikipedia.org \
 		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/cswiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 datasets/cswiki.revisions_for_review.5k_2016.json: \
 		datasets/cswiki.autolabeled_revisions.20k_2016.json
 	( \
-	  cat datasets/cswiki.autolabeled_revisions.20k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": true' | \
 	  shuf -n 2500; \
-	  cat datasets/cswiki.autolabeled_revisions.20k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": false' | \
 	  shuf -n 2500 \
-	 ) | shuf > datasets/cswiki.revisions_for_review.5k_2016.json
+	 ) | shuf > $@
 
 datasets/cswiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/cswiki/44/ > \
-	datasets/cswiki.human_labeled_revisions.5k_2016.json
+		https://labels.wmflabs.org/campaigns/cswiki/44/ > $@
 
 datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json: \
 		datasets/cswiki.human_labeled_revisions.5k_2016.json
-	cat datasets/cswiki.human_labeled_revisions.5k_2016.json | \
-	grep '"needs_review": false' > \
-	datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json
+	cat $< | \
+	grep '"needs_review": false' > $@
 
 datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/cswiki.autolabeled_revisions.20k_2016.json
-	cat datasets/cswiki.autolabeled_revisions.20k_2016.json | \
-	grep '"needs_review": false' > \
-	datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json
+	cat $< | \
+	grep '"needs_review": false' > $@
 
 datasets/cswiki.labeled_revisions.20k_2016.json: \
 		datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json \
@@ -231,41 +221,38 @@ datasets/cswiki.labeled_revisions.20k_2016.json: \
 	    datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json; \
 	  cat datasets/cswiki.human_labeled_revisions.5k_2016.json | \
 	  grep '"needs_review": true' | shuf -rn 4558 \
-	) > datasets/cswiki.labeled_revisions.20k_2016.json
+	) > $@
 
 datasets/cswiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/cswiki.labeled_revisions.20k_2016.json
-	cat datasets/cswiki.labeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.cswiki.damaging \
 		editquality.feature_lists.cswiki.goodfaith \
 		--host https://cs.wikipedia.org \
-		--verbose > \
-	datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/cswiki.autolabeled_revisions.20k_2016.json
-	cat datasets/cswiki.autolabeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.cswiki.reverted \
 		--host https://cs.wikipedia.org \
-		--verbose > \
-	datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 tuning_reports/cswiki.reverted.md: \
 		datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/cswiki.reverted.md
+		--debug > $@
 
 models/cswiki.reverted.gradient_boosting.model: \
 		datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.cswiki.reverted \
@@ -277,23 +264,21 @@ models/cswiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/cswiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/cswiki.damaging.md: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/cswiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/cswiki.damaging.md
+		--debug > $@
 
 models/cswiki.damaging.gradient_boosting.model: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/cswiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.cswiki.damaging \
@@ -305,23 +290,21 @@ models/cswiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/cswiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/cswiki.goodfaith.md: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/cswiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/cswiki.goodfaith.md
+		--debug > $@
 
 models/cswiki.goodfaith.gradient_boosting.model: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/cswiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.cswiki.goodfaith \
@@ -333,8 +316,7 @@ models/cswiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/cswiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 cswiki_models: \
 	models/cswiki.reverted.gradient_boosting.model \
@@ -349,41 +331,37 @@ cswiki_tuning_reports: \
 ############################# German Wikipedia ################################
 
 datasets/dewiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/42223/output/0/json-lines?download=true > \
-	datasets/dewiki.sampled_revisions.20k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/42223/output/0/json-lines?download=true > $@
 
 datasets/dewiki.autolabeled_revisions.20k_2015.json: \
 		datasets/dewiki.sampled_revisions.20k_2015.json
-	cat datasets/dewiki.sampled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://de.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/dewiki.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/dewiki.autolabeled_revisions.20k_2015.json
-	cat datasets/dewiki.autolabeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.dewiki.reverted \
 		--host https://de.wikipedia.org \
-		--verbose > \
-	datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/dewiki.reverted.md: \
 		datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.dewiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/dewiki.reverted.md
+		--debug > $@
 
 models/dewiki.reverted.gradient_boosting.model: \
 		datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.dewiki.reverted \
@@ -395,8 +373,7 @@ models/dewiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=3' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/dewiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 dewiki_models: \
 		models/dewiki.reverted.gradient_boosting.model
@@ -407,43 +384,39 @@ dewiki_tuning_reports: \
 ############################# English Wikipedia ###############################
 datasets/enwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/enwiki/4/ > \
-	datasets/enwiki.human_labeled_revisions.20k_2015.json
+		https://labels.wmflabs.org/campaigns/enwiki/4/ > $@
 
 datasets/enwiki.labeled_revisions.20k_2015.json: \
 		datasets/enwiki.human_labeled_revisions.20k_2015.json
-	cat datasets/enwiki.human_labeled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://en.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/enwiki.labeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/enwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/enwiki.labeled_revisions.20k_2015.json
-	cat datasets/enwiki.labeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.enwiki.reverted \
 		editquality.feature_lists.enwiki.goodfaith \
 		editquality.feature_lists.enwiki.damaging \
 		--host https://en.wikipedia.org \
-		--verbose > \
-	datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/enwiki.reverted.md: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/enwiki.reverted.md
+		--debug > $@
 
 models/enwiki.reverted.gradient_boosting.model: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.enwiki.reverted \
@@ -455,24 +428,22 @@ models/enwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/enwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 
 tuning_reports/enwiki.damaging.md: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/enwiki.damaging.md
+		--debug > $@
 
 models/enwiki.damaging.gradient_boosting.model: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.enwiki.damaging \
@@ -484,22 +455,20 @@ models/enwiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/enwiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/enwiki.goodfaith.md: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/enwiki.goodfaith.md
+		--debug > $@
 
 models/enwiki.goodfaith.gradient_boosting.model: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/enwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.enwiki.goodfaith \
@@ -511,8 +480,7 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/enwiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 enwiki_models: \
 		models/enwiki.reverted.gradient_boosting.model \
@@ -528,57 +496,51 @@ enwiki_tuning_reports: \
 ############################# English Wiktionary ################################
 
 datasets/enwiktionary.sampled_revisions.200k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/97131/output/0/json-lines?download=true > \
-	datasets/enwiktionary.sampled_revisions.200k_2016.json
+	wget -qO- https://quarry.wmflabs.org/run/97131/output/0/json-lines?download=true > $@
 
 datasets/enwiktionary.autolabeled_revisions.200k_2016.json: \
 		datasets/enwiktionary.sampled_revisions.200k_2016.json
-	cat datasets/enwiktionary.sampled_revisions.200k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://en.wiktionary.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/enwiktionary.autolabeled_revisions.200k_2016.json
+		--verbose > $@
 
 datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json: \
 		datasets/enwiktionary.autolabeled_revisions.200k_2016.json
-	cat datasets/enwiktionary.autolabeled_revisions.200k_2016.json | \
-	grep -P '"rev_id": [0-9]+[02468],' > \
-	datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json
+	cat $< | \
+	grep -P '"rev_id": [0-9]+[02468],' > $@
 
 datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json
-	cat datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.enwiktionary.reverted \
 		--host https://en.wiktionary.org \
-		--verbose > \
-	datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json: \
 		datasets/enwiktionary.autolabeled_revisions.200k_2016.json
 	( \
-	  cat datasets/enwiktionary.autolabeled_revisions.200k_2016.json | \
+	  cat $< | \
 	    grep '"reverted_for_damage": false' | shuf -n 20000; \
-	  cat datasets/enwiktionary.autolabeled_revisions.200k_2016.json | \
+	  cat $< | \
 	    grep '"reverted_for_damage": true' \
-	) | shuf > \
-	datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json
+	) | shuf > $@
 
 tuning_reports/enwiktionary.reverted.md: \
 		datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiktionary.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/enwiktionary.reverted.md
+		--debug > $@
 
 models/enwiktionary.reverted.rf.model: \
 		datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.enwiktionary.reverted \
@@ -590,8 +552,7 @@ models/enwiktionary.reverted.rf.model: \
 		-p 'min_samples_leaf=3' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/enwiktionary.reverted.rf.model
+		--center --scale > $@
 
 enwiktionary_models: \
 	models/enwiktionary.reverted.rf.model
@@ -602,41 +563,37 @@ enwiktionary_tuning_reports: \
 ############################# Spanish Wikipedia ################################
 
 datasets/eswiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/42221/output/0/json-lines?download=true > \
-	datasets/eswiki.sampled_revisions.20k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/42221/output/0/json-lines?download=true > $@
 
 datasets/eswiki.autolabeled_revisions.20k_2015.json: \
 		datasets/eswiki.sampled_revisions.20k_2015.json
-	cat datasets/eswiki.sampled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://es.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/eswiki.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswiki.autolabeled_revisions.20k_2015.json
-	cat datasets/eswiki.autolabeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.eswiki.reverted \
 		--host https://es.wikipedia.org \
-		--verbose > \
-	datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/eswiki.reverted.md: \
 		datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/eswiki.reverted.md
+		--debug > $@
 
 models/eswiki.reverted.gradient_boosting.model: \
 		datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.eswiki.reverted \
@@ -648,8 +605,7 @@ models/eswiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/eswiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 eswiki_models: \
 		models/eswiki.reverted.gradient_boosting.model
@@ -660,41 +616,37 @@ eswiki_tuning_reports: \
 ############################# Spanish Wikibooks ################################
 
 datasets/eswikibooks.sampled_revisions.20k_2015.json:
-	wget -qO- https://quarry.wmflabs.org/run/113419/output/0/json-lines?download=true > \
-	datasets/eswikibooks.sampled_revisions.20k_2015.json
+	wget -qO- https://quarry.wmflabs.org/run/113419/output/0/json-lines?download=true > $@
 
 datasets/eswikibooks.autolabeled_revisions.20k_2015.json: \
 		datasets/eswikibooks.sampled_revisions.20k_2015.json
-	cat datasets/eswikibooks.sampled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://es.wikibooks.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/eswikibooks.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
-	cat datasets/eswikibooks.autolabeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.eswikibooks.reverted \
 		--host https://es.wikibooks.org \
-		--verbose > \
-	datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/eswikibooks.reverted.md: \
 		datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswikibooks.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/eswikibooks.reverted.md
+		--debug > $@
 
 models/eswikibooks.reverted.gradient_boosting.model: \
 		datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.eswikibooks.reverted \
@@ -706,8 +658,7 @@ models/eswikibooks.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/eswikibooks.reverted.gradient_boosting.model
+		--center --scale > $@
 
 eswikibooks_models: \
 		models/eswikibooks.reverted.gradient_boosting.model
@@ -718,78 +669,68 @@ eswikibooks_tuning_reports: \
 ########################### Estonian Wikipedia ################################
 
 datasets/etwiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/50110/output/0/json-lines?download=true > \
-	datasets/etwiki.sampled_revisions.20k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/50110/output/0/json-lines?download=true > $@
 
 datasets/etwiki.autolabeled_revisions.20k_2015.json: \
 		datasets/etwiki.sampled_revisions.20k_2015.json
-	cat datasets/etwiki.sampled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://et.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/etwiki.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/etwiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/etwiki/17/ > \
-	datasets/etwiki.human_labeled_revisions.5k_2015.json
+		https://labels.wmflabs.org/campaigns/etwiki/17/ > $@
 
 datasets/etwiki.labeled_revisions.20k_2015.json: \
 		datasets/etwiki.human_labeled_revisions.5k_2015.json \
 		datasets/etwiki.autolabeled_revisions.20k_2015.json
-	./utility merge_labels \
-		datasets/etwiki.human_labeled_revisions.5k_2015.json \
-		datasets/etwiki.autolabeled_revisions.20k_2015.json > \
-	datasets/etwiki.labeled_revisions.20k_2015.json
+	./utility merge_labels $^ > $@
 
 datasets/etwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/etwiki.labeled_revisions.20k_2015.json
-	cat datasets/etwiki.labeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.etwiki.reverted \
 		editquality.feature_lists.etwiki.damaging \
 		editquality.feature_lists.etwiki.goodfaith \
 		--host https://et.wikipedia.org \
-		--verbose > \
-	datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/etwiki.reverted.md: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug  > \
-	tuning_reports/etwiki.reverted.md
+		--debug  > $@
 
 tuning_reports/etwiki.damaging.md: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug  > \
-	tuning_reports/etwiki.damaging.md
+		--debug  > $@
 
 tuning_reports/etwiki.goodfaith.md: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug  > \
-	tuning_reports/etwiki.goodfaith.md
+		--debug  > $@
 
 models/etwiki.reverted.gradient_boosting.model: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.etwiki.reverted \
@@ -801,12 +742,11 @@ models/etwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale  > \
-	models/etwiki.reverted.gradient_boosting.model
+		--center --scale  > $@
 
 models/etwiki.damaging.gradient_boosting.model: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.etwiki.damaging \
@@ -818,12 +758,11 @@ models/etwiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale  > \
-	models/etwiki.damaging.gradient_boosting.model
+		--center --scale  > $@
 
 models/etwiki.goodfaith.gradient_boosting.model: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/etwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.etwiki.goodfaith \
@@ -835,8 +774,7 @@ models/etwiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale  > \
-	models/etwiki.goodfaith.gradient_boosting.model
+		--center --scale  > $@
 
 etwiki_models: \
 		models/etwiki.reverted.gradient_boosting.model \
@@ -851,56 +789,50 @@ etwiki_tuning_reports: \
 ############################# Persian Wikipedia ################################
 datasets/fawiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/fawiki/6/ > \
-	datasets/fawiki.human_labeled_revisions.20k_2015.json
+		https://labels.wmflabs.org/campaigns/fawiki/6/ > $@
 
 datasets/fawiki.labeled_revisions.20k_2015.json: \
 		datasets/fawiki.human_labeled_revisions.20k_2015.json
-	cat datasets/fawiki.human_labeled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://fa.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/fawiki.labeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/fawiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/fawiki.labeled_revisions.20k_2015.json
-	cat datasets/fawiki.labeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.fawiki.reverted \
 		editquality.feature_lists.fawiki.damaging \
 		editquality.feature_lists.fawiki.goodfaith \
 		--host https://fa.wikipedia.org \
-		--verbose > \
-	datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 datasets/fawiki.sampled_revisions.2.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true > \
-	datasets/fawiki.sampled_revisions.2.20k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true > $@
 
 datasets/fawiki.autolabeled_revisions.2.20k_2015.json: \
 		datasets/fawiki.sampled_revisions.2.20k_2015.json
-	cat datasets/fawiki.sampled_revisions.2.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://fa.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/fawiki.autolabeled_revisions.2.20k_2015.json
+		--verbose > $@
 
 tuning_reports/fawiki.reverted.md: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/fawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug  > \
-	tuning_reports/fawiki.reverted.md
+		--debug  > $@
 
 models/fawiki.reverted.gradient_boosting.model: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/fawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.reverted \
@@ -912,23 +844,21 @@ models/fawiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale  > \
-	models/fawiki.reverted.gradient_boosting.model
+		--center --scale  > $@
 
 tuning_reports/fawiki.damaging.md: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/fawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/fawiki.damaging.md
+		--debug > $@
 
 models/fawiki.damaging.gradient_boosting.model: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/fawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.damaging \
@@ -940,23 +870,21 @@ models/fawiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/fawiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/fawiki.goodfaith.md: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/fawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/fawiki.goodfaith.md
+		--debug > $@
 
 models/fawiki.goodfaith.gradient_boosting.model: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/fawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.goodfaith \
@@ -968,8 +896,7 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/fawiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 fawiki_models: \
 		models/fawiki.reverted.gradient_boosting.model \
@@ -984,92 +911,80 @@ fawiki_tuning_reports: \
 ############################# Finnish Wikipedia ################################
 
 datasets/fiwiki.sampled_revisions.20k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/161254/output/0/json-lines?download=true > \
-	datasets/fiwiki.sampled_revisions.20k_2016.json
+	wget -qO- https://quarry.wmflabs.org/run/161254/output/0/json-lines?download=true > $@
 
 # From https://quarry.wmflabs.org/query/19212
 datasets/fiwiki.sampled_revisions.20k_2017.json:
-	wget -qO- https://quarry.wmflabs.org/run/181764/output/0/json-lines?download=true > \
-	datasets/fiwiki.sampled_revisions.20k_2017.json
+	wget -qO- https://quarry.wmflabs.org/run/181764/output/0/json-lines?download=true > $@
 
 datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/fiwiki.sampled_revisions.20k_2016.json
-	cat datasets/fiwiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://fi.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,autoreview,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/fiwiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 datasets/fiwiki.autolabeled_revisions.20k_2017.json: \
 		datasets/fiwiki.sampled_revisions.20k_2017.json
-	cat datasets/fiwiki.sampled_revisions.20k_2017.json | \
+	cat $< | \
 	./utility autolabel --host=https://fi.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,autoreview,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/fiwiki.autolabeled_revisions.20k_2017.json
+		--verbose > $@
 
 datasets/fiwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/fiwiki/55/ > \
-	datasets/fiwiki.human_labeled_revisions.5k_2016.json
+		https://labels.wmflabs.org/campaigns/fiwiki/55/ > $@
 
 datasets/fiwiki.labeled_revisions.20k_2016.json: \
 		datasets/fiwiki.human_labeled_revisions.5k_2016.json \
 		datasets/fiwiki.autolabeled_revisions.20k_2016.json
-	./utility merge_labels \
-		datasets/fiwiki.human_labeled_revisions.5k_2016.json \
-		datasets/fiwiki.autolabeled_revisions.20k_2016.json > \
-	datasets/fiwiki.labeled_revisions.20k_2016.json
+	./utility merge_labels $^ > $@
 
 datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/fiwiki.labeled_revisions.20k_2016.json
-	cat datasets/fiwiki.labeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.fiwiki.reverted \
 		editquality.feature_lists.fiwiki.damaging \
 		editquality.feature_lists.fiwiki.goodfaith \
 		--host https://fi.wikipedia.org \
-		--verbose > \
-	datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 tuning_reports/fiwiki.reverted.md: \
 		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fiwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/fiwiki.reverted.md
+		--debug > $@
 
 tuning_reports/fiwiki.damaging.md: \
 		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fiwiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/fiwiki.damaging.md
+		--debug > $@
 
 tuning_reports/fiwiki.goodfaith.md: \
 		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fiwiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/fiwiki.goodfaith.md
+		--debug > $@
 
 models/fiwiki.reverted.gradient_boosting.model: \
 		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fiwiki.reverted \
@@ -1081,12 +996,11 @@ models/fiwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/fiwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 models/fiwiki.damaging.gradient_boosting.model: \
 		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fiwiki.damaging \
@@ -1098,12 +1012,11 @@ models/fiwiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/fiwiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 models/fiwiki.goodfaith.gradient_boosting.model: \
 		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fiwiki.goodfaith \
@@ -1115,8 +1028,7 @@ models/fiwiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/fiwiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 fiwiki_models: \
 		models/fiwiki.reverted.gradient_boosting.model \
@@ -1131,56 +1043,51 @@ fiwiki_tuning_reports: \
 ############################# French Wikipedia ################################
 
 datasets/frwiki.sampled_revisions.20k_2015.json:
-	wget -qO- https://quarry.wmflabs.org/run/48090/output/0/json-lines?download=true > \
-	datasets/frwiki.sampled_revisions.20k_2015.json
+	wget -qO- https://quarry.wmflabs.org/run/48090/output/0/json-lines?download=true > $@
 
 datasets/frwiki.sampled_revisions.20k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/98251/output/0/json-lines?download=true > \
-        datasets/frwiki.sampled_revisions.20k_2016.json
+	wget -qO- https://quarry.wmflabs.org/run/98251/output/0/json-lines?download=true > $@
 
 datasets/frwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/frwiki.sampled_revisions.20k_2016.json
-	cat datasets/frwiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://fr.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/frwiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 datasets/frwiki.revisions_for_review.5k_2016.json: \
 		datasets/frwiki.autolabeled_revisions.20k_2016.json
 	( \
-	  cat datasets/frwiki.autolabeled_revisions.20k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": true' | \
 	  shuf -n 2500; \
-	  cat datasets/frwiki.autolabeled_revisions.20k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": false' | \
 	  shuf -n 2500 \
-	 ) | shuf > datasets/frwiki.revisions_for_review.5k_2016.json
+	 ) | shuf > $@
 
 datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/frwiki.autolabeled_revisions.20k_2016.json
-	cat datasets/frwiki.autolabeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.frwiki.reverted \
 		--host https://fr.wikipedia.org \
-		--verbose > \
-	datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 tuning_reports/frwiki.reverted.md: \
 		datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.frwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/frwiki.reverted.md
+		--debug > $@
 
 models/frwiki.reverted.gradient_boosting.model: \
 		datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.frwiki.reverted \
@@ -1192,47 +1099,40 @@ models/frwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/frwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 datasets/frwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/frwiki/38/ > \
-	datasets/frwiki.human_labeled_revisions.5k_2016.json
+		https://labels.wmflabs.org/campaigns/frwiki/38/ > $@
 
 datasets/frwiki.labeled_revisions.20k_2016.json: \
 		datasets/frwiki.human_labeled_revisions.5k_2016.json \
 		datasets/frwiki.autolabeled_revisions.20k_2016.json
-	./utility merge_labels \
-		datasets/frwiki.human_labeled_revisions.5k_2016.json \
-		datasets/frwiki.autolabeled_revisions.20k_2016.json > \
-	datasets/frwiki.labeled_revisions.20k_2016.json
+	./utility merge_labels $^ > $@
 
 datasets/frwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/frwiki.labeled_revisions.20k_2016.json
-	cat datasets/frwiki.labeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.frwiki.reverted \
 		editquality.feature_lists.frwiki.damaging \
 		editquality.feature_lists.frwiki.goodfaith \
 		--host https://fr.wikipedia.org \
-		--verbose > \
-	datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 tuning_reports/frwiki.damaging.md: \
 		datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/frwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.frwiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/frwiki.damaging.md
+		--debug > $@
 
 models/frwiki.damaging.gradient_boosting.model: \
 		datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/frwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.frwiki.damaging \
@@ -1244,23 +1144,21 @@ models/frwiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=300' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/frwiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/frwiki.goodfaith.md: \
 		datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/frwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.frwiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/frwiki.goodfaith.md
+		--debug > $@
 
 models/frwiki.goodfaith.gradient_boosting.model: \
 		datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/frwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.frwiki.goodfaith \
@@ -1272,8 +1170,7 @@ models/frwiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/frwiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 frwiki_models: \
 		models/frwiki.reverted.gradient_boosting.model \
@@ -1288,45 +1185,40 @@ frwiki_tuning_reports: \
 ############################# Hebrew Wikipedia ################################
 
 datasets/hewiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true > \
-	datasets/hewiki.sampled_revisions.20k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true > $@
 
 datasets/hewiki.autolabeled_revisions.20k_2015.json: \
 		datasets/hewiki.sampled_revisions.20k_2015.json
-	cat datasets/hewiki.sampled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://he.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/hewiki.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/hewiki.revisions_to_review.5k_2015.json: \
 		datasets/hewiki.autolabeled_revisions.20k_2015.json
 	( \
-	  cat datasets/hewiki.autolabeled_revisions.20k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": true' | \
 	  shuf -n 2500; \
-	  cat datasets/hewiki.autolabeled_revisions.20k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": false' | \
 	  shuf -n 2500 \
-	) | shuf > datasets/hewiki.revisions_for_review.5k_2016.json
+	) | shuf > $@
 
 datasets/hewiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/hewiki/25/ > \
-	datasets/hewiki.human_labeled_revisions.5k_2015.json
+		https://labels.wmflabs.org/campaigns/hewiki/25/ > $@
 
 datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json: \
 		datasets/hewiki.human_labeled_revisions.5k_2015.json
-	cat datasets/hewiki.human_labeled_revisions.5k_2015.json | \
-	grep '"needs_review": false' > \
-	datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json
+	cat $< | \
+	grep '"needs_review": false' > $@
 
 datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/hewiki.autolabeled_revisions.20k_2015.json
-	cat datasets/hewiki.autolabeled_revisions.20k_2015.json | \
-	grep '"needs_review": false' > \
-	datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json
+	cat $< | \
+	grep '"needs_review": false' > $@
 
 datasets/hewiki.labeled_revisions.20k_2015.json: \
 		datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json \
@@ -1338,64 +1230,59 @@ datasets/hewiki.labeled_revisions.20k_2015.json: \
 	    datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json; \
 	  cat datasets/hewiki.human_labeled_revisions.5k_2015.json | \
 	  grep '"needs_review": true' | shuf -rn 4603 \
-	) > datasets/hewiki.labeled_revisions.20k_2015.json
+	) > $@
 
 datasets/hewiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/hewiki.labeled_revisions.20k_2015.json
-	cat datasets/hewiki.labeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.hewiki.damaging \
 		editquality.feature_lists.hewiki.goodfaith \
 		--host https://he.wikipedia.org \
-		--verbose > \
-	datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/hewiki.autolabeled_revisions.20k_2015.json
-	cat datasets/hewiki.autolabeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.hewiki.reverted \
 		--host https://he.wikipedia.org \
-		--verbose > \
-	datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/hewiki.reverted.md: \
 		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/hewiki.reverted.md
+		--debug > $@
 
 tuning_reports/hewiki.damaging.md: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/hewiki.damaging.md
+		--debug > $@
 
 tuning_reports/hewiki.goodfaith.md: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/hewiki.goodfaith.md
+		--debug > $@
 
 
 models/hewiki.reverted.gradient_boosting.model: \
 		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.hewiki.reverted \
@@ -1407,13 +1294,12 @@ models/hewiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/hewiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 
 models/hewiki.damaging.rf.model: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.hewiki.damaging \
@@ -1425,13 +1311,12 @@ models/hewiki.damaging.rf.model: \
 		-p 'n_estimators=320' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/hewiki.damaging.rf.model
+		--center --scale > $@
 
 
 models/hewiki.goodfaith.gradient_boosting.model: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/hewiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.hewiki.goodfaith \
@@ -1443,8 +1328,7 @@ models/hewiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/hewiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 hewiki_models: \
 		models/hewiki.reverted.gradient_boosting.model \
@@ -1459,41 +1343,37 @@ hewiki_tuning_reports: \
 ############################### Hungarian Wikipedia ###########################
 
 datasets/huwiki.sampled_revisions.40k_2016.json:
-	wget -qO- http://quarry.wmflabs.org/run/79645/output/0/json-lines?download=true > \
-	datasets/huwiki.sampled_revisions.40k_2016.json
+	wget -qO- http://quarry.wmflabs.org/run/79645/output/0/json-lines?download=true > $@
 
 datasets/huwiki.autolabeled_revisions.40k_2016.json: \
 		datasets/huwiki.sampled_revisions.40k_2016.json
-	cat datasets/huwiki.sampled_revisions.40k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://hu.wikipedia.org \
 		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/huwiki.autolabeled_revisions.40k_2016.json
+		--verbose > $@
 
 datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json: \
 		datasets/huwiki.autolabeled_revisions.40k_2016.json
-	cat datasets/huwiki.autolabeled_revisions.40k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.huwiki.reverted \
 		--host https://hu.wikipedia.org \
-		--verbose > \
-	datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json
+		--verbose > $@
 
 tuning_reports/huwiki.reverted.md: \
 		datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json
-	cat datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.huwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/huwiki.reverted.md
+		--debug > $@
 
 models/huwiki.reverted.rf.model: \
 		datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json
-	cat datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.huwiki.reverted \
@@ -1505,19 +1385,18 @@ models/huwiki.reverted.rf.model: \
 		-p 'min_samples_leaf=13' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/huwiki.reverted.rf.model
+		--center --scale > $@
 
 datasets/huwiki.revisions_for_review.5k_2016.json: \
 		datasets/huwiki.autolabeled_revisions.40k_2016.json
 	( \
-    cat datasets/huwiki.autolabeled_revisions.40k_2016.json | \
+    cat $< | \
     grep '"needs_review": true' | \
     shuf -n 2500; \
-    cat datasets/huwiki.autolabeled_revisions.40k_2016.json | \
+    cat $< | \
     grep '"needs_review": false' | \
     shuf -n 2500 \
-	 ) | shuf > datasets/huwiki.revisions_for_review.5k_2016.json
+	 ) | shuf > $@
 
 huwiki_models: \
 	models/huwiki.reverted.rf.model
@@ -1528,41 +1407,37 @@ huwiki_tuning_reports: \
 ############################### Indonesian Wikipedia ##########################
 
 datasets/idwiki.sampled_revisions.100k_2016.json:
-	wget -qO- http://quarry.wmflabs.org/run/135748/output/0/json-lines?download=true > \
-	datasets/idwiki.sampled_revisions.100k_2016.json
+	wget -qO- http://quarry.wmflabs.org/run/135748/output/0/json-lines?download=true > $@
 
 datasets/idwiki.autolabeled_revisions.100k_2016.json: \
 		datasets/idwiki.sampled_revisions.100k_2016.json
-	cat datasets/idwiki.sampled_revisions.100k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://id.wikipedia.org \
 		--trusted-groups=autoreview,bot,bureaucrat,checkuser,editor,flow-bot,oversight,reviewer,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/idwiki.autolabeled_revisions.100k_2016.json
+		--verbose > $@
 
 datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json: \
 		datasets/idwiki.autolabeled_revisions.100k_2016.json
-	cat datasets/idwiki.autolabeled_revisions.100k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.idwiki.reverted \
 		--host https://id.wikipedia.org \
-		--verbose > \
-	datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
+		--verbose > $@
 
 tuning_reports/idwiki.reverted.md: \
 		datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
-	cat datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.idwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/idwiki.reverted.md
+		--debug > $@
 
 models/idwiki.reverted.gradient_boosting.model: \
 		datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
-	cat datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.idwiki.reverted \
@@ -1574,8 +1449,7 @@ models/idwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/idwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 idwiki_models: \
 		models/idwiki.reverted.gradient_boosting.model
@@ -1586,41 +1460,37 @@ idwiki_tuning_reports: \
 ############################# Italian Wikipedia ###############################
 
 datasets/itwiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/42224/output/0/json-lines?download=true > \
-	datasets/itwiki.sampled_revisions.20k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/42224/output/0/json-lines?download=true > $@
 
 datasets/itwiki.autolabeled_revisions.20k_2015.json: \
 		datasets/itwiki.sampled_revisions.20k_2015.json
-	cat datasets/itwiki.sampled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://it.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/itwiki.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/itwiki.autolabeled_revisions.20k_2015.json
-	cat datasets/itwiki.autolabeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.itwiki.reverted \
 		--host https://it.wikipedia.org \
-		--verbose > \
-	datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/itwiki.reverted.md: \
 		datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.itwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/itwiki.reverted.md
+		--debug > $@
 
 models/itwiki.reverted.gradient_boosting.model: \
 		datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.itwiki.reverted \
@@ -1632,8 +1502,7 @@ models/itwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/itwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 itwiki_models: \
 		models/itwiki.reverted.gradient_boosting.model
@@ -1644,58 +1513,52 @@ itwiki_tuning_reports: \
 ########################### Japanese Wikipedia ################################
 
 datasets/jawiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/50111/output/0/json-lines?download=true > \
-	datasets/jawiki.sampled_revisions.20k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/50111/output/0/json-lines?download=true > $@
 
 datasets/jawiki.autolabeled_revisions.20k_2015.json: \
 		datasets/jawiki.sampled_revisions.20k_2015.json
-	cat datasets/jawiki.sampled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://ja.wikipedia.org \
 		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/jawiki.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 
 ############################# Korean Wikipedia ################################
 
 # from https://quarry.wmflabs.org/query/17645
 datasets/kowiki.sampled_revisions.20k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/165613/output/0/json-lines?download=true > \
-	datasets/kowiki.sampled_revisions.20k_2016.json
+	wget -qO- https://quarry.wmflabs.org/run/165613/output/0/json-lines?download=true > $@
 
 datasets/kowiki.autolabeled_revisions.20k_2016.json: \
 		datasets/kowiki.sampled_revisions.20k_2016.json
-	cat datasets/kowiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://ko.wikipedia.org \
 		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/kowiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/kowiki.autolabeled_revisions.20k_2016.json
-	cat datasets/kowiki.autolabeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.kowiki.reverted \
 		--host https://ko.wikipedia.org \
-		--verbose > \
-	datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 tuning_reports/kowiki.reverted.md: \
 		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.kowiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/kowiki.reverted.md
+		--debug > $@
 
 models/kowiki.reverted.gradient_boosting.model: \
 		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.kowiki.reverted \
@@ -1707,8 +1570,7 @@ models/kowiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/kowiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 kowiki_models: \
 	models/kowiki.reverted.gradient_boosting.model
@@ -1721,48 +1583,43 @@ kowiki_tuning_reports: \
 
 # From https://quarry.wmflabs.org/query/17989
 datasets/lvwiki.sampled_revisions.20k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/169100/output/0/json-lines?download=true > \
-	datasets/lvwiki.sampled_revisions.20k_2016.json
+	wget -qO- https://quarry.wmflabs.org/run/169100/output/0/json-lines?download=true > $@
 
 datasets/lvwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/lvwiki.sampled_revisions.20k_2016.json
-	cat datasets/lvwiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://lv.wikipedia.org \
 		--trusted-groups=sysop,bureaucrat,bot,oversight,checkuser,patroller,autopatrolled \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/lvwiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 
 ############################### Dutch Wikipedia ###############################
 
 datasets/nlwiki.sampled_revisions.20k_2016.json:
-	wget -qO- http://quarry.wmflabs.org/run/42225/output/0/json-lines?download=true > \
-	datasets/nlwiki.sampled_revisions.20k_2016.json
+	wget -qO- http://quarry.wmflabs.org/run/42225/output/0/json-lines?download=true > $@
 
 datasets/nlwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/nlwiki.sampled_revisions.20k_2016.json
-	cat datasets/nlwiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://nl.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/nlwiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 tuning_reports/nlwiki.reverted.md: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nlwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/nlwiki.reverted.md
+		--debug > $@
 
 models/nlwiki.reverted.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.reverted \
@@ -1774,47 +1631,40 @@ models/nlwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/nlwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 datasets/nlwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/nlwiki/14/ > \
-	datasets/nlwiki.human_labeled_revisions.5k_2016.json
+		https://labels.wmflabs.org/campaigns/nlwiki/14/ > $@
 
 datasets/nlwiki.labeled_revisions.20k_2016.json: \
 		datasets/nlwiki.human_labeled_revisions.5k_2016.json \
 		datasets/nlwiki.autolabeled_revisions.20k_2016.json
-	./utility merge_labels \
-		datasets/nlwiki.human_labeled_revisions.5k_2016.json \
-		datasets/nlwiki.autolabeled_revisions.20k_2016.json > \
-	datasets/nlwiki.labeled_revisions.20k_2016.json
+	./utility merge_labels $^ > $@
 
 datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/nlwiki.labeled_revisions.20k_2016.json
-	cat datasets/nlwiki.labeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.nlwiki.reverted \
 		editquality.feature_lists.nlwiki.damaging \
 		editquality.feature_lists.nlwiki.goodfaith \
 		--host https://nl.wikipedia.org \
-		--verbose > \
-	datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 tuning_reports/nlwiki.damaging.md: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nlwiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/nlwiki.damaging.md
+		--debug > $@
 
 models/nlwiki.damaging.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.damaging \
@@ -1826,23 +1676,21 @@ models/nlwiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/nlwiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/nlwiki.goodfaith.md: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nlwiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/nlwiki.goodfaith.md
+		--debug > $@
 
 models/nlwiki.goodfaith.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
-	cat datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nlwiki.goodfaith \
@@ -1854,8 +1702,7 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/nlwiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 nlwiki_models: \
 		models/nlwiki.reverted.gradient_boosting.model \
@@ -1870,53 +1717,49 @@ nlwiki_tuning_reports: \
 ############################# Norwegian Wikipedia #############################
 
 datasets/nowiki.sampled_revisions.100k_2015.json:
-	wget -qO- https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true > \
-	datasets/nowiki.sampled_revisions.100k_2015.json
+	wget -qO- https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true > $@
 
 datasets/nowiki.autolabeled_revisions.100k_2015.json: \
 		datasets/nowiki.sampled_revisions.100k_2015.json
-	cat datasets/nowiki.sampled_revisions.100k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://no.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/nowiki.autolabeled_revisions.100k_2015.json
+		--verbose > $@
 
 datasets/nowiki.revisions_to_review.5k_2015.json: \
 		datasets/nowiki.autolabeled_revisions.100k_2015.json
 	( \
-		cat datasets/nowiki.autolabeled_revisions.100k_2015.json | \
+		cat $< | \
 		grep '"needs_review": true' | \
 		shuf -n 2500; \
-		cat datasets/nowiki.autolabeled_revisions.100k_2015.json | \
+		cat $< | \
 		grep '"needs_review": false' | \
 		shuf -n 2500 \
-	) | shuf > datasets/nowiki.revisions_to_review.5k_2015.json
+	) | shuf > $@
 
 
 datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json: \
 		datasets/nowiki.autolabeled_revisions.100k_2015.json
-	shuf -n 40000 datasets/nowiki.autolabeled_revisions.100k_2015.json | \
+	shuf -n 40000 $< | \
 	revscoring extract \
 		editquality.feature_lists.nowiki.reverted \
 		--host https://no.wikipedia.org \
-		--verbose > \
-	datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
+		--verbose > $@
 
 tuning_reports/nowiki.reverted.md: \
 		datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
-	cat datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nowiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/nowiki.reverted.md
+		--debug > $@
 
 models/nowiki.reverted.gradient_boosting.model: \
 		datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
-	cat datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.nowiki.reverted \
@@ -1928,8 +1771,7 @@ models/nowiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/nowiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 nowiki_models: \
 		models/nowiki.reverted.gradient_boosting.model
@@ -1940,46 +1782,42 @@ nowiki_tuning_reports: \
 ############################# Polish Wikipedia ############################
 
 datasets/plwiki.sampled_revisions.500k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/65541/output/0/json-lines?download=true > \
-	datasets/plwiki.sampled_revisions.500k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/65541/output/0/json-lines?download=true > $@
 
 datasets/plwiki.autolabeled_revisions.500k_2015.json: \
 		datasets/plwiki.sampled_revisions.500k_2015.json
-	cat datasets/plwiki.sampled_revisions.500k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://pl.wikipedia.org \
 		--trusted-groups=bot,bureaucrat,sysop,rollbackers \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/plwiki.autolabeled_revisions.500k_2015.json
+		--verbose > $@
 
 datasets/plwiki.autolabeled_revisions.40k_2015.json: \
 		datasets/plwiki.autolabeled_revisions.500k_2015.json
-	cat datasets/plwiki.autolabeled_revisions.500k_2015.json | \
-	shuf -n 40000 > datasets/plwiki.autolabeled_revisions.40k_2015.json
+	cat $< | \
+	shuf -n 40000 > $@
 
 datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json: \
 		datasets/plwiki.autolabeled_revisions.40k_2015.json
-	cat datasets/plwiki.autolabeled_revisions.40k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.plwiki.reverted \
 		--host https://pl.wikipedia.org \
-		--verbose > \
-	datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json
+		--verbose > $@
 
 tuning_reports/plwiki.reverted.md: \
 		datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json
-	cat datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.plwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/plwiki.reverted.md
+		--debug > $@
 
 models/plwiki.reverted.gradient_boosting.model: \
 		datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json
-	cat datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.reverted \
@@ -1991,49 +1829,44 @@ models/plwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/plwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 
 datasets/plwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/plwiki/24/ > \
-	datasets/plwiki.human_labeled_revisions.5k_2016.json
+		https://labels.wmflabs.org/campaigns/plwiki/24/ > $@
 
 datasets/plwiki.labeled_revisions.resampled_15k_2016.json: \
 		datasets/plwiki.human_labeled_revisions.5k_2016.json
 	( \
-		cat datasets/plwiki.human_labeled_revisions.5k_2016.json | \
+		cat $< | \
 		grep '"needs_review": true'; \
-		cat datasets/plwiki.human_labeled_revisions.5k_2016.json | \
+		cat $< | \
  		grep '"needs_review": false' | shuf -r -n 12651 \
-	) | shuf > \
-	datasets/plwiki.labeled_revisions.resampled_15k_2016.json
+	) | shuf > $@
 
 datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json: \
 		datasets/plwiki.labeled_revisions.resampled_15k_2016.json
-	cat datasets/plwiki.labeled_revisions.resampled_15k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.plwiki.damaging \
 		editquality.feature_lists.plwiki.goodfaith \
 		--host https://pl.wikipedia.org \
-		--verbose > \
-	datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json
+		--verbose > $@
 
 tuning_reports/plwiki.damaging.md: \
 		datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json
-	cat datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.plwiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/plwiki.damaging.md
+		--debug > $@
 
 models/plwiki.damaging.gradient_boosting.model: \
 		datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json
-	cat datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.plwiki.damaging \
@@ -2045,24 +1878,22 @@ models/plwiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/plwiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 
 tuning_reports/plwiki.goodfaith.md: \
 		datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json
-	cat datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.plwiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/plwiki.goodfaith.md
+		--debug > $@
 
 models/plwiki.goodfaith.rf.model: \
 		datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json
-	cat datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.RF \
 		editquality.feature_lists.plwiki.goodfaith \
@@ -2074,8 +1905,7 @@ models/plwiki.goodfaith.rf.model: \
 		-p 'n_estimators=320' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/plwiki.goodfaith.rf.model
+		--center --scale > $@
 
 plwiki_models: \
 		models/plwiki.reverted.gradient_boosting.model \
@@ -2090,41 +1920,37 @@ plwiki_tuning_reports: \
 ############################# Portugueses Wikipedia ############################
 datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/ptwiki/7/ > \
-	datasets/ptwiki.human_labeled_revisions.20k_2015.json
+		https://labels.wmflabs.org/campaigns/ptwiki/7/ > $@
 
 datasets/ptwiki.labeled_revisions.20k_2015.json: \
 		datasets/ptwiki.human_labeled_revisions.20k_2015.json
-	cat datasets/ptwiki.human_labeled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://pt.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/ptwiki.labeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/ptwiki.labeled_revisions.20k_2015.json
-	cat datasets/ptwiki.labeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.ptwiki.reverted \
 		--host https://pt.wikipedia.org \
-		--verbose > \
-	datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/ptwiki.reverted.md: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ptwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/ptwiki.reverted.md
+		--debug > $@
 
 models/ptwiki.reverted.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ptwiki.reverted \
@@ -2136,23 +1962,21 @@ models/ptwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/ptwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/ptwiki.damaging.md: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ptwiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/ptwiki.damaging.md
+		--debug > $@
 
 models/ptwiki.damaging.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ptwiki.damaging \
@@ -2164,23 +1988,21 @@ models/ptwiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/ptwiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/ptwiki.goodfaith.md: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ptwiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/ptwiki.goodfaith.md
+		--debug > $@
 
 models/ptwiki.goodfaith.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ptwiki.goodfaith \
@@ -2192,8 +2014,7 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/ptwiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 ptwiki_models: \
 		models/ptwiki.reverted.gradient_boosting.model \
@@ -2209,42 +2030,38 @@ ptwiki_tuning_reports: \
 ############################### Romanian Wikipedia ############################
 
 datasets/rowiki.sampled_revisions.20k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/146926/output/0/json-lines?download=true > \
-	datasets/rowiki.sampled_revisions.20k_2016.json
+	wget -qO- https://quarry.wmflabs.org/run/146926/output/0/json-lines?download=true > $@
 
 datasets/rowiki.autolabeled_revisions.20k_2016.json: \
 		datasets/rowiki.sampled_revisions.20k_2016.json
-	cat datasets/rowiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://ro.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot,templateeditor,patroller,autopatrolled \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/rowiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/rowiki.autolabeled_revisions.20k_2016.json
-	cat datasets/rowiki.autolabeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.rowiki.reverted \
 		--host https://ro.wikipedia.org \
-		--verbose > \
-	datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 
 tuning_reports/rowiki.reverted.md: \
 		datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.rowiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/rowiki.reverted.md
+		--debug > $@
 
 models/rowiki.reverted.gradient_boosting.model: \
 		datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.rowiki.reverted \
@@ -2256,8 +2073,7 @@ models/rowiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/rowiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 rowiki_models: \
 		models/rowiki.reverted.gradient_boosting.model
@@ -2268,56 +2084,48 @@ rowiki_tuning_reports: \
 ############################### Russian Wikipedia ############################
 
 datasets/ruwiki.sampled_revisions.20k_2015.json:
-	wget -qO- https://quarry.wmflabs.org/run/48649/output/0/json-lines?download=true > \
-	datasets/ruwiki.sampled_revisions.20k_2015.json
+	wget -qO- https://quarry.wmflabs.org/run/48649/output/0/json-lines?download=true > $@
 
 datasets/ruwiki.autolabeled_revisions.20k_2015.json: \
 		datasets/ruwiki.sampled_revisions.20k_2015.json
-	cat datasets/ruwiki.sampled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://ru.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/ruwiki.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/ruwiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/ruwiki/10/ > \
-	datasets/ruwiki.human_labeled_revisions.5k_2015.json
+		https://labels.wmflabs.org/campaigns/ruwiki/10/ > $@
 
 datasets/ruwiki.labeled_revisions.20k_2015.json: \
 		datasets/ruwiki.human_labeled_revisions.5k_2015.json \
 		datasets/ruwiki.autolabeled_revisions.20k_2015.json
-	./utility merge_labels \
-		datasets/ruwiki.human_labeled_revisions.5k_2015.json \
-		datasets/ruwiki.autolabeled_revisions.20k_2015.json > \
-	datasets/ruwiki.labeled_revisions.20k_2015.json
+	./utility merge_labels $^ > $@
 
 datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/ruwiki.labeled_revisions.20k_2015.json
-	cat datasets/ruwiki.labeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.ruwiki.reverted \
 		editquality.feature_lists.ruwiki.goodfaith \
 		editquality.feature_lists.ruwiki.damaging \
 		--host https://ru.wikipedia.org \
-		--verbose > \
-	datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/ruwiki.reverted.md: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ruwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/ruwiki.reverted.md
+		--debug > $@
 
 models/ruwiki.reverted.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.reverted \
@@ -2329,23 +2137,21 @@ models/ruwiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/ruwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/ruwiki.damaging.md: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ruwiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/ruwiki.damaging.md
+		--debug > $@
 
 models/ruwiki.damaging.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.damaging \
@@ -2357,23 +2163,21 @@ models/ruwiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/ruwiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/ruwiki.goodfaith.md: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ruwiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/ruwiki.goodfaith.md
+		--debug > $@
 
 models/ruwiki.goodfaith.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ruwiki.goodfaith \
@@ -2385,8 +2189,7 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=300' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/ruwiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 ruwiki_models: \
 		models/ruwiki.reverted.gradient_boosting.model \
@@ -2402,56 +2205,50 @@ ruwiki_tuning_reports: \
 
 # From https://quarry.wmflabs.org/query/17988
 datasets/sqwiki.sampled_revisions.20k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/169099/output/0/json-lines?download=true > \
-	datasets/sqwiki.sampled_revisions.20k_2016.json
+	wget -qO- https://quarry.wmflabs.org/run/169099/output/0/json-lines?download=true > $@
 
 datasets/sqwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/sqwiki.sampled_revisions.20k_2016.json
-	cat datasets/sqwiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://sq.wikipedia.org \
 		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/sqwiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 ################################# Swedish Wikipedia ###########################
 
 datasets/svwiki.sampled_revisions.40k_2016.json:
-	wget -qO- http://quarry.wmflabs.org/run/79646/output/0/json-lines?download=true > \
-	datasets/svwiki.sampled_revisions.40k_2016.json
+	wget -qO- http://quarry.wmflabs.org/run/79646/output/0/json-lines?download=true > $@
 
 datasets/svwiki.autolabeled_revisions.40k_2016.json: \
 		datasets/svwiki.sampled_revisions.40k_2016.json
-	cat datasets/svwiki.sampled_revisions.40k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://sv.wikipedia.org \
 		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/svwiki.autolabeled_revisions.40k_2016.json
+		--verbose > $@
 
 datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json: \
 		datasets/svwiki.autolabeled_revisions.40k_2016.json
-	cat datasets/svwiki.autolabeled_revisions.40k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.svwiki.reverted \
 		--host https://sv.wikipedia.org \
-		--verbose > \
-	datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json
+		--verbose > $@
 
 tuning_reports/svwiki.reverted.md: \
 		datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json
-	cat datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.svwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/svwiki.reverted.md
+		--debug > $@
 
 models/svwiki.reverted.gradient_boosting.model: \
 		datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json
-	cat datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.svwiki.reverted \
@@ -2463,19 +2260,18 @@ models/svwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/svwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 datasets/svwiki.revisions_for_review.5k_2016.json: \
 		datasets/svwiki.autolabeled_revisions.40k_2016.json
 	( \
-	  cat datasets/svwiki.autolabeled_revisions.40k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": true' | \
 	  shuf -n 2500; \
-	  cat datasets/svwiki.autolabeled_revisions.40k_2016.json | \
+	  cat $< | \
 	  grep '"needs_review": false' | \
 	  shuf -n 2500 \
-	) | shuf > datasets/svwiki.revisions_for_review.5k_2016.json
+	) | shuf > $@
 
 svwiki_models: \
 	models/svwiki.reverted.gradient_boosting.model
@@ -2486,70 +2282,63 @@ svwiki_tuning_reports: \
 ############################# Turkish Wikipedia ############################
 datasets/trwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/trwiki/5/ > \
-	datasets/trwiki.human_labeled_revisions.20k_2015.json
+		https://labels.wmflabs.org/campaigns/trwiki/5/ > $@
 
 datasets/trwiki.labeled_revisions.20k_2015.json: \
 		datasets/trwiki.human_labeled_revisions.20k_2015.json
-	cat datasets/trwiki.human_labeled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://tr.wikipedia.org \
 		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/trwiki.labeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/trwiki.labeled_revisions.20k_2015.json
-	cat datasets/trwiki.labeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.trwiki.reverted \
 		editquality.feature_lists.trwiki.damaging \
 		editquality.feature_lists.trwiki.goodfaith \
 		--host https://tr.wikipedia.org \
-		--verbose > \
-	datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 datasets/trwiki.sampled_revisions.20k_2016.json:
-	wget -qO- http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true > \
-	datasets/trwiki.sampled_revisions.20k_2016.json
+	wget -qO- http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true > $@
 
 datasets/trwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/trwiki.sampled_revisions.20k_2016.json
-	cat datasets/trwiki.sampled_revisions.20k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://tr.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/trwiki.autolabeled_revisions.20k_2016.json
+		--verbose > $@
 
 datasets/trwiki.revisions_to_review.20k_2016.json: \
 		datasets/trwiki.autolabeled_revisions.20k_2016.json
-	cat datasets/trwiki.autolabeled_revisions.20k_2016.json | \
-	grep '"needs_review": true' > datasets/trwiki.revisions_for_review.20k_2016.json
+	cat $< | \
+	grep '"needs_review": true' > $@
 
 datasets/trwiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/trwiki.autolabeled_revisions.20k_2016.json
-	cat datasets/trwiki.autolabeled_revisions.20k_2016.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.trwiki.reverted \
 		--host https://tr.wikipedia.org \
-		--verbose > \
-	datasets/trwiki.autolabeled_revisions.w_cache.20k_2016.json
+		--verbose > $@
 
 tuning_reports/trwiki.reverted.md: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.trwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/trwiki.reverted.md
+		--debug > $@
 
 models/trwiki.reverted.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.reverted \
@@ -2561,23 +2350,21 @@ models/trwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/trwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/trwiki.damaging.md: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.trwiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/trwiki.damaging.md
+		--debug > $@
 
 models/trwiki.damaging.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.damaging \
@@ -2589,23 +2376,21 @@ models/trwiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/trwiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/trwiki.goodfaith.md: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.trwiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/trwiki.goodfaith.md
+		--debug > $@
 
 models/trwiki.goodfaith.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/trwiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.trwiki.goodfaith \
@@ -2617,8 +2402,7 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/trwiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 trwiki_models: \
 		models/trwiki.reverted.gradient_boosting.model \
@@ -2633,41 +2417,37 @@ trwiki_tuning_reports: \
 ############################### Ukranian Wikipedia ############################
 
 datasets/ukwiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/48597/output/0/json-lines?download=true > \
-	datasets/ukwiki.sampled_revisions.20k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/48597/output/0/json-lines?download=true > $@
 
 datasets/ukwiki.autolabeled_revisions.20k_2015.json: \
 		datasets/ukwiki.sampled_revisions.20k_2015.json
-	cat datasets/ukwiki.sampled_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://uk.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/ukwiki.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/ukwiki.autolabeled_revisions.20k_2015.json
-	cat datasets/ukwiki.autolabeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.ukwiki.reverted \
 		--host https://uk.wikipedia.org \
-		--verbose > \
-	datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/ukwiki.reverted.md: \
 		datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ukwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/ukwiki.reverted.md
+		--debug > $@
 
 models/ukwiki.reverted.gradient_boosting.model: \
 		datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.ukwiki.reverted \
@@ -2679,8 +2459,7 @@ models/ukwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/ukwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 ukwiki_models: \
 		models/ukwiki.reverted.gradient_boosting.model
@@ -2691,29 +2470,27 @@ ukwiki_tuning_reports: \
 ############################### Urdu Wikipedia #################################
 
 datasets/urwiki.sampled_revisions.500k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/64277/output/0/json-lines?download=true > \
-	datasets/urwiki.sampled_revisions.500k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/64277/output/0/json-lines?download=true > $@
 
 datasets/urwiki.autolabeled_revisions.500k_2015.json: \
 		datasets/urwiki.sampled_revisions.500k_2015.json
-	cat datasets/urwiki.sampled_revisions.500k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://ur.wikipedia.org \
 		--trusted-groups=bot,bureaucrat,sysop,rollbackers \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/urwiki.autolabeled_revisions.500k_2015.json
+		--verbose > $@
 
 
 datasets/urwiki.revisions_for_review.5k_2015.json: \
 		datasets/urwiki.autolabeled_revisions.500k_2015.json
 	( \
-		cat datasets/urwiki.autolabeled_revisions.500k_2015.json | \
+		cat $< | \
 		grep '"needs_review": true' | \
 		shuf -n 2500; \
-	  cat datasets/urwiki.autolabeled_revisions.500k_2015.json | \
+	  cat $< | \
 	  grep '"needs_review": false' | \
 	  shuf -n 2500 \
-	) | shuf > datasets/urwiki.revisions_for_review.5k_2015.json
+	) | shuf > $@
 
 
 #urwiki_models: \
@@ -2725,49 +2502,45 @@ datasets/urwiki.revisions_for_review.5k_2015.json: \
 ############################### Vietnamese Wikipedia ###########################
 
 datasets/viwiki.sampled_revisions.500k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/65793/output/0/json-lines?download=true > \
-	datasets/viwiki.sampled_revisions.500k_2015.json
+	wget -qO- http://quarry.wmflabs.org/run/65793/output/0/json-lines?download=true > $@
 
 datasets/viwiki.autolabeled_revisions.500k_2015.json: \
 		datasets/viwiki.sampled_revisions.500k_2015.json
-	cat datasets/viwiki.sampled_revisions.500k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://vi.wikipedia.org \
 		--trusted-groups=checkuser,bureaucrat,sysop,eliminator,bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/viwiki.autolabeled_revisions.500k_2015.json
+		--verbose > $@
 
 datasets/viwiki.revisions_to_review.5k_2015.json: \
 		datasets/viwiki.autolabeled_revisions.500k_2015.json
-	(cat datasets/viwiki.autolabeled_revisions.500k_2015.json | grep True | \
+	(cat $< | grep True | \
 	 shuf -n 2500; \
-	 cat datasets/viwiki.autolabeled_revisions.500k_2015.json | grep False | \
+	 cat $< | grep False | \
 	 shuf -n 2500 \
-	) | shuf > datasets/viwiki.revisions_to_review.500k_2015.json
+	) | shuf > $@
 
 datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json: \
 		datasets/viwiki.autolabeled_revisions.500k_2015.json
-	cat datasets/viwiki.autolabeled_revisions.500k_2015.json | shuf -n 100000 | \
+	cat $< | shuf -n 100000 | \
 	revscoring extract \
 		editquality.feature_lists.viwiki.reverted \
 		--host https://vi.wikipedia.org \
-		--verbose > \
-	datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
+		--verbose > $@
 
 tuning_reports/viwiki.reverted.md: \
 		datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
-	cat datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.viwiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/viwiki.reverted.md
+		--debug > $@
 
 models/viwiki.reverted.gradient_boosting.model: \
 		datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
-	cat datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.viwiki.reverted \
@@ -2779,8 +2552,7 @@ models/viwiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/viwiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 viwiki_models: \
 		models/viwiki.reverted.gradient_boosting.model
@@ -2794,52 +2566,45 @@ viwiki_tuning_reports: \
 
 datasets/wikidatawiki.autolabeled_revisions.20k_2015.json: \
 		datasets/wikidatawiki.balanced_revisions.20k_2015.json
-	cat datasets/wikidatawiki.balanced_revisions.20k_2015.json | \
+	cat $< | \
 	./utility autolabel --host=https://wikidata.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/wikidatawiki.autolabeled_revisions.20k_2015.json
+		--verbose > $@
 
 datasets/wikidatawiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/wikidatawiki/19/ > \
-	datasets/wikidatawiki.human_labeled_revisions.5k_2016.json
+		https://labels.wmflabs.org/campaigns/wikidatawiki/19/ > $@
 
 datasets/wikidatawiki.labeled_revisions.20k_2015.json: \
 		datasets/wikidatawiki.autolabeled_revisions.20k_2015.json \
 		datasets/wikidatawiki.human_labeled_revisions.5k_2016.json
-	./utility merge_labels \
-		datasets/wikidatawiki.human_labeled_revisions.5k_2016.json \
-		datasets/wikidatawiki.autolabeled_revisions.20k_2015.json > \
-	datasets/wikidatawiki.labeled_revisions.20k_2015.json
+	./utility merge_labels $^ > $@
 
 datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/wikidatawiki.labeled_revisions.20k_2015.json
-	cat datasets/wikidatawiki.labeled_revisions.20k_2015.json | \
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.wikidatawiki.reverted \
 		editquality.feature_lists.wikidatawiki.damaging \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		--host https://wikidata.org \
-		--verbose > \
-	datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
+		--verbose > $@
 
 tuning_reports/wikidatawiki.reverted.md: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.reverted \
 		reverted_for_damage \
 		--cv-timeout=60 \
 		--debug \
-		--scoring=roc_auc > \
-	tuning_reports/wikidatawiki.reverted.md
+		--scoring=roc_auc > $@
 
 models/wikidatawiki.reverted.gradient_boosting.model: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.reverted \
@@ -2851,23 +2616,21 @@ models/wikidatawiki.reverted.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/wikidatawiki.reverted.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/wikidatawiki.damaging.md: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.damaging \
 		damaging \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/wikidatawiki.damaging.md
+		--debug > $@
 
 models/wikidatawiki.damaging.gradient_boosting.model: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.damaging \
@@ -2879,23 +2642,21 @@ models/wikidatawiki.damaging.gradient_boosting.model: \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/wikidatawiki.damaging.gradient_boosting.model
+		--center --scale > $@
 
 tuning_reports/wikidatawiki.goodfaith.md: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		goodfaith \
 		--cv-timeout=60 \
-		--debug > \
-	tuning_reports/wikidatawiki.goodfaith.md
+		--debug > $@
 
 models/wikidatawiki.goodfaith.gradient_boosting.model: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.goodfaith \
@@ -2907,8 +2668,7 @@ models/wikidatawiki.goodfaith.gradient_boosting.model: \
 		-p 'n_estimators=300' \
 		$(test_statistics) \
 		--balance-sample-weight \
-		--center --scale > \
-	models/wikidatawiki.goodfaith.gradient_boosting.model
+		--center --scale > $@
 
 wikidatawiki_models: \
 		models/wikidatawiki.reverted.gradient_boosting.model \
@@ -2923,24 +2683,22 @@ wikidatawiki_tuning_reports: \
 ############################### Chinese Wikipedia #############################
 
 datasets/zhwiki.sampled_revisions.100k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true > \
-	datasets/zhwiki.sampled_revisions.100k_2016.json
+	wget -qO- https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true > $@
 
 datasets/zhwiki.autolabeled_revisions.100k_2016.json: \
 		datasets/zhwiki.sampled_revisions.100k_2016.json
-	cat datasets/zhwiki.sampled_revisions.100k_2016.json | \
+	cat $< | \
 	./utility autolabel --host=https://zh.wikipedia.org \
 		--trusted-groups=checkuser,bureaucrat,sysop,eliminator,bot \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/zhwiki.autolabeled_revisions.100k_2016.json
+		--verbose > $@
 
 datasets/zhwiki.revisions_to_review.5k_2016.json: \
 		datasets/zhwiki.autolabeled_revisions.100k_2016.json
-	(cat datasets/zhwiki.autolabeled_revisions.100k_2016.json | \
+	(cat $< | \
 	 grep '"needs_review": true' | \
 	 shuf -n 2500; \
-	 cat datasets/zhwiki.autolabeled_revisions.100k_2016.json | \
+	 cat $< | \
 	 grep '"needs_review": false' | \
 	 shuf -n 2500 \
-	) | shuf > datasets/zhwiki.revisions_to_review.5k_2016.json
+	) | shuf > $@
