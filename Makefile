@@ -2044,14 +2044,20 @@ datasets/rowiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/rowiki/48/ > $@
 
-datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json: \
+datasets/rowiki.labeled_revisions.20k_2016.json: \
+		datasets/rowiki.human_labeled_revisions.5k_2016.json \
 		datasets/rowiki.autolabeled_revisions.20k_2016.json
+	./utility merge_labels $^ > $@
+
+datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/rowiki.labeled_revisions.20k_2016.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.rowiki.reverted \
+		editquality.feature_lists.rowiki.goodfaith \
+		editquality.feature_lists.rowiki.damaging \
 		--host https://ro.wikipedia.org \
 		--verbose > $@
-
 
 tuning_reports/rowiki.reverted.md: \
 		datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json
@@ -2079,11 +2085,67 @@ models/rowiki.reverted.gradient_boosting.model: \
 		--balance-sample-weight \
 		--center --scale > $@
 
+tuning_reports/rowiki.damaging.md: \
+		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.rowiki.damaging \
+		damaging \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/rowiki.damaging.gradient_boosting.model: \
+		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.rowiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
+tuning_reports/rowiki.goodfaith.md: \
+		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.rowiki.goodfaith \
+		goodfaith \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/rowiki.goodfaith.gradient_boosting.model: \
+		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.rowiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
 rowiki_models: \
-		models/rowiki.reverted.gradient_boosting.model
+		models/rowiki.reverted.gradient_boosting.model \
+		models/rowiki.damaging.gradient_boosting.model \
+		models/rowiki.goodfaith.gradient_boosting.model
 
 rowiki_tuning_reports: \
-		tuning_reports/rowiki.reverted.md
+		tuning_reports/rowiki.reverted.md \
+		tuning_reports/rowiki.damaging.md \
+		tuning_reports/rowiki.goodfaith.md
 
 ############################### Russian Wikipedia ############################
 
