@@ -2040,6 +2040,10 @@ datasets/rowiki.autolabeled_revisions.20k_2016.json: \
 		--trusted-edits=1000 \
 		--verbose > $@
 
+datasets/rowiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/rowiki/48/ > $@
+
 datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/rowiki.autolabeled_revisions.20k_2016.json
 	cat $< | \
