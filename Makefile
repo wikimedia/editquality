@@ -2049,6 +2049,14 @@ datasets/rowiki.labeled_revisions.20k_2016.json: \
 		datasets/rowiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
+datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/rowiki.autolabeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.rowiki.reverted \
+		--host https://ro.wikipedia.org \
+		--verbose > $@
+
 datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/rowiki.labeled_revisions.20k_2016.json
 	cat $< | \
