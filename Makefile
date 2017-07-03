@@ -1,4 +1,5 @@
-
+# Remove target files after command failure.
+.DELETE_ON_ERROR:
 
 models: \
 		arwiki_models \
