@@ -1304,8 +1304,8 @@ datasets/fiwiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/181764/output/0/json-lines?download=true > $@
 
 # From https://quarry.wmflabs.org/query/20200
-datasets/fiwiki.flaggedrevs_approved.2017.json:
-	wget -qO- https://quarry.wmflabs.org/run/190541/output/0/json-lines?download=true > $@
+datasets/fiwiki.flaggedrevs_approved.50k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/192057/output/0/json-lines?download=true > $@
 
 datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/fiwiki.sampled_revisions.20k_2016.json
@@ -1330,10 +1330,36 @@ datasets/fiwiki.human_labeled_revisions.5k_2016.json:
 datasets/fiwiki.labeled_revisions.20k_2016.json: \
 		datasets/fiwiki.human_labeled_revisions.5k_2016.json \
 		datasets/fiwiki.autolabeled_revisions.20k_2016.json
-	./utility merge_labels $^ > $@
+	./utility merge_labels $^ | shuf > $@
+
+datasets/fiwiki.flaggedrevs_training.65k.json: \
+		datasets/fiwiki.labeled_revisions.20k_2016.json \
+		datasets/fiwiki.flaggedrevs_approved.50k_2017.json
+	# TODO: write this script
+	./utility deduplicate_revs $^ > $@
 
 datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/fiwiki.labeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.fiwiki.reverted \
+		editquality.feature_lists.fiwiki.damaging \
+		editquality.feature_lists.fiwiki.goodfaith \
+		--host https://fi.wikipedia.org \
+		--verbose > $@
+
+datasets/fiwiki.flaggedrevs_training.w_cache.65k.json: \
+		datasets/fiwiki.flaggedrevs_training.65k.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.fiwiki.reverted \
+		editquality.feature_lists.fiwiki.damaging \
+		editquality.feature_lists.fiwiki.goodfaith \
+		--host https://fi.wikipedia.org \
+		--verbose > $@
+
+datasets/fiwiki.labeled_revisions_testing.w_cache.5k_2016.json: \
+		datasets/fiwiki.labeled_revisions_testing.5k_2016.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.fiwiki.reverted \
@@ -1375,7 +1401,7 @@ models/fiwiki.reverted.gradient_boosting.model: \
 		--center --scale > $@
 
 tuning_reports/fiwiki.damaging.md: \
-		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
+		fiwiki.flaggedrevs_training.w_cache.65k.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -1390,7 +1416,7 @@ tuning_reports/fiwiki.damaging.md: \
 		--debug > $@
 
 models/fiwiki.damaging.gradient_boosting.model: \
-		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
+		fiwiki.flaggedrevs_training.w_cache.65k.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
