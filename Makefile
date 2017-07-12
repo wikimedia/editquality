@@ -1303,6 +1303,10 @@ datasets/fiwiki.sampled_revisions.20k_2016.json:
 datasets/fiwiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/181764/output/0/json-lines?download=true > $@
 
+# From https://quarry.wmflabs.org/query/20200
+datasets/fiwiki.flaggedrevs_approved.2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/190541/output/0/json-lines?download=true > $@
+
 datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/fiwiki.sampled_revisions.20k_2016.json
 	cat $< | \
@@ -1436,7 +1440,8 @@ models/fiwiki.goodfaith.gradient_boosting.model: \
 
 fiwiki_models: \
 		models/fiwiki.damaging.gradient_boosting.model \
-		models/fiwiki.goodfaith.gradient_boosting.model
+		models/fiwiki.goodfaith.gradient_boosting.model \
+		models/fiwiki.flaggedrevs.gradient_boosting.model
 
 fiwiki_tuning_reports: \
 		tuning_reports/fiwiki.damaging.md \
