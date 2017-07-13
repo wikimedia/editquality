@@ -20,25 +20,10 @@ informals = [
     tamil.informals.revision.diff.match_prop_delta_decrease
 ]
 
-dict_words = [
-    tamil.dictionary.revision.diff.dict_word_delta_sum,
-    tamil.dictionary.revision.diff.dict_word_delta_increase,
-    tamil.dictionary.revision.diff.dict_word_delta_decrease,
-    tamil.dictionary.revision.diff.dict_word_prop_delta_sum,
-    tamil.dictionary.revision.diff.dict_word_prop_delta_increase,
-    tamil.dictionary.revision.diff.dict_word_prop_delta_decrease,
-    tamil.dictionary.revision.diff.non_dict_word_delta_sum,
-    tamil.dictionary.revision.diff.non_dict_word_delta_increase,
-    tamil.dictionary.revision.diff.non_dict_word_delta_decrease,
-    tamil.dictionary.revision.diff.non_dict_word_prop_delta_sum,
-    tamil.dictionary.revision.diff.non_dict_word_prop_delta_increase,
-    tamil.dictionary.revision.diff.non_dict_word_prop_delta_decrease
-]
-
 damaging = wikipedia.page + \
            wikitext.parent + wikitext.diff + mediawiki.user_rights + \
            mediawiki.protected_user + mediawiki.comment + \
-           badwords + informals + dict_words + \
+           badwords + informals + \
            enwiki.badwords + enwiki.informals
 
 reverted = damaging
