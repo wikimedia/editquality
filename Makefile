@@ -3,8 +3,10 @@
 
 models: \
 		arwiki_models \
+		bnwiki_models \
 		cswiki_models \
 		dewiki_models \
+		elwiki_models \
 		enwiki_models \
 		enwiktionary_models \
 		eswiki_models \
@@ -25,6 +27,7 @@ models: \
 		rowiki_models \
 		ruwiki_models \
 		svwiki_models \
+		tawiki_models \
 		trwiki_models \
 		ukwiki_models \
 		viwiki_models \
@@ -32,8 +35,10 @@ models: \
 
 tuning_reports: \
 		arwiki_tuning_reports \
+		bnwiki_tuning_reports \
 		cswiki_tuning_reports \
 		dewiki_tuning_reports \
+		elwiki_tuning_reports \
 		enwiki_tuning_reports \
 		enwiktionary_tuning_reports \
 		eswiki_tuning_reports \
@@ -54,6 +59,7 @@ tuning_reports: \
 		rowiki_tuning_reports \
 		ruwiki_tuning_reports \
 		svwiki_tuning_reports \
+		tawiki_tuning_reports \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
 		viwiki_tuning_reports \
@@ -224,6 +230,12 @@ models/bnwiki.reverted.gradient_boosting.model: \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale > $@
+
+bnwiki_models: \
+	models/bnwiki.reverted.gradient_boosting.model
+
+bnwiki_tuning_reports: \
+	tuning_reports/bnwiki.reverted.md
 
 ############################# Czech Wikipedia ################################
 
@@ -485,6 +497,12 @@ models/elwiki.reverted.gradient_boosting.model: \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale > $@
+
+elwiki_models: \
+	models/elwiki.reverted.gradient_boosting.model
+
+elwiki_tuning_reports: \
+	tuning_reports/elwiki.reverted.md
 
 ############################# English Wikipedia ###############################
 datasets/enwiki.human_labeled_revisions.20k_2015.json:
@@ -2509,6 +2527,13 @@ models/tawiki.reverted.gradient_boosting.model: \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale > $@
+
+tawiki_models: \
+	models/tawiki.reverted.gradient_boosting.model
+
+tawiki_tuning_reports: \
+	tuning_reports/tawiki.reverted.md
+
 
 ############################# Turkish Wikipedia ############################
 datasets/trwiki.human_labeled_revisions.20k_2015.json:
