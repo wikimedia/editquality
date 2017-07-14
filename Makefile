@@ -677,11 +677,85 @@ models/enwiktionary.reverted.rf.model: \
 		--balance-sample-weight \
 		--center --scale > $@
 
+datasets/enwiktionary.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/enwiktionary/59/ > $@
+
+datasets/enwiktionary.labeled_revisions.100k_2016.json: \
+		datasets/enwiktionary.human_labeled_revisions.5k_2016.json \
+		datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json
+	./utility merge_labels $^ > $@
+
+datasets/enwiktionary.labeled_revisions.w_cache.100k_2016.json: \
+		datasets/enwiktionary.labeled_revisions.100k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.enwiktionary.goodfaith \
+		editquality.feature_lists.enwiktionary.damaging \
+		--host https://en.wiktionary.org \
+		--verbose > $@
+
+tuning_reports/enwiktionary.damaging.md: \
+		datasets/enwiktionary.labeled_revisions.w_cache.100k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiktionary.damaging \
+		damaging \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/enwiktionary.damaging.gradient_boosting.model: \
+		datasets/enwiktionary.labeled_revisions.w_cache.100k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.enwiktionary.goodfaith \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
+tuning_reports/enwiktionary.goodfaith.md: \
+		datasets/enwiktionary.labeled_revisions.w_cache.100k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiktionary.goodfaith \
+		goodfaith \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/enwiktionary.goodfaith.gradient_boosting.model: \
+		datasets/enwiktionary.labeled_revisions.w_cache.100k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.enwiktionary.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
 enwiktionary_models: \
-	models/enwiktionary.reverted.rf.model
+	models/enwiktionary.reverted.rf.model \
+	models/enwiktionary.damaging.rf.model \
+	models/enwiktionary.goodfaith.rf.model
 
 enwiktionary_tuning_reports: \
-	tuning_reports/enwiktionary.reverted.md
+	tuning_reports/enwiktionary.reverted.md \
+	tuning_reports/enwiktionary.damaging.md \
+	tuning_reports/enwiktionary.goodfaith.md
 
 ############################# Spanish Wikipedia ################################
 
