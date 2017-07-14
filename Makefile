@@ -2417,39 +2417,109 @@ datasets/sqwiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/sqwiki/57/ > \
 	datasets/sqwiki.human_labeled_revisions.5k_2016.json
 
-datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json: \
-		datasets/sqwiki.human_labeled_revisions.5k_2016.json
-	cat datasets/sqwiki.human_labeled_revisions.5k_2016.json | \
-	grep '"needs_review": false' > \
-	datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json
-
-datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/sqwiki.autolabeled_revisions.20k_2016.json
-	cat datasets/sqwiki.autolabeled_revisions.20k_2016.json | \
-	grep '"needs_review": false' > \
-	datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json
-
 datasets/sqwiki.labeled_revisions.20k_2016.json: \
-		datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json \
-		datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json \
-		datasets/sqwiki.human_labeled_revisions.5k_2016.json
-	( \
-	  ./utility merge_labels \
-	    datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json \
-	    datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json; \
-	  cat datasets/sqwiki.human_labeled_revisions.5k_2016.json | \
-	  grep '"needs_review": true' | head -n 20000 | shuf \
-	) > datasets/sqwiki.labeled_revisions.20k_2016.json
+		datasets/sqwiki.human_labeled_revisions.5k_2016.json \
+		datasets/sqwiki.autolabeled_revisions.20k_2016.json
+	./utility merge_labels $^ > $@
 
 datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/sqwiki.labeled_revisions.20k_2016.json
 	cat datasets/sqwiki.labeled_revisions.20k_2016.json | \
 	revscoring extract \
+		editquality.feature_lists.sqwiki.reverted \
 		editquality.feature_lists.sqwiki.damaging \
 		editquality.feature_lists.sqwiki.goodfaith \
 		--host https://sq.wikipedia.org \
 		--verbose > \
 	datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+
+tuning_reports/sqwiki.reverted.md: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.sqwiki.reverted \
+		reverted_for_damage \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/sqwiki.reverted.gradient_boosting.model: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.sqwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
+tuning_reports/sqwiki.damaging.md: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.sqwiki.damaging \
+		damaging \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/sqwiki.damaging.gradient_boosting.model: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.sqwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
+tuning_reports/sqwiki.goodfaith.md: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.sqwiki.goodfaith \
+		goodfaith \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/sqwiki.goodfaith.gradient_boosting.model: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.sqwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
+sqwiki_tuning_reports: \
+	tuning_reports/sqwiki.reverted.md \
+	tuning_reports/sqwiki.damaging.md \
+	tuning_reports/sqwiki.goodfaith.md
+
+sqwiki_models: \
+	models/sqwiki.reverted.gradient_boosting.model \
+	models/sqwiki.damaging.gradient_boosting.model \
+	models/sqwiki.goodfaith.gradient_boosting.model
 
 ################################# Swedish Wikipedia ###########################
 
