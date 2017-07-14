@@ -220,8 +220,8 @@ models/bnwiki.reverted.gradient_boosting.model: \
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
-		editquality.feature_lists.bnwiki.damaging \
-		damaging \
+		editquality.feature_lists.bnwiki.reverted \
+		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
@@ -487,8 +487,8 @@ models/elwiki.reverted.gradient_boosting.model: \
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
-		editquality.feature_lists.elwiki.damaging \
-		damaging \
+		editquality.feature_lists.elwiki.reverted \
+		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
@@ -2517,8 +2517,8 @@ models/tawiki.reverted.gradient_boosting.model: \
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
-		editquality.feature_lists.elwiki.damaging \
-		damaging \
+		editquality.feature_lists.tawiki.reverted \
+		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
