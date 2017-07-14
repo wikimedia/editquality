@@ -3,8 +3,10 @@
 
 models: \
 		arwiki_models \
+		bnwiki_models \
 		cswiki_models \
 		dewiki_models \
+		elwiki_models \
 		enwiki_models \
 		enwiktionary_models \
 		eswiki_models \
@@ -25,6 +27,7 @@ models: \
 		rowiki_models \
 		ruwiki_models \
 		svwiki_models \
+		tawiki_models \
 		trwiki_models \
 		ukwiki_models \
 		viwiki_models \
@@ -32,8 +35,10 @@ models: \
 
 tuning_reports: \
 		arwiki_tuning_reports \
+		bnwiki_tuning_reports \
 		cswiki_tuning_reports \
 		dewiki_tuning_reports \
+		elwiki_tuning_reports \
 		enwiki_tuning_reports \
 		enwiktionary_tuning_reports \
 		eswiki_tuning_reports \
@@ -54,6 +59,7 @@ tuning_reports: \
 		rowiki_tuning_reports \
 		ruwiki_tuning_reports \
 		svwiki_tuning_reports \
+		tawiki_tuning_reports \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
 		viwiki_tuning_reports \
@@ -172,6 +178,64 @@ datasets/azwiki.revisions_for_review.5k_2016.json: \
 	  grep '"needs_review": false' | \
 	  shuf -n 2500 \
 	) | shuf > $@
+
+############################# Bengali Wikipedia ##############################
+
+# From https://quarry.wmflabs.org/query/20229
+datasets/bnwiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/190661/output/0/json-lines?download=true > $@
+
+datasets/bnwiki.autolabeled_revisions.20k_2017.json: \
+		datasets/bnwiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://bn.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/bnwiki.revisions_for_review.5k_2017.json: \
+		datasets/bnwiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json: \
+		datasets/bnwiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.bnwiki.reverted \
+		--host https://bn.wikipedia.org \
+		--verbose > $@
+
+tuning_reports/bnwiki.reverted.md: \
+		datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.bnwiki.reverted \
+		reverted_for_damage \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/bnwiki.reverted.gradient_boosting.model: \
+		datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.bnwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
+bnwiki_models: \
+	models/bnwiki.reverted.gradient_boosting.model
+
+bnwiki_tuning_reports: \
+	tuning_reports/bnwiki.reverted.md
 
 ############################# Czech Wikipedia ################################
 
@@ -381,6 +445,64 @@ dewiki_models: \
 
 dewiki_tuning_reports: \
 		tuning_reports/dewiki.reverted.md
+
+############################# Greek Wikipedia ##############################
+
+# From https://quarry.wmflabs.org/query/20231
+datasets/elwiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/190663/output/0/json-lines?download=true > $@
+
+datasets/elwiki.autolabeled_revisions.20k_2017.json: \
+		datasets/elwiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://el.wikipedia.org \
+		--trusted-groups=bot,bureaucrat,sysop \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/elwiki.revisions_for_review.5k_2017.json: \
+		datasets/elwiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json: \
+		datasets/elwiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.elwiki.reverted \
+		--host https://el.wikipedia.org \
+		--verbose > $@
+
+tuning_reports/elwiki.reverted.md: \
+		datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.elwiki.reverted \
+		reverted_for_damage \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/elwiki.reverted.gradient_boosting.model: \
+		datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.elwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
+elwiki_models: \
+	models/elwiki.reverted.gradient_boosting.model
+
+elwiki_tuning_reports: \
+	tuning_reports/elwiki.reverted.md
 
 ############################# English Wikipedia ###############################
 datasets/enwiki.human_labeled_revisions.20k_2015.json:
@@ -2353,6 +2475,65 @@ svwiki_models: \
 
 svwiki_tuning_reports: \
 	tuning_reports/svwiki.reverted.md
+
+############################## Tamil Wikipedia ################################
+
+# From https://quarry.wmflabs.org/query/20230
+datasets/tawiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/190662/output/0/json-lines?download=true > $@
+
+datasets/tawiki.autolabeled_revisions.20k_2017.json: \
+		datasets/tawiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://ta.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,patroller,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/tawiki.revisions_for_review.5k_2017.json: \
+		datasets/tawiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json: \
+		datasets/tawiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.tawiki.reverted \
+		--host https://ta.wikipedia.org \
+		--verbose > $@
+
+tuning_reports/tawiki.reverted.md: \
+		datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.tawiki.reverted \
+		reverted_for_damage \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/tawiki.reverted.gradient_boosting.model: \
+		datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scorer_models.GradientBoosting \
+		editquality.feature_lists.tawiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		$(test_statistics) \
+		--balance-sample-weight \
+		--center --scale > $@
+
+tawiki_models: \
+	models/tawiki.reverted.gradient_boosting.model
+
+tawiki_tuning_reports: \
+	tuning_reports/tawiki.reverted.md
+
 
 ############################# Turkish Wikipedia ############################
 datasets/trwiki.human_labeled_revisions.20k_2015.json:
