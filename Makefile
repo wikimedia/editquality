@@ -2412,6 +2412,45 @@ datasets/sqwiki.autolabeled_revisions.20k_2016.json: \
 		--trusted-edits=1000 \
 		--verbose > $@
 
+datasets/sqwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/sqwiki/57/ > \
+	datasets/sqwiki.human_labeled_revisions.5k_2016.json
+
+datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json: \
+		datasets/sqwiki.human_labeled_revisions.5k_2016.json
+	cat datasets/sqwiki.human_labeled_revisions.5k_2016.json | \
+	grep '"needs_review": false' > \
+	datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json
+
+datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json: \
+		datasets/sqwiki.autolabeled_revisions.20k_2016.json
+	cat datasets/sqwiki.autolabeled_revisions.20k_2016.json | \
+	grep '"needs_review": false' > \
+	datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json
+
+datasets/sqwiki.labeled_revisions.20k_2016.json: \
+		datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json \
+		datasets/sqwiki.human_labeled_revisions.5k_2016.json
+	( \
+	  ./utility merge_labels \
+	    datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json \
+	    datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json; \
+	  cat datasets/sqwiki.human_labeled_revisions.5k_2016.json | \
+	  grep '"needs_review": true' | head -n 20000 | shuf \
+	) > datasets/sqwiki.labeled_revisions.20k_2016.json
+
+datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/sqwiki.labeled_revisions.20k_2016.json
+	cat datasets/sqwiki.labeled_revisions.20k_2016.json | \
+	revscoring extract \
+		editquality.feature_lists.sqwiki.damaging \
+		editquality.feature_lists.sqwiki.goodfaith \
+		--host https://sq.wikipedia.org \
+		--verbose > \
+	datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+
 ################################# Swedish Wikipedia ###########################
 
 datasets/svwiki.sampled_revisions.40k_2016.json:
