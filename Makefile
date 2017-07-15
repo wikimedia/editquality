@@ -677,11 +677,53 @@ models/enwiktionary.reverted.rf.model: \
 		--balance-sample-weight \
 		--center --scale > $@
 
+datasets/enwiktionary.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/enwiktionary/59/ > $@
+
+datasets/enwiktionary.labeled_revisions.100k_2016.json: \
+		datasets/enwiktionary.human_labeled_revisions.5k_2016.json \
+		datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json
+	./utility merge_labels $^ > $@
+
+datasets/enwiktionary.labeled_revisions.w_cache.100k_2016.json: \
+		datasets/enwiktionary.labeled_revisions.100k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.enwiktionary.goodfaith \
+		editquality.feature_lists.enwiktionary.damaging \
+		--host https://en.wiktionary.org \
+		--verbose > $@
+
+tuning_reports/enwiktionary.damaging.md: \
+		datasets/enwiktionary.labeled_revisions.w_cache.100k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiktionary.damaging \
+		damaging \
+		--cv-timeout=60 \
+		--debug > $@
+
+tuning_reports/enwiktionary.goodfaith.md: \
+		datasets/enwiktionary.labeled_revisions.w_cache.100k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiktionary.goodfaith \
+		goodfaith \
+		--cv-timeout=60 \
+		--debug > $@
+
 enwiktionary_models: \
-	models/enwiktionary.reverted.rf.model
+	models/enwiktionary.reverted.rf.model 
+#	models/enwiktionary.damaging.gradient_boosting.model \
+#	models/enwiktionary.goodfaith.gradient_boosting.model
 
 enwiktionary_tuning_reports: \
 	tuning_reports/enwiktionary.reverted.md
+#	tuning_reports/enwiktionary.damaging.md \
+#	tuning_reports/enwiktionary.goodfaith.md
 
 ############################# Spanish Wikipedia ################################
 
