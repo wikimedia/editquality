@@ -20,25 +20,10 @@ informals = [
     albanian.informals.revision.diff.match_prop_delta_decrease
 ]
 
-dict_words = [
-    albanian.dictionary.revision.diff.dict_word_delta_sum,
-    albanian.dictionary.revision.diff.dict_word_delta_increase,
-    albanian.dictionary.revision.diff.dict_word_delta_decrease,
-    albanian.dictionary.revision.diff.dict_word_prop_delta_sum,
-    albanian.dictionary.revision.diff.dict_word_prop_delta_increase,
-    albanian.dictionary.revision.diff.dict_word_prop_delta_decrease,
-    albanian.dictionary.revision.diff.non_dict_word_delta_sum,
-    albanian.dictionary.revision.diff.non_dict_word_delta_increase,
-    albanian.dictionary.revision.diff.non_dict_word_delta_decrease,
-    albanian.dictionary.revision.diff.non_dict_word_prop_delta_sum,
-    albanian.dictionary.revision.diff.non_dict_word_prop_delta_increase,
-    albanian.dictionary.revision.diff.non_dict_word_prop_delta_decrease
-]
-
 damaging = wikipedia.page + \
            wikitext.parent + wikitext.diff + mediawiki.user_rights + \
            mediawiki.protected_user + mediawiki.comment + \
-           badwords + informals + dict_words + \
+           badwords + informals + \
            enwiki.badwords + enwiki.informals
 
 reverted = damaging
