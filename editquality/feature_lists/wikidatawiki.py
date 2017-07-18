@@ -1,8 +1,12 @@
 from revscoring.features import revision_oriented, wikibase as wikibase_features
 from revscoring.features.meta import bools
+from revscoring.features.feature import Feature
 from revscoring.features.modifiers import not_
 
 from . import mediawiki, wikibase
+
+import re
+from itertools import groupby
 
 name = "wikidatawiki"
 
@@ -29,6 +33,49 @@ class items:
     """
     HUMAN = 'Q5'
 
+
+def _process_uppercase_ratio(comment):
+    return len(re.findall(r"[A-Z]", comment)) / (len(comment) + 1)
+
+
+def _process_numbers_ratio(comment):
+    return len(re.findall(r"\d", comment)) / (len(comment) + 1)
+
+
+def _process_whitespace_ratio(comment):
+    return len(re.findall(r"\s", comment)) / (len(comment) + 1)
+
+
+def _process_longest_repeated_char(text):
+    if len(text or "") > 0:
+        return max(sum(1 for _ in group)
+                   for _, group in groupby(text.lower()))
+    else:
+        return 1
+
+comment_longest_repeated_char = Feature(
+    "revision.comment.longest_repeated_char",
+    _process_longest_repeated_char,
+    returns=int,
+    depends_on=[revision_oriented.revision.datasources.comment])
+
+comment_uppercase_ratio = Feature(
+    "revision.comment.comment_uppercase_ratio",
+    _process_uppercase_ratio,
+    returns=float,
+    depends_on=[revision_oriented.revision.datasources.comment])
+
+comment_numbers_ratio = Feature(
+    "revision.comment.comment_numbers_ratio",
+    _process_numbers_ratio,
+    returns=float,
+    depends_on=[revision_oriented.revision.datasources.comment])
+
+comment_whitespace_ratio = Feature(
+    "revision.comment.comment_whitespace_ratio",
+    _process_whitespace_ratio,
+    returns=float,
+    depends_on=[revision_oriented.revision.datasources.comment])
 
 # Comment features
 is_client_delete = revision_oriented.revision.comment_matches(
@@ -115,8 +162,14 @@ local_wiki = [
     is_blp
 ]
 
+comment_related = [
+    comment_longest_repeated_char,
+    comment_uppercase_ratio,
+    comment_numbers_ratio,
+    comment_whitespace_ratio
+]
 damaging = mediawiki.comment + mediawiki.user_rights + \
            mediawiki.protected_user + wikibase.parent + wikibase.diff + \
-           local_wiki
+           local_wiki + comment_related
 reverted = damaging
 goodfaith = damaging
