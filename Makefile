@@ -2984,8 +2984,8 @@ datasets/wikidatawiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/wikidatawiki/19/ > $@
 
 datasets/wikidatawiki.labeled_revisions.20k_2015.json: \
-		datasets/wikidatawiki.autolabeled_revisions.20k_2015.json \
-		datasets/wikidatawiki.human_labeled_revisions.5k_2016.json
+		datasets/wikidatawiki.human_labeled_revisions.5k_2016.json \
+		datasets/wikidatawiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json: \
