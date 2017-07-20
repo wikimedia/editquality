@@ -586,6 +586,7 @@ tuning_reports/enwiki.goodfaith.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.goodfaith \
+		goodfaith \
 		--cv-timeout=60 \
 		--debug > $@
 
