@@ -2,6 +2,7 @@ from revscoring.features import revision_oriented, wikibase as wikibase_features
 from revscoring.features.meta import bools
 from revscoring.features.feature import Feature
 from revscoring.features.modifiers import not_
+from revscoring.languages import english
 
 from . import mediawiki, wikibase
 
@@ -53,6 +54,17 @@ def _process_longest_repeated_char(text):
     else:
         return 1
 
+
+def _process_english_bad_words(comment):
+    return len(
+        english.badwords.revision.datasources.matches.process(comment))
+
+
+def _process_english_informals(comment):
+    return len(
+        english.informals.revision.datasources.matches.process(comment))
+
+
 comment_longest_repeated_char = Feature(
     "revision.comment.longest_repeated_char",
     _process_longest_repeated_char,
@@ -75,6 +87,18 @@ comment_whitespace_ratio = Feature(
     "revision.comment.comment_whitespace_ratio",
     _process_whitespace_ratio,
     returns=float,
+    depends_on=[revision_oriented.revision.datasources.comment])
+
+comment_english_bad_words = Feature(
+    "revision.comment.comment_bad_words",
+    _process_english_bad_words,
+    returns=int,
+    depends_on=[revision_oriented.revision.datasources.comment])
+
+comment_english_informals = Feature(
+    "revision.comment.comment_informals",
+    _process_english_informals,
+    returns=int,
     depends_on=[revision_oriented.revision.datasources.comment])
 
 # Comment features
@@ -166,7 +190,9 @@ comment_related = [
     comment_longest_repeated_char,
     comment_uppercase_ratio,
     comment_numbers_ratio,
-    comment_whitespace_ratio
+    comment_whitespace_ratio,
+    comment_english_bad_words,
+    comment_english_informals
 ]
 damaging = mediawiki.comment + mediawiki.user_rights + \
            mediawiki.protected_user + wikibase.parent + wikibase.diff + \
