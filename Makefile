@@ -1304,8 +1304,12 @@ datasets/fiwiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/181764/output/0/json-lines?download=true > $@
 
 # From https://quarry.wmflabs.org/query/20200
-datasets/fiwiki.flaggedrevs_approved.50k_2017.json:
+datasets/fiwiki.flaggedrevs_approved_raw.50k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/192057/output/0/json-lines?download=true > $@
+
+datasets/fiwiki.flaggedrevs_approved.50k_2017.json: \
+		datasets/fiwiki.flaggedrevs_approved_raw.50k_2017.json
+	python ~/revscoring/revscoring/utilities/normalize.py < $< > $@
 
 datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/fiwiki.sampled_revisions.20k_2016.json
@@ -1335,8 +1339,7 @@ datasets/fiwiki.labeled_revisions.20k_2016.json: \
 datasets/fiwiki.flaggedrevs_training.65k.json: \
 		datasets/fiwiki.labeled_revisions.20k_2016.json \
 		datasets/fiwiki.flaggedrevs_approved.50k_2017.json
-	# TODO: write this script
-	./utility deduplicate_revs $^ > $@
+	python ~/revscoring/revscoring/utilities/deduplicate_revs.py $^ > $@
 
 datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/fiwiki.labeled_revisions.20k_2016.json
