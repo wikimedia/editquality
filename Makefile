@@ -957,6 +957,10 @@ datasets/fawiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ > $@
 
+datasets/fawiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/fawiki/21/ > $@
+
 datasets/fawiki.labeled_revisions.20k_2015.json: \
 		datasets/fawiki.human_labeled_revisions.20k_2015.json
 	cat $< | \
@@ -986,9 +990,25 @@ datasets/fawiki.autolabeled_revisions.2.20k_2015.json: \
 		--trusted-edits=1000 \
 		--verbose > $@
 
-tuning_reports/fawiki.reverted.md: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
+datasets/fawiki.labeled_revisions.20k_2016.json: \
+		datasets/fawiki.human_labeled_revisions.5k_2016.json \
+		datasets/fawiki.autolabeled_revisions.2.20k_2015.json
+	./utility merge_labels $^ > $@
+
+datasets/fawiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/fawiki.labeled_revisions.20k_2016.json
 	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.fawiki.reverted \
+	        editquality.feature_lists.fawiki.damaging \
+	        editquality.feature_lists.fawiki.goodfaith \
+	        --host https://fa.wikipedia.org \
+	        --verbose > $@
+
+tuning_reports/fawiki.reverted.md: \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.reverted \
@@ -997,8 +1017,9 @@ tuning_reports/fawiki.reverted.md: \
 		--debug  > $@
 
 models/fawiki.reverted.gradient_boosting.model: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.reverted \
@@ -1007,14 +1028,15 @@ models/fawiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale  > $@
 
 tuning_reports/fawiki.damaging.md: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.damaging \
@@ -1023,24 +1045,26 @@ tuning_reports/fawiki.damaging.md: \
 		--debug > $@
 
 models/fawiki.damaging.gradient_boosting.model: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'n_estimators=300' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale > $@
 
 tuning_reports/fawiki.goodfaith.md: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.goodfaith \
@@ -1049,8 +1073,9 @@ tuning_reports/fawiki.goodfaith.md: \
 		--debug > $@
 
 models/fawiki.goodfaith.gradient_boosting.model: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
 		editquality.feature_lists.fawiki.goodfaith \
@@ -1059,7 +1084,7 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'n_estimators=500' \
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale > $@
