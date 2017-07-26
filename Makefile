@@ -464,6 +464,7 @@ tuning_reports/enwiki.goodfaith.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.goodfaith \
+                goodfaith \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2161,25 +2162,25 @@ rowiki_tuning_reports: \
 datasets/ruwiki.sampled_revisions.20k_2015.json:
 	wget -qO- https://quarry.wmflabs.org/run/48649/output/0/json-lines?download=true > $@
 
-datasets/ruwiki.autolabeled_revisions.100.json: \
+datasets/ruwiki.autolabeled_revisions.20k_2015.json: \
 		datasets/ruwiki.sampled_revisions.20k_2015.json
-	cat $< | head -100 | \
+	cat $< | \
 	./utility autolabel --host=https://ru.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
 		--verbose > $@
 
-datasets/ruwiki.human_labeled_revisions.100.json:
+datasets/ruwiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/ruwiki/10/ | head -100 > $@
+		https://labels.wmflabs.org/campaigns/ruwiki/10/ > $@
 
-datasets/ruwiki.labeled_revisions.100.json: \
-		datasets/ruwiki.human_labeled_revisions.100.json \
-		datasets/ruwiki.autolabeled_revisions.100.json
+datasets/ruwiki.labeled_revisions.20k_2015.json: \
+		datasets/ruwiki.human_labeled_revisions.5k_2015.json \
+		datasets/ruwiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
-datasets/ruwiki.labeled_revisions.w_cache.100.json: \
-		datasets/ruwiki.labeled_revisions.100.json
+datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/ruwiki.labeled_revisions.20k_2015.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.ruwiki.reverted \
@@ -2189,7 +2190,7 @@ datasets/ruwiki.labeled_revisions.w_cache.100.json: \
 		--verbose > $@
 
 tuning_reports/ruwiki.reverted.md: \
-		datasets/ruwiki.labeled_revisions.w_cache.100.json
+		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -2215,7 +2216,7 @@ models/ruwiki.reverted.gradient_boosting.model: \
 		--center --scale > $@
 
 tuning_reports/ruwiki.damaging.md: \
-		datasets/ruwiki.labeled_revisions.w_cache.100.json
+		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -2225,7 +2226,7 @@ tuning_reports/ruwiki.damaging.md: \
 		--debug > $@
 
 models/ruwiki.damaging.gradient_boosting.model: \
-		datasets/ruwiki.labeled_revisions.w_cache.100.json
+		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
@@ -2241,7 +2242,7 @@ models/ruwiki.damaging.gradient_boosting.model: \
 		--center --scale > $@
 
 tuning_reports/ruwiki.goodfaith.md: \
-		datasets/ruwiki.labeled_revisions.w_cache.100.json
+		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -2251,7 +2252,7 @@ tuning_reports/ruwiki.goodfaith.md: \
 		--debug > $@
 
 models/ruwiki.goodfaith.gradient_boosting.model: \
-		datasets/ruwiki.labeled_revisions.w_cache.100.json
+		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
