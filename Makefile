@@ -586,7 +586,6 @@ tuning_reports/enwiki.goodfaith.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.goodfaith \
-                goodfaith \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2399,7 +2398,7 @@ models/ruwiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
-		-p 'max_features=null' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		$(test_statistics) \
 		--balance-sample-weight \
