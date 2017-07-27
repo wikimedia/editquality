@@ -97,7 +97,7 @@ def aggregate_labels(label_docs):
                 else False)
             label_lists['goodfaith'].append(
                 l['data']['goodfaith'] if l['data']['goodfaith'] is not None
-                else False)
+                else True)
 
         return {'damaging': mean(label_lists['damaging']) > 0.5,
                 'goodfaith': mean(label_lists['goodfaith']) >= 0.5,
