@@ -1303,13 +1303,13 @@ datasets/fiwiki.sampled_revisions.20k_2016.json:
 datasets/fiwiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/181764/output/0/json-lines?download=true > $@
 
-# From https://quarry.wmflabs.org/query/20200
-datasets/fiwiki.flaggedrevs_approved_raw.50k_2017.json:
-	wget -qO- https://quarry.wmflabs.org/run/192057/output/0/json-lines?download=true > $@
+# From https://quarry.wmflabs.org/query/20647
+datasets/fiwiki.flaggedrevs_approved_raw.210k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/194201/output/0/json-lines?download=true > $@
 
-datasets/fiwiki.flaggedrevs_approved.50k_2017.json: \
-		datasets/fiwiki.flaggedrevs_approved_raw.50k_2017.json
-	python ~/revscoring/revscoring/utilities/normalize.py < $< > $@
+datasets/fiwiki.flaggedrevs_approved.210k_2017.json: \
+		datasets/fiwiki.flaggedrevs_approved_raw.210k_2017.json
+	python oneoff-fiwiki.flaggedrevs/normalize_columns.py < $< > $@
 
 datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/fiwiki.sampled_revisions.20k_2016.json
@@ -1327,6 +1327,20 @@ datasets/fiwiki.autolabeled_revisions.20k_2017.json: \
 		--trusted-edits=1000 \
 		--verbose > $@
 
+datasets/fiwiki.flaggedrevs_autolabeled.210k_2017.json: \
+		datasets/fiwiki.flaggedrevs_approved.210k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://fi.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,autoreview,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/fiwiki.flaggedrevs_autolabeled_unreverted.210k_2017.json: \
+		datasets/fiwiki.flaggedrevs_autolabeled.210k_2017.json
+	cat $< | \
+	python oneoff-fiwiki.flaggedrevs/filter_data.py \
+		autolabel.review_reason --unequal="reverted edit" > $@
+
 datasets/fiwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fiwiki/55/ > $@
@@ -1339,7 +1353,7 @@ datasets/fiwiki.labeled_revisions.20k_2016.json: \
 datasets/fiwiki.flaggedrevs_training.65k.json: \
 		datasets/fiwiki.labeled_revisions.20k_2016.json \
 		datasets/fiwiki.flaggedrevs_approved.50k_2017.json
-	python ~/revscoring/revscoring/utilities/deduplicate_revs.py $^ > $@
+	./utility join_observations $^ rev_id > $@
 
 datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/fiwiki.labeled_revisions.20k_2016.json
@@ -1351,8 +1365,8 @@ datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json: \
 		--host https://fi.wikipedia.org \
 		--verbose > $@
 
-datasets/fiwiki.flaggedrevs_training.w_cache.65k.json: \
-		datasets/fiwiki.flaggedrevs_training.65k.json
+datasets/fiwiki.flaggedrevs_training.w_cache.225k.json: \
+		datasets/fiwiki.flaggedrevs_training.225k.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.fiwiki.reverted \
@@ -1470,7 +1484,7 @@ models/fiwiki.goodfaith.gradient_boosting.model: \
 fiwiki_models: \
 		models/fiwiki.damaging.gradient_boosting.model \
 		models/fiwiki.goodfaith.gradient_boosting.model \
-		models/fiwiki.flaggedrevs.gradient_boosting.model
+		models/fiwiki.damaging_w_flaggedrevs.gradient_boosting.model
 
 fiwiki_tuning_reports: \
 		tuning_reports/fiwiki.damaging.md \
