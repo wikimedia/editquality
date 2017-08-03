@@ -67,25 +67,15 @@ tuning_reports: \
 		#jawiki_tuning_reports
 		#urwiki_tuning_reports
 
-test_statistics = \
-		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.9)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
-		-s 'recall_at_precision(min_precision=0.995)' \
-		-s 'recall_at_precision(min_precision=0.99)' \
-		-s 'recall_at_precision(min_precision=0.98)' \
-		-s 'recall_at_precision(min_precision=0.90)' \
-		-s 'recall_at_precision(min_precision=0.75)' \
-		-s 'recall_at_precision(min_precision=0.60)' \
-		-s 'recall_at_precision(min_precision=0.45)' \
-		-s 'recall_at_precision(min_precision=0.15)'
 
-major_minor = 0.3
+major_minor = 0.4
 reverted_major_minor = $(major_minor)
 damaging_major_minor = $(major_minor)
 goodfaith_major_minor = $(major_minor)
+
+reverted_weight = 10
+damaging_weight = 10
+badfaith_weight = 10
 
 
 ############################# Arabic Wikipedia ################################
@@ -130,23 +120,25 @@ tuning_reports/arwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.arwiki.reverted \
 		reverted_for_damage \
-		--cv-timeout=60 \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--cv-timeout 60 \
 		--debug > $@
 
 models/arwiki.reverted.gradient_boosting.model: \
 		datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.arwiki.reverted \
 		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		--version $(reverted_major_minor).0 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		$(test_statistics) \
-		--balance-sample-weight \
+		--label-weight "true=$(reverted_weight)" \
+		--population-rate "true=0.035186595582635184" \
 		--center --scale > $@
 
 arwiki_models: \
@@ -212,6 +204,9 @@ tuning_reports/bnwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.bnwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -219,7 +214,7 @@ models/bnwiki.reverted.gradient_boosting.model: \
 		datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.bnwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -227,8 +222,8 @@ models/bnwiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		$(test_statistics) \
-		--balance-sample-weight \
+		--label-weight "true=$(reverted_weight)" \
+		--population-rate "true=0.021554310862172434" \
 		--center --scale > $@
 
 bnwiki_models: \
@@ -312,6 +307,8 @@ tuning_reports/cswiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -319,7 +316,7 @@ models/cswiki.reverted.gradient_boosting.model: \
 		datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cswiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -338,6 +335,8 @@ tuning_reports/cswiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -345,7 +344,7 @@ models/cswiki.damaging.gradient_boosting.model: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cswiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -364,6 +363,8 @@ tuning_reports/cswiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -371,7 +372,7 @@ models/cswiki.goodfaith.gradient_boosting.model: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cswiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -419,6 +420,8 @@ tuning_reports/dewiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.dewiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -426,7 +429,7 @@ models/dewiki.reverted.gradient_boosting.model: \
 		datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.dewiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -477,6 +480,8 @@ tuning_reports/elwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.elwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -484,7 +489,7 @@ models/elwiki.reverted.gradient_boosting.model: \
 		datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.elwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -532,6 +537,8 @@ tuning_reports/enwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -539,7 +546,7 @@ models/enwiki.reverted.gradient_boosting.model: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.enwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -559,6 +566,8 @@ tuning_reports/enwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -566,7 +575,7 @@ models/enwiki.damaging.gradient_boosting.model: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.enwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -585,6 +594,8 @@ tuning_reports/enwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -592,7 +603,7 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.enwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -655,6 +666,8 @@ tuning_reports/enwiktionary.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiktionary.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -662,7 +675,7 @@ models/enwiktionary.reverted.rf.model: \
 		datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.RF \
+		revscoring.scoring.models.RandomForest \
 		editquality.feature_lists.enwiktionary.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -699,6 +712,8 @@ tuning_reports/enwiktionary.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiktionary.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -709,11 +724,13 @@ tuning_reports/enwiktionary.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiktionary.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
 enwiktionary_models: \
-	models/enwiktionary.reverted.rf.model 
+	models/enwiktionary.reverted.rf.model
 #	models/enwiktionary.damaging.gradient_boosting.model \
 #	models/enwiktionary.goodfaith.gradient_boosting.model
 
@@ -750,6 +767,8 @@ tuning_reports/eswiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -757,7 +776,7 @@ models/eswiki.reverted.gradient_boosting.model: \
 		datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.eswiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -803,6 +822,8 @@ tuning_reports/eswikibooks.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswikibooks.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -810,7 +831,7 @@ models/eswikibooks.reverted.gradient_boosting.model: \
 		datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.eswikibooks.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -867,6 +888,8 @@ tuning_reports/etwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug  > $@
 
@@ -877,6 +900,8 @@ tuning_reports/etwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug  > $@
 
@@ -887,6 +912,8 @@ tuning_reports/etwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug  > $@
 
@@ -894,7 +921,7 @@ models/etwiki.reverted.gradient_boosting.model: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.etwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -910,7 +937,7 @@ models/etwiki.damaging.gradient_boosting.model: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.etwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -926,7 +953,7 @@ models/etwiki.goodfaith.gradient_boosting.model: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.etwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -1007,6 +1034,8 @@ tuning_reports/fawiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug  > $@
 
@@ -1015,7 +1044,7 @@ models/fawiki.reverted.gradient_boosting.model: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
 	cat $^ | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fawiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1035,6 +1064,8 @@ tuning_reports/fawiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1043,7 +1074,7 @@ models/fawiki.damaging.gradient_boosting.model: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
 	cat $^ | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fawiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -1063,6 +1094,8 @@ tuning_reports/fawiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1071,7 +1104,7 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
 	cat $^ | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fawiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -1142,6 +1175,8 @@ tuning_reports/fiwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fiwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1152,6 +1187,8 @@ tuning_reports/fiwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fiwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1162,6 +1199,8 @@ tuning_reports/fiwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fiwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1169,7 +1208,7 @@ models/fiwiki.reverted.gradient_boosting.model: \
 		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fiwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1185,7 +1224,7 @@ models/fiwiki.damaging.gradient_boosting.model: \
 		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fiwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -1201,7 +1240,7 @@ models/fiwiki.goodfaith.gradient_boosting.model: \
 		datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fiwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -1263,6 +1302,8 @@ tuning_reports/frwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.frwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1270,7 +1311,7 @@ models/frwiki.reverted.gradient_boosting.model: \
 		datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.frwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1308,6 +1349,8 @@ tuning_reports/frwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.frwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1315,7 +1358,7 @@ models/frwiki.damaging.gradient_boosting.model: \
 		datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.frwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -1334,6 +1377,8 @@ tuning_reports/frwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.frwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1341,7 +1386,7 @@ models/frwiki.goodfaith.gradient_boosting.model: \
 		datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.frwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -1435,6 +1480,8 @@ tuning_reports/hewiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1445,6 +1492,8 @@ tuning_reports/hewiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1455,6 +1504,8 @@ tuning_reports/hewiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1463,7 +1514,7 @@ models/hewiki.reverted.gradient_boosting.model: \
 		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.hewiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1480,7 +1531,7 @@ models/hewiki.damaging.rf.model: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.RF \
+		revscoring.scoring.models.RandomForest \
 		editquality.feature_lists.hewiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -1497,7 +1548,7 @@ models/hewiki.goodfaith.gradient_boosting.model: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.hewiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -1545,6 +1596,8 @@ tuning_reports/huwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.huwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1552,7 +1605,7 @@ models/huwiki.reverted.rf.model: \
 		datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.RF \
+		revscoring.scoring.models.RandomForest \
 		editquality.feature_lists.huwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1609,6 +1662,8 @@ tuning_reports/idwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.idwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1616,7 +1671,7 @@ models/idwiki.reverted.gradient_boosting.model: \
 		datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.idwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1662,6 +1717,8 @@ tuning_reports/itwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.itwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1669,7 +1726,7 @@ models/itwiki.reverted.gradient_boosting.model: \
 		datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.itwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1730,6 +1787,8 @@ tuning_reports/kowiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.kowiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1737,7 +1796,7 @@ models/kowiki.reverted.gradient_boosting.model: \
 		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.kowiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1791,6 +1850,8 @@ tuning_reports/nlwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nlwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1798,7 +1859,7 @@ models/nlwiki.reverted.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nlwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1836,6 +1897,8 @@ tuning_reports/nlwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nlwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1843,7 +1906,7 @@ models/nlwiki.damaging.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nlwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -1862,6 +1925,8 @@ tuning_reports/nlwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nlwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1869,7 +1934,7 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nlwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -1929,6 +1994,8 @@ tuning_reports/nowiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nowiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1936,7 +2003,7 @@ models/nowiki.reverted.gradient_boosting.model: \
 		datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nowiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -1987,6 +2054,8 @@ tuning_reports/plwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.plwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -1994,7 +2063,7 @@ models/plwiki.reverted.gradient_boosting.model: \
 		datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.plwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -2036,6 +2105,8 @@ tuning_reports/plwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.plwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2043,7 +2114,7 @@ models/plwiki.damaging.gradient_boosting.model: \
 		datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.plwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -2063,6 +2134,8 @@ tuning_reports/plwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.plwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2070,7 +2143,7 @@ models/plwiki.goodfaith.rf.model: \
 		datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.RF \
+		revscoring.scoring.models.RandomForest \
 		editquality.feature_lists.plwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -2118,6 +2191,8 @@ tuning_reports/ptwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ptwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2125,7 +2200,7 @@ models/ptwiki.reverted.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ptwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -2144,6 +2219,8 @@ tuning_reports/ptwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ptwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2151,7 +2228,7 @@ models/ptwiki.damaging.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ptwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -2170,6 +2247,8 @@ tuning_reports/ptwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ptwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2177,7 +2256,7 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ptwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -2245,6 +2324,8 @@ tuning_reports/rowiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.rowiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2252,7 +2333,7 @@ models/rowiki.reverted.gradient_boosting.model: \
 		datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -2271,6 +2352,8 @@ tuning_reports/rowiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.rowiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2278,7 +2361,7 @@ models/rowiki.damaging.gradient_boosting.model: \
 		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -2297,6 +2380,8 @@ tuning_reports/rowiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.rowiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2304,7 +2389,7 @@ models/rowiki.goodfaith.gradient_boosting.model: \
 		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -2365,6 +2450,8 @@ tuning_reports/ruwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ruwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2372,7 +2459,7 @@ models/ruwiki.reverted.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ruwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -2391,6 +2478,8 @@ tuning_reports/ruwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ruwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2398,7 +2487,7 @@ models/ruwiki.damaging.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ruwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -2417,6 +2506,8 @@ tuning_reports/ruwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ruwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2424,7 +2515,7 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ruwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -2486,6 +2577,8 @@ tuning_reports/sqwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.sqwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2493,7 +2586,7 @@ models/sqwiki.reverted.gradient_boosting.model: \
 		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.sqwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -2512,6 +2605,8 @@ tuning_reports/sqwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.sqwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2519,7 +2614,7 @@ models/sqwiki.damaging.gradient_boosting.model: \
 		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.sqwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -2538,6 +2633,8 @@ tuning_reports/sqwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.sqwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2545,7 +2642,7 @@ models/sqwiki.goodfaith.gradient_boosting.model: \
 		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.sqwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -2593,6 +2690,8 @@ tuning_reports/svwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.svwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2600,7 +2699,7 @@ models/svwiki.reverted.gradient_boosting.model: \
 		datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.svwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -2662,6 +2761,8 @@ tuning_reports/tawiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.tawiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2669,7 +2770,7 @@ models/tawiki.reverted.gradient_boosting.model: \
 		datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.tawiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -2742,6 +2843,8 @@ tuning_reports/trwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.trwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2749,7 +2852,7 @@ models/trwiki.reverted.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.trwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -2768,6 +2871,8 @@ tuning_reports/trwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.trwiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2775,7 +2880,7 @@ models/trwiki.damaging.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.trwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -2794,6 +2899,8 @@ tuning_reports/trwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.trwiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2801,7 +2908,7 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.trwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
@@ -2849,6 +2956,8 @@ tuning_reports/ukwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ukwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2856,7 +2965,7 @@ models/ukwiki.reverted.gradient_boosting.model: \
 		datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ukwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -2942,6 +3051,8 @@ tuning_reports/viwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.viwiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -2949,7 +3060,7 @@ models/viwiki.reverted.gradient_boosting.model: \
 		datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.viwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -3005,6 +3116,8 @@ tuning_reports/wikidatawiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.reverted \
 		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
 		--cv-timeout=60 \
 		--debug \
 		--scoring=roc_auc > $@
@@ -3013,7 +3126,7 @@ models/wikidatawiki.reverted.gradient_boosting.model: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
@@ -3032,6 +3145,8 @@ tuning_reports/wikidatawiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.damaging \
 		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -3039,7 +3154,7 @@ models/wikidatawiki.damaging.gradient_boosting.model: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
@@ -3058,6 +3173,8 @@ tuning_reports/wikidatawiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -3065,7 +3182,7 @@ models/wikidatawiki.goodfaith.gradient_boosting.model: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
