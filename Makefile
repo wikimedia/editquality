@@ -384,12 +384,10 @@ models/cswiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 cswiki_models: \
-	models/cswiki.reverted.gradient_boosting.model \
 	models/cswiki.damaging.gradient_boosting.model \
 	models/cswiki.goodfaith.gradient_boosting.model
 
 cswiki_tuning_reports: \
-	tuning_reports/cswiki.reverted.md \
 	tuning_reports/cswiki.damaging.md \
 	tuning_reports/cswiki.goodfaith.md
 
@@ -607,12 +605,10 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 enwiki_models: \
-		models/enwiki.reverted.gradient_boosting.model \
 		models/enwiki.damaging.gradient_boosting.model \
 		models/enwiki.goodfaith.gradient_boosting.model
 
 enwiki_tuning_reports: \
-		tuning_reports/enwiki.reverted.md \
 		tuning_reports/enwiki.damaging.md \
 		tuning_reports/enwiki.goodfaith.md
 
@@ -943,12 +939,10 @@ models/etwiki.goodfaith.gradient_boosting.model: \
 		--center --scale  > $@
 
 etwiki_models: \
-		models/etwiki.reverted.gradient_boosting.model \
 		models/etwiki.damaging.gradient_boosting.model \
 		models/etwiki.goodfaith.gradient_boosting.model
 
 etwiki_tuning_reports: \
-		tuning_reports/etwiki.reverted.md \
 		tuning_reports/etwiki.damaging.md \
 		tuning_reports/etwiki.goodfaith.md
 
@@ -1090,12 +1084,10 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 fawiki_models: \
-		models/fawiki.reverted.gradient_boosting.model \
 		models/fawiki.damaging.gradient_boosting.model \
 		models/fawiki.goodfaith.gradient_boosting.model
 
 fawiki_tuning_reports: \
-		tuning_reports/fawiki.reverted.md \
 		tuning_reports/fawiki.damaging.md \
 		tuning_reports/fawiki.goodfaith.md
 
@@ -1222,12 +1214,10 @@ models/fiwiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 fiwiki_models: \
-		models/fiwiki.reverted.gradient_boosting.model \
 		models/fiwiki.damaging.gradient_boosting.model \
 		models/fiwiki.goodfaith.gradient_boosting.model
 
 fiwiki_tuning_reports: \
-		tuning_reports/fiwiki.reverted.md \
 		tuning_reports/fiwiki.damaging.md \
 		tuning_reports/fiwiki.goodfaith.md
 
@@ -1364,12 +1354,10 @@ models/frwiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 frwiki_models: \
-		models/frwiki.reverted.gradient_boosting.model \
 		models/frwiki.damaging.gradient_boosting.model \
 		models/frwiki.goodfaith.gradient_boosting.model
 
 frwiki_tuning_reports: \
-		tuning_reports/frwiki.reverted.md \
 		tuning_reports/frwiki.damaging.md \
 		tuning_reports/frwiki.goodfaith.md
 
@@ -1522,12 +1510,10 @@ models/hewiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 hewiki_models: \
-		models/hewiki.reverted.gradient_boosting.model \
 		models/hewiki.damaging.rf.model \
 		models/hewiki.goodfaith.gradient_boosting.model
 
 hewiki_tuning_reports: \
-		tuning_reports/hewiki.reverted.md \
 		tuning_reports/hewiki.damaging.md \
 		tuning_reports/hewiki.goodfaith.md
 
@@ -1896,12 +1882,10 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 nlwiki_models: \
-		models/nlwiki.reverted.gradient_boosting.model \
 		models/nlwiki.damaging.gradient_boosting.model \
 		models/nlwiki.goodfaith.gradient_boosting.model
 
 nlwiki_tuning_reports: \
-		tuning_reports/nlwiki.reverted.md \
 		tuning_reports/nlwiki.damaging.md \
 		tuning_reports/nlwiki.goodfaith.md
 
@@ -2099,12 +2083,10 @@ models/plwiki.goodfaith.rf.model: \
 		--center --scale > $@
 
 plwiki_models: \
-		models/plwiki.reverted.gradient_boosting.model \
 		models/plwiki.damaging.gradient_boosting.model \
 		models/plwiki.goodfaith.rf.model
 
 plwiki_tuning_reports: \
-		tuning_reports/plwiki.reverted.md \
 		tuning_reports/plwiki.damaging.md \
 		tuning_reports/plwiki.goodfaith.md
 
@@ -2208,12 +2190,10 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 ptwiki_models: \
-		models/ptwiki.reverted.gradient_boosting.model \
 		models/ptwiki.damaging.gradient_boosting.model \
 		models/ptwiki.goodfaith.gradient_boosting.model
 
 ptwiki_tuning_reports: \
-		tuning_reports/ptwiki.reverted.md \
 		tuning_reports/ptwiki.damaging.md \
 		tuning_reports/ptwiki.goodfaith.md
 
@@ -2457,12 +2437,10 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 ruwiki_models: \
-		models/ruwiki.reverted.gradient_boosting.model \
 		models/ruwiki.damaging.gradient_boosting.model \
 		models/ruwiki.goodfaith.gradient_boosting.model
 
 ruwiki_tuning_reports: \
-		tuning_reports/ruwiki.reverted.md \
 		tuning_reports/ruwiki.damaging.md \
 		tuning_reports/ruwiki.goodfaith.md
 
@@ -2580,12 +2558,10 @@ models/sqwiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 sqwiki_tuning_reports: \
-	tuning_reports/sqwiki.reverted.md \
 	tuning_reports/sqwiki.damaging.md \
 	tuning_reports/sqwiki.goodfaith.md
 
 sqwiki_models: \
-	models/sqwiki.reverted.gradient_boosting.model \
 	models/sqwiki.damaging.gradient_boosting.model \
 	models/sqwiki.goodfaith.gradient_boosting.model
 
@@ -2838,12 +2814,10 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 trwiki_models: \
-		models/trwiki.reverted.gradient_boosting.model \
 		models/trwiki.damaging.gradient_boosting.model \
 		models/trwiki.goodfaith.gradient_boosting.model
 
 trwiki_tuning_reports: \
-		tuning_reports/trwiki.reverted.md \
 		tuning_reports/trwiki.damaging.md \
 		tuning_reports/trwiki.goodfaith.md
 
@@ -3104,12 +3078,10 @@ models/wikidatawiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 wikidatawiki_models: \
-		models/wikidatawiki.reverted.gradient_boosting.model \
 		models/wikidatawiki.damaging.gradient_boosting.model \
 		models/wikidatawiki.goodfaith.gradient_boosting.model
 
 wikidatawiki_tuning_reports: \
-		tuning_reports/wikidatawiki.reverted.md \
 		tuning_reports/wikidatawiki.damaging.md \
 		tuning_reports/wikidatawiki.goodfaith.md
 
