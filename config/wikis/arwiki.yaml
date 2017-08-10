@@ -1,0 +1,5 @@
+name: arwiki
+label: Arabic Wikipedia
+samples:
+    20k_2016:
+        url: "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
