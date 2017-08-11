@@ -1,2 +1,21 @@
 name: enwiki
 label: English Wikipedia
+samples:
+    20k_2015:
+        labeling_campaign: https://labels.wmflabs.org/campaigns/enwiki/4/
+
+default_sample: 20k_2015
+
+models:
+    - reverted
+    - damaging
+    - goodfaith
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat

@@ -23,7 +23,7 @@ def render_all():
     )
 
     all_templates = [
-        basedir + "/Makefile.jinja"
+        basedir + "/Makefile.j2"
     ]
     for path in all_templates:
         template = env.get_template(path)
