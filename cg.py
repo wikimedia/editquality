@@ -1,6 +1,7 @@
 """Generate templated Makefile"""
 
 
+import copy
 import glob
 import jinja2
 import os.path
@@ -11,9 +12,37 @@ basedir = "."
 
 
 def load_config():
+    defaults = yaml.safe_load(open(basedir + "/config/defaults.yaml", "r"))
+
     all_files = glob.glob(basedir + "/config/wikis/*.yaml")
     wikis = [yaml.safe_load(open(f, "r")) for f in all_files]
-    return {"wikis": wikis}
+
+    config = {
+        "defaults": defaults,
+        "wikis": wikis,
+    }
+    config = populate_defaults(config)
+
+    return config
+
+
+def populate_defaults(config):
+    wikis_config = []
+    # TODO: Genearlize this list vs dict and defaults negotiation.
+    for wiki in config["wikis"]:
+        if isinstance(wiki["models"], list):
+            wiki["models"] = {name: {} for name in wiki["models"]}
+
+        for model_name, model in wiki["models"].items():
+            tuning_params = copy.deepcopy(config["defaults"]["tuning_params"])
+            if "tuning_params" in model:
+                tuning_params.update(model["tuning_params"])
+            model["tuning_params"] = tuning_params
+        wikis_config.append(wiki)
+
+    config["wikis"] = wikis_config
+
+    return config
 
 
 def render_all():

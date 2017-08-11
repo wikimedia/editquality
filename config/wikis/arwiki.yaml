@@ -9,7 +9,9 @@ balanced_5k_set_for_review: true
 default_sample: 20k_2016
 
 models:
-    - reverted
+    reverted:
+        tuning_params:
+            max_depth: 5
 
 host: ar.wikipedia.org
 trusted_groups:

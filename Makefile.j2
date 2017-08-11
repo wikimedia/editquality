@@ -2,14 +2,14 @@
 .DELETE_ON_ERROR:
 
 models: \
-		{% for wiki in wikis %}
-			{{ wiki.name }}_models {% if not loop.last %}\{% endif %}
-		{% endfor %}
+	{%- for wiki in wikis %}
+		{{ wiki.name }}_models {% if not loop.last %}\{% endif -%}
+	{% endfor %}
 
 tuning_reports: \
-		{% for wiki in wikis %}
-			{{ wiki.name }}_tuning_reports {% if not loop.last %}\{% endif %}
-		{% endfor %}
+	{%- for wiki in wikis %}
+		{{ wiki.name }}_tuning_reports {% if not loop.last %}\{% endif -%}
+	{% endfor %}
 
 test_statistics = \
 		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
@@ -31,13 +31,12 @@ reverted_major_minor = $(major_minor)
 damaging_major_minor = $(major_minor)
 goodfaith_major_minor = $(major_minor)
 
-
 {% for wiki in wikis %}
 ############################# {{ wiki.label }} ################################
 
-{% for sample_name, sample in wiki.samples.items() %}
+{%- for sample_name, sample in wiki.samples.items() %}
 
-{% if "labeling_campaign" in sample %}
+{%- if "labeling_campaign" in sample %}
 datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
 	./utility fetch_labels \
 		{{ sample.labeling_campaign }} > $@
@@ -51,10 +50,9 @@ datasets/{{ wiki.name }}.labeled_revisions.20k_2015.json: \
 		--verbose > $@
 {% endif %}
 
-{% if "quarry_url" in sample %}
+{%- if "quarry_url" in sample %}
 datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json:
 	wget -qO- {{ sample.quarry_url }} > $@
-{% endif %}
 
 datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
 		datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json
@@ -65,12 +63,13 @@ datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
+{% endif %}
 
 {% endfor %}
 
-{%- if wiki.balanced_5k_set_for_review %}
+{%- if wiki.balanced_5k_set_for_review -%}
 datasets/{{ wiki.name }}.revisions_for_review.5k_2016.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
 	( \
 	 cat $< | \
 	 grep '"needs_review": true' | \
@@ -85,48 +84,51 @@ datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
 	cat $< | \
 	revscoring extract \
-		{%- for model in wiki.models -%}
-		editquality.feature_lists.{{ wiki.name }}.{{ model }} \
-		{%- endfor -%}
+		{% for model_name, model in wiki.models.items() -%}
+		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
+		{% endfor -%}
 		--host https://{{ wiki.host }} \
 		--verbose > $@
 
-{% for model in wiki.models %}
-tuning_reports/{{ wiki.name }}.{{ model }}.md: \
+{% for model_name, model in wiki.models.items() %}
+tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.{{ wiki.name }}.{{ model }} \
-		{%- if model == "reverted" %}
+		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
+		{%- if model_name == "reverted" %}
 		reverted_for_damage \
 		{% else %}
-		{{ model }} \
+		{{ model_name }} \
 		{% endif -%}
 		--cv-timeout=60 \
 		--debug > $@
-{% endfor %}
 
-models/{{ wiki.name }}.reverted.gradient_boosting.model: \
+models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scorer_models.GradientBoosting \
-		editquality.feature_lists.{{ wiki.name }}.reverted \
-		reverted_for_damage \
+		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
+		{% if model_name == "reverted" %}reverted_for_damage{% else %}{{ model_name }}{% endif %} \
 		--version=$(reverted_major_minor).0 \
-		-p 'max_depth=5' \
-		-p 'learning_rate=0.01' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		{% for key, value in model.tuning_params.items() -%}
+		-p '{{ key }}={{ value }}' \
+		{% endfor -%}
 		$(test_statistics) \
 		--balance-sample-weight \
 		--center --scale > $@
+{% endfor %}
 
 {{ wiki.name }}_models: \
-	models/{{ wiki.name }}.reverted.gradient_boosting.model
+{%- for model_name, model in wiki.models.items() %}
+	models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model {% if not loop.last %}\{% endif -%}
+{% endfor %}
 
 {{ wiki.name }}_tuning_reports: \
-	tuning_reports/{{ wiki.name }}.reverted.md
+{%- for model_name, model in wiki.models.items() %}
+	tuning_reports/{{ wiki.name }}.{{ model_name }}.md {% if not loop.last %}\{% endif -%}
+{% endfor %}
 
 {% endfor %}

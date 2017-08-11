@@ -1,5 +1,6 @@
 name: enwiki
 label: English Wikipedia
+host: en.wikipedia.org
 samples:
     20k_2015:
         labeling_campaign: https://labels.wmflabs.org/campaigns/enwiki/4/
