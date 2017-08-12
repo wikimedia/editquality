@@ -2582,12 +2582,10 @@ models/rowiki.goodfaith.gradient_boosting.model: \
 		--center --scale > $@
 
 rowiki_models: \
-		models/rowiki.reverted.gradient_boosting.model \
 		models/rowiki.damaging.gradient_boosting.model \
 		models/rowiki.goodfaith.gradient_boosting.model
 
 rowiki_tuning_reports: \
-		tuning_reports/rowiki.reverted.md \
 		tuning_reports/rowiki.damaging.md \
 		tuning_reports/rowiki.goodfaith.md
 
