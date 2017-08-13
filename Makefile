@@ -711,7 +711,7 @@ tuning_reports/enwiktionary.reverted.md: \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.004778273117085203" \
 		--pop-rate "false=0.9952217268829148" \
-		--scale --center \
+		--center --scale \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -819,7 +819,7 @@ tuning_reports/eswiki.reverted.md: \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.11036013315847877" \
 		--pop-rate "false=0.8896398668415212" \
-		--center --scale
+		--center --scale \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -948,7 +948,7 @@ tuning_reports/etwiki.reverted.md: \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.020021127823331153" \
 		--pop-rate "false=0.9799788721766688" \
-		--scale --center \
+		--center --scale \
 		--cv-timeout=60 \
 		--debug  > $@
 
@@ -1106,7 +1106,7 @@ tuning_reports/fawiki.reverted.md: \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.029729045327931122" \
 		--pop-rate "false=0.9702709546720689" \
-		--scale --center \
+		--center --scale \
 		--cv-timeout=60 \
 		--debug  > $@
 
