@@ -27,6 +27,7 @@ models: \
 		rowiki_models \
 		ruwiki_models \
 		svwiki_models \
+		sqwiki_models \
 		tawiki_models \
 		trwiki_models \
 		ukwiki_models \
@@ -59,6 +60,7 @@ tuning_reports: \
 		rowiki_tuning_reports \
 		ruwiki_tuning_reports \
 		svwiki_tuning_reports \
+		sqwiki_tuning_reports \
 		tawiki_tuning_reports \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
