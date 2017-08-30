@@ -50,8 +50,9 @@ import re
 import sys
 import traceback
 from functools import lru_cache
-from itertools import islice
+from itertools import islice, tee
 from multiprocessing import cpu_count
+from tqdm import tqdm
 
 import docopt
 import mwapi
@@ -124,22 +125,23 @@ def run(api_host, revisions, labels_f, trusted_groups, trusted_edits,
                             revert_radius, revert_window, exclude_reverted,
                             exclude_reverting)
 
+    revisions, revisions2 = tee(revisions)
+    number_of_revisions = sum(1 for line in revisions2)
     rev_id_chunks = chunk(revisions, 50)
-    for revision in para.map(autolabel, rev_id_chunks, mappers=threads):
+    tq = tqdm(para.map(autolabel, rev_id_chunks, mappers=threads), file=sys.stderr, total=number_of_revisions)
+    verbose_result = ''
+    for revision in tq:
         if verbose:
             if not revision['autolabel']['needs_review']:
-                sys.stderr.write(".")
+                verbose_result += '.'
             else:
-                sys.stderr.write(
-                    (revision['autolabel']['review_reason'] or "?")[0])
-
-            sys.stderr.flush()
+                verbose_result += (revision['autolabel']['review_reason'] or "?")[0]
 
         labels_f.write(json.dumps(revision))
         labels_f.write("\n")
 
     if verbose:
-        sys.stderr.write("\n")
+        sys.stderr.write(verbose_result + "\n")
         sys.stderr.flush()
 
 
