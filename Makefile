@@ -1683,6 +1683,24 @@ hewiki_tuning_reports: \
 		tuning_reports/hewiki.damaging.md \
 		tuning_reports/hewiki.goodfaith.md
 
+############################### Croatian Wikipedia ###########################
+
+# From https://quarry.wmflabs.org/query/21213
+datasets/hrwiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/200064/output/0/json-lines?download=true > $@
+
+datasets/hrwiki.autolabeled_revisions.20k_2017.json: \
+		datasets/hrwiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://hr.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/hrwiki.revisions_for_review.5k_2017.json: \
+		datasets/hrwiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
 ############################### Hungarian Wikipedia ###########################
 
 datasets/huwiki.sampled_revisions.40k_2016.json:
