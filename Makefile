@@ -2953,11 +2953,46 @@ datasets/svwiki.autolabeled_revisions.40k_2016.json: \
 		--trusted-edits=1000 \
 		--verbose > $@
 
-datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json: \
+datasets/svwiki.human_labeled_revisions.no_autolabel.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/svwiki/35/ > $@
+
+datasets/svwiki.human_labeled_revisions.5k_2016.json: \
+		datasets/svwiki.human_labeled_revisions.no_autolabel.5k_2016.json \
 		datasets/svwiki.autolabeled_revisions.40k_2016.json
+	./utility join_observations $^ rev_id \
+		--verbose > $@
+
+datasets/svwiki.human_labeled_revisions.5k_2016.no_review.json: \
+		datasets/svwiki.human_labeled_revisions.5k_2016.json
+	cat $< | \
+	grep '"needs_review": false' > $@
+
+datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json: \
+		datasets/svwiki.autolabeled_revisions.40k_2016.json
+	cat $< | \
+	grep '"needs_review": false' > $@
+
+datasets/svwiki.labeled_revisions.40k_2016.json: \
+		datasets/svwiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json \
+		datasets/svwiki.human_labeled_revisions.5k_2016.json
+	( \
+	  ./utility merge_labels \
+	    datasets/svwiki.human_labeled_revisions.5k_2016.no_review.json \
+	    datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json; \
+	  cat datasets/svwiki.human_labeled_revisions.5k_2016.json | \
+	  grep '"needs_review": true' \
+	) > $@
+
+
+datasets/svwiki.labeled_revisions.w_cache.40k_2016.json: \
+		datasets/svwiki.labeled_revisions.40k_2016.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.svwiki.reverted \
+		editquality.feature_lists.svwiki.damaging \
+		editquality.feature_lists.svwiki.goodfaith \
 		--host https://sv.wikipedia.org \
 		--verbose > $@
 
@@ -2977,7 +3012,7 @@ tuning_reports/svwiki.reverted.md: \
 		--debug > $@
 
 models/svwiki.reverted.gradient_boosting.model: \
-		datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json
+		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
@@ -2993,6 +3028,70 @@ models/svwiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9816589515826348" \
 		--center --scale > $@
 
+tuning_reports/svwiki.damaging.md: \
+		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.svwiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.025209073272463033" \
+		--pop-rate "false=0.974790926727537" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/svwiki.damaging.gradient_boosting.model: \
+		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.svwiki.damaging \
+		reverted_for_damage \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.025209073272463033" \
+		--pop-rate "false=0.974790926727537" \
+		--center --scale > $@
+
+tuning_reports/svwiki.goodfaith.md: \
+		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.svwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "true=$(goodfaith_weight)" \
+		--pop-rate "true=0.9822912868686937" \
+		--pop-rate "false=0.01770871313130623" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/svwiki.goodfaith.gradient_boosting.model: \
+		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.svwiki.goodfaith \
+		reverted_for_damage \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(goodfaith_weight)" \
+		--pop-rate "true=0.9822912868686937" \
+		--pop-rate "false=0.01770871313130623" \
+		--center --scale > $@
+
 datasets/svwiki.revisions_for_review.5k_2016.json: \
 		datasets/svwiki.autolabeled_revisions.40k_2016.json
 	( \
@@ -3005,10 +3104,12 @@ datasets/svwiki.revisions_for_review.5k_2016.json: \
 	) | shuf > $@
 
 svwiki_models: \
-	models/svwiki.reverted.gradient_boosting.model
+	models/svwiki.damaging.gradient_boosting.model \
+	models/svwiki.goodfaith.gradient_boosting.model
 
 svwiki_tuning_reports: \
-	tuning_reports/svwiki.reverted.md
+	tuning_reports/svwiki.damaging.md \
+	tuning_reports/svwiki.goodfaith.md
 
 ############################## Tamil Wikipedia ################################
 
