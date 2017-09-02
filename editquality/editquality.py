@@ -3,7 +3,8 @@ This script provides access to a set of utilities for extracting features and
 building edit quality predictors.
 
 * fetch_labels -- Fetches labels from the labels server for a campaign
-* prelabel -- Labels edits by whether or not they require review
+* join_observations -- Joins a set of observations together
+* autolabel -- Labels edits by whether or not they require review
 
 Usage:
     editquality (-h | --help)
