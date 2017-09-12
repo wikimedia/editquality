@@ -1730,16 +1730,17 @@ models/hrwiki.reverted.gradient_boosting.model: \
 		datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.hrwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
-		$(test_statistics) \
-		--balance-sample-weight \
+		-p 'n_estimators=300' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.07927353670258512" \
+		--pop-rate "false=0.9207264632974149" \
 		--center --scale > $@
 
 hrwiki_models: \
