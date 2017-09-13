@@ -5,6 +5,7 @@ samples:
     20k_2015:
         labeling_campaign: https://labels.wmflabs.org/campaigns/enwiki/4/
 
+wikilabels_sample: 5k_balanced_2016
 default_sample: 20k_2015
 
 models:

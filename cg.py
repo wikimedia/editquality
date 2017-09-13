@@ -60,5 +60,14 @@ def render_all():
         print(out)
 
 
+# TODO:
+# * make API calls to learn things
+# * ores/config has dict merge
+# * survey dependency solvers
+# https://github.com/ninja-build/ninja/wiki/List-of-generators-producing-ninja-build-files
+# ** Still considering: scons, doit, drake, ninja, meson
+# ** Don't like so far: waf
+# * Where can we store information about samples?  Original population rates; how we've distorted them.
+
 if __name__ == "__main__":
     render_all()
