@@ -89,8 +89,7 @@ max_extractors = 4
 ############################# Arabic Wikipedia ################################
 
 datasets/arwiki.sampled_revisions.20k_2016.json:
-	wget -qO- http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true > \
-	datasets/arwiki.sampled_revisions.20k_2016.json
+	wget -qO- http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true > $@
 
 datasets/arwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/arwiki.sampled_revisions.20k_2016.json
