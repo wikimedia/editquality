@@ -1891,65 +1891,58 @@ itwiki_tuning_reports: \
 
 ########################### Japanese Wikipedia ################################
 
-datasets/jawiki.sampled_revisions.40k_2016.tsv:
-	wget -qO- http://quarry.wmflabs.org/run/89016/output/0/tsv?download=true > \
-	datasets/jawiki.sampled_revisions.40k_2016.tsv
+# From https://quarry.wmflabs.org/query/9927
+datasets/jawiki.sampled_revisions.40k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/89016/output/0/json-lines?download=true > $@
 
-datasets/jawiki.prelabeled_revisions.40k_2016.tsv: \
-		datasets/jawiki.sampled_revisions.40k_2016.tsv
-	cat datasets/jawiki.sampled_revisions.40k_2016.tsv | \
-	./utility prelabel https://ja.wikipedia.org \
+datasets/jawiki.autolabeled_revisions.40k_2016.json: \
+		datasets/jawiki.sampled_revisions.40k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://ja.wikipedia.org \
 		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--verbose > \
-	datasets/jawiki.prelabeled_revisions.40k_2016.tsv
+		--verbose > $@
 
-datasets/jawiki.rev_reverted.40k_2016.tsv: \
-		datasets/jawiki.sampled_revisions.40k_2016.tsv
-	cat datasets/jawiki.sampled_revisions.40k_2016.tsv | \
-	./utility label_reverted \
-		--host https://ja.wikipedia.org \
-		--revert-radius 7 \
-		--verbose > \
-	datasets/jawiki.rev_reverted.40k_2016.tsv
-
-datasets/jawiki.features_reverted.40k_2016.tsv: \
-		datasets/jawiki.rev_reverted.40k_2016.tsv
-	cat datasets/jawiki.rev_reverted.40k_2016.tsv | \
-	revscoring extract_features \
+datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json: \
+		datasets/jawiki.autolabeled_revisions.40k_2016.json
+	cat $< | \
+	revscoring extract \
 		editquality.feature_lists.jawiki.reverted \
 		--host https://ja.wikipedia.org \
-		--include-revid \
-		--verbose > \
-	datasets/jawiki.features_reverted.40k_2016.tsv
+		--verbose > $@
 
 tuning_reports/jawiki.reverted.md: \
-		datasets/jawiki.features_reverted.40k_2016.tsv
-	cat datasets/jawiki.features_reverted.40k_2016.tsv | cut -f2- | \
+		datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.jawiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.03256945140908635" \
+		--pop-rate "false=0.9674305485909136" \
+		--center --scale \
 		--cv-timeout=60 \
-		--debug \
-		--label-type=bool > \
-	tuning_reports/jawiki.reverted.md
+		--debug > $@
 
 models/jawiki.reverted.gradient_boosting.model: \
-		datasets/jawiki.features_reverted.40k_2016.tsv
-	cut datasets/jawiki.features_reverted.40k_2016.tsv -f2- | \
-	revscoring train_test \
-		revscoring.scorer_models.GradientBoosting \
+		datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.jawiki.reverted \
-		--version 0.0.1 \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
-		$(test_statistics) \
-		--balance-sample-weight \
-		--center --scale \
-		--label-type=bool > \
-	models/jawiki.reverted.gradient_boosting.model
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.03256945140908635" \
+		--pop-rate "false=0.9674305485909136" \
+		--center --scale > $@
+
 
 jawiki_models: \
 	models/jawiki.reverted.gradient_boosting.model
@@ -3433,9 +3426,9 @@ datasets/viwiki.autolabeled_revisions.500k_2015.json: \
 
 datasets/viwiki.revisions_to_review.5k_2015.json: \
 		datasets/viwiki.autolabeled_revisions.500k_2015.json
-	(cat $< | grep True | \
+	(cat $< | grep '"needs_review": true' | \
 	 shuf -n 2500; \
-	 cat $< | grep False | \
+	 cat $< | grep '"needs_review": false' | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
