@@ -793,6 +793,10 @@ enwiktionary_tuning_reports: \
 datasets/eswiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/42221/output/0/json-lines?download=true > $@
 
+datasets/eswiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/eswiki/12/ > $@
+
 datasets/eswiki.autolabeled_revisions.20k_2015.json: \
 		datasets/eswiki.sampled_revisions.20k_2015.json
 	cat $< | \
@@ -801,13 +805,45 @@ datasets/eswiki.autolabeled_revisions.20k_2015.json: \
 		--trusted-edits=1000 \
 		--verbose > $@
 
+datasets/eswiki.labeled_revisions.20k_2015.json: \
+		datasets/eswiki.human_labeled_revisions.5k_2015.json \
+		datasets/eswiki.autolabeled_revisions.20k_2015.json
+	./utility merge_labels $^ > $@
+
 datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswiki.autolabeled_revisions.20k_2015.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.eswiki.reverted \
+		editquality.feature_lists.eswiki.damaging \
+		editquality.feature_lists.eswiki.goodfaith \
 		--host https://es.wikipedia.org \
 		--verbose > $@
+
+datasets/eswiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/eswiki.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.eswiki.reverted \
+		editquality.feature_lists.eswiki.damaging \
+		editquality.feature_lists.eswiki.goodfaith \
+		--host https://es.wikipedia.org \
+		--verbose > $@
+
+tuning_reports/eswiki.damaging.md: \
+		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.1273116307504203" \
+		--pop-rate "false=0.8726883692495797" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug  > $@
 
 tuning_reports/eswiki.reverted.md: \
 		datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json
@@ -841,11 +877,62 @@ models/eswiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.8896398668415212" \
 		--center --scale > $@
 
+models/eswiki.damaging.gradient_boosting.model: \
+		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.11036013315847877" \
+		--pop-rate "false=0.8896398668415212" \
+		--center --scale  > $@
+
+tuning_reports/eswiki.goodfaith.md: \
+		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.11036013315847877" \
+		--pop-rate "false=0.8896398668415212" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug  > $@
+
+models/eswiki.goodfaith.gradient_boosting.model: \
+		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.11036013315847877" \
+		--pop-rate "false=0.8896398668415212" \
+		--center --scale  > $@
+
 eswiki_models: \
-		models/eswiki.reverted.gradient_boosting.model
+		models/eswiki.damaging.gradient_boosting.model \
+		models/enwiki.goodfaith.gradient_boosting.model
 
 eswiki_tuning_reports: \
-		tuning_reports/eswiki.reverted.md
+		tuning_reports/eswiki.damaging.md \
+		tuning_reports/eswiki.goodfaith.md
 
 ############################# Spanish Wikibooks ################################
 
