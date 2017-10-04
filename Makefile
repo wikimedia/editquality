@@ -16,6 +16,7 @@ models: \
 		fiwiki_models \
 		frwiki_models \
 		hewiki_models \
+		hrwiki_models \
 		huwiki_models \
 		idwiki_models \
 		itwiki_models \
@@ -50,6 +51,7 @@ tuning_reports: \
 		fiwiki_tuning_reports \
 		frwiki_tuning_reports \
 		hewiki_tuning_reports \
+		hrwiki_tuning_reports \
 		huwiki_tuning_reports \
 		idwiki_tuning_reports \
 		itwiki_tuning_reports \
@@ -1787,6 +1789,52 @@ datasets/hrwiki.autolabeled_revisions.20k_2017.json: \
 datasets/hrwiki.revisions_for_review.5k_2017.json: \
 		datasets/hrwiki.autolabeled_revisions.20k_2017.json
 	grep '"needs_review": true' $< | shuf > $@
+
+datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json: \
+		datasets/hrwiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.hrwiki.reverted \
+		--host https://hr.wikipedia.org \
+		--verbose > $@
+
+tuning_reports/hrwiki.reverted.md: \
+		datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hrwiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.07927353670258512" \
+		--pop-rate "false=0.9207264632974149" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/hrwiki.reverted.gradient_boosting.model: \
+		datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.hrwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.07927353670258512" \
+		--pop-rate "false=0.9207264632974149" \
+		--center --scale > $@
+
+hrwiki_models: \
+	models/hrwiki.reverted.gradient_boosting.model
+
+hrwiki_tuning_reports: \
+	tuning_reports/hrwiki.reverted.md
 
 ############################### Hungarian Wikipedia ###########################
 
