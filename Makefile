@@ -942,7 +942,7 @@ models/eswiki.goodfaith.gradient_boosting.model: \
 
 eswiki_models: \
 		models/eswiki.damaging.gradient_boosting.model \
-		models/enwiki.goodfaith.gradient_boosting.model
+		models/eswiki.goodfaith.gradient_boosting.model
 
 eswiki_tuning_reports: \
 		tuning_reports/eswiki.damaging.md \
