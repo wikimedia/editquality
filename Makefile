@@ -82,6 +82,7 @@ reverted_weight = 10
 damaging_weight = 10
 goodfaith_weight = 10
 
+max_extractors = 4
 
 ############################# Arabic Wikipedia ################################
 
@@ -116,6 +117,7 @@ datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.arwiki.reverted \
 		--host https://ar.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/arwiki.reverted.md: \
@@ -204,6 +206,7 @@ datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json: \
 	revscoring extract \
 		editquality.feature_lists.bnwiki.reverted \
 		--host https://bn.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/bnwiki.reverted.md: \
@@ -302,6 +305,7 @@ datasets/cswiki.labeled_revisions.w_cache.20k_2016.json: \
 		editquality.feature_lists.cswiki.damaging \
 		editquality.feature_lists.cswiki.goodfaith \
 		--host https://cs.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json: \
@@ -310,6 +314,7 @@ datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.cswiki.reverted \
 		--host https://cs.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/cswiki.reverted.md: \
@@ -435,6 +440,7 @@ datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json: \
 	revscoring extract \
 		editquality.feature_lists.dewiki.reverted \
 		--host https://de.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/dewiki.reverted.md: \
@@ -499,6 +505,7 @@ datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json: \
 	revscoring extract \
 		editquality.feature_lists.elwiki.reverted \
 		--host https://el.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/elwiki.reverted.md: \
@@ -560,6 +567,7 @@ datasets/enwiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.enwiki.goodfaith \
 		editquality.feature_lists.enwiki.damaging \
 		--host https://en.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/enwiki.reverted.md: \
@@ -692,6 +700,7 @@ datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.enwiktionary.reverted \
 		--host https://en.wiktionary.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json: \
@@ -752,6 +761,7 @@ datasets/enwiktionary.labeled_revisions.w_cache.100k_2016.json: \
 		editquality.feature_lists.enwiktionary.goodfaith \
 		editquality.feature_lists.enwiktionary.damaging \
 		--host https://en.wiktionary.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/enwiktionary.damaging.md: \
@@ -820,6 +830,7 @@ datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.eswiki.damaging \
 		editquality.feature_lists.eswiki.goodfaith \
 		--host https://es.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 datasets/eswiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -830,6 +841,7 @@ datasets/eswiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.eswiki.damaging \
 		editquality.feature_lists.eswiki.goodfaith \
 		--host https://es.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/eswiki.damaging.md: \
@@ -930,7 +942,7 @@ models/eswiki.goodfaith.gradient_boosting.model: \
 
 eswiki_models: \
 		models/eswiki.damaging.gradient_boosting.model \
-		models/enwiki.goodfaith.gradient_boosting.model
+		models/eswiki.goodfaith.gradient_boosting.model
 
 eswiki_tuning_reports: \
 		tuning_reports/eswiki.damaging.md \
@@ -955,6 +967,7 @@ datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json: \
 	revscoring extract \
 		editquality.feature_lists.eswikibooks.reverted \
 		--host https://es.wikibooks.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/eswikibooks.reverted.md: \
@@ -1025,6 +1038,7 @@ datasets/etwiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.etwiki.damaging \
 		editquality.feature_lists.etwiki.goodfaith \
 		--host https://et.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/etwiki.reverted.md: \
@@ -1156,6 +1170,7 @@ datasets/fawiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.fawiki.damaging \
 		editquality.feature_lists.fawiki.goodfaith \
 		--host https://fa.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 datasets/fawiki.sampled_revisions.2.20k_2015.json:
@@ -1336,6 +1351,7 @@ datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json: \
 		editquality.feature_lists.fiwiki.damaging \
 		editquality.feature_lists.fiwiki.goodfaith \
 		--host https://fi.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/fiwiki.reverted.md: \
@@ -1475,6 +1491,7 @@ datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.frwiki.reverted \
 		--host https://fr.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/frwiki.reverted.md: \
@@ -1526,6 +1543,7 @@ datasets/frwiki.labeled_revisions.w_cache.20k_2016.json: \
 		editquality.feature_lists.frwiki.damaging \
 		editquality.feature_lists.frwiki.goodfaith \
 		--host https://fr.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/frwiki.damaging.md: \
@@ -1657,6 +1675,7 @@ datasets/hewiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.hewiki.damaging \
 		editquality.feature_lists.hewiki.goodfaith \
 		--host https://he.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json: \
@@ -1665,6 +1684,7 @@ datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json: \
 	revscoring extract \
 		editquality.feature_lists.hewiki.reverted \
 		--host https://he.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/hewiki.reverted.md: \
@@ -1796,6 +1816,7 @@ datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json: \
 	revscoring extract \
 		editquality.feature_lists.hrwiki.reverted \
 		--host https://hr.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/hrwiki.reverted.md: \
@@ -1855,6 +1876,7 @@ datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.huwiki.reverted \
 		--host https://hu.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/huwiki.reverted.md: \
@@ -1925,6 +1947,7 @@ datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.idwiki.reverted \
 		--host https://id.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/idwiki.reverted.md: \
@@ -1984,6 +2007,7 @@ datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json: \
 	revscoring extract \
 		editquality.feature_lists.itwiki.reverted \
 		--host https://it.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/itwiki.reverted.md: \
@@ -2044,6 +2068,7 @@ datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.jawiki.reverted \
 		--host https://ja.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/jawiki.reverted.md: \
@@ -2106,6 +2131,7 @@ datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.kowiki.reverted \
 		--host https://ko.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/kowiki.reverted.md: \
@@ -2224,6 +2250,7 @@ datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json: \
 		editquality.feature_lists.nlwiki.damaging \
 		editquality.feature_lists.nlwiki.goodfaith \
 		--host https://nl.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/nlwiki.damaging.md: \
@@ -2329,6 +2356,7 @@ datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json: \
 	revscoring extract \
 		editquality.feature_lists.nowiki.reverted \
 		--host https://no.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/nowiki.reverted.md: \
@@ -2393,6 +2421,7 @@ datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json: \
 	revscoring extract \
 		editquality.feature_lists.plwiki.reverted \
 		--host https://pl.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/plwiki.reverted.md: \
@@ -2448,6 +2477,7 @@ datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json: \
 		editquality.feature_lists.plwiki.damaging \
 		editquality.feature_lists.plwiki.goodfaith \
 		--host https://pl.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/plwiki.damaging.md: \
@@ -2542,6 +2572,7 @@ datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json: \
 	revscoring extract \
 		editquality.feature_lists.ptwiki.reverted \
 		--host https://pt.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/ptwiki.reverted.md: \
@@ -2677,6 +2708,7 @@ datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.rowiki.reverted \
 		--host https://ro.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -2687,6 +2719,7 @@ datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
 		editquality.feature_lists.rowiki.goodfaith \
 		editquality.feature_lists.rowiki.damaging \
 		--host https://ro.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/rowiki.reverted.md: \
@@ -2823,6 +2856,7 @@ datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.ruwiki.goodfaith \
 		editquality.feature_lists.ruwiki.damaging \
 		--host https://ru.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/ruwiki.reverted.md: \
@@ -2961,6 +2995,7 @@ datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
 		editquality.feature_lists.sqwiki.damaging \
 		editquality.feature_lists.sqwiki.goodfaith \
 		--host https://sq.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > \
 	datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
 
@@ -3122,6 +3157,7 @@ datasets/svwiki.labeled_revisions.w_cache.40k_2016.json: \
 		editquality.feature_lists.svwiki.damaging \
 		editquality.feature_lists.svwiki.goodfaith \
 		--host https://sv.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/svwiki.reverted.md: \
@@ -3263,6 +3299,7 @@ datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json: \
 	revscoring extract \
 		editquality.feature_lists.tawiki.reverted \
 		--host https://ta.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/tawiki.reverted.md: \
@@ -3325,6 +3362,7 @@ datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.trwiki.damaging \
 		editquality.feature_lists.trwiki.goodfaith \
 		--host https://tr.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 datasets/trwiki.sampled_revisions.20k_2016.json:
@@ -3349,6 +3387,7 @@ datasets/trwiki.autolabeled_revisions.w_cache.20k_2016.json: \
 	revscoring extract \
 		editquality.feature_lists.trwiki.reverted \
 		--host https://tr.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/trwiki.reverted.md: \
@@ -3474,6 +3513,7 @@ datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json: \
 	revscoring extract \
 		editquality.feature_lists.ukwiki.reverted \
 		--host https://uk.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/ukwiki.reverted.md: \
@@ -3573,6 +3613,7 @@ datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json: \
 	revscoring extract \
 		editquality.feature_lists.viwiki.reverted \
 		--host https://vi.wikipedia.org \
+		--extractor $(max_extractors) \
 		--verbose > $@
 
 tuning_reports/viwiki.reverted.md: \
