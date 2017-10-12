@@ -953,6 +953,10 @@ eswiki_tuning_reports: \
 datasets/eswikibooks.sampled_revisions.20k_2015.json:
 	wget -qO- https://quarry.wmflabs.org/run/113419/output/0/json-lines?download=true > $@
 
+datasets/eswikibooks.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/eswikibooks/42/ > $@
+
 datasets/eswikibooks.autolabeled_revisions.20k_2015.json: \
 		datasets/eswikibooks.sampled_revisions.20k_2015.json
 	cat $< | \
@@ -961,11 +965,29 @@ datasets/eswikibooks.autolabeled_revisions.20k_2015.json: \
 		--trusted-edits=1000 \
 		--verbose > $@
 
+datasets/eswikibooks.labeled_revisions.20k_2015.json: \
+		datasets/eswikibooks.human_labeled_revisions.5k_2015.json \
+		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
+	./utility merge_labels $^ > $@
+
 datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.eswikibooks.reverted \
+		editquality.feature_lists.eswikibooks.damaging \
+		editquality.feature_lists.eswikibooks.goodfaith \
+		--host https://es.wikibooks.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/eswikibooks.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.eswikibooks.reverted \
+		editquality.feature_lists.eswikibooks.damaging \
+		editquality.feature_lists.eswikibooks.goodfaith \
 		--host https://es.wikibooks.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
@@ -1002,11 +1024,77 @@ models/eswikibooks.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9101689579179347" \
 		--center --scale > $@
 
+tuning_reports/eswikibooks.damaging.md: \
+		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswikibooks.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.1126671580499105" \
+		--pop-rate "false=0.8873328419500895" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug  > $@
+
+models/eswikibooks.damaging.gradient_boosting.model: \
+		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswikibooks.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.1126671580499105" \
+		--pop-rate "false=0.8873328419500895" \
+		--center --scale  > $@
+
+tuning_reports/eswikibooks.goodfaith.md: \
+		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswikibooks.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9139393939393939" \
+		--pop-rate "false=0.08606060606060606" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug  > $@
+
+models/eswikibooks.goodfaith.gradient_boosting.model: \
+		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswikibooks.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.5' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9139393939393939" \
+		--pop-rate "false=0.08606060606060606" \
+		--center --scale  > $@
+
 eswikibooks_models: \
-		models/eswikibooks.reverted.gradient_boosting.model
+		models/eswikibooks.damaging.gradient_boosting.model
+		models/eswikibooks.goodfaith.gradient_boosting.model
 
 eswikibooks_tuning_reports: \
-		tuning_reports/eswikibooks.reverted.md
+		tuning_reports/eswikibooks.damaging.md
+		tuning_reports/eswikibooks.goodfaith.md
 
 ########################### Estonian Wikipedia ################################
 
