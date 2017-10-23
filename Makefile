@@ -3363,6 +3363,23 @@ svwiki_tuning_reports: \
 	tuning_reports/svwiki.damaging.md \
 	tuning_reports/svwiki.goodfaith.md
 
+############################## Serbian Wikipedia ################################
+# From https://quarry.wmflabs.org/query/22469
+datasets/srwiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/210792/output/0/json-lines?download=true > $@
+
+datasets/srwiki.autolabeled_revisions.20k_2017.json: \
+		datasets/srwiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://sr.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,patroller,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/srwiki.revisions_for_review.5k_2017.json: \
+		datasets/srwiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
 ############################## Tamil Wikipedia ################################
 
 # From https://quarry.wmflabs.org/query/20230
