@@ -3365,11 +3365,11 @@ svwiki_tuning_reports: \
 
 ############################## Serbian Wikipedia ################################
 # From https://quarry.wmflabs.org/query/22469
-datasets/srwiki.sampled_revisions.20k_2017.json:
-	wget -qO- https://quarry.wmflabs.org/run/210792/output/0/json-lines?download=true > $@
+datasets/srwiki.sampled_revisions.120k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/211097/output/0/json-lines?download=true > $@
 
-datasets/srwiki.autolabeled_revisions.20k_2017.json: \
-		datasets/srwiki.sampled_revisions.20k_2017.json
+datasets/srwiki.autolabeled_revisions.120k_2017.json: \
+		datasets/srwiki.sampled_revisions.120k_2017.json
 	cat $< | \
 	./utility autolabel --host=https://sr.wikipedia.org \
 		--trusted-groups=autopatrolled,bot,bureaucrat,patroller,rollbacker,sysop \
@@ -3377,7 +3377,7 @@ datasets/srwiki.autolabeled_revisions.20k_2017.json: \
 		--verbose > $@
 
 datasets/srwiki.revisions_for_review.5k_2017.json: \
-		datasets/srwiki.autolabeled_revisions.20k_2017.json
+		datasets/srwiki.autolabeled_revisions.120k_2017.json
 	grep '"needs_review": true' $< | shuf > $@
 
 ############################## Tamil Wikipedia ################################
