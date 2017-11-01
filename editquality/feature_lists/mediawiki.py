@@ -24,11 +24,11 @@ user_rights = [
     revision_oriented.revision.user.in_group(
         {'browsearchive', 'deletedhistory', 'interface-editor',
          'noratelimit', 'accountcreator', 'massmessage-sender', 'templateeditor',
-         'autopatrolled', 'propertycreator', 'centralnoticeadmin'}, 
+         'autopatrolled', 'propertycreator', 'centralnoticeadmin'},
         name="revision.user.is_trusted"),
     revision_oriented.revision.user.in_group(
-        {'rollback', 'abusefilter', 'patroller', 
-         'reviewer', 'autoreview', 'autoreviewer', 'editor', 'autoeditor', 
+        {'rollback', 'abusefilter', 'patroller',
+         'reviewer', 'autoreview', 'autoreviewer', 'editor', 'autoeditor',
          'eliminator'},
         name="revision.user.is_patroller"),
     revision_oriented.revision.user.in_group(
