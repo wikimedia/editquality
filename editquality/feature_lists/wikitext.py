@@ -8,6 +8,7 @@ def _process_new_longest(p_longest, r_longest):
     else:
         return 1
 
+
 parent = [
     log(wikitext.revision.parent.chars + 1),
     log(wikitext.revision.parent.tokens + 1),

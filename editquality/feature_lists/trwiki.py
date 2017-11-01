@@ -29,11 +29,11 @@ trwiki_user_rights = [
 ]
 
 damaging = wikipedia.page + \
-           wikitext.parent + wikitext.diff + mediawiki.user_rights + \
-           mediawiki.protected_user + mediawiki.comment + \
-           badwords + informals + \
-           enwiki.badwords + enwiki.informals + \
-           trwiki_user_rights
+    wikitext.parent + wikitext.diff + mediawiki.user_rights + \
+    mediawiki.protected_user + mediawiki.comment + \
+    badwords + informals + \
+    enwiki.badwords + enwiki.informals + \
+    trwiki_user_rights
 
 reverted = damaging
 goodfaith = damaging
