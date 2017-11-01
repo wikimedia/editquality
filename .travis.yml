@@ -3,17 +3,37 @@ dist: trusty
 python:
   - "3.5"
 
+addons:
+  apt:
+    packages:
+    - enchant
+    - aspell-hu
+    - myspell-en-au
+    - myspell-en-gb
+    - myspell-en-us
+    - myspell-en-za
+
 # command to install dependencies
 install: 
   - pip install -r requirements.txt
   - python setup.py install
   - pip install codecov
   - pip install flake8
+  - python -m nltk.downloader stopwords
 
 script:
-  - flake8 . --ignore=E722
+  - flake8 . --ignore=E722 --max-line-length=85
   - coverage run --source editquality -m pytest -m "not nottravis"
 
 after_success:
   - coverage report
   - codecov
+
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#wikimedia-ai"
+    on_success: change
+    on_failure: change
+    template:
+      - "%{repository_slug}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} %{build_url}"

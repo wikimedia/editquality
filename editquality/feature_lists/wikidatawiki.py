@@ -195,7 +195,7 @@ comment_related = [
     comment_english_informals
 ]
 damaging = mediawiki.comment + mediawiki.user_rights + \
-           mediawiki.protected_user + wikibase.parent + wikibase.diff + \
-           local_wiki + comment_related
+    mediawiki.protected_user + wikibase.parent + wikibase.diff + \
+    local_wiki + comment_related
 reverted = damaging
 goodfaith = damaging

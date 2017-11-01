@@ -122,7 +122,7 @@ class Filter:
 
     def filter(self, doc):
         return sum(condition(doc) for condition in self.conditions) == \
-               len(self.conditions)
+            len(self.conditions)
 
     @classmethod
     def from_strings(cls, condition_strings):
