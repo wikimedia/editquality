@@ -36,10 +36,10 @@ dict_words = [
 ]
 
 damaging = wikipedia.page + \
-           wikitext.parent + wikitext.diff + mediawiki.user_rights + \
-           mediawiki.protected_user + mediawiki.comment + \
-           badwords + informals + dict_words + \
-           enwiki.badwords
+    wikitext.parent + wikitext.diff + mediawiki.user_rights + \
+    mediawiki.protected_user + mediawiki.comment + \
+    badwords + informals + dict_words + \
+    enwiki.badwords
 
 reverted = damaging
 goodfaith = damaging
