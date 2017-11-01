@@ -21,10 +21,10 @@ informals = [
 ]
 
 damaging = wikipedia.page + \
-           wikitext.parent + wikitext.diff + mediawiki.user_rights + \
-           mediawiki.protected_user + mediawiki.comment + \
-           badwords + informals + \
-           enwiki.badwords + enwiki.informals
+    wikitext.parent + wikitext.diff + mediawiki.user_rights + \
+    mediawiki.protected_user + mediawiki.comment + \
+    badwords + informals + \
+    enwiki.badwords + enwiki.informals
 
 reverted = damaging
 goodfaith = damaging

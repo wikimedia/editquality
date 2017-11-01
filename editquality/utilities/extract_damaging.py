@@ -127,7 +127,7 @@ def load_user_group_members(groups, session):
 def load_user_info(user_name, session):
     logger.debug("Getting info for {0}".format(user_name))
     res = session.get(action='query', list='users', ususers=user_name,
-                       usprop='groups|editcount')
+                      usprop='groups|editcount')
     user_data = res["query"]["users"][0]
     if 'missing' in user_data:
         return User(user_name, 0, set())
@@ -173,9 +173,10 @@ def run(paths, session, start, end, revert_radius, revert_window,
                 if revert is not None:
                     # A revert!
                     for reverted in revert.reverteds:
-                        if (revision.timestamp - \
+                        if (revision.timestamp -
                             reverted.timestamp) <= revert_window and \
-                           reverted.user is not None and revision.user is not None and \
+                           reverted.user is not None and \
+                           revision.user is not None and \
                            reverted.user.text != revision.user.text and \
                            reverted.maybe_damaging is not False:
                             # Happened within the window
@@ -255,6 +256,7 @@ def run(paths, session, start, end, revert_radius, revert_window,
 
     if verbose:
         sys.stderr.write("\n")
+
 
 if __name__ == "__main__":
     try:
