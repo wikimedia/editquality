@@ -83,13 +83,13 @@ def main(argv=None):
         labels_f = open(args['--output'], 'w')
 
     trusted_groups = set(args['--trusted-groups'].strip().split(",")) \
-                     if args['--trusted-groups'] is not None else None
+        if args['--trusted-groups'] is not None else None
     trusted_edits = int(args['--trusted-edits']) \
-                    if args['--trusted-edits'] is not None else None
+        if args['--trusted-edits'] is not None else None
 
     revert_radius = int(args['--revert-radius'])
     revert_window = int(float(args['--revert-window']) * 60 * 60) \
-                    if args['--revert-window'] is not None else None
+        if args['--revert-window'] is not None else None
 
     if args['--exclude-reverted'] is not None:
         exclude_reverted = re.compile(args['--exclude-reverted'])
@@ -128,14 +128,21 @@ def run(api_host, revisions, labels_f, trusted_groups, trusted_edits,
     revisions, revisions2 = tee(revisions)
     number_of_revisions = sum(1 for line in revisions2)
     rev_id_chunks = chunk(revisions, 50)
-    tq = tqdm(para.map(autolabel, rev_id_chunks, mappers=threads), file=sys.stderr, total=number_of_revisions)
+    tq = tqdm(
+        para.map(
+            autolabel,
+            rev_id_chunks,
+            mappers=threads),
+        file=sys.stderr,
+        total=number_of_revisions)
     verbose_result = ''
     for revision in tq:
         if verbose:
             if not revision['autolabel']['needs_review']:
                 verbose_result += '.'
             else:
-                verbose_result += (revision['autolabel']['review_reason'] or "?")[0]
+                verbose_result += (revision['autolabel']
+                                   ['review_reason'] or "?")[0]
 
         labels_f.write(json.dumps(revision))
         labels_f.write("\n")
@@ -193,13 +200,13 @@ def autolabeler(session, trusted_groups, trusted_edits,
                     autolabel = {'needs_review': True,
                                  'review_reason': "blocked user"}
                 elif trusted_groups is not None and \
-                     user_in_trusted_group(session, user_text, trusted_groups):
+                        user_in_trusted_group(session, user_text, trusted_groups):
                     # Non-reverted edits by non-blocked users in trusted groups
                     # don't need review
                     autolabel = {'needs_review': False,
                                  'review_reason': "trusted user"}
                 elif trusted_edits is not None and \
-                     user_has_trusted_edits(session, user_text, trusted_edits):
+                        user_has_trusted_edits(session, user_text, trusted_edits):
                     # Non-reverted edits by non-blocked users with trusted
                     # number of edits don't need review
                     autolabel = {'needs_review': False,
@@ -256,7 +263,7 @@ def check_reverted_status(session, rev_id, page_id,
                     logger.debug("Excluding reverted comment {0}"
                                  .format(reverted_comment))
                 elif exclude_reverting and \
-                     exclude_reverting.match(reverting_comment):
+                        exclude_reverting.match(reverting_comment):
                     comment_exclusion = True
                     logger.debug("Excluding reverting comment {0}"
                                  .format(reverting_comment))
