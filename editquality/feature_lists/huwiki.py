@@ -52,9 +52,9 @@ dict_words = [
 ]
 
 damaging = wikipedia.page + \
-           wikitext.parent + wikitext.diff + mediawiki.user_rights + \
-           mediawiki.protected_user + mediawiki.comment + \
-           badwords + informals + dict_words
+    wikitext.parent + wikitext.diff + mediawiki.user_rights + \
+    mediawiki.protected_user + mediawiki.comment + \
+    badwords + informals + dict_words
 
 reverted = damaging
 goodfaith = damaging
