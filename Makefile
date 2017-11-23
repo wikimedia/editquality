@@ -3834,6 +3834,7 @@ tuning_reports/wikidatawiki.damaging.md: \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.0008668694143782405" \
 		--pop-rate "false=0.9991331305856218" \
+		--labels "true,false" \
 		--center --scale \
 		--cv-timeout=60 \
 		--debug > $@
@@ -3851,8 +3852,7 @@ models/wikidatawiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.0008668694143782405" \
-		--pop-rate "false=0.9991331305856218" \
+		--labels "true,false" \
 		--center --scale > $@
 
 tuning_reports/wikidatawiki.goodfaith.md: \
@@ -3866,6 +3866,7 @@ tuning_reports/wikidatawiki.goodfaith.md: \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9998525516181488" \
 		--pop-rate "false=0.00014744838185121178" \
+		--labels "true,false" \
 		--cv-timeout=60 \
 		--debug > $@
 
@@ -3882,8 +3883,7 @@ models/wikidatawiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9998525516181488" \
-		--pop-rate "false=0.00014744838185121178" \
+		--labels "true,false" \
 		--center --scale > $@
 
 wikidatawiki_models: \
