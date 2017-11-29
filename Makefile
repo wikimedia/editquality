@@ -19,6 +19,7 @@ models: \
 		hrwiki_models \
 		huwiki_models \
 		idwiki_models \
+		iswiki_models \
 		itwiki_models \
 		kowiki_models \
 		jawiki_models \
@@ -54,6 +55,7 @@ tuning_reports: \
 		hrwiki_tuning_reports \
 		huwiki_tuning_reports \
 		idwiki_tuning_reports \
+		iswiki_tuning_reports \
 		itwiki_tuning_reports \
 		kowiki_tuning_reports \
 		jawiki_tuning_reports \
@@ -1282,10 +1284,10 @@ datasets/fawiki.labeled_revisions.w_cache.20k_2016.json: \
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.fawiki.reverted \
-	        editquality.feature_lists.fawiki.damaging \
-	        editquality.feature_lists.fawiki.goodfaith \
-	        --host https://fa.wikipedia.org \
-	        --verbose > $@
+		editquality.feature_lists.fawiki.damaging \
+		editquality.feature_lists.fawiki.goodfaith \
+		--host https://fa.wikipedia.org \
+		--verbose > $@
 
 tuning_reports/fawiki.reverted.md: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
@@ -2075,6 +2077,71 @@ idwiki_models: \
 
 idwiki_tuning_reports: \
 		tuning_reports/idwiki.reverted.md
+
+############################# Icelandinc Wikipedia #############################
+
+# From https://quarry.wmflabs.org/query/23305
+datasets/iswiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/218976/output/0/json-lines?download=true > $@
+
+datasets/iswiki.autolabeled_revisions.20k_2017.json: \
+	        datasets/iswiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://is.wikipedia.org \
+	        --trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
+	        --trusted-edits=1000 \
+	        --verbose > $@
+
+datasets/iswiki.revisions_for_review.5k_2017.json: \
+	        datasets/iswiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/iswiki.autolabeled_revisions.w_cache.20k_2017.json: \
+	        datasets/iswiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+	        editquality.feature_lists.iswiki.reverted \
+	        --host https://is.wikipedia.org \
+	        --extractor $(max_extractors) \
+	        --verbose > $@
+
+tuning_reports/iswiki.reverted.md: \
+	        datasets/iswiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+	        config/classifiers.params.yaml \
+	        editquality.feature_lists.iswiki.reverted \
+	        reverted_for_damage \
+	        roc_auc.labels.true \
+	        --label-weight "true=$(reverted_weight)" \
+	        --pop-rate "true=0.021554310862" \
+	        --pop-rate "false=0.97844568913" \
+	        --center --scale \
+	        --cv-timeout=60 \
+	        --debug > $@
+
+models/iswiki.reverted.gradient_boosting.model: \
+	        datasets/iswiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+	        revscoring.scoring.models.GradientBoosting \
+	        editquality.feature_lists.iswiki.reverted \
+	        reverted_for_damage \
+	        --version=$(reverted_major_minor).0 \
+	        -p 'max_depth=7' \
+	        -p 'learning_rate=0.01' \
+	        -p 'max_features="log2"' \
+	        -p 'n_estimators=500' \
+	        --label-weight "true=$(reverted_weight)" \
+	        --pop-rate "true=0.021554310862" \
+	        --pop-rate "false=0.97844568913" \
+	        --center --scale > $@
+
+iswiki_models: \
+	models/iswiki.reverted.gradient_boosting.model
+
+iswiki_tuning_reports: \
+	tuning_reports/iswiki.reverted.md
 
 ############################# Italian Wikipedia ###############################
 
