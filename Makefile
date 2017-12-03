@@ -2114,8 +2114,8 @@ tuning_reports/iswiki.reverted.md: \
 	        reverted_for_damage \
 	        roc_auc.labels.true \
 	        --label-weight "true=$(reverted_weight)" \
-	        --pop-rate "true=0.021554310862" \
-	        --pop-rate "false=0.97844568913" \
+	        --pop-rate "true=0.08115405770288514" \
+	        --pop-rate "false=0.9188459422971149" \
 	        --center --scale \
 	        --cv-timeout=60 \
 	        --debug > $@
@@ -2129,12 +2129,12 @@ models/iswiki.reverted.gradient_boosting.model: \
 	        reverted_for_damage \
 	        --version=$(reverted_major_minor).0 \
 	        -p 'max_depth=7' \
-	        -p 'learning_rate=0.01' \
+	        -p 'learning_rate=0.1' \
 	        -p 'max_features="log2"' \
-	        -p 'n_estimators=500' \
+	        -p 'n_estimators=300' \
 	        --label-weight "true=$(reverted_weight)" \
-	        --pop-rate "true=0.021554310862" \
-	        --pop-rate "false=0.97844568913" \
+	        --pop-rate "true=0.08115405770288514" \
+	        --pop-rate "false=0.9188459422971149" \
 	        --center --scale > $@
 
 iswiki_models: \
