@@ -1096,6 +1096,80 @@ eswikibooks_tuning_reports: \
 		tuning_reports/eswikibooks.damaging.md
 		tuning_reports/eswikibooks.goodfaith.md
 
+############################# Spanish Wikiquote ################################
+
+# From https://quarry.wmflabs.org/query/23421
+datasets/eswikiquote.sampled_revisions.12k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/219894/output/0/json-lines?download=true > $@
+
+datasets/eswikiquote.revisions_for_review.5k_2017.json: \
+		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
+	( \
+	 cat $< | \
+	 grep '"needs_review": true' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep '"needs_review": false' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/eswikiquote.autolabeled_revisions.12k_2017.json: \
+		datasets/eswikiquote.sampled_revisions.12k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://es.wikiquote.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json: \
+		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.eswikiquote.reverted \
+		editquality.feature_lists.eswikiquote.damaging \
+		editquality.feature_lists.eswikiquote.goodfaith \
+		--host https://es.wikiquote.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/eswikiquote.reverted.md: \
+		datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswikiquote.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.089509548245983" \
+		--pop-rate "false=0.910490451754017" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/eswikiquote.reverted.gradient_boosting.model: \
+		datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswikiquote.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.089509548245983" \
+		--pop-rate "false=0.910490451754017" \
+		--center --scale > $@
+
+eswikiquote_models: \
+	models/eswikiquote.reverted.gradient_boosting.model
+
+eswikiquote_tuning_reports: \
+	tuning_reports/eswikiquote.reverted.md
+
 ########################### Estonian Wikipedia ################################
 
 datasets/etwiki.sampled_revisions.20k_2015.json:
