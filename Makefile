@@ -1104,14 +1104,7 @@ datasets/eswikiquote.sampled_revisions.12k_2017.json:
 
 datasets/eswikiquote.revisions_for_review.5k_2017.json: \
 		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
-	( \
-	 cat $< | \
-	 grep '"needs_review": true' | \
-	 shuf -n 2500; \
-	 cat $< | \
-	 grep '"needs_review": false' | \
-	 shuf -n 2500 \
-	) | shuf > $@
+	grep '"needs_review": true' $< | shuf > $@
 
 datasets/eswikiquote.autolabeled_revisions.12k_2017.json: \
 		datasets/eswikiquote.sampled_revisions.12k_2017.json
