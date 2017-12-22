@@ -1089,7 +1089,7 @@ models/eswikibooks.goodfaith.gradient_boosting.model: \
 		--center --scale  > $@
 
 eswikibooks_models: \
-		models/eswikibooks.damaging.gradient_boosting.model
+		models/eswikibooks.damaging.gradient_boosting.model \
 		models/eswikibooks.goodfaith.gradient_boosting.model
 
 eswikibooks_tuning_reports: \
