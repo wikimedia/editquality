@@ -144,7 +144,7 @@ models/arwiki.reverted.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.arwiki.reverted \
 		reverted_for_damage \
-		--version $(reverted_major_minor).0 \
+		--version $(reverted_major_minor).1 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1533,7 +1533,7 @@ models/fiwiki.reverted.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fiwiki.reverted \
 		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		--version=$(reverted_major_minor).1 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1565,7 +1565,7 @@ models/fiwiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fiwiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -1597,7 +1597,7 @@ models/fiwiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fiwiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2058,7 +2058,7 @@ models/huwiki.reverted.rf.model: \
 		revscoring.scoring.models.RandomForest \
 		editquality.feature_lists.huwiki.reverted \
 		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		--version=$(reverted_major_minor).1 \
 		-p 'criterion="entropy"' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=320' \
@@ -2603,7 +2603,7 @@ models/nowiki.reverted.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nowiki.reverted \
 		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		--version=$(reverted_major_minor).1 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -2966,7 +2966,7 @@ models/rowiki.reverted.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.reverted \
 		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		--version=$(reverted_major_minor).1 \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		-p 'learning_rate=0.01' \
@@ -2998,7 +2998,7 @@ models/rowiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -3030,7 +3030,7 @@ models/rowiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'max_depth=3' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
@@ -3404,7 +3404,7 @@ models/svwiki.reverted.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.svwiki.reverted \
 		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		--version=$(reverted_major_minor).1 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -3436,7 +3436,7 @@ models/svwiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.svwiki.damaging \
 		reverted_for_damage \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'max_depth=5' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -3468,7 +3468,7 @@ models/svwiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.svwiki.goodfaith \
 		reverted_for_damage \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
