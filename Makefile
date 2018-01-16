@@ -249,6 +249,71 @@ bnwiki_models: \
 bnwiki_tuning_reports: \
 	tuning_reports/bnwiki.reverted.md
 
+############################# Catalan Wikipedia #############################
+
+# From https://quarry.wmflabs.org/query/24081
+datasets/cawiki.sampled_revisions.100k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/228948/output/0/json-lines?download=true > $@
+
+datasets/cawiki.autolabeled_revisions.100k_2017.json: \
+		datasets/cawiki.sampled_revisions.100k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://ca.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/cawiki.revisions_for_review.5k_2017.json: \
+		datasets/cawiki.autolabeled_revisions.100k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json: \
+		datasets/cawiki.autolabeled_revisions.100k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.cawiki.reverted \
+		--host https://ca.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/cawiki.reverted.md: \
+		datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cawiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.01919" \
+		--pop-rate "false=0.98081" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/cawiki.reverted.gradient_boosting.model: \
+		datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.cawiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.01919" \
+		--pop-rate "false=0.98081" \
+		--center --scale > $@
+
+cawiki_models: \
+	models/cawiki.reverted.gradient_boosting.model
+
+cawiki_tuning_reports: \
+	tuning_reports/cawiki.reverted.md
+
 ############################# Czech Wikipedia ################################
 
 datasets/cswiki.sampled_revisions.20k_2016.json:
