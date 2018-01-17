@@ -36,7 +36,6 @@ goodfaith_major_minor = $(major_minor)
 
 {% for wiki in wikis %}
 ############################# {{ wiki.label }} ################################
-
 {%- for sample_name, sample in wiki.samples.items() %}{%- if "labeling_campaign" in sample %}
 datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
 	./utility fetch_labels \
@@ -49,15 +48,17 @@ datasets/{{ wiki.name }}.labeled_revisions.20k_2015.json: \
 		--trusted-groups={{ wiki.trusted_groups|join(",") }} \
 		--trusted-edits=1000 \
 		--verbose > $@
-
-{% endif %}{%- if "quarry_url" in sample %}
+{% endif %}
+{%- if "quarry_url" in sample %}
+{%- if "quarry_page" in sample %}
+# From {{ sample.quarry_page }}{% endif %}
 datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json:
 	wget -qO- {{ sample.quarry_url }} > $@
 
 datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
 		datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json
 	cat $< | \
-	./utility autolabel --host https://{{ wiki.host }} \
+	./utility autolabel --host=https://{{ wiki.host }} \
 		--trusted-groups={{ wiki.trusted_groups|join(",") }} \
 		--trusted-edits=1000 \
 		--revert-radius=3 \
@@ -65,7 +66,7 @@ datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
 		--verbose > $@
 
 {% endif %}{% endfor %}{%- if wiki.balanced_5k_set_for_review -%}
-datasets/{{ wiki.name }}.revisions_for_review.5k_2016.json: \
+datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
 	( \
 	 cat $< | \
@@ -75,6 +76,10 @@ datasets/{{ wiki.name }}.revisions_for_review.5k_2016.json: \
 	 grep '"needs_review": false' | \
 	 shuf -n 2500 \
 	) | shuf > $@
+{% endif %}{%- if wiki.unbalanced_5k_set_for_review -%}
+datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
+	grep '"needs_review": true' $< | shuf > $@
 {% endif %}
 datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
@@ -113,8 +118,8 @@ models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
 		{% if model_name == "reverted" %}reverted_for_damage{% else %}{{ model_name }}{% endif %} \
-		--version $({{ model_name }}_major_minor).{{model.build_number}} \
-		{% for key, value in model.tuning_params.items() -%}
+		--version=$({{ model_name }}_major_minor).{{model.build_number}} \
+		{% for key, value in model.tuning_params|dictsort -%}
 		-p '{{ key }}={{ value }}' \
 		{% endfor -%}
 		--label-weight "true=$({{ model_name }}_weight)" \
