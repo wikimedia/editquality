@@ -1,16 +1,14 @@
-# This file is built automatically using cg.py file and Mafile.j2
+# This file is built automatically using cg.py file and Makefile.j2
 # Any change you make on this file will be lost in the next run.
 
 # Remove target files after command failure.
 .DELETE_ON_ERROR:
 
-models: \
-		arwiki_models \
-		enwiki_models 
+#models: \
+		#arwiki_models
 
-tuning_reports: \
-		arwiki_tuning_reports \
-		enwiki_tuning_reports 
+#tuning_reports: \
+		#arwiki_tuning_reports
 
 test_statistics = \
 		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
@@ -90,10 +88,10 @@ models/arwiki.reverted.gradient_boosting.model: \
 		editquality.feature_lists.arwiki.reverted \
 		reverted_for_damage \
 		--version $(reverted_major_minor).1 \
-		-p 'max_features=log2' \
-		-p 'n_estimators=700' \
-		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'n_estimators=700' \
+		-p 'max_features=log2' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.035186595582635184" \
 		--pop-rate "false=0.9648134044173649" \
@@ -104,135 +102,4 @@ arwiki_models: \
 
 arwiki_tuning_reports: \
 	tuning_reports/arwiki.reverted.md
-
-############################# English Wikipedia ################################
-datasets/enwiki.human_labeled_revisions.20k_2015.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/enwiki/4/ > $@
-
-datasets/enwiki.labeled_revisions.20k_2015.json: \
-		datasets/enwiki.human_labeled_revisions.20k_2015.json
-	cat $< | \
-	./utility autolabel --host=https://en.wikipedia.org \
-		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
-		--trusted-edits=1000 \
-		--verbose > $@
-
-
-datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/enwiki.autolabeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.enwiki.reverted \
-		editquality.feature_lists.enwiki.goodfaith \
-		editquality.feature_lists.enwiki.damaging \
-		--host https://en.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
-tuning_reports/enwiki.reverted.md: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.enwiki.reverted \
-		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.0728788421214136" \
-		--pop-rate "false=0.9271211578785864" \
-		--center --scale \
-		--cv-timeout 60 \
-		--debug > $@
-
-models/enwiki.reverted.gradient_boosting.model: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.enwiki.reverted \
-		reverted_for_damage \
-		--version $(reverted_major_minor).0 \
-		-p 'max_features=log2' \
-		-p 'n_estimators=700' \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.0728788421214136" \
-		--pop-rate "false=0.9271211578785864" \
-		--center --scale > $@
-
-tuning_reports/enwiki.goodfaith.md: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.enwiki.goodfaith \
-		goodfaith \
-		roc_auc.labels.true \
-		--label-weight "true=$(goodfaith_weight)" \
-		--pop-rate "true=0.9671661637600368" \
-		--pop-rate "false=0.032833836239963166" \
-		--center --scale \
-		--cv-timeout 60 \
-		--debug > $@
-
-models/enwiki.goodfaith.gradient_boosting.model: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.enwiki.goodfaith \
-		goodfaith \
-		--version $(goodfaith_major_minor).0 \
-		-p 'max_features=log2' \
-		-p 'n_estimators=700' \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
-		--label-weight "true=$(goodfaith_weight)" \
-		--pop-rate "true=0.9671661637600368" \
-		--pop-rate "false=0.032833836239963166" \
-		--center --scale > $@
-
-tuning_reports/enwiki.damaging.md: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.enwiki.damaging \
-		damaging \
-		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.034163555464634586" \
-		--pop-rate "false=0.9658364445353654" \
-		--center --scale \
-		--cv-timeout 60 \
-		--debug > $@
-
-models/enwiki.damaging.gradient_boosting.model: \
-		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.enwiki.damaging \
-		damaging \
-		--version $(damaging_major_minor).0 \
-		-p 'max_features=log2' \
-		-p 'n_estimators=700' \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
-		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.034163555464634586" \
-		--pop-rate "false=0.9658364445353654" \
-		--center --scale > $@
-
-enwiki_models: \
-	models/enwiki.reverted.gradient_boosting.model \
-	models/enwiki.goodfaith.gradient_boosting.model \
-	models/enwiki.damaging.gradient_boosting.model
-
-enwiki_tuning_reports: \
-	tuning_reports/enwiki.reverted.md \
-	tuning_reports/enwiki.goodfaith.md \
-	tuning_reports/enwiki.damaging.md
 
