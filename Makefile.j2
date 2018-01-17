@@ -1,0 +1,134 @@
+# This file is built automatically using cg.py file and Makefile.j2
+# Any change you make on this file will be lost in the next run.
+
+# Remove target files after command failure.
+.DELETE_ON_ERROR:
+
+#models: \
+	{%- for wiki in wikis %}
+		#{{ wiki.name }}_models{% if not loop.last %} \{% endif -%}
+	{% endfor %}
+
+#tuning_reports: \
+	{%- for wiki in wikis %}
+		#{{ wiki.name }}_tuning_reports{% if not loop.last %} \{% endif -%}
+	{% endfor %}
+
+test_statistics = \
+		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
+		-s 'pr' -s 'roc' \
+		-s 'recall_at_fpr(max_fpr=0.10)' \
+		-s 'filter_rate_at_recall(min_recall=0.9)' \
+		-s 'filter_rate_at_recall(min_recall=0.75)' \
+		-s 'recall_at_precision(min_precision=0.995)' \
+		-s 'recall_at_precision(min_precision=0.99)' \
+		-s 'recall_at_precision(min_precision=0.98)' \
+		-s 'recall_at_precision(min_precision=0.90)' \
+		-s 'recall_at_precision(min_precision=0.75)' \
+		-s 'recall_at_precision(min_precision=0.60)' \
+		-s 'recall_at_precision(min_precision=0.45)' \
+		-s 'recall_at_precision(min_precision=0.15)'
+
+major_minor = 0.3
+reverted_major_minor = $(major_minor)
+damaging_major_minor = $(major_minor)
+goodfaith_major_minor = $(major_minor)
+
+{% for wiki in wikis %}
+############################# {{ wiki.label }} ################################
+
+{%- for sample_name, sample in wiki.samples.items() %}{%- if "labeling_campaign" in sample %}
+datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
+	./utility fetch_labels \
+		{{ sample.labeling_campaign }} > $@
+
+datasets/{{ wiki.name }}.labeled_revisions.20k_2015.json: \
+		datasets/{{ wiki.name }}.human_labeled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://{{ wiki.host }} \
+		--trusted-groups={{ wiki.trusted_groups|join(",") }} \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+{% endif %}{%- if "quarry_url" in sample %}
+datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json:
+	wget -qO- {{ sample.quarry_url }} > $@
+
+datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
+		datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json
+	cat $< | \
+	./utility autolabel --host https://{{ wiki.host }} \
+		--trusted-groups={{ wiki.trusted_groups|join(",") }} \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+{% endif %}{% endfor %}{%- if wiki.balanced_5k_set_for_review -%}
+datasets/{{ wiki.name }}.revisions_for_review.5k_2016.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
+	( \
+	 cat $< | \
+	 grep '"needs_review": true' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep '"needs_review": false' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+{% endif %}
+datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
+	cat $< | \
+	revscoring extract \
+		{% for model_name, model in wiki.models.items() -%}
+		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
+		{% endfor -%}
+		--host https://{{ wiki.host }} \
+		--extractor $(max_extractors) \
+		--verbose > $@
+{% for model_name, model in wiki.models.items() %}
+tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
+		{%- if model_name == "reverted" %}
+		reverted_for_damage \
+		{% else %}
+		{{ model_name }} \
+		{% endif -%}
+		roc_auc.labels.true \
+		--label-weight "true=$({{ model_name }}_weight)" \
+		--pop-rate "true={{ model.pop_rate_true }}" \
+		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
+		{% if model_name == "reverted" %}reverted_for_damage{% else %}{{ model_name }}{% endif %} \
+		--version $({{ model_name }}_major_minor).{{model.build_number}} \
+		{% for key, value in model.tuning_params.items() -%}
+		-p '{{ key }}={{ value }}' \
+		{% endfor -%}
+		--label-weight "true=$({{ model_name }}_weight)" \
+		--pop-rate "true={{ model.pop_rate_true }}" \
+		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
+		--center --scale > $@
+{% endfor %}
+{{ wiki.name }}_models: \
+{%- for model_name, model in wiki.models.items() %}
+	models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model{% if not loop.last %} \{% endif -%}
+{% endfor %}
+
+{{ wiki.name }}_tuning_reports: \
+{%- for model_name, model in wiki.models.items() %}
+	tuning_reports/{{ wiki.name }}.{{ model_name }}.md{% if not loop.last %} \{% endif -%}
+{% endfor %}
+{% endfor %}
