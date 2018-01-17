@@ -1,51 +1,68 @@
 """Generate templated Makefile"""
 
-
 import copy
+import collections
 import glob
 import jinja2
-import os.path
 import yaml
 
 # FIXME:
 basedir = "."
 
 
+# https://stackoverflow.com/a/3233356
+def update(d, u):
+    for k, v in u.items():
+        if isinstance(v, collections.Mapping):
+            d[k] = update(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d
+
+
 def load_config():
-    defaults = yaml.safe_load(open(basedir + "/config/defaults.yaml", "r"))
+    path = "/config/{0}_defaults.yaml"
+    model_defaults = yaml.safe_load(open(basedir + path.format('model'), "r"))
+    wiki_defaults = yaml.safe_load(open(basedir + path.format('wiki'), "r"))
 
     all_files = glob.glob(basedir + "/config/wikis/*.yaml")
     wikis = [yaml.safe_load(open(f, "r")) for f in all_files]
 
     config = {
-        "defaults": defaults,
+        "model_defaults": model_defaults,
+        "wiki_defaults": wiki_defaults,
         "wikis": wikis,
     }
     config = populate_defaults(config)
+    config['wikis'].sort(key=lambda t: t['name'])
 
     return config
 
 
+def load_wiki(wiki, config):
+    default_wiki = copy.deepcopy(config["wiki_defaults"])
+    wiki = update(default_wiki, wiki)
+    if isinstance(wiki["models"], list):
+        wiki["models"] = {name: {} for name in wiki["models"]}
+
+    for model_name, model in wiki["models"].items():
+        model_defaults = copy.deepcopy(config["model_defaults"])
+        model = update(model_defaults, model)
+        wiki["models"][model_name] = model
+    return wiki
+
+
 def populate_defaults(config):
     wikis_config = []
-    # TODO: Genearlize this list vs dict and defaults negotiation.
     for wiki in config["wikis"]:
-        if isinstance(wiki["models"], list):
-            wiki["models"] = {name: {} for name in wiki["models"]}
-
-        for model_name, model in wiki["models"].items():
-            tuning_params = copy.deepcopy(config["defaults"]["tuning_params"])
-            if "tuning_params" in model:
-                tuning_params.update(model["tuning_params"])
-            model["tuning_params"] = tuning_params
-        wikis_config.append(wiki)
+        wikis_config.append(load_wiki(wiki, config))
 
     config["wikis"] = wikis_config
 
     return config
 
 
-def render_all():
+def main():
     variables = load_config()
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(basedir)
@@ -67,7 +84,8 @@ def render_all():
 # https://github.com/ninja-build/ninja/wiki/List-of-generators-producing-ninja-build-files
 # ** Still considering: scons, doit, drake, ninja, meson
 # ** Don't like so far: waf
-# * Where can we store information about samples?  Original population rates; how we've distorted them.
+# * Where can we store information about samples?
+#   Original population rates; how we've distorted them.
 
 if __name__ == "__main__":
-    render_all()
+    main()

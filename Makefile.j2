@@ -1,3 +1,6 @@
+# This file is built automatically using cg.py file and Mafile.j2
+# Any change you make on this file will be lost in the next run.
+
 # Remove target files after command failure.
 .DELETE_ON_ERROR:
 
@@ -34,9 +37,7 @@ goodfaith_major_minor = $(major_minor)
 {% for wiki in wikis %}
 ############################# {{ wiki.label }} ################################
 
-{%- for sample_name, sample in wiki.samples.items() %}
-
-{%- if "labeling_campaign" in sample %}
+{%- for sample_name, sample in wiki.samples.items() %}{%- if "labeling_campaign" in sample %}
 datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
 	./utility fetch_labels \
 		{{ sample.labeling_campaign }} > $@
@@ -48,9 +49,8 @@ datasets/{{ wiki.name }}.labeled_revisions.20k_2015.json: \
 		--trusted-groups={{ wiki.trusted_groups|join(",") }} \
 		--trusted-edits=1000 \
 		--verbose > $@
-{% endif %}
 
-{%- if "quarry_url" in sample %}
+{% endif %}{%- if "quarry_url" in sample %}
 datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json:
 	wget -qO- {{ sample.quarry_url }} > $@
 
@@ -63,11 +63,8 @@ datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
-{% endif %}
 
-{% endfor %}
-
-{%- if wiki.balanced_5k_set_for_review -%}
+{% endif %}{% endfor %}{%- if wiki.balanced_5k_set_for_review -%}
 datasets/{{ wiki.name }}.revisions_for_review.5k_2016.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
 	( \
@@ -79,7 +76,6 @@ datasets/{{ wiki.name }}.revisions_for_review.5k_2016.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 {% endif %}
-
 datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
 	cat $< | \
@@ -88,8 +84,8 @@ datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
 		{% endfor -%}
 		--host https://{{ wiki.host }} \
+		--extractor $(max_extractors) \
 		--verbose > $@
-
 {% for model_name, model in wiki.models.items() %}
 tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json
@@ -102,33 +98,37 @@ tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		{% else %}
 		{{ model_name }} \
 		{% endif -%}
-		--cv-timeout=60 \
+		roc_auc.labels.true \
+		--label-weight "true=$({{ model_name }}_weight)" \
+		--pop-rate "true={{ model.pop_rate_true }}" \
+		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
+		--center --scale \
+		--cv-timeout 60 \
 		--debug > $@
 
 models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scorer_models.GradientBoosting \
+		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
 		{% if model_name == "reverted" %}reverted_for_damage{% else %}{{ model_name }}{% endif %} \
-		--version=$(reverted_major_minor).0 \
+		--version $({{ model_name }}_major_minor).{{model.build_number}} \
 		{% for key, value in model.tuning_params.items() -%}
 		-p '{{ key }}={{ value }}' \
 		{% endfor -%}
-		$(test_statistics) \
-		--balance-sample-weight \
+		--label-weight "true=$({{ model_name }}_weight)" \
+		--pop-rate "true={{ model.pop_rate_true }}" \
+		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
 {% endfor %}
-
 {{ wiki.name }}_models: \
 {%- for model_name, model in wiki.models.items() %}
-	models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model {% if not loop.last %}\{% endif -%}
+	models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model{% if not loop.last %} \{% endif -%}
 {% endfor %}
 
 {{ wiki.name }}_tuning_reports: \
 {%- for model_name, model in wiki.models.items() %}
-	tuning_reports/{{ wiki.name }}.{{ model_name }}.md {% if not loop.last %}\{% endif -%}
+	tuning_reports/{{ wiki.name }}.{{ model_name }}.md{% if not loop.last %} \{% endif -%}
 {% endfor %}
-
 {% endfor %}

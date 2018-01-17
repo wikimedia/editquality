@@ -1,5 +1,7 @@
 name: arwiki
 label: Arabic Wikipedia
+host: ar.wikipedia.org
+
 samples:
     20k_2016:
         quarry_url: "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
@@ -12,14 +14,5 @@ models:
     reverted:
         tuning_params:
             max_depth: 5
-
-host: ar.wikipedia.org
-trusted_groups:
-    - sysop
-    - oversight
-    - editor
-    - bot
-    - rollbacker
-    - checkuser
-    - abusefilter
-    - bureaucrat
+        pop_rate_true: 0.035186595582635184
+        build_number: 1
