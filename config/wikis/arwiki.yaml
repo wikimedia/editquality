@@ -9,6 +9,7 @@ samples:
 balanced_5k_set_for_review: true
 
 default_sample: 20k_2016
+review_sample: 5k_2016
 
 models:
     reverted:
