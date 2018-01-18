@@ -1,0 +1,27 @@
+name: idwiki
+label: Indonesian Wikipedia
+host: id.wikipedia.org
+
+samples:
+    100k_2016:
+        quarry_url: "http://quarry.wmflabs.org/run/135748/output/0/json-lines?download=true"
+
+trusted_groups:
+    - autoreview
+    - bot
+    - bureaucrat
+    - checkuser
+    - editor
+    - flow-bot
+    - oversight
+    - reviewer
+    - rollbacker
+    - sysop
+
+default_sample: 100k_2016
+
+models:
+    reverted:
+        tuning_params:
+            max_depth: 5
+        pop_rate_true: 0.02272613605673532
