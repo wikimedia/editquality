@@ -5,10 +5,20 @@
 .DELETE_ON_ERROR:
 
 #models: \
-		#arwiki_models
+		#arwiki_models \
+		#bnwiki_models \
+		#cawiki_models \
+		#dewiki_models \
+		#elwiki_models \
+		#eswikiquote_models
 
 #tuning_reports: \
-		#arwiki_tuning_reports
+		#arwiki_tuning_reports \
+		#bnwiki_tuning_reports \
+		#cawiki_tuning_reports \
+		#dewiki_tuning_reports \
+		#elwiki_tuning_reports \
+		#eswikiquote_tuning_reports
 
 test_statistics = \
 		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
@@ -38,7 +48,7 @@ datasets/arwiki.sampled_revisions.20k_2016.json:
 datasets/arwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/arwiki.sampled_revisions.20k_2016.json
 	cat $< | \
-	./utility autolabel --host https://ar.wikipedia.org \
+	./utility autolabel --host=https://ar.wikipedia.org \
 		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
 		--revert-radius=3 \
@@ -87,11 +97,11 @@ models/arwiki.reverted.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.arwiki.reverted \
 		reverted_for_damage \
-		--version $(reverted_major_minor).1 \
-		-p 'max_depth=5' \
+		--version=$(reverted_major_minor).1 \
 		-p 'learning_rate=0.01' \
-		-p 'n_estimators=700' \
+		-p 'max_depth=5' \
 		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.035186595582635184" \
 		--pop-rate "false=0.9648134044173649" \
@@ -102,4 +112,330 @@ arwiki_models: \
 
 arwiki_tuning_reports: \
 	tuning_reports/arwiki.reverted.md
+
+############################# Bengali Wikipedia ################################
+# From https://quarry.wmflabs.org/query/20229
+datasets/bnwiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/190661/output/0/json-lines?download=true > $@
+
+datasets/bnwiki.autolabeled_revisions.20k_2017.json: \
+		datasets/bnwiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://bn.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/bnwiki.revisions_for_review.5k_2017.json: \
+		datasets/bnwiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json: \
+		datasets/bnwiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.bnwiki.reverted \
+		--host https://bn.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/bnwiki.reverted.md: \
+		datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.bnwiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.021554310862" \
+		--pop-rate "false=0.978445689138" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/bnwiki.reverted.gradient_boosting.model: \
+		datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.bnwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.021554310862" \
+		--pop-rate "false=0.978445689138" \
+		--center --scale > $@
+
+bnwiki_models: \
+	models/bnwiki.reverted.gradient_boosting.model
+
+bnwiki_tuning_reports: \
+	tuning_reports/bnwiki.reverted.md
+
+############################# Catalan Wikipedia ################################
+# From https://quarry.wmflabs.org/query/24081
+datasets/cawiki.sampled_revisions.100k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/228948/output/0/json-lines?download=true > $@
+
+datasets/cawiki.autolabeled_revisions.100k_2017.json: \
+		datasets/cawiki.sampled_revisions.100k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://ca.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/cawiki.revisions_for_review.5k_2017.json: \
+		datasets/cawiki.autolabeled_revisions.100k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json: \
+		datasets/cawiki.autolabeled_revisions.100k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.cawiki.reverted \
+		--host https://ca.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/cawiki.reverted.md: \
+		datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cawiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.01919" \
+		--pop-rate "false=0.98081" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/cawiki.reverted.gradient_boosting.model: \
+		datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.cawiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.01919" \
+		--pop-rate "false=0.98081" \
+		--center --scale > $@
+
+cawiki_models: \
+	models/cawiki.reverted.gradient_boosting.model
+
+cawiki_tuning_reports: \
+	tuning_reports/cawiki.reverted.md
+
+############################# German Wikipedia ################################
+datasets/dewiki.sampled_revisions.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/42223/output/0/json-lines?download=true > $@
+
+datasets/dewiki.autolabeled_revisions.20k_2015.json: \
+		datasets/dewiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://de.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+
+datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/dewiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.dewiki.reverted \
+		--host https://de.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/dewiki.reverted.md: \
+		datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.dewiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.049775581219426095" \
+		--pop-rate "false=0.950224418780574" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/dewiki.reverted.gradient_boosting.model: \
+		datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.dewiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=300' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.049775581219426095" \
+		--pop-rate "false=0.950224418780574" \
+		--center --scale > $@
+
+dewiki_models: \
+	models/dewiki.reverted.gradient_boosting.model
+
+dewiki_tuning_reports: \
+	tuning_reports/dewiki.reverted.md
+
+############################# Greek Wikipedia ################################
+# From https://quarry.wmflabs.org/query/20231
+datasets/elwiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/190663/output/0/json-lines?download=true > $@
+
+datasets/elwiki.autolabeled_revisions.20k_2017.json: \
+		datasets/elwiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://el.wikipedia.org \
+		--trusted-groups=bot,bureaucrat,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/elwiki.revisions_for_review.5k_2017.json: \
+		datasets/elwiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json: \
+		datasets/elwiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.elwiki.reverted \
+		--host https://el.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/elwiki.reverted.md: \
+		datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.elwiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.05170687756532186" \
+		--pop-rate "false=0.9482931224346781" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/elwiki.reverted.gradient_boosting.model: \
+		datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.elwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.05170687756532186" \
+		--pop-rate "false=0.9482931224346781" \
+		--center --scale > $@
+
+elwiki_models: \
+	models/elwiki.reverted.gradient_boosting.model
+
+elwiki_tuning_reports: \
+	tuning_reports/elwiki.reverted.md
+
+############################# Spanish Wikiquote ################################
+# From https://quarry.wmflabs.org/query/23421
+datasets/eswikiquote.sampled_revisions.12k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/219894/output/0/json-lines?download=true > $@
+
+datasets/eswikiquote.autolabeled_revisions.12k_2017.json: \
+		datasets/eswikiquote.sampled_revisions.12k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://es.wikiquote.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/eswikiquote.revisions_for_review.5k_2017.json: \
+		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json: \
+		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.eswikiquote.reverted \
+		--host https://es.wikiquote.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/eswikiquote.reverted.md: \
+		datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswikiquote.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.089509548245983" \
+		--pop-rate "false=0.910490451754017" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/eswikiquote.reverted.gradient_boosting.model: \
+		datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswikiquote.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.089509548245983" \
+		--pop-rate "false=0.910490451754017" \
+		--center --scale > $@
+
+eswikiquote_models: \
+	models/eswikiquote.reverted.gradient_boosting.model
+
+eswikiquote_tuning_reports: \
+	tuning_reports/eswikiquote.reverted.md
 

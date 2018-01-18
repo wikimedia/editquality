@@ -1,0 +1,26 @@
+name: dewiki
+label: German Wikipedia
+host: de.wikipedia.org
+
+samples:
+    20k_2015:
+        quarry_url: "http://quarry.wmflabs.org/run/42223/output/0/json-lines?download=true"
+
+default_sample: 20k_2015
+
+models:
+    reverted:
+        tuning_params:
+            n_estimators: 300
+            learning_rate: 0.1
+            max_depth: 3
+        pop_rate_true: 0.049775581219426095
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
