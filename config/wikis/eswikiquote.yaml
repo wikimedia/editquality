@@ -1,0 +1,31 @@
+name: eswikiquote
+label: Spanish Wikiquote
+host: es.wikiquote.org
+
+samples:
+    12k_2017:
+        quarry_url: "https://quarry.wmflabs.org/run/219894/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/23421"
+
+unbalanced_5k_set_for_review: true
+
+default_sample: 12k_2017
+review_sample: 5k_2017
+
+models:
+    reverted:
+        tuning_params:
+            n_estimators: 500
+            learning_rate: 0.1
+            max_depth: 3
+        pop_rate_true: 0.089509548245983
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
+    - autopatrolled
