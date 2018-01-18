@@ -1,0 +1,22 @@
+name: itwiki
+label: Italian Wikipedia
+host: it.wikipedia.org
+
+samples:
+    20k_2015:
+        quarry_url: "http://quarry.wmflabs.org/run/42224/output/0/json-lines?download=true"
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
+
+default_sample: 20k_2015
+
+models:
+    reverted:
+        pop_rate_true: 0.04628882613957241
