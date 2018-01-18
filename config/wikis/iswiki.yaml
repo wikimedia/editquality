@@ -5,7 +5,7 @@ host: is.wikipedia.org
 samples:
     20k_2017:
         quarry_url: "https://quarry.wmflabs.org/run/218976/output/0/json-lines?download=true"
-        qarry_page: "https://quarry.wmflabs.org/query/23305"
+        quarry_page: "https://quarry.wmflabs.org/query/23305"
 
 trusted_groups:
     - autopatrolled
