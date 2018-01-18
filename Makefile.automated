@@ -10,7 +10,11 @@
 		#cawiki_models \
 		#dewiki_models \
 		#elwiki_models \
-		#eswikiquote_models
+		#eswikiquote_models \
+		#hrwiki_models \
+		#idwiki_models \
+		#iswiki_models \
+		#itwiki_models
 
 #tuning_reports: \
 		#arwiki_tuning_reports \
@@ -18,7 +22,11 @@
 		#cawiki_tuning_reports \
 		#dewiki_tuning_reports \
 		#elwiki_tuning_reports \
-		#eswikiquote_tuning_reports
+		#eswikiquote_tuning_reports \
+		#hrwiki_tuning_reports \
+		#idwiki_tuning_reports \
+		#iswiki_tuning_reports \
+		#itwiki_tuning_reports
 
 test_statistics = \
 		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
@@ -438,4 +446,259 @@ eswikiquote_models: \
 
 eswikiquote_tuning_reports: \
 	tuning_reports/eswikiquote.reverted.md
+
+############################# Croatian Wikipedia ################################
+# From https://quarry.wmflabs.org/query/21213
+datasets/hrwiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/200064/output/0/json-lines?download=true > $@
+
+datasets/hrwiki.autolabeled_revisions.20k_2017.json: \
+		datasets/hrwiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://hr.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/hrwiki.revisions_for_review.5k_2017.json: \
+		datasets/hrwiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json: \
+		datasets/hrwiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.hrwiki.reverted \
+		--host https://hr.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/hrwiki.reverted.md: \
+		datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hrwiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.07927353670258512" \
+		--pop-rate "false=0.9207264632974149" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/hrwiki.reverted.gradient_boosting.model: \
+		datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.hrwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=300' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.07927353670258512" \
+		--pop-rate "false=0.9207264632974149" \
+		--center --scale > $@
+
+hrwiki_models: \
+	models/hrwiki.reverted.gradient_boosting.model
+
+hrwiki_tuning_reports: \
+	tuning_reports/hrwiki.reverted.md
+
+############################# Indonesian Wikipedia ################################
+datasets/idwiki.sampled_revisions.100k_2016.json:
+	wget -qO- http://quarry.wmflabs.org/run/135748/output/0/json-lines?download=true > $@
+
+datasets/idwiki.autolabeled_revisions.100k_2016.json: \
+		datasets/idwiki.sampled_revisions.100k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://id.wikipedia.org \
+		--trusted-groups=autoreview,bot,bureaucrat,checkuser,editor,flow-bot,oversight,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+
+datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json: \
+		datasets/idwiki.autolabeled_revisions.100k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.idwiki.reverted \
+		--host https://id.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/idwiki.reverted.md: \
+		datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.idwiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.02272613605673532" \
+		--pop-rate "false=0.9772738639432647" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/idwiki.reverted.gradient_boosting.model: \
+		datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.idwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.02272613605673532" \
+		--pop-rate "false=0.9772738639432647" \
+		--center --scale > $@
+
+idwiki_models: \
+	models/idwiki.reverted.gradient_boosting.model
+
+idwiki_tuning_reports: \
+	tuning_reports/idwiki.reverted.md
+
+############################# Icelandic Wikipedia ################################
+datasets/iswiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/218976/output/0/json-lines?download=true > $@
+
+datasets/iswiki.autolabeled_revisions.20k_2017.json: \
+		datasets/iswiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://is.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/iswiki.revisions_for_review.5k_2017.json: \
+		datasets/iswiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/iswiki.autolabeled_revisions.w_cache.20k_2017.json: \
+		datasets/iswiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.iswiki.reverted \
+		--host https://is.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/iswiki.reverted.md: \
+		datasets/iswiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.iswiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.08115405770288514" \
+		--pop-rate "false=0.9188459422971149" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/iswiki.reverted.gradient_boosting.model: \
+		datasets/iswiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.iswiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=300' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.08115405770288514" \
+		--pop-rate "false=0.9188459422971149" \
+		--center --scale > $@
+
+iswiki_models: \
+	models/iswiki.reverted.gradient_boosting.model
+
+iswiki_tuning_reports: \
+	tuning_reports/iswiki.reverted.md
+
+############################# Italian Wikipedia ################################
+datasets/itwiki.sampled_revisions.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/42224/output/0/json-lines?download=true > $@
+
+datasets/itwiki.autolabeled_revisions.20k_2015.json: \
+		datasets/itwiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://it.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+
+datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/itwiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.itwiki.reverted \
+		--host https://it.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/itwiki.reverted.md: \
+		datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.itwiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.04628882613957241" \
+		--pop-rate "false=0.9537111738604276" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/itwiki.reverted.gradient_boosting.model: \
+		datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.itwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.04628882613957241" \
+		--pop-rate "false=0.9537111738604276" \
+		--center --scale > $@
+
+itwiki_models: \
+	models/itwiki.reverted.gradient_boosting.model
+
+itwiki_tuning_reports: \
+	tuning_reports/itwiki.reverted.md
 
