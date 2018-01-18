@@ -17,3 +17,12 @@ models:
         tuning_params:
             n_estimators: 500
         pop_rate_true: 0.01919
+
+trusted_groups:
+    - autopatrolled
+    - bot
+    - bureaucrat
+    - checkuser
+    - reviewer
+    - rollbacker
+    - sysop
