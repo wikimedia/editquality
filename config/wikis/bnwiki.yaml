@@ -9,7 +9,7 @@ samples:
 
 unbalanced_5k_set_for_review: true
 
-default_sample: 100k_2017
+default_sample: 20k_2017
 review_sample: 5k_2017
 
 models:
@@ -17,3 +17,12 @@ models:
         tuning_params:
             n_estimators: 500
         pop_rate_true: 0.021554310862
+
+trusted_groups:
+    - autopatrolled
+    - bot
+    - bureaucrat
+    - checkuser
+    - reviewer
+    - rollbacker
+    - sysop
