@@ -42,13 +42,28 @@ def load_config():
 def load_wiki(wiki, config):
     default_wiki = copy.deepcopy(config["wiki_defaults"])
     wiki = update(default_wiki, wiki)
+    result = collections.OrderedDict()
     if isinstance(wiki["models"], list):
         wiki["models"] = {name: {} for name in wiki["models"]}
 
-    for model_name, model in wiki["models"].items():
+    for model_name in ['reverted', 'damaging', 'goodfaith']:
+        if model_name not in wiki['models']:
+            continue
+        model = wiki["models"][model_name]
         model_defaults = copy.deepcopy(config["model_defaults"])
         model = update(model_defaults, model)
-        wiki["models"][model_name] = model
+        result[model_name] = model
+
+    wiki["models"] = result
+
+    # Sort sample types
+    result = collections.OrderedDict()
+    for sample_type in ['quarry_url', 'labeling_campaign']:
+        for sample in wiki.get('samples', {}):
+            if sample_type not in wiki['samples'][sample]:
+                continue
+            result[sample] = wiki['samples'][sample]
+    wiki['samples'] = result
     return wiki
 
 

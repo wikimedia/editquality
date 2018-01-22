@@ -11,9 +11,16 @@ wikilabels_sample: 5k_balanced_2016
 default_sample: 20k_2015
 
 models:
-    reverted:
-        pop_rate_true: 0.0728788421214136
     damaging:
         pop_rate_true: 0.034163555464634586
     goodfaith:
         pop_rate_true: 0.9671661637600368
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
