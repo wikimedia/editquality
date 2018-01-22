@@ -1,0 +1,27 @@
+name: tawiki
+label: Tamil Wikipedia
+host: ta.wikipedia.org
+
+samples:
+    20k_2017:
+        quarry_url: "https://quarry.wmflabs.org/run/190662/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/20230"
+
+trusted_groups:
+    - autopatrolled
+    - bot
+    - bureaucrat
+    - patroller
+    - rollbacker
+    - sysop
+
+unbalanced_5k_set_for_review: true
+
+default_sample: 20k_2017
+review_sample: 5k_2017
+
+models:
+    reverted:
+        tuning_params:
+            n_estimators: 500
+        pop_rate_true: 0.015904172328753335

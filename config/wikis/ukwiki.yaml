@@ -1,0 +1,22 @@
+name: ukwiki
+label: Ukranian Wikipedia
+host: uk.wikipedia.org
+
+samples:
+    20k_2015:
+        quarry_url: "http://quarry.wmflabs.org/run/48597/output/0/json-lines?download=true"
+
+trusted_groups:
+    - abusefilter
+    - arbcom
+    - bureaucrat
+    - checkuser
+    - rollbacker
+    - sysop
+    - bot
+
+default_sample: 20k_2015
+
+models:
+    reverted:
+        pop_rate_true: 0.021877665713282153

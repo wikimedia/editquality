@@ -14,7 +14,11 @@
 		#hrwiki_models \
 		#idwiki_models \
 		#iswiki_models \
-		#itwiki_models
+		#itwiki_models \
+		#jawiki_models \
+		#kowiki_models \
+		#tawiki_models \
+		#ukwiki_models
 
 #tuning_reports: \
 		#arwiki_tuning_reports \
@@ -26,7 +30,11 @@
 		#hrwiki_tuning_reports \
 		#idwiki_tuning_reports \
 		#iswiki_tuning_reports \
-		#itwiki_tuning_reports
+		#itwiki_tuning_reports \
+		#jawiki_tuning_reports \
+		#kowiki_tuning_reports \
+		#tawiki_tuning_reports \
+		#ukwiki_tuning_reports
 
 test_statistics = \
 		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
@@ -576,6 +584,7 @@ idwiki_tuning_reports: \
 	tuning_reports/idwiki.reverted.md
 
 ############################# Icelandic Wikipedia ################################
+# From https://quarry.wmflabs.org/query/23305
 datasets/iswiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/218976/output/0/json-lines?download=true > $@
 
@@ -701,4 +710,258 @@ itwiki_models: \
 
 itwiki_tuning_reports: \
 	tuning_reports/itwiki.reverted.md
+
+############################# Japanese Wikipedia ################################
+# From https://quarry.wmflabs.org/query/9927
+datasets/jawiki.sampled_revisions.40k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/89016/output/0/json-lines?download=true > $@
+
+datasets/jawiki.autolabeled_revisions.40k_2016.json: \
+		datasets/jawiki.sampled_revisions.40k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://ja.wikipedia.org \
+		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+
+datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json: \
+		datasets/jawiki.autolabeled_revisions.40k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.jawiki.reverted \
+		--host https://ja.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/jawiki.reverted.md: \
+		datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.jawiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.03256945140908635" \
+		--pop-rate "false=0.9674305485909136" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/jawiki.reverted.gradient_boosting.model: \
+		datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.jawiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.03256945140908635" \
+		--pop-rate "false=0.9674305485909136" \
+		--center --scale > $@
+
+jawiki_models: \
+	models/jawiki.reverted.gradient_boosting.model
+
+jawiki_tuning_reports: \
+	tuning_reports/jawiki.reverted.md
+
+############################# Korean Wikipedia ################################
+# From https://quarry.wmflabs.org/query/17645
+datasets/kowiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/165613/output/0/json-lines?download=true > $@
+
+datasets/kowiki.autolabeled_revisions.20k_2016.json: \
+		datasets/kowiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://ko.wikipedia.org \
+		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+
+datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/kowiki.autolabeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.kowiki.reverted \
+		--host https://ko.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/kowiki.reverted.md: \
+		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.kowiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.04717122705217348" \
+		--pop-rate "false=0.9528287729478265" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/kowiki.reverted.gradient_boosting.model: \
+		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.kowiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.04717122705217348" \
+		--pop-rate "false=0.9528287729478265" \
+		--center --scale > $@
+
+kowiki_models: \
+	models/kowiki.reverted.gradient_boosting.model
+
+kowiki_tuning_reports: \
+	tuning_reports/kowiki.reverted.md
+
+############################# Tamil Wikipedia ################################
+# From https://quarry.wmflabs.org/query/20230
+datasets/tawiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/190662/output/0/json-lines?download=true > $@
+
+datasets/tawiki.autolabeled_revisions.20k_2017.json: \
+		datasets/tawiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://ta.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,patroller,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/tawiki.revisions_for_review.5k_2017.json: \
+		datasets/tawiki.autolabeled_revisions.20k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json: \
+		datasets/tawiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.tawiki.reverted \
+		--host https://ta.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/tawiki.reverted.md: \
+		datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.tawiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.015904172328753335" \
+		--pop-rate "false=0.9840958276712467" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/tawiki.reverted.gradient_boosting.model: \
+		datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.tawiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.015904172328753335" \
+		--pop-rate "false=0.9840958276712467" \
+		--center --scale > $@
+
+tawiki_models: \
+	models/tawiki.reverted.gradient_boosting.model
+
+tawiki_tuning_reports: \
+	tuning_reports/tawiki.reverted.md
+
+############################# Ukranian Wikipedia ################################
+datasets/ukwiki.sampled_revisions.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/48597/output/0/json-lines?download=true > $@
+
+datasets/ukwiki.autolabeled_revisions.20k_2015.json: \
+		datasets/ukwiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://uk.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+
+datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/ukwiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.ukwiki.reverted \
+		--host https://uk.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/ukwiki.reverted.md: \
+		datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ukwiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.021877665713282153" \
+		--pop-rate "false=0.9781223342867178" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/ukwiki.reverted.gradient_boosting.model: \
+		datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.ukwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.021877665713282153" \
+		--pop-rate "false=0.9781223342867178" \
+		--center --scale > $@
+
+ukwiki_models: \
+	models/ukwiki.reverted.gradient_boosting.model
+
+ukwiki_tuning_reports: \
+	tuning_reports/ukwiki.reverted.md
 
