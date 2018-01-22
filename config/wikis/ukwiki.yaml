@@ -15,10 +15,7 @@ trusted_groups:
     - sysop
     - bot
 
-unbalanced_5k_set_for_review: true
-
 default_sample: 20k_2015
-review_sample: 5k_2015
 
 models:
     reverted:
