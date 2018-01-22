@@ -1,0 +1,25 @@
+name: jawiki
+label: Japanese Wikipedia
+host: ja.wikipedia.org
+
+samples:
+    40k_2016:
+        quarry_url: "https://quarry.wmflabs.org/run/89016/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/9927"
+
+trusted_groups:
+    - abusefilter
+    - bot
+    - bureaucrat
+    - checkuser
+    - eliminator
+    - interface-editor
+    - oversight
+    - rollbacker
+    - sysop
+
+default_sample: 40k_2016
+
+models:
+    reverted:
+        pop_rate_true: 0.03256945140908635
