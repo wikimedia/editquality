@@ -1,0 +1,25 @@
+name: kowiki
+label: Korean Wikipedia
+host: ko.wikipedia.org
+
+samples:
+    20k_2016:
+        quarry_url: "https://quarry.wmflabs.org/run/165613/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/17645"
+
+trusted_groups:
+    - abusefilter
+    - bot
+    - bureaucrat
+    - checkuser
+    - eliminator
+    - interface-editor
+    - oversight
+    - rollbacker
+    - sysop
+
+default_sample: 20k_2016
+
+models:
+    reverted:
+        pop_rate_true: 0.04717122705217348
