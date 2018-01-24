@@ -43,6 +43,8 @@ def load_wiki(wiki, config):
     default_wiki = copy.deepcopy(config["wiki_defaults"])
     wiki = update(default_wiki, wiki)
     result = collections.OrderedDict()
+    if 'models' not in wiki:
+        wiki['models'] = {}
     if isinstance(wiki["models"], list):
         wiki["models"] = {name: {} for name in wiki["models"]}
 

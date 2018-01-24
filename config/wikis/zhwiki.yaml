@@ -1,0 +1,18 @@
+name: zhwiki
+label: Chinese Wikipedia
+host: zh.wikipedia.org
+
+samples:
+    100k_2016:
+        quarry_url: "https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true"
+
+trusted_groups:
+    - checkuser
+    - bureaucrat
+    - sysop
+    - eliminator
+    - bot
+
+balanced_5k_set_for_review: true
+default_sample: 100k_2016
+review_sample: 5k_2016
