@@ -1,0 +1,38 @@
+name: etwiki
+label: Estonian Wikipedia
+host: et.wikipedia.org
+
+samples:
+    5k_2015:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/etwiki/17/"
+    20k_2015:
+        quarry_url: "http://quarry.wmflabs.org/run/50110/output/0/json-lines?download=true"
+
+wikilabels_sample: 5k_2015
+default_sample: 20k_2015
+review_sample: 5k_2015
+
+merged_samples:
+    20k_2015:
+        20k_2015: "autolabeled_revisions"
+        5k_2015: "human_labeled_revisions"
+
+models:
+    damaging:
+        tuning_params:
+            n_estimators: 500
+        pop_rate_true: 0.026158257457618593
+    goodfaith:
+        tuning_params:
+            n_estimators: 500
+        pop_rate_true: 0.9841038281603702
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
+    - flow-bot
