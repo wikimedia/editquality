@@ -1,0 +1,17 @@
+name: urwiki
+label: Urdu Wikipedia
+host: ur.wikipedia.org
+
+samples:
+    500k_2015:
+        quarry_url: "http://quarry.wmflabs.org/run/64277/output/0/json-lines?download=true"
+
+trusted_groups:
+    - bot
+    - bureaucrat
+    - sysop
+    - rollbackers
+
+balanced_5k_set_for_review: true
+default_sample: 500k_2015
+review_sample: 5k_2015
