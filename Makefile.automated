@@ -516,7 +516,7 @@ datasets/eswikibooks.autolabeled_revisions.20k_2015.json: \
 		datasets/eswikibooks.sampled_revisions.20k_2015.json
 	cat $< | \
 	./utility autolabel --host=https://es.wikibooks.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
 		--trusted-edits=1000 \
 		--revert-radius=3 \
 		--revert-window=48 \

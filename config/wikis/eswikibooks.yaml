@@ -37,3 +37,4 @@ trusted_groups:
     - checkuser
     - abusefilter
     - bureaucrat
+    - autopatrolled
