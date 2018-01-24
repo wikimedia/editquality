@@ -36,20 +36,7 @@ goodfaith_major_minor = $(major_minor)
 
 {% for wiki in wikis %}
 ############################# {{ wiki.label }} ################################
-{%- for sample_name, sample in wiki.samples.items() %}{%- if "labeling_campaign" in sample %}
-datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
-	./utility fetch_labels \
-		{{ sample.labeling_campaign }} > $@
-
-datasets/{{ wiki.name }}.labeled_revisions.20k_2015.json: \
-		datasets/{{ wiki.name }}.human_labeled_revisions.20k_2015.json
-	cat $< | \
-	./utility autolabel --host=https://{{ wiki.host }} \
-		--trusted-groups={{ wiki.trusted_groups|join(",") }} \
-		--trusted-edits=1000 \
-		--verbose > $@
-{% endif %}
-{%- if "quarry_url" in sample %}
+{%- for sample_name, sample in wiki.samples.items() %}{%- if "quarry_url" in sample %}
 {%- if "quarry_page" in sample %}
 # From {{ sample.quarry_page }}{% endif %}
 datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json:
@@ -64,8 +51,11 @@ datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
-
-{% endif %}{% endfor %}{%- if wiki.balanced_5k_set_for_review -%}
+{% endif %}{% if "labeling_campaign" in sample %}
+datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
+	./utility fetch_labels \
+		{{ sample.labeling_campaign }} > $@
+{% endif %}{% endfor %}{% if wiki.balanced_5k_set_for_review %}
 datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
 	( \
@@ -76,13 +66,30 @@ datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 	 grep '"needs_review": false' | \
 	 shuf -n 2500 \
 	) | shuf > $@
-{% endif %}{%- if wiki.unbalanced_5k_set_for_review -%}
+{% endif %}{% if wiki.unbalanced_5k_set_for_review %}
 datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
 	grep '"needs_review": true' $< | shuf > $@
-{% endif %}
+{% endif %}{% if wiki.merged_samples %}{% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
+datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
+{%- for sample_name, sample in big_sample|dictsort %}
+		datasets/{{ wiki.name }}.{{ sample }}.{{ sample_name }}.json{% if not loop.last %} \{% endif -%}
+{% endfor %}
+	./utility merge_labels $^ > $@
+{% endfor %}
+{%- endif %}
 datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.{{ wiki.name }}.reverted \
+		--host https://{{ wiki.host }} \
+		--extractor $(max_extractors) \
+		--verbose > $@
+{% if wiki.merged_samples %}
+{%- for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
+datasets/{{ wiki.name }}.labeled_revisions.w_cache.{{ big_sample_name }}.json: \
+		datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json
 	cat $< | \
 	revscoring extract \
 		{% for model_name, model in wiki.models.items() -%}
@@ -91,9 +98,9 @@ datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}
 		--host https://{{ wiki.host }} \
 		--extractor $(max_extractors) \
 		--verbose > $@
-{% for model_name, model in wiki.models.items() %}
+{% endfor %}{% endif %}{% for model_name, model in wiki.models.items() %}
 tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json
+		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -104,7 +111,7 @@ tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		{{ model_name }} \
 		{% endif -%}
 		roc_auc.labels.true \
-		--label-weight "true=$({{ model_name }}_weight)" \
+		--label-weight "{% if model_name == "goodfaith" %}false{% else %}true{% endif %}=$({{ model_name }}_weight)" \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale \
@@ -112,7 +119,7 @@ tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		--debug > $@
 
 models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json
+		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
@@ -122,7 +129,7 @@ models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
 		{% for key, value in model.tuning_params|dictsort -%}
 		-p '{{ key }}={{ value }}' \
 		{% endfor -%}
-		--label-weight "true=$({{ model_name }}_weight)" \
+		--label-weight "{% if model_name == "goodfaith" %}false{% else %}true{% endif %}=$({{ model_name }}_weight)" \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
