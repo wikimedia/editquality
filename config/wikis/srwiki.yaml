@@ -1,0 +1,19 @@
+name: srwiki
+label: Serbian Wikipedia
+host: sr.wikipedia.org
+
+samples:
+    120k_2017:
+        quarry_url: "https://quarry.wmflabs.org/run/211097/output/0/json-lines?download=true"
+
+trusted_groups:
+    - autopatrolled
+    - bot
+    - bureaucrat
+    - patroller
+    - rollbacker
+    - sysop
+
+unbalanced_5k_set_for_review: true
+default_sample: 120k_2017
+review_sample: 5k_2017
