@@ -1,0 +1,18 @@
+name: ptwiki
+label: Portugueses Wikipedia
+host: pt.wikipedia.org
+
+samples:
+    20k_2015:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/ptwiki/7/"
+
+wikilabels_sample: 20k_2015
+default_sample: 20k_2015
+review_sample: 20k_2015
+
+models:
+    damaging:
+        pop_rate_true: 0.06896029864299047
+    goodfaith:
+        pop_rate_true: 0.9397669373959542
+

@@ -1,0 +1,20 @@
+name: azwiki
+label: Azeri Wikipedia
+host: az.wikipedia.org
+
+samples:
+    20k_2016:
+        quarry_url: "https://quarry.wmflabs.org/run/99533/output/0/json-lines?download=true"
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
+
+balanced_5k_set_for_review: true
+default_sample: 20k_2016
+review_sample: 5k_2016
