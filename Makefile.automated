@@ -10,7 +10,10 @@
 		#cawiki_models \
 		#dewiki_models \
 		#elwiki_models \
+		#eswiki_models \
+		#eswikibooks_models \
 		#eswikiquote_models \
+		#etwiki_models \
 		#hrwiki_models \
 		#idwiki_models \
 		#iswiki_models \
@@ -26,7 +29,10 @@
 		#cawiki_tuning_reports \
 		#dewiki_tuning_reports \
 		#elwiki_tuning_reports \
+		#eswiki_tuning_reports \
+		#eswikibooks_tuning_reports \
 		#eswikiquote_tuning_reports \
+		#etwiki_tuning_reports \
 		#hrwiki_tuning_reports \
 		#idwiki_tuning_reports \
 		#iswiki_tuning_reports \
@@ -275,7 +281,6 @@ datasets/dewiki.autolabeled_revisions.20k_2015.json: \
 		--revert-window=48 \
 		--verbose > $@
 
-
 datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/dewiki.autolabeled_revisions.20k_2015.json
 	cat $< | \
@@ -389,6 +394,234 @@ elwiki_models: \
 elwiki_tuning_reports: \
 	tuning_reports/elwiki.reverted.md
 
+############################# Spanish Wikipedia ################################
+datasets/eswiki.sampled_revisions.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/42221/output/0/json-lines?download=true > $@
+
+datasets/eswiki.autolabeled_revisions.20k_2015.json: \
+		datasets/eswiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://es.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/eswiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/eswiki/12/ > $@
+
+datasets/eswiki.labeled_revisions.20k_2015.json: \
+		datasets/eswiki.autolabeled_revisions.20k_2015.json \
+		datasets/eswiki.human_labeled_revisions.5k_2015.json
+	./utility merge_labels $^ > $@
+
+datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/eswiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.eswiki.reverted \
+		--host https://es.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+datasets/eswiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/eswiki.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.eswiki.damaging \
+		editquality.feature_lists.eswiki.goodfaith \
+		--host https://es.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/eswiki.damaging.md: \
+		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.11036013315847877" \
+		--pop-rate "false=0.8896398668415212" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/eswiki.damaging.gradient_boosting.model: \
+		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=300' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.11036013315847877" \
+		--pop-rate "false=0.8896398668415212" \
+		--center --scale > $@
+
+tuning_reports/eswiki.goodfaith.md: \
+		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.11036013315847877" \
+		--pop-rate "false=0.8896398668415212" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/eswiki.goodfaith.gradient_boosting.model: \
+		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=300' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.11036013315847877" \
+		--pop-rate "false=0.8896398668415212" \
+		--center --scale > $@
+
+eswiki_models: \
+	models/eswiki.damaging.gradient_boosting.model \
+	models/eswiki.goodfaith.gradient_boosting.model
+
+eswiki_tuning_reports: \
+	tuning_reports/eswiki.damaging.md \
+	tuning_reports/eswiki.goodfaith.md
+
+############################# Spanish Wikibooks ################################
+datasets/eswikibooks.sampled_revisions.20k_2015.json:
+	wget -qO- https://quarry.wmflabs.org/run/113419/output/0/json-lines?download=true > $@
+
+datasets/eswikibooks.autolabeled_revisions.20k_2015.json: \
+		datasets/eswikibooks.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://es.wikibooks.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/eswikibooks.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/eswikibooks/42/ > $@
+
+datasets/eswikibooks.labeled_revisions.20k_2015.json: \
+		datasets/eswikibooks.autolabeled_revisions.20k_2015.json \
+		datasets/eswikibooks.human_labeled_revisions.5k_2015.json
+	./utility merge_labels $^ > $@
+
+datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.eswikibooks.reverted \
+		--host https://es.wikibooks.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/eswikibooks.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.eswikibooks.damaging \
+		editquality.feature_lists.eswikibooks.goodfaith \
+		--host https://es.wikibooks.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/eswikibooks.damaging.md: \
+		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswikibooks.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.1126671580499105" \
+		--pop-rate "false=0.8873328419500895" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/eswikibooks.damaging.gradient_boosting.model: \
+		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswikibooks.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.1126671580499105" \
+		--pop-rate "false=0.8873328419500895" \
+		--center --scale > $@
+
+tuning_reports/eswikibooks.goodfaith.md: \
+		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.eswikibooks.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9139393939393939" \
+		--pop-rate "false=0.08606060606060606" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/eswikibooks.goodfaith.gradient_boosting.model: \
+		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.eswikibooks.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.5' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9139393939393939" \
+		--pop-rate "false=0.08606060606060606" \
+		--center --scale > $@
+
+eswikibooks_models: \
+	models/eswikibooks.damaging.gradient_boosting.model \
+	models/eswikibooks.goodfaith.gradient_boosting.model
+
+eswikibooks_tuning_reports: \
+	tuning_reports/eswikibooks.damaging.md \
+	tuning_reports/eswikibooks.goodfaith.md
+
 ############################# Spanish Wikiquote ################################
 # From https://quarry.wmflabs.org/query/23421
 datasets/eswikiquote.sampled_revisions.12k_2017.json:
@@ -454,6 +687,120 @@ eswikiquote_models: \
 
 eswikiquote_tuning_reports: \
 	tuning_reports/eswikiquote.reverted.md
+
+############################# Estonian Wikipedia ################################
+datasets/etwiki.sampled_revisions.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/50110/output/0/json-lines?download=true > $@
+
+datasets/etwiki.autolabeled_revisions.20k_2015.json: \
+		datasets/etwiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://et.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/etwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/etwiki/17/ > $@
+
+datasets/etwiki.labeled_revisions.20k_2015.json: \
+		datasets/etwiki.autolabeled_revisions.20k_2015.json \
+		datasets/etwiki.human_labeled_revisions.5k_2015.json
+	./utility merge_labels $^ > $@
+
+datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/etwiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.etwiki.reverted \
+		--host https://et.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+datasets/etwiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/etwiki.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.etwiki.damaging \
+		editquality.feature_lists.etwiki.goodfaith \
+		--host https://et.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/etwiki.damaging.md: \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.etwiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.026158257457618593" \
+		--pop-rate "false=0.9738417425423814" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/etwiki.damaging.gradient_boosting.model: \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.etwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.026158257457618593" \
+		--pop-rate "false=0.9738417425423814" \
+		--center --scale > $@
+
+tuning_reports/etwiki.goodfaith.md: \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.etwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9841038281603702" \
+		--pop-rate "false=0.01589617183962977" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/etwiki.goodfaith.gradient_boosting.model: \
+		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.etwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9841038281603702" \
+		--pop-rate "false=0.01589617183962977" \
+		--center --scale > $@
+
+etwiki_models: \
+	models/etwiki.damaging.gradient_boosting.model \
+	models/etwiki.goodfaith.gradient_boosting.model
+
+etwiki_tuning_reports: \
+	tuning_reports/etwiki.damaging.md \
+	tuning_reports/etwiki.goodfaith.md
 
 ############################# Croatian Wikipedia ################################
 # From https://quarry.wmflabs.org/query/21213
@@ -534,7 +881,6 @@ datasets/idwiki.autolabeled_revisions.100k_2016.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
-
 
 datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json: \
 		datasets/idwiki.autolabeled_revisions.100k_2016.json
@@ -663,7 +1009,6 @@ datasets/itwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-window=48 \
 		--verbose > $@
 
-
 datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/itwiki.autolabeled_revisions.20k_2015.json
 	cat $< | \
@@ -726,7 +1071,6 @@ datasets/jawiki.autolabeled_revisions.40k_2016.json: \
 		--revert-window=48 \
 		--verbose > $@
 
-
 datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json: \
 		datasets/jawiki.autolabeled_revisions.40k_2016.json
 	cat $< | \
@@ -788,7 +1132,6 @@ datasets/kowiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
-
 
 datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/kowiki.autolabeled_revisions.20k_2016.json
@@ -916,7 +1259,6 @@ datasets/ukwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
-
 
 datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json: \
 		datasets/ukwiki.autolabeled_revisions.20k_2015.json

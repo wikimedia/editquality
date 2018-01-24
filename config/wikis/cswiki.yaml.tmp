@@ -1,0 +1,25 @@
+name: cswiki
+label: Czech Wikipedia
+host: cs.wikipedia.org
+
+samples:
+    20k_2016:
+        quarry_url: "https://quarry.wmflabs.org/run/97125/output/0/json-lines?download=true"
+
+balanced_5k_set_for_review: true
+
+default_sample: 20k_2016
+review_sample: 5k_2016
+
+models:
+    reverted:
+        pop_rate_true: 0.031783372541168226
+    damaging:
+        tuning_params:
+            n_estimators: 500
+        pop_rate_true: 0.0445968266680014
+    goodfaith:
+        tuning_params:
+            max_depth: 5
+            n_estimators: 500
+        pop_rate_true: 0.977526402722859
