@@ -134,7 +134,7 @@ models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
 {% endfor %}
-{{ wiki.name }}_models: \
+{% if wiki.models %}{{ wiki.name }}_models: \
 {%- for model_name, model in wiki.models.items() %}
 	models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model{% if not loop.last %} \{% endif -%}
 {% endfor %}
@@ -143,4 +143,5 @@ models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
 {%- for model_name, model in wiki.models.items() %}
 	tuning_reports/{{ wiki.name }}.{{ model_name }}.md{% if not loop.last %} \{% endif -%}
 {% endfor %}
+{%- endif -%}
 {% endfor %}

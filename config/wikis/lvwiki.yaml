@@ -1,0 +1,21 @@
+name: lvwiki
+label: Latvian Wikipedia
+host: lv.wikipedia.org
+
+samples:
+    20k_2016:
+        quarry_url: "https://quarry.wmflabs.org/run/169100/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/17989"
+
+trusted_groups:
+    - sysop
+    - bureaucrat
+    - bot
+    - oversight
+    - checkuser
+    - patroller
+    - autopatrolled
+
+unbalanced_5k_set_for_review: true
+default_sample: 20k_2016
+review_sample: 5k_2016

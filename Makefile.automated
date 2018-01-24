@@ -6,6 +6,7 @@
 
 #models: \
 		#arwiki_models \
+		#azwiki_models \
 		#bnwiki_models \
 		#cawiki_models \
 		#dewiki_models \
@@ -20,11 +21,20 @@
 		#itwiki_models \
 		#jawiki_models \
 		#kowiki_models \
+		#lvwiki_models \
+		#rowiki_models \
+		#ruwiki_models \
+		#sqwiki_models \
+		#srwiki_models \
 		#tawiki_models \
-		#ukwiki_models
+		#trwiki_models \
+		#ukwiki_models \
+		#urwiki_models \
+		#zhwiki_models
 
 #tuning_reports: \
 		#arwiki_tuning_reports \
+		#azwiki_tuning_reports \
 		#bnwiki_tuning_reports \
 		#cawiki_tuning_reports \
 		#dewiki_tuning_reports \
@@ -39,8 +49,16 @@
 		#itwiki_tuning_reports \
 		#jawiki_tuning_reports \
 		#kowiki_tuning_reports \
+		#lvwiki_tuning_reports \
+		#rowiki_tuning_reports \
+		#ruwiki_tuning_reports \
+		#sqwiki_tuning_reports \
+		#srwiki_tuning_reports \
 		#tawiki_tuning_reports \
-		#ukwiki_tuning_reports
+		#trwiki_tuning_reports \
+		#ukwiki_tuning_reports \
+		#urwiki_tuning_reports \
+		#zhwiki_tuning_reports
 
 test_statistics = \
 		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
@@ -134,6 +152,40 @@ arwiki_models: \
 
 arwiki_tuning_reports: \
 	tuning_reports/arwiki.reverted.md
+############################# Azeri Wikipedia ################################
+datasets/azwiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/99533/output/0/json-lines?download=true > $@
+
+datasets/azwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/azwiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://az.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/azwiki.revisions_for_review.5k_2016.json: \
+		datasets/azwiki.autolabeled_revisions.20k_2016.json
+	( \
+	 cat $< | \
+	 grep '"needs_review": true' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep '"needs_review": false' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/azwiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/azwiki.autolabeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.azwiki.reverted \
+		--host https://az.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
 
 ############################# Bengali Wikipedia ################################
 # From https://quarry.wmflabs.org/query/20229
@@ -200,7 +252,6 @@ bnwiki_models: \
 
 bnwiki_tuning_reports: \
 	tuning_reports/bnwiki.reverted.md
-
 ############################# Catalan Wikipedia ################################
 # From https://quarry.wmflabs.org/query/24081
 datasets/cawiki.sampled_revisions.100k_2017.json:
@@ -266,7 +317,6 @@ cawiki_models: \
 
 cawiki_tuning_reports: \
 	tuning_reports/cawiki.reverted.md
-
 ############################# German Wikipedia ################################
 datasets/dewiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/42223/output/0/json-lines?download=true > $@
@@ -327,7 +377,6 @@ dewiki_models: \
 
 dewiki_tuning_reports: \
 	tuning_reports/dewiki.reverted.md
-
 ############################# Greek Wikipedia ################################
 # From https://quarry.wmflabs.org/query/20231
 datasets/elwiki.sampled_revisions.20k_2017.json:
@@ -393,7 +442,6 @@ elwiki_models: \
 
 elwiki_tuning_reports: \
 	tuning_reports/elwiki.reverted.md
-
 ############################# Spanish Wikipedia ################################
 datasets/eswiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/42221/output/0/json-lines?download=true > $@
@@ -507,7 +555,6 @@ eswiki_models: \
 eswiki_tuning_reports: \
 	tuning_reports/eswiki.damaging.md \
 	tuning_reports/eswiki.goodfaith.md
-
 ############################# Spanish Wikibooks ################################
 datasets/eswikibooks.sampled_revisions.20k_2015.json:
 	wget -qO- https://quarry.wmflabs.org/run/113419/output/0/json-lines?download=true > $@
@@ -621,7 +668,6 @@ eswikibooks_models: \
 eswikibooks_tuning_reports: \
 	tuning_reports/eswikibooks.damaging.md \
 	tuning_reports/eswikibooks.goodfaith.md
-
 ############################# Spanish Wikiquote ################################
 # From https://quarry.wmflabs.org/query/23421
 datasets/eswikiquote.sampled_revisions.12k_2017.json:
@@ -687,7 +733,6 @@ eswikiquote_models: \
 
 eswikiquote_tuning_reports: \
 	tuning_reports/eswikiquote.reverted.md
-
 ############################# Estonian Wikipedia ################################
 datasets/etwiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/50110/output/0/json-lines?download=true > $@
@@ -801,7 +846,6 @@ etwiki_models: \
 etwiki_tuning_reports: \
 	tuning_reports/etwiki.damaging.md \
 	tuning_reports/etwiki.goodfaith.md
-
 ############################# Croatian Wikipedia ################################
 # From https://quarry.wmflabs.org/query/21213
 datasets/hrwiki.sampled_revisions.20k_2017.json:
@@ -867,7 +911,6 @@ hrwiki_models: \
 
 hrwiki_tuning_reports: \
 	tuning_reports/hrwiki.reverted.md
-
 ############################# Indonesian Wikipedia ################################
 datasets/idwiki.sampled_revisions.100k_2016.json:
 	wget -qO- http://quarry.wmflabs.org/run/135748/output/0/json-lines?download=true > $@
@@ -928,7 +971,6 @@ idwiki_models: \
 
 idwiki_tuning_reports: \
 	tuning_reports/idwiki.reverted.md
-
 ############################# Icelandic Wikipedia ################################
 # From https://quarry.wmflabs.org/query/23305
 datasets/iswiki.sampled_revisions.20k_2017.json:
@@ -994,7 +1036,6 @@ iswiki_models: \
 
 iswiki_tuning_reports: \
 	tuning_reports/iswiki.reverted.md
-
 ############################# Italian Wikipedia ################################
 datasets/itwiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/42224/output/0/json-lines?download=true > $@
@@ -1055,7 +1096,6 @@ itwiki_models: \
 
 itwiki_tuning_reports: \
 	tuning_reports/itwiki.reverted.md
-
 ############################# Japanese Wikipedia ################################
 # From https://quarry.wmflabs.org/query/9927
 datasets/jawiki.sampled_revisions.40k_2016.json:
@@ -1117,7 +1157,6 @@ jawiki_models: \
 
 jawiki_tuning_reports: \
 	tuning_reports/jawiki.reverted.md
-
 ############################# Korean Wikipedia ################################
 # From https://quarry.wmflabs.org/query/17645
 datasets/kowiki.sampled_revisions.20k_2016.json:
@@ -1179,6 +1218,402 @@ kowiki_models: \
 
 kowiki_tuning_reports: \
 	tuning_reports/kowiki.reverted.md
+############################# Latvian Wikipedia ################################
+# From https://quarry.wmflabs.org/query/17989
+datasets/lvwiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/169100/output/0/json-lines?download=true > $@
+
+datasets/lvwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/lvwiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://lv.wikipedia.org \
+		--trusted-groups=sysop,bureaucrat,bot,oversight,checkuser,patroller,autopatrolled \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/lvwiki.revisions_for_review.5k_2016.json: \
+		datasets/lvwiki.autolabeled_revisions.20k_2016.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/lvwiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/lvwiki.autolabeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.lvwiki.reverted \
+		--host https://lv.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+
+############################# Romanian Wikipedia ################################
+datasets/rowiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/146926/output/0/json-lines?download=true > $@
+
+datasets/rowiki.autolabeled_revisions.20k_2016.json: \
+		datasets/rowiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://ro.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot,templateeditor,patroller,autopatrolled \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/rowiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/rowiki/48/ > $@
+
+datasets/rowiki.labeled_revisions.20k_2016.json: \
+		datasets/rowiki.autolabeled_revisions.20k_2016.json \
+		datasets/rowiki.human_labeled_revisions.5k_2016.json
+	./utility merge_labels $^ > $@
+
+datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/rowiki.autolabeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.rowiki.reverted \
+		--host https://ro.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/rowiki.labeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.rowiki.damaging \
+		editquality.feature_lists.rowiki.goodfaith \
+		--host https://ro.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/rowiki.damaging.md: \
+		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.rowiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.04956982793117247" \
+		--pop-rate "false=0.9504301720688275" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/rowiki.damaging.gradient_boosting.model: \
+		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.rowiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.04956982793117247" \
+		--pop-rate "false=0.9504301720688275" \
+		--center --scale > $@
+
+tuning_reports/rowiki.goodfaith.md: \
+		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.rowiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9699379751900761" \
+		--pop-rate "false=0.030062024809923926" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/rowiki.goodfaith.gradient_boosting.model: \
+		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.rowiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).1 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=300' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9699379751900761" \
+		--pop-rate "false=0.030062024809923926" \
+		--center --scale > $@
+
+rowiki_models: \
+	models/rowiki.damaging.gradient_boosting.model \
+	models/rowiki.goodfaith.gradient_boosting.model
+
+rowiki_tuning_reports: \
+	tuning_reports/rowiki.damaging.md \
+	tuning_reports/rowiki.goodfaith.md
+############################# Russian Wikipedia ################################
+datasets/ruwiki.sampled_revisions.20k_2015.json:
+	wget -qO- https://quarry.wmflabs.org/run/48649/output/0/json-lines?download=true > $@
+
+datasets/ruwiki.autolabeled_revisions.20k_2015.json: \
+		datasets/ruwiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://ru.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/ruwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/ruwiki/10/ > $@
+
+datasets/ruwiki.labeled_revisions.20k_2015.json: \
+		datasets/ruwiki.autolabeled_revisions.20k_2015.json \
+		datasets/ruwiki.human_labeled_revisions.5k_2015.json
+	./utility merge_labels $^ > $@
+
+datasets/ruwiki.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/ruwiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.ruwiki.reverted \
+		--host https://ru.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/ruwiki.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.ruwiki.damaging \
+		editquality.feature_lists.ruwiki.goodfaith \
+		--host https://ru.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/ruwiki.damaging.md: \
+		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ruwiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.053479185657854755" \
+		--pop-rate "false=0.9465208143421453" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/ruwiki.damaging.gradient_boosting.model: \
+		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.ruwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.053479185657854755" \
+		--pop-rate "false=0.9465208143421453" \
+		--center --scale > $@
+
+tuning_reports/ruwiki.goodfaith.md: \
+		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ruwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9713866099463182" \
+		--pop-rate "false=0.028613390053681798" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/ruwiki.goodfaith.gradient_boosting.model: \
+		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.ruwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=300' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9713866099463182" \
+		--pop-rate "false=0.028613390053681798" \
+		--center --scale > $@
+
+ruwiki_models: \
+	models/ruwiki.damaging.gradient_boosting.model \
+	models/ruwiki.goodfaith.gradient_boosting.model
+
+ruwiki_tuning_reports: \
+	tuning_reports/ruwiki.damaging.md \
+	tuning_reports/ruwiki.goodfaith.md
+############################# Albanian Wikipedia ################################
+# From https://quarry.wmflabs.org/query/17988
+datasets/sqwiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/169099/output/0/json-lines?download=true > $@
+
+datasets/sqwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/sqwiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://sq.wikipedia.org \
+		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/sqwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/sqwiki/57/ > $@
+
+datasets/sqwiki.labeled_revisions.20k_2016.json: \
+		datasets/sqwiki.autolabeled_revisions.20k_2016.json \
+		datasets/sqwiki.human_labeled_revisions.5k_2016.json
+	./utility merge_labels $^ > $@
+
+datasets/sqwiki.autolabeled_revisions.w_cache.20k_2016.json: \
+		datasets/sqwiki.autolabeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.sqwiki.reverted \
+		--host https://sq.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/sqwiki.labeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.sqwiki.damaging \
+		editquality.feature_lists.sqwiki.goodfaith \
+		--host https://sq.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/sqwiki.damaging.md: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.sqwiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0287028702870287" \
+		--pop-rate "false=0.9712971297129713" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/sqwiki.damaging.gradient_boosting.model: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.sqwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0287028702870287" \
+		--pop-rate "false=0.9712971297129713" \
+		--center --scale > $@
+
+tuning_reports/sqwiki.goodfaith.md: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.sqwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9763476347634763" \
+		--pop-rate "false=0.023652365236523698" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/sqwiki.goodfaith.gradient_boosting.model: \
+		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.sqwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9763476347634763" \
+		--pop-rate "false=0.023652365236523698" \
+		--center --scale > $@
+
+sqwiki_models: \
+	models/sqwiki.damaging.gradient_boosting.model \
+	models/sqwiki.goodfaith.gradient_boosting.model
+
+sqwiki_tuning_reports: \
+	tuning_reports/sqwiki.damaging.md \
+	tuning_reports/sqwiki.goodfaith.md
+############################# Serbian Wikipedia ################################
+datasets/srwiki.sampled_revisions.120k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/211097/output/0/json-lines?download=true > $@
+
+datasets/srwiki.autolabeled_revisions.120k_2017.json: \
+		datasets/srwiki.sampled_revisions.120k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://sr.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,patroller,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/srwiki.revisions_for_review.5k_2017.json: \
+		datasets/srwiki.autolabeled_revisions.120k_2017.json
+	grep '"needs_review": true' $< | shuf > $@
+
+datasets/srwiki.autolabeled_revisions.w_cache.120k_2017.json: \
+		datasets/srwiki.autolabeled_revisions.120k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.srwiki.reverted \
+		--host https://sr.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
 
 ############################# Tamil Wikipedia ################################
 # From https://quarry.wmflabs.org/query/20230
@@ -1245,7 +1680,119 @@ tawiki_models: \
 
 tawiki_tuning_reports: \
 	tuning_reports/tawiki.reverted.md
+############################# Turkish Wikipedia ################################
+datasets/trwiki.sampled_revisions.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true > $@
 
+datasets/trwiki.autolabeled_revisions.20k_2015.json: \
+		datasets/trwiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://tr.wikipedia.org \
+		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/trwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/trwiki/5/ > $@
+
+datasets/trwiki.labeled_revisions.20k_2015.json: \
+		datasets/trwiki.autolabeled_revisions.20k_2015.json \
+		datasets/trwiki.human_labeled_revisions.5k_2015.json
+	./utility merge_labels $^ > $@
+
+datasets/trwiki.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/trwiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.trwiki.reverted \
+		--host https://tr.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/trwiki.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.trwiki.damaging \
+		editquality.feature_lists.trwiki.goodfaith \
+		--host https://tr.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/trwiki.damaging.md: \
+		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.trwiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0495014425266994" \
+		--pop-rate "false=0.9504985574733006" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/trwiki.damaging.gradient_boosting.model: \
+		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.trwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0495014425266994" \
+		--pop-rate "false=0.9504985574733006" \
+		--center --scale > $@
+
+tuning_reports/trwiki.goodfaith.md: \
+		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.trwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9538897605911829" \
+		--pop-rate "false=0.04611023940881709" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/trwiki.goodfaith.gradient_boosting.model: \
+		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.trwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9538897605911829" \
+		--pop-rate "false=0.04611023940881709" \
+		--center --scale > $@
+
+trwiki_models: \
+	models/trwiki.damaging.gradient_boosting.model \
+	models/trwiki.goodfaith.gradient_boosting.model
+
+trwiki_tuning_reports: \
+	tuning_reports/trwiki.damaging.md \
+	tuning_reports/trwiki.goodfaith.md
 ############################# Ukranian Wikipedia ################################
 datasets/ukwiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/48597/output/0/json-lines?download=true > $@
@@ -1306,4 +1853,73 @@ ukwiki_models: \
 
 ukwiki_tuning_reports: \
 	tuning_reports/ukwiki.reverted.md
+############################# Urdu Wikipedia ################################
+datasets/urwiki.sampled_revisions.500k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/64277/output/0/json-lines?download=true > $@
+
+datasets/urwiki.autolabeled_revisions.500k_2015.json: \
+		datasets/urwiki.sampled_revisions.500k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://ur.wikipedia.org \
+		--trusted-groups=bot,bureaucrat,sysop,rollbackers \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/urwiki.revisions_for_review.5k_2015.json: \
+		datasets/urwiki.autolabeled_revisions.500k_2015.json
+	( \
+	 cat $< | \
+	 grep '"needs_review": true' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep '"needs_review": false' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/urwiki.autolabeled_revisions.w_cache.500k_2015.json: \
+		datasets/urwiki.autolabeled_revisions.500k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.urwiki.reverted \
+		--host https://ur.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+
+############################# Chinese Wikipedia ################################
+datasets/zhwiki.sampled_revisions.100k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true > $@
+
+datasets/zhwiki.autolabeled_revisions.100k_2016.json: \
+		datasets/zhwiki.sampled_revisions.100k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://zh.wikipedia.org \
+		--trusted-groups=checkuser,bureaucrat,sysop,eliminator,bot \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/zhwiki.revisions_for_review.5k_2016.json: \
+		datasets/zhwiki.autolabeled_revisions.100k_2016.json
+	( \
+	 cat $< | \
+	 grep '"needs_review": true' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep '"needs_review": false' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/zhwiki.autolabeled_revisions.w_cache.100k_2016.json: \
+		datasets/zhwiki.autolabeled_revisions.100k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.zhwiki.reverted \
+		--host https://zh.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
 
