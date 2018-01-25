@@ -48,7 +48,7 @@ def main(argv=None):
 
     output_path = args["--output-path"] \
         if args["--output-path"] is not None \
-            else DEFAULT_BASE_DIR + "/Makefile.automated"
+        else DEFAULT_BASE_DIR + "/Makefile.automated"
 
     template_dir = args["--template-dir"] \
         if args["--template-dir"] is not None else DEFAULT_BASE_DIR + "/templates"
