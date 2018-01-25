@@ -63,5 +63,3 @@ def populate_defaults(config):
     config["wikis"] = wikis_config
 
     return config
-
-
