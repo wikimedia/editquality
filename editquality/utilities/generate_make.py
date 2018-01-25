@@ -31,86 +31,13 @@ Code-generate Makefile from template and configuration
 # * Where can we store information about samples?
 #   Original population rates; how we've distorted them.
 
-import copy
-import collections
 import docopt
-import glob
-import jinja2
 import os.path
-import yaml
 
 from ..codegen import differ
+from ..codegen import generate
 
 DEFAULT_BASE_DIR = os.path.dirname(__file__) + "/../.."
-
-
-# https://stackoverflow.com/a/3233356
-def deep_update(d, u):
-    for k, v in u.items():
-        if isinstance(v, collections.Mapping):
-            d[k] = deep_update(d.get(k, {}), v)
-        else:
-            d[k] = v
-    return d
-
-
-def load_config(config_dir=None):
-    path = "/{0}_defaults.yaml"
-    model_defaults = yaml.safe_load(open(config_dir + path.format('model'), "r"))
-    wiki_defaults = yaml.safe_load(open(config_dir + path.format('wiki'), "r"))
-
-    all_files = glob.glob(config_dir + "/wikis/*.yaml")
-    wikis = [yaml.safe_load(open(f, "r")) for f in all_files]
-
-    config = {
-        "model_defaults": model_defaults,
-        "wiki_defaults": wiki_defaults,
-        "wikis": wikis,
-    }
-    config = populate_defaults(config)
-    config['wikis'].sort(key=lambda t: t['name'])
-
-    return config
-
-
-def load_wiki(wiki, config):
-    default_wiki = copy.deepcopy(config["wiki_defaults"])
-    wiki = deep_update(default_wiki, wiki)
-    result = collections.OrderedDict()
-    if 'models' not in wiki:
-        wiki['models'] = {}
-    if isinstance(wiki["models"], list):
-        wiki["models"] = {name: {} for name in wiki["models"]}
-
-    for model_name in ['reverted', 'damaging', 'goodfaith']:
-        if model_name not in wiki['models']:
-            continue
-        model = wiki["models"][model_name]
-        model_defaults = copy.deepcopy(config["model_defaults"])
-        model = deep_update(model_defaults, model)
-        result[model_name] = model
-
-    wiki["models"] = result
-
-    # Sort sample types
-    result = collections.OrderedDict()
-    for sample_type in ['quarry_url', 'labeling_campaign']:
-        for sample in wiki.get('samples', {}):
-            if sample_type not in wiki['samples'][sample]:
-                continue
-            result[sample] = wiki['samples'][sample]
-    wiki['samples'] = result
-    return wiki
-
-
-def populate_defaults(config):
-    wikis_config = []
-    for wiki in config["wikis"]:
-        wikis_config.append(load_wiki(wiki, config))
-
-    config["wikis"] = wikis_config
-
-    return config
 
 
 def main(argv=None):
@@ -130,18 +57,7 @@ def main(argv=None):
         differ.diff_sections(DEFAULT_BASE_DIR + "/Makefile", output_path, wikis)
         return
 
-    variables = load_config(config_dir)
-
-    env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(template_dir)
-    )
-
-    main_template_name = "Makefile.j2"
-    template = env.get_template(main_template_name)
-    out = template.render(variables)
-
-    with open(output_path, "w") as f:
-        f.write(out)
+    generate.render(config_dir, output_path, template_dir)
 
     if args["--diff"]:
         differ.diff_files(DEFAULT_BASE_DIR + "/Makefile", output_path)
