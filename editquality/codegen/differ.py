@@ -8,19 +8,24 @@ import sys
 
 from difflib import Differ
 
-basedir = "./"
+
+def diff_files(old_path, new_path):
+    d = Differ()
+    old_lines = open(old_path, 'U').readlines()
+    new_lines = open(new_path, 'U').readlines()
+    result = list(d.compare(old_lines, new_lines))
+    sys.stdout.writelines(result)
 
 
-def main():
-    wiki_name = sys.argv[1]
-    with open(basedir + 'Makefile', 'r') as old_file:
+def diff_section(old_path, new_path, wiki_name):
+    with open(old_path, 'r') as old_file:
         old_res = re.findall(
             r'(\n\#{3,} *?' + wiki_name + ' *?\#{3,}\n.+?)\n(?:\#{3,}|$)',
             old_file.read(), re.DOTALL)
     if not old_res:
         raise RuntimeError('Can not find the text in the old file')
 
-    with open(basedir + 'Makefile.automated', 'r') as new_file:
+    with open(new_path, 'r') as new_file:
         new_res = re.findall(
             r'(\n\#{3,} *?' + wiki_name + ' *?\#{3,}\n.+?)\n(?:\#{3,}|$)',
             new_file.read(), re.DOTALL)
@@ -38,5 +43,6 @@ def main():
     sys.stdout.writelines(result)
 
 
-if __name__ == "__main__":
-    main()
+def diff_sections(old_file, new_file, wikis):
+    for wiki in wikis:
+        diff_section(old_file, new_file, wiki)

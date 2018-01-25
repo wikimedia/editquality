@@ -1,31 +1,17 @@
-"""Generate templated Makefile"""
-
-import copy
 import collections
+import copy
 import glob
-import jinja2
 import yaml
 
-# FIXME:
-basedir = "."
+from . import util
 
 
-# https://stackoverflow.com/a/3233356
-def update(d, u):
-    for k, v in u.items():
-        if isinstance(v, collections.Mapping):
-            d[k] = update(d.get(k, {}), v)
-        else:
-            d[k] = v
-    return d
+def load_config(config_dir=None):
+    path = "/{0}_defaults.yaml"
+    model_defaults = yaml.safe_load(open(config_dir + path.format('model'), "r"))
+    wiki_defaults = yaml.safe_load(open(config_dir + path.format('wiki'), "r"))
 
-
-def load_config():
-    path = "/config/{0}_defaults.yaml"
-    model_defaults = yaml.safe_load(open(basedir + path.format('model'), "r"))
-    wiki_defaults = yaml.safe_load(open(basedir + path.format('wiki'), "r"))
-
-    all_files = glob.glob(basedir + "/config/wikis/*.yaml")
+    all_files = glob.glob(config_dir + "/wikis/*.yaml")
     wikis = [yaml.safe_load(open(f, "r")) for f in all_files]
 
     config = {
@@ -41,7 +27,7 @@ def load_config():
 
 def load_wiki(wiki, config):
     default_wiki = copy.deepcopy(config["wiki_defaults"])
-    wiki = update(default_wiki, wiki)
+    wiki = util.deep_update(default_wiki, wiki)
     result = collections.OrderedDict()
     if 'models' not in wiki:
         wiki['models'] = {}
@@ -53,7 +39,7 @@ def load_wiki(wiki, config):
             continue
         model = wiki["models"][model_name]
         model_defaults = copy.deepcopy(config["model_defaults"])
-        model = update(model_defaults, model)
+        model = util.deep_update(model_defaults, model)
         result[model_name] = model
 
     wiki["models"] = result
@@ -77,32 +63,3 @@ def populate_defaults(config):
     config["wikis"] = wikis_config
 
     return config
-
-
-def main():
-    variables = load_config()
-    env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(basedir)
-    )
-
-    all_templates = [
-        basedir + "/Makefile.j2"
-    ]
-    for path in all_templates:
-        template = env.get_template(path)
-        out = template.render(variables)
-        print(out)
-
-
-# TODO:
-# * make API calls to learn things
-# * ores/config has dict merge
-# * survey dependency solvers
-# https://github.com/ninja-build/ninja/wiki/List-of-generators-producing-ninja-build-files
-# ** Still considering: scons, doit, drake, ninja, meson
-# ** Don't like so far: waf
-# * Where can we store information about samples?
-#   Original population rates; how we've distorted them.
-
-if __name__ == "__main__":
-    main()
