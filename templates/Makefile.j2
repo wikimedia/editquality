@@ -33,10 +33,10 @@ major_minor = 0.3
 reverted_major_minor = $(major_minor)
 damaging_major_minor = $(major_minor)
 goodfaith_major_minor = $(major_minor)
-
 {% for wiki in wikis %}
+
 ############################# {{ wiki.label }} ################################
-{%- for sample_name, sample in wiki.samples.items() %}{%- if "quarry_url" in sample %}
+{% for sample_name, sample in wiki.samples.items() %}{%- if "quarry_url" in sample %}
 {%- if "quarry_page" in sample %}
 # From {{ sample.quarry_page }}{% endif %}
 datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json:
@@ -118,11 +118,11 @@ tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
+models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_boosting{% endif %}.model: \
 		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
+		revscoring.scoring.models.{% if model.rf %}RandomForest{% else %}GradientBoosting{% endif %} \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
 		{% if model_name == "reverted" %}reverted_for_damage{% else %}{{ model_name }}{% endif %} \
 		--version=$({{ model_name }}_major_minor).{{model.build_number}} \
@@ -136,7 +136,7 @@ models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model: \
 {% endfor %}
 {% if wiki.models %}{{ wiki.name }}_models: \
 {%- for model_name, model in wiki.models.items() %}
-	models/{{ wiki.name }}.{{ model_name }}.gradient_boosting.model{% if not loop.last %} \{% endif -%}
+	models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_boosting{% endif %}.model{% if not loop.last %} \{% endif -%}
 {% endfor %}
 
 {{ wiki.name }}_tuning_reports: \

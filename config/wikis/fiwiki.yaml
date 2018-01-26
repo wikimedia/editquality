@@ -1,0 +1,44 @@
+name: fiwiki
+label: Finnish Wikipedia
+host: fi.wikipedia.org
+
+samples:
+    5k_2016:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/fiwiki/55/"
+    20k_2016:
+        quarry_url: "https://quarry.wmflabs.org/run/161254/output/0/json-lines?download=true"
+    20k_2017:
+        quarry_url: "https://quarry.wmflabs.org/run/181764/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/19212"
+
+
+wikilabels_sample: 5k_2016
+review_sample: 5k_2016
+default_sample: 20k_2016
+
+merged_samples:
+    20k_2016:
+        20k_2016: "autolabeled_revisions"
+        5k_2016: "human_labeled_revisions"
+
+models:
+    damaging:
+        tuning_params:
+            max_depth: 5
+        pop_rate_true: 0.051323095392926815
+        build_number: 1
+    goodfaith:
+        tuning_params:
+            max_depth: 5
+        pop_rate_true: 0.9658846480916412
+        build_number: 1
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - autoreview
+    - abusefilter
+    - bureaucrat
