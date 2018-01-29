@@ -36,7 +36,7 @@ goodfaith_major_minor = $(major_minor)
 {% for wiki in wikis %}
 
 ############################# {{ wiki.label }} ################################
-{% for sample_name, sample in wiki.samples.items() %}{%- if "quarry_url" in sample %}
+{% for sample_name, sample in wiki.samples|dictsort %}{%- if "quarry_url" in sample %}
 {%- if "quarry_page" in sample %}
 # From {{ sample.quarry_page }}{% endif %}
 datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json:
