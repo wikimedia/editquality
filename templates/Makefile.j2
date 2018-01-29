@@ -77,7 +77,7 @@ datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
 {% endfor %}
 	./utility merge_labels $^ > $@
 {% endfor %}
-{%- endif %}
+{%- endif %}{% if wiki.models.reverted %}
 datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
 	cat $< | \
@@ -86,7 +86,7 @@ datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}
 		--host https://{{ wiki.host }} \
 		--extractor $(max_extractors) \
 		--verbose > $@
-{% if wiki.merged_samples %}
+{% endif %}{% if wiki.merged_samples %}
 {%- for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
 datasets/{{ wiki.name }}.labeled_revisions.w_cache.{{ big_sample_name }}.json: \
 		datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json

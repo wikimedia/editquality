@@ -190,15 +190,6 @@ datasets/azwiki.revisions_for_review.5k_2016.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
-datasets/azwiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/azwiki.autolabeled_revisions.20k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.azwiki.reverted \
-		--host https://az.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
 
 
 ############################# Bengali Wikipedia ################################
@@ -474,15 +465,6 @@ datasets/enwiki.labeled_revisions.20k_2015.json: \
 		datasets/enwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
-datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/enwiki.autolabeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.enwiki.reverted \
-		--host https://en.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
 datasets/enwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/enwiki.labeled_revisions.20k_2015.json
 	cat $< | \
@@ -589,15 +571,6 @@ datasets/eswiki.labeled_revisions.20k_2015.json: \
 		datasets/eswiki.human_labeled_revisions.5k_2015.json
 	./utility merge_labels $^ > $@
 
-datasets/eswiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/eswiki.autolabeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.eswiki.reverted \
-		--host https://es.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
 datasets/eswiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswiki.labeled_revisions.20k_2015.json
 	cat $< | \
@@ -703,15 +676,6 @@ datasets/eswikibooks.labeled_revisions.20k_2015.json: \
 		datasets/eswikibooks.autolabeled_revisions.20k_2015.json \
 		datasets/eswikibooks.human_labeled_revisions.5k_2015.json
 	./utility merge_labels $^ > $@
-
-datasets/eswikibooks.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.eswikibooks.reverted \
-		--host https://es.wikibooks.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
 
 datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswikibooks.labeled_revisions.20k_2015.json
@@ -886,15 +850,6 @@ datasets/etwiki.labeled_revisions.20k_2015.json: \
 		datasets/etwiki.human_labeled_revisions.5k_2015.json
 	./utility merge_labels $^ > $@
 
-datasets/etwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/etwiki.autolabeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.etwiki.reverted \
-		--host https://et.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
 datasets/etwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/etwiki.labeled_revisions.20k_2015.json
 	cat $< | \
@@ -1014,15 +969,6 @@ datasets/fiwiki.labeled_revisions.20k_2016.json: \
 		datasets/fiwiki.autolabeled_revisions.20k_2016.json \
 		datasets/fiwiki.human_labeled_revisions.5k_2016.json
 	./utility merge_labels $^ > $@
-
-datasets/fiwiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/fiwiki.autolabeled_revisions.20k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.fiwiki.reverted \
-		--host https://fi.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
 
 datasets/fiwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/fiwiki.labeled_revisions.20k_2016.json
@@ -1153,15 +1099,6 @@ datasets/frwiki.labeled_revisions.20k_2016.json: \
 		datasets/frwiki.autolabeled_revisions.20k_2016.json \
 		datasets/frwiki.human_labeled_revisions.5k_2016.json
 	./utility merge_labels $^ > $@
-
-datasets/frwiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/frwiki.autolabeled_revisions.20k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.frwiki.reverted \
-		--host https://fr.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
 
 datasets/frwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/frwiki.labeled_revisions.20k_2016.json
@@ -1649,15 +1586,6 @@ datasets/lvwiki.revisions_for_review.5k_2016.json: \
 		datasets/lvwiki.autolabeled_revisions.20k_2016.json
 	grep '"needs_review": true' $< | shuf > $@
 
-datasets/lvwiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/lvwiki.autolabeled_revisions.20k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.lvwiki.reverted \
-		--host https://lv.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
 
 
 ############################# Dutch Wikipedia ################################
@@ -1683,15 +1611,6 @@ datasets/nlwiki.labeled_revisions.20k_2016.json: \
 		datasets/nlwiki.autolabeled_revisions.20k_2016.json \
 		datasets/nlwiki.human_labeled_revisions.5k_2016.json
 	./utility merge_labels $^ > $@
-
-datasets/nlwiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/nlwiki.autolabeled_revisions.20k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.nlwiki.reverted \
-		--host https://nl.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
 
 datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/nlwiki.labeled_revisions.20k_2016.json
@@ -1784,15 +1703,6 @@ datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 datasets/ptwiki.labeled_revisions.20k_2015.json: \
 		datasets/ptwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
-
-datasets/ptwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/ptwiki.autolabeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.ptwiki.reverted \
-		--host https://pt.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
 
 datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/ptwiki.labeled_revisions.20k_2015.json
@@ -1900,15 +1810,6 @@ datasets/rowiki.labeled_revisions.20k_2016.json: \
 		datasets/rowiki.human_labeled_revisions.5k_2016.json
 	./utility merge_labels $^ > $@
 
-datasets/rowiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/rowiki.autolabeled_revisions.20k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.rowiki.reverted \
-		--host https://ro.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
 datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/rowiki.labeled_revisions.20k_2016.json
 	cat $< | \
@@ -2014,15 +1915,6 @@ datasets/ruwiki.labeled_revisions.20k_2015.json: \
 		datasets/ruwiki.autolabeled_revisions.20k_2015.json \
 		datasets/ruwiki.human_labeled_revisions.5k_2015.json
 	./utility merge_labels $^ > $@
-
-datasets/ruwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/ruwiki.autolabeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.ruwiki.reverted \
-		--host https://ru.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
 
 datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/ruwiki.labeled_revisions.20k_2015.json
@@ -2131,15 +2023,6 @@ datasets/sqwiki.labeled_revisions.20k_2016.json: \
 		datasets/sqwiki.human_labeled_revisions.5k_2016.json
 	./utility merge_labels $^ > $@
 
-datasets/sqwiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/sqwiki.autolabeled_revisions.20k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.sqwiki.reverted \
-		--host https://sq.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
 datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/sqwiki.labeled_revisions.20k_2016.json
 	cat $< | \
@@ -2241,15 +2124,6 @@ datasets/srwiki.revisions_for_review.5k_2017.json: \
 		datasets/srwiki.autolabeled_revisions.120k_2017.json
 	grep '"needs_review": true' $< | shuf > $@
 
-datasets/srwiki.autolabeled_revisions.w_cache.120k_2017.json: \
-		datasets/srwiki.autolabeled_revisions.120k_2017.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.srwiki.reverted \
-		--host https://sr.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
 
 
 ############################# Tamil Wikipedia ################################
@@ -2342,15 +2216,6 @@ datasets/trwiki.labeled_revisions.20k_2015.json: \
 		datasets/trwiki.autolabeled_revisions.20k_2015.json \
 		datasets/trwiki.human_labeled_revisions.5k_2015.json
 	./utility merge_labels $^ > $@
-
-datasets/trwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/trwiki.autolabeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.trwiki.reverted \
-		--host https://tr.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
 
 datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/trwiki.labeled_revisions.20k_2015.json
@@ -2522,15 +2387,6 @@ datasets/urwiki.revisions_for_review.5k_2015.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
-datasets/urwiki.autolabeled_revisions.w_cache.500k_2015.json: \
-		datasets/urwiki.autolabeled_revisions.500k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.urwiki.reverted \
-		--host https://ur.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
 
 
 ############################# Chinese Wikipedia ################################
@@ -2558,13 +2414,4 @@ datasets/zhwiki.revisions_for_review.5k_2016.json: \
 	 grep '"needs_review": false' | \
 	 shuf -n 2500 \
 	) | shuf > $@
-
-datasets/zhwiki.autolabeled_revisions.w_cache.100k_2016.json: \
-		datasets/zhwiki.autolabeled_revisions.100k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.zhwiki.reverted \
-		--host https://zh.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
 
