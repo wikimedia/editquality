@@ -10,6 +10,10 @@ wikilabels_sample: 5k_balanced_2016
 
 default_sample: 20k_2015
 
+merged_samples:
+    20k_2015:
+        20k_2015: "human_labeled_revisions"
+
 models:
     damaging:
         pop_rate_true: 0.034163555464634586
