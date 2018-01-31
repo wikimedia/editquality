@@ -1,0 +1,31 @@
+name: huwiki
+label: Hungarian Wikipedia
+host: hu.wikipedia.org
+
+samples:
+    40k_2016:
+        quarry_url: "http://quarry.wmflabs.org/run/79645/output/0/json-lines?download=true"
+
+trusted_groups:
+    - sysop
+    - oversight
+    - trusted
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
+
+balanced_5k_set_for_review: true
+
+default_sample: 40k_2016
+review_sample: 5k_2016
+
+models:
+    reverted:
+        rf: true
+        tuning_params:
+            criterion: entropy
+            n_estimators: 320
+            min_samples_leaf: 13
+        pop_rate_true: 0.014812583163867339
