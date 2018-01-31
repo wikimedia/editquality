@@ -1,0 +1,44 @@
+name: fawiki
+label: Persian Wikipedia
+host: fa.wikipedia.org
+
+samples:
+    5k_2015:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/fawiki/6/"
+    5k_2016:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/fawiki/21/"
+    20k_2015:
+        quarry_url: "http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true"
+    2.20k_2015:
+        quarry_url: "http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true"
+
+merged_samples:
+    20k_2016:
+        2.20k_2015: "autolabeled_revisions"
+        5k_2016: "human_labeled_revisions"
+
+wikilabels_sample: 20k_2015
+default_sample: 20k_2015
+review_sample: 20k_2015
+
+models:
+    damaging:
+        tuning_params:
+            n_estimators: 300
+            max_depth: 3
+            learning_rate: 0.1
+        pop_rate_true: 0.0297029702970297
+    goodfaith:
+        tuning_params:
+            n_estimators: 500
+        pop_rate_true: 0.9834641681438339
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
+    - flow-bot
