@@ -1,0 +1,38 @@
+name: nlwiki
+label: Dutch Wikipedia
+host: nl.wikipedia.org
+
+samples:
+    5k_2016:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/nlwiki/14/"
+    20k_2016:
+        quarry_url: "http://quarry.wmflabs.org/run/42225/output/0/json-lines?download=true"
+
+
+wikilabels_sample: 5k_2016
+review_sample: 5k_2016
+default_sample: 20k_2016
+
+merged_samples:
+    20k_2016:
+        20k_2016: "autolabeled_revisions"
+        5k_2016: "human_labeled_revisions"
+
+models:
+    damaging:
+        tuning_params:
+            max_depth: 5
+        pop_rate_true: 0.05068086413432989
+    goodfaith:
+        tuning_params:
+            max_depth: 5
+        pop_rate_true: 0.9646257806900789
+
+trusted_groups:
+    - abusefilter
+    - arbcom
+    - bureaucrat
+    - checkuser
+    - rollbacker
+    - sysop
+    - bot

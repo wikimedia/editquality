@@ -1,0 +1,42 @@
+name: frwiki
+label: French Wikipedia
+host: fr.wikipedia.org
+
+samples:
+    5k_2016:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/frwiki/38/"
+    20k_2015:
+        quarry_url: "https://quarry.wmflabs.org/run/48090/output/0/json-lines?download=true"
+    20k_2016:
+        quarry_url: "https://quarry.wmflabs.org/run/98251/output/0/json-lines?download=true"
+
+
+wikilabels_sample: 5k_2016
+balanced_5k_set_for_review: true
+review_sample: 5k_2016
+default_sample: 20k_2016
+
+merged_samples:
+    20k_2016:
+        20k_2016: "autolabeled_revisions"
+        5k_2016: "human_labeled_revisions"
+
+models:
+    damaging:
+        tuning_params:
+            n_estimators: 300
+        pop_rate_true: 0.028751753155680224
+    goodfaith:
+        tuning_params:
+            max_depth: 5
+            n_estimators: 500
+        pop_rate_true: 0.9786115007012622
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
