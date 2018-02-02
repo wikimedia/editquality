@@ -72,7 +72,6 @@ tuning_reports: \
 		ukwiki_tuning_reports \
 		viwiki_tuning_reports \
 		wikidatawiki_tuning_reports
-		#urwiki_tuning_reports
 
 
 major_minor = 0.4
@@ -148,47 +147,6 @@ datasets/cswiki.labeled_revisions.w_cache.20k_2016.json: \
 		--host https://cs.wikipedia.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
-
-datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/cswiki.autolabeled_revisions.20k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.cswiki.reverted \
-		--host https://cs.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
-tuning_reports/cswiki.reverted.md: \
-		datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.cswiki.reverted \
-		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.031783372541168226" \
-		--pop-rate "false=0.9682166274588317" \
-		--center --scale \
-		--cv-timeout=60 \
-		--debug > $@
-
-models/cswiki.reverted.gradient_boosting.model: \
-		datasets/cswiki.autolabeled_revisions.w_cache.20k_2016.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.cswiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.031783372541168226" \
-		--pop-rate "false=0.9682166274588317" \
-		--center --scale > $@
 
 tuning_reports/cswiki.damaging.md: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
@@ -379,13 +337,9 @@ tuning_reports/enwiktionary.goodfaith.md: \
 
 enwiktionary_models: \
 	models/enwiktionary.reverted.rf.model
-#	models/enwiktionary.damaging.gradient_boosting.model \
-#	models/enwiktionary.goodfaith.gradient_boosting.model
 
 enwiktionary_tuning_reports: \
 	tuning_reports/enwiktionary.reverted.md
-#	tuning_reports/enwiktionary.damaging.md \
-#	tuning_reports/enwiktionary.goodfaith.md
 
 ############################# Persian Wikipedia ################################
 datasets/fawiki.human_labeled_revisions.20k_2015.json:
@@ -440,40 +394,6 @@ datasets/fawiki.labeled_revisions.w_cache.20k_2016.json: \
 		editquality.feature_lists.fawiki.goodfaith \
 		--host https://fa.wikipedia.org \
 		--verbose > $@
-
-tuning_reports/fawiki.reverted.md: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.fawiki.reverted \
-		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.029729045327931122" \
-		--pop-rate "false=0.9702709546720689" \
-		--center --scale \
-		--cv-timeout=60 \
-		--debug  > $@
-
-models/fawiki.reverted.gradient_boosting.model: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.fawiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.029729045327931122" \
-		--pop-rate "false=0.9702709546720689" \
-		--center --scale  > $@
 
 tuning_reports/fawiki.damaging.md: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
@@ -610,47 +530,6 @@ datasets/hewiki.labeled_revisions.w_cache.20k_2015.json: \
 		--host https://he.wikipedia.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
-
-datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/hewiki.autolabeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.hewiki.reverted \
-		--host https://he.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
-tuning_reports/hewiki.reverted.md: \
-		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.hewiki.reverted \
-		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.02769195884470395" \
-		--pop-rate "false=0.971741163799212" \
-		--center --scale \
-		--cv-timeout=60 \
-		--debug > $@
-
-models/hewiki.reverted.gradient_boosting.model: \
-		datasets/hewiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.hewiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.02769195884470395" \
-		--pop-rate "false=0.971741163799212" \
-		--center --scale > $@
 
 tuning_reports/hewiki.damaging.md: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
@@ -881,53 +760,6 @@ datasets/plwiki.autolabeled_revisions.500k_2015.json: \
 		--trusted-edits=1000 \
 		--verbose > $@
 
-datasets/plwiki.autolabeled_revisions.40k_2015.json: \
-		datasets/plwiki.autolabeled_revisions.500k_2015.json
-	cat $< | \
-	shuf -n 40000 > $@
-
-datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json: \
-		datasets/plwiki.autolabeled_revisions.40k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.plwiki.reverted \
-		--host https://pl.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
-tuning_reports/plwiki.reverted.md: \
-		datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.plwiki.reverted \
-		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.036425" \
-		--pop-rate "false=0.963575" \
-		--center --scale \
-		--cv-timeout=60 \
-		--debug > $@
-
-models/plwiki.reverted.gradient_boosting.model: \
-		datasets/plwiki.autolabeled_revisions.w_cache.40k_2015.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.plwiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
-		-p 'max_depth=5' \
-		-p 'learning_rate=0.01' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.036425" \
-		--pop-rate "false=0.963575" \
-		--center --scale > $@
-
-
 datasets/plwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/plwiki/24/ > $@
@@ -1080,38 +912,6 @@ datasets/svwiki.labeled_revisions.w_cache.40k_2016.json: \
 		--host https://sv.wikipedia.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
-
-tuning_reports/svwiki.reverted.md: \
-		datasets/svwiki.autolabeled_revisions.w_cache.40k_2016.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.svwiki.reverted \
-		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.018341048417365193" \
-		--pop-rate "false=0.9816589515826348" \
-		--center --scale \
-		--cv-timeout=60 \
-		--debug > $@
-
-models/svwiki.reverted.gradient_boosting.model: \
-		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.svwiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).1 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.01' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.018341048417365193" \
-		--pop-rate "false=0.9816589515826348" \
-		--center --scale > $@
 
 tuning_reports/svwiki.damaging.md: \
 		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
@@ -1294,39 +1094,6 @@ datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		--host https://wikidata.org \
 		--verbose > $@
-
-tuning_reports/wikidatawiki.reverted.md: \
-		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.wikidatawiki.reverted \
-		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.00389859276" \
-		--pop-rate "false=0.99610140724" \
-		--center --scale \
-		--cv-timeout=60 \
-		--debug \
-		--scoring=roc_auc > $@
-
-models/wikidatawiki.reverted.gradient_boosting.model: \
-		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.wikidatawiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
-		-p 'max_depth=7' \
-		-p 'learning_rate=0.1' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.00389859276" \
-		--pop-rate "false=0.99610140724" \
-		--center --scale > $@
 
 tuning_reports/wikidatawiki.damaging.md: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
