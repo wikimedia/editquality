@@ -341,6 +341,180 @@ enwiktionary_models: \
 enwiktionary_tuning_reports: \
 	tuning_reports/enwiktionary.reverted.md
 
+
+############################# Finnish Wikipedia ################################
+
+datasets/fiwiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/161254/output/0/json-lines?download=true > $@
+
+# From https://quarry.wmflabs.org/query/19212
+datasets/fiwiki.sampled_revisions.20k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/181764/output/0/json-lines?download=true > $@
+
+# From https://quarry.wmflabs.org/query/20647
+datasets/fiwiki.flaggedrevs_approved_raw.210k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/194201/output/0/json-lines?download=true > $@
+
+datasets/fiwiki.flaggedrevs_approved.210k_2017.json: \
+		datasets/fiwiki.flaggedrevs_approved_raw.210k_2017.json
+	cat $< | sed -r 's/"(true|false)"/\1/g' | > $@
+
+datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/fiwiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://fi.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,autoreview,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/fiwiki.autolabeled_revisions.20k_2017.json: \
+		datasets/fiwiki.sampled_revisions.20k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://fi.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,autoreview,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/fiwiki.flaggedrevs_autolabeled.210k_2017.json: \
+		datasets/fiwiki.flaggedrevs_approved.210k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://fi.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,autoreview,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--verbose > $@
+
+datasets/fiwiki.flaggedrevs_autolabeled_unreverted.210k_2017.json: \
+		datasets/fiwiki.flaggedrevs_autolabeled.210k_2017.json
+	cat $< | \
+	grep -v '"review_reason": "reverted edit"' > $@
+
+datasets/fiwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/fiwiki/55/ > $@
+
+datasets/fiwiki.labeled_revisions.20k_2016.json: \
+		datasets/fiwiki.human_labeled_revisions.5k_2016.json \
+		datasets/fiwiki.autolabeled_revisions.20k_2016.json
+	./utility merge_labels $^ | shuf > $@
+
+datasets/fiwiki.combined_labeled_revisions.w_cache.230k_2016.json.bz2: \
+		datasets/fiwiki.labeled_revisions.20k_2016.json \
+		datasets/fiwiki.flaggedrevs_autolabeled_unreverted.210k_2017.json
+	cat $^ | \
+	revscoring extract \
+		editquality.feature_lists.fiwiki.reverted \
+		editquality.feature_lists.fiwiki.damaging \
+		editquality.feature_lists.fiwiki.goodfaith \
+		--host https://fi.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose | bzip2 -c > $@
+
+tuning_reports/fiwiki.reverted.md: \
+		datasets/fiwiki.combined_labeled_revisions.w_cache.230k_2016.json.bz2
+	bzcat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fiwiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.053624130858886496" \
+		--pop-rate "false=0.9463758691411135" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/fiwiki.reverted.gradient_boosting.model: \
+		datasets/fiwiki.combined_labeled_revisions.w_cache.230k_2016.json.bz2
+	bzcat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.fiwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).1 \
+		-p 'max_depth=5' \
+		-p 'learning_rate=0.01' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.053624130858886496" \
+		--pop-rate "false=0.9463758691411135" \
+		--center --scale > $@
+
+tuning_reports/fiwiki.damaging.md: \
+		datasets/fiwiki.combined_labeled_revisions.w_cache.230k_2016.json.bz2
+	bzcat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fiwiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.051323095392926815" \
+		--pop-rate "false=0.9486769046070732" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/fiwiki.damaging.gradient_boosting.model: \
+		datasets/fiwiki.combined_labeled_revisions.w_cache.230k_2016.json.bz2
+	bzcat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.fiwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).1 \
+		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		-p 'threshold_ndigits=5' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.051323095392926815" \
+		--pop-rate "false=0.9486769046070732" \
+		--center --scale > $@
+
+tuning_reports/fiwiki.goodfaith.md: \
+		datasets/fiwiki.combined_labeled_revisions.w_cache.230k_2016.json.bz2
+	bzcat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fiwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9658846480916412" \
+		--pop-rate "false=0.03411535190835876" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug > $@
+
+models/fiwiki.goodfaith.gradient_boosting.model: \
+		datasets/fiwiki.combined_labeled_revisions.w_cache.230k_2016.json.bz2
+	bzcat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.fiwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).1 \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		-p 'learning_rate=0.5' \
+		-p 'max_depth=7' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9658846480916412" \
+		--pop-rate "false=0.03411535190835876" \
+		--center --scale > $@
+
+fiwiki_models: \
+		models/fiwiki.damaging.gradient_boosting.model \
+		models/fiwiki.goodfaith.gradient_boosting.model
+
+fiwiki_tuning_reports: \
+		tuning_reports/fiwiki.damaging.md \
+		tuning_reports/fiwiki.goodfaith.md
+
+
 ############################# Persian Wikipedia ################################
 datasets/fawiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
