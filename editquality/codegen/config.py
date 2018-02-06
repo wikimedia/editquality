@@ -10,14 +10,18 @@ def load_config(config_dir=None):
     path = "/{0}_defaults.yaml"
     model_defaults = yaml.safe_load(open(config_dir + path.format('model'), "r"))
     wiki_defaults = yaml.safe_load(open(config_dir + path.format('wiki'), "r"))
+    manual_wikis = yaml.safe_load(open(config_dir + '/manual_wikis.yaml', "r"))
 
     all_files = glob.glob(config_dir + "/wikis/*.yaml")
     wikis = [yaml.safe_load(open(f, "r")) for f in all_files]
+    wiki_names = [i['name'] for i in wikis] + manual_wikis['manual_wikis']
+    wiki_names.sort()
 
     config = {
         "model_defaults": model_defaults,
         "wiki_defaults": wiki_defaults,
         "wikis": wikis,
+        'wiki_names': wiki_names,
     }
     config = populate_defaults(config)
     config['wikis'].sort(key=lambda t: t['name'])
