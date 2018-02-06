@@ -4,14 +4,14 @@
 # Remove target files after command failure.
 .DELETE_ON_ERROR:
 
-#models: \
-	{%- for wiki in wikis %}
-		#{{ wiki.name }}_models{% if not loop.last %} \{% endif -%}
+models: \
+	{%- for wiki in wiki_names %}
+		{{ wiki }}_models{% if not loop.last %} \{% endif -%}
 	{% endfor %}
 
-#tuning_reports: \
-	{%- for wiki in wikis %}
-		#{{ wiki.name }}_tuning_reports{% if not loop.last %} \{% endif -%}
+tuning_reports: \
+	{%- for wiki in wiki_names %}
+		{{ wiki }}_tuning_reports{% if not loop.last %} \{% endif -%}
 	{% endfor %}
 
 test_statistics = \
@@ -33,6 +33,8 @@ major_minor = 0.3
 reverted_major_minor = $(major_minor)
 damaging_major_minor = $(major_minor)
 goodfaith_major_minor = $(major_minor)
+
+include  Makefile.manual
 {% for wiki in wikis %}
 
 ############################# {{ wiki.label }} ################################
