@@ -102,8 +102,12 @@ datasets/{{ wiki.name }}.labeled_revisions.w_cache.{{ big_sample_name }}.json: \
 		--verbose > $@
 {% endfor %}{% endif %}{% for model_name, model in wiki.models.items() %}
 tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
+{%- if model.datasets %}{%- for dataset in model.datasets %}
+		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json{% if not loop.last %} \{% endif -%}
+{% endfor %}{% else %}
 		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
-	cat $< | \
+{%- endif %}
+	cat {% if model.datasets %}$^{% else %}$<{% endif %} | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
@@ -121,8 +125,12 @@ tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		--debug > $@
 
 models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_boosting{% endif %}.model: \
+{%- if model.datasets %}{%- for dataset in model.datasets %}
+		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json{% if not loop.last %} \{% endif -%}
+{% endfor %}{% else %}
 		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
-	cat $< | \
+{%- endif %}
+	cat {% if model.datasets %}$^{% else %}$<{% endif %} | \
 	revscoring cv_train \
 		revscoring.scoring.models.{% if model.rf %}RandomForest{% else %}GradientBoosting{% endif %} \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
