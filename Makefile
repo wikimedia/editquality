@@ -19,6 +19,7 @@ models: \
 		eswikiquote_models \
 		etwiki_models \
 		fawiki_models \
+		fawiki_models \
 		fiwiki_models \
 		frwiki_models \
 		hewiki_models \
@@ -61,6 +62,7 @@ tuning_reports: \
 		eswikibooks_tuning_reports \
 		eswikiquote_tuning_reports \
 		etwiki_tuning_reports \
+		fawiki_tuning_reports \
 		fawiki_tuning_reports \
 		fiwiki_tuning_reports \
 		frwiki_tuning_reports \
@@ -953,6 +955,147 @@ etwiki_models: \
 etwiki_tuning_reports: \
 	tuning_reports/etwiki.damaging.md \
 	tuning_reports/etwiki.goodfaith.md
+
+############################# Persian Wikipedia ################################
+
+datasets/fawiki.sampled_revisions.2.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true > $@
+
+datasets/fawiki.autolabeled_revisions.2.20k_2015.json: \
+		datasets/fawiki.sampled_revisions.2.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://fa.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/fawiki.sampled_revisions.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true > $@
+
+datasets/fawiki.autolabeled_revisions.20k_2015.json: \
+		datasets/fawiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://fa.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/fawiki.human_labeled_revisions.20k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/fawiki/6/ > $@
+
+datasets/fawiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/fawiki/21/ > $@
+
+datasets/fawiki.labeled_revisions.20k_2015.json: \
+		datasets/fawiki.human_labeled_revisions.20k_2015.json
+	./utility merge_labels $^ > $@
+
+datasets/fawiki.labeled_revisions.20k_2016.json: \
+		datasets/fawiki.autolabeled_revisions.2.20k_2015.json \
+		datasets/fawiki.human_labeled_revisions.5k_2016.json
+	./utility merge_labels $^ > $@
+
+datasets/fawiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/fawiki.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.fawiki.damaging \
+		editquality.feature_lists.fawiki.goodfaith \
+		--host https://fa.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+datasets/fawiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/fawiki.labeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.fawiki.damaging \
+		editquality.feature_lists.fawiki.goodfaith \
+		--host https://fa.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/fawiki.damaging.md: \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fawiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0297029702970297" \
+		--pop-rate "false=0.9702970297029703" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/fawiki.damaging.gradient_boosting.model: \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.fawiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=300' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0297029702970297" \
+		--pop-rate "false=0.9702970297029703" \
+		--center --scale > $@
+
+tuning_reports/fawiki.goodfaith.md: \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.fawiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9834641681438339" \
+		--pop-rate "false=0.01653583185616614" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/fawiki.goodfaith.gradient_boosting.model: \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.fawiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9834641681438339" \
+		--pop-rate "false=0.01653583185616614" \
+		--center --scale > $@
+
+fawiki_models: \
+	models/fawiki.damaging.gradient_boosting.model \
+	models/fawiki.goodfaith.gradient_boosting.model
+
+fawiki_tuning_reports: \
+	tuning_reports/fawiki.damaging.md \
+	tuning_reports/fawiki.goodfaith.md
 
 ############################# French Wikipedia ################################
 
