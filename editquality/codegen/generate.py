@@ -3,16 +3,12 @@ import jinja2
 from . import config
 
 
-def render(config_dir, output_path, template_dir):
-    variables = config.load_config(config_dir)
+def generate(config_path, templates_path):
+    variables = config.load_config(config_path)
 
     env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(template_dir)
+        loader=jinja2.FileSystemLoader(templates_path)
     )
 
-    main_template_name = "Makefile.j2"
-    template = env.get_template(main_template_name)
-    out = template.render(variables)
-
-    with open(output_path, "w") as f:
-        f.write(out)
+    template = env.get_template("Makefile.j2")
+    return template.render(variables)
