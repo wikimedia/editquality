@@ -4,20 +4,26 @@ Code-generate Makefile from template and configuration
 :Usage:
     generate_make -h | --help
     generate_make
-                 [--config-dir=<path>]
-                 [--diff]
-                 [--diff-only=<wiki_name>]
-                 [--output-path=<path>]
-                 [--template-dir=<path>]
+                 [--config=<path>]
+                 [--compare-to=<path>]
+                 [--compare-section=<name>]...
+                 [--output=<path>]
+                 [--templates=<path>]
+                 [--debug]
 
 :Options:
-    --config-dir=<path>     Directory to search for configuration files.
-    --diff                  Output diffs while generating.
-    --diff-only=<wiki_name> Only compare sections, don't generate.  Wiki name
-                            is given in English, for example "Spanish Wikibooks".
+    --config=<path>         Directory to search for configuration files
+                            [default: config/]
+    --compare-to=<path>     If specified, compare output to an old Makefile
+    --compare-section=<name> Only compare sections, don't generate.  Wiki name
+                             is given in English, for example
+                             "Spanish Wikibooks"
                             Multiple wikis can be separated by a comma.
-    --output-path=<path>    Where to write the Makefile output.
-    --template-dir=<path>   Directory to search for input templates.
+    --output=<path>         Where to write the Makefile output.
+                            [default: <stdout>]
+    --templates=<path>      Directory to search for input templates.
+                            [default: templates/]
+    --debug                 Print debug logging
 
 """
 
@@ -31,34 +37,38 @@ Code-generate Makefile from template and configuration
 # * Where can we store information about samples?
 #   Original population rates; how we've distorted them.
 
+import logging
+import sys
+
 import docopt
-import os.path
 
-from ..codegen import differ
-from ..codegen import generate
+from ..codegen import differ, generate
 
-DEFAULT_BASE_DIR = os.path.dirname(__file__) + "/../.."
+logger = logging.getLogger(__name__)
 
 
 def main(argv=None):
     args = docopt.docopt(__doc__, argv=argv)
 
-    config_dir = args["--config-dir"] \
-        if args["--config-dir"] is not None else DEFAULT_BASE_DIR + "/config"
+    logging.basicConfig(
+        level=logging.DEBUG if args['--debug'] else logging.WARNING,
+        format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
+    )
 
-    output_path = args["--output-path"] \
-        if args["--output-path"] is not None \
-        else DEFAULT_BASE_DIR + "/Makefile.automated"
+    config_path = args["--config"]
 
-    template_dir = args["--template-dir"] \
-        if args["--template-dir"] is not None else DEFAULT_BASE_DIR + "/templates"
+    output_f = sys.stdout \
+        if args["--output"] == "<stdout>" \
+        else open(args["--output"], "w")
 
-    if args["--diff-only"] is not None:
-        wikis = [name.strip() for name in args["--diff-only"].split(",")]
-        differ.diff_sections(DEFAULT_BASE_DIR + "/Makefile", output_path, wikis)
-        return
+    templates_path = args["--templates"]
 
-    generate.render(config_dir, output_path, template_dir)
+    output = generate.generate(config_path, templates_path)
+    output_f.write(output)
 
-    if args["--diff"]:
-        differ.diff_files(DEFAULT_BASE_DIR + "/Makefile", output_path)
+    if args['--compare-to'] is not None:
+        compare_to_f = open(args['--compare-to'])
+        section_names = args['--compare-section']
+
+        sys.stderr.write("".join(differ.diff(
+            compare_to_f.read(), output, section_names)) + "\n")
