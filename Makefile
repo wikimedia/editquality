@@ -9,7 +9,7 @@ models: \
 		azwiki_models \
 		bawiki_models \
 		bnwiki_models \
-		bnwiki_models \
+		bnwikisource_models \
 		cawiki_models \
 		cswiki_models \
 		dewiki_models \
@@ -54,7 +54,7 @@ tuning_reports: \
 		azwiki_tuning_reports \
 		bawiki_tuning_reports \
 		bnwiki_tuning_reports \
-		bnwiki_tuning_reports \
+		bnwikisource_tuning_reports \
 		cawiki_tuning_reports \
 		cswiki_tuning_reports \
 		dewiki_tuning_reports \
@@ -310,11 +310,11 @@ bnwiki_tuning_reports: \
 ############################# Bengali Wikisource ################################
 
 # From https://quarry.wmflabs.org/query/24776
-datasets/bnwiki.sampled_revisions.20k_2017.json:
+datasets/bnwikisource.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/236180/output/0/json-lines?download=true > $@
 
-datasets/bnwiki.autolabeled_revisions.20k_2017.json: \
-		datasets/bnwiki.sampled_revisions.20k_2017.json
+datasets/bnwikisource.autolabeled_revisions.20k_2017.json: \
+		datasets/bnwikisource.sampled_revisions.20k_2017.json
 	cat $< | \
 	./utility autolabel --host=https://bn.wikisource.org \
 		--trusted-groups=bot,sysop \
@@ -323,8 +323,8 @@ datasets/bnwiki.autolabeled_revisions.20k_2017.json: \
 		--revert-window=48 \
 		--verbose > $@
 
-datasets/bnwiki.revisions_for_review.5k_2018.json: \
-		datasets/bnwiki.autolabeled_revisions.20k_2018.json
+datasets/bnwikisource.revisions_for_review.5k_2018.json: \
+		datasets/bnwikisource.autolabeled_revisions.20k_2018.json
 	grep '"needs_review": true' $< | shuf > $@
 
 
