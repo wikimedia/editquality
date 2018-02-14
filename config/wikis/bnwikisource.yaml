@@ -1,0 +1,19 @@
+name: bnwiki
+label: Bengali Wikisource
+host: bn.wikisource.org
+
+samples:
+    20k_2017:
+        quarry_url: "https://quarry.wmflabs.org/run/236180/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/24776"
+
+unbalanced_5k_set_for_review: true
+
+default_sample: 20k_2018
+review_sample: 5k_2018
+
+models: {}
+
+trusted_groups:
+    - bot
+    - sysop
