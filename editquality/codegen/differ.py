@@ -3,46 +3,52 @@ Temporary script during the migration to check differences between
 different make files.
 """
 
+import logging
 import re
-import sys
-
 from difflib import Differ
+from itertools import chain
+
+logger = logging.getLogger(__name__)
 
 
-def diff_files(old_path, new_path):
+def diff(old, new, sections=None):
+    if sections is not None and len(sections) > 0:
+        return chain(*(diff_section(old, new, section)
+                       for section in sections))
+    else:
+        return diff_text(old, new)
+
+
+def diff_text(old, new):
     d = Differ()
-    old_lines = open(old_path, 'U').readlines()
-    new_lines = open(new_path, 'U').readlines()
+    old_lines = old.splitlines(keepends=True)
+    new_lines = new.splitlines(keepends=True)
     result = list(d.compare(old_lines, new_lines))
-    sys.stdout.writelines(result)
+    return result
 
 
-def diff_section(old_path, new_path, wiki_name):
-    with open(old_path, 'r') as old_file:
-        old_res = re.findall(
-            r'(\n\#{3,} *?' + wiki_name + ' *?\#{3,}\n.+?)\n(?:\#{3,}|$)',
-            old_file.read(), re.DOTALL)
+def diff_section(old, new, section_name):
+    old_res = re.findall(
+        r'(\n\#{3,} *?' + section_name + ' *?\#{3,}\n.+?)\n(?:\#{3,}|$)',
+        old, re.DOTALL)
     if not old_res:
-        raise RuntimeError('Can not find the text in the old file')
+        logger.warn('Can not find the section name {0} in the old file'
+                    .format(section_name))
+        old = ""
+    else:
+        old = old_res[0]
 
-    with open(new_path, 'r') as new_file:
-        new_res = re.findall(
-            r'(\n\#{3,} *?' + wiki_name + ' *?\#{3,}\n.+?)\n(?:\#{3,}|$)',
-            new_file.read(), re.DOTALL)
-
+    new_res = re.findall(
+        r'(\n\#{3,} *?' + section_name + ' *?\#{3,}\n.+?)\n(?:\#{3,}|$)',
+        old, re.DOTALL)
     if not new_res:
-        raise RuntimeError('Can not find the text in the new file')
+        logger.warn('Can not find the section name {0} in the new file'
+                    .format(section_name))
+        new = ""
+    else:
+        new = new_res[0]
 
-    if old_res == new_res:
-        print('They are the same, keep up the great work')
-        return
-
-    d = Differ()
-    result = list(d.compare(old_res[0].splitlines(keepends=True),
-                            new_res[0].splitlines(keepends=True)))
-    sys.stdout.writelines(result)
-
-
-def diff_sections(old_file, new_file, wikis):
-    for wiki in wikis:
-        diff_section(old_file, new_file, wiki)
+    if old == new:
+        return ["No difference"]
+    else:
+        return diff_text(old, new)
