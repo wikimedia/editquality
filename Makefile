@@ -221,11 +221,11 @@ datasets/azwiki.revisions_for_review.5k_2016.json: \
 ############################# Bosnian Wikipedia ################################
 
 # From https://quarry.wmflabs.org/query/24777
-datasets/bawiki.sampled_revisions.20k_2018.json:
-	wget -qO- https://quarry.wmflabs.org/run/236179/output/0/json-lines?download=true > $@
+datasets/bawiki.sampled_revisions.60k_2018.json:
+	wget -qO- https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true > $@
 
-datasets/bawiki.autolabeled_revisions.20k_2018.json: \
-		datasets/bawiki.sampled_revisions.20k_2018.json
+datasets/bawiki.autolabeled_revisions.60k_2018.json: \
+		datasets/bawiki.sampled_revisions.60k_2018.json
 	cat $< | \
 	./utility autolabel --host=https://ba.wikipedia.org \
 		--trusted-groups=bot,sysop,bureaucrat \
@@ -235,7 +235,7 @@ datasets/bawiki.autolabeled_revisions.20k_2018.json: \
 		--verbose > $@
 
 datasets/bawiki.revisions_for_review.5k_2018.json: \
-		datasets/bawiki.autolabeled_revisions.20k_2018.json
+		datasets/bawiki.autolabeled_revisions.60k_2018.json
 	grep '"needs_review": true' $< | shuf > $@
 
 
@@ -310,11 +310,11 @@ bnwiki_tuning_reports: \
 ############################# Bengali Wikisource ################################
 
 # From https://quarry.wmflabs.org/query/24776
-datasets/bnwikisource.sampled_revisions.20k_2017.json:
-	wget -qO- https://quarry.wmflabs.org/run/236180/output/0/json-lines?download=true > $@
+datasets/bnwikisource.sampled_revisions.200k_2018.json:
+	wget -qO- https://quarry.wmflabs.org/run/236208/output/0/json-lines?download=true > $@
 
-datasets/bnwikisource.autolabeled_revisions.20k_2017.json: \
-		datasets/bnwikisource.sampled_revisions.20k_2017.json
+datasets/bnwikisource.autolabeled_revisions.200k_2018.json: \
+		datasets/bnwikisource.sampled_revisions.200k_2018.json
 	cat $< | \
 	./utility autolabel --host=https://bn.wikisource.org \
 		--trusted-groups=bot,sysop \
@@ -324,7 +324,7 @@ datasets/bnwikisource.autolabeled_revisions.20k_2017.json: \
 		--verbose > $@
 
 datasets/bnwikisource.revisions_for_review.5k_2018.json: \
-		datasets/bnwikisource.autolabeled_revisions.20k_2018.json
+		datasets/bnwikisource.autolabeled_revisions.200k_2018.json
 	grep '"needs_review": true' $< | shuf > $@
 
 
