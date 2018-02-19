@@ -1951,7 +1951,7 @@ datasets/huwiki.autolabeled_revisions.40k_2016.json: \
 		datasets/huwiki.sampled_revisions.40k_2016.json
 	cat $< | \
 	./utility autolabel --host=https://hu.wikipedia.org \
-		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat,editor,templateeditor,interface-editor \
 		--trusted-edits=1000 \
 		--revert-radius=3 \
 		--revert-window=48 \

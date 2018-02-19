@@ -15,6 +15,9 @@ trusted_groups:
     - checkuser
     - abusefilter
     - bureaucrat
+    - editor
+    - templateeditor
+    - interface-editor
 
 balanced_5k_set_for_review: true
 
