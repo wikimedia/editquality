@@ -2,7 +2,7 @@
 Merges human-applied labels into an autolabeled set
 
 Usage:
-    merge_labels <from-human-labels> <to-auto-labels>
+    merge_labels <to-auto-labels> <from-human-labels>
                  [--output=<path>]
                  [--debug] [--verbose]
 
