@@ -26,6 +26,11 @@ review_sample: 5k_2016
 
 models:
     damaging:
+        tuning_params:
+            max_depth: 5
+            n_estimators: 500
         pop_rate_true: 0.01093805131
     goodfaith:
+        tuning_params:
+            learning_rate: 0.1
         pop_rate_true: 0.99221230908

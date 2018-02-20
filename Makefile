@@ -1998,10 +1998,10 @@ models/huwiki.damaging.gradient_boosting.model: \
 		editquality.feature_lists.huwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'n_estimators=300' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.01093805131" \
 		--pop-rate "false=0.98906194869" \
@@ -2032,7 +2032,7 @@ models/huwiki.goodfaith.gradient_boosting.model: \
 		editquality.feature_lists.huwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
-		-p 'learning_rate=0.01' \
+		-p 'learning_rate=0.1' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
