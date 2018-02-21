@@ -70,7 +70,7 @@ datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 	) | shuf > $@
 {% endif %}{% if wiki.unbalanced_5k_set_for_review %}
 datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample }}.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.sample_to_build_review %}{{ wiki.sample_to_build_review }}{% else %}{{ wiki.default_sample }}{% endif %}.json
 	grep '"needs_review": true' $< | shuf > $@
 {% endif %}{% if wiki.merged_samples %}{% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
 datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
