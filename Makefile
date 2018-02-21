@@ -34,6 +34,7 @@ models: \
 		lvwiki_models \
 		nlwiki_models \
 		nowiki_models \
+		nowiki_models \
 		plwiki_models \
 		ptwiki_models \
 		rowiki_models \
@@ -45,6 +46,7 @@ models: \
 		trwiki_models \
 		ukwiki_models \
 		urwiki_models \
+		viwiki_models \
 		viwki_models \
 		wikidatawiki_models \
 		zhwiki_models
@@ -79,6 +81,7 @@ tuning_reports: \
 		lvwiki_tuning_reports \
 		nlwiki_tuning_reports \
 		nowiki_tuning_reports \
+		nowiki_tuning_reports \
 		plwiki_tuning_reports \
 		ptwiki_tuning_reports \
 		rowiki_tuning_reports \
@@ -90,6 +93,7 @@ tuning_reports: \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
 		urwiki_tuning_reports \
+		viwiki_tuning_reports \
 		viwki_tuning_reports \
 		wikidatawiki_tuning_reports \
 		zhwiki_tuning_reports
@@ -1799,6 +1803,79 @@ nlwiki_tuning_reports: \
 	tuning_reports/nlwiki.damaging.md \
 	tuning_reports/nlwiki.goodfaith.md
 
+############################# Norwegian Wikipedia ################################
+
+datasets/nowiki.sampled_revisions.100k_2015.json:
+	wget -qO- https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true > $@
+
+datasets/nowiki.autolabeled_revisions.100k_2015.json: \
+		datasets/nowiki.sampled_revisions.100k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://no.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/nowiki.revisions_for_review.5k_2015.json: \
+		datasets/nowiki.autolabeled_revisions.100k_2015.json
+	( \
+	 cat $< | \
+	 grep '"needs_review": true' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep '"needs_review": false' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json: \
+		datasets/nowiki.autolabeled_revisions.100k_2015.json
+	shuf -n 40000 $< | \
+	revscoring extract \
+		editquality.feature_lists.nowiki.reverted \
+		--host https://no.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/nowiki.reverted.md: \
+		datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.nowiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.019061539539679838" \
+		--pop-rate "false=0.9809384604603202" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/nowiki.reverted.gradient_boosting.model: \
+		datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.nowiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.019061539539679838" \
+		--pop-rate "false=0.9809384604603202" \
+		--center --scale > $@
+
+nowiki_models: \
+	models/nowiki.reverted.gradient_boosting.model
+
+nowiki_tuning_reports: \
+	tuning_reports/nowiki.reverted.md
+
 ############################# Portugueses Wikipedia ################################
 
 datasets/ptwiki.human_labeled_revisions.20k_2015.json:
@@ -2493,6 +2570,79 @@ datasets/urwiki.revisions_for_review.5k_2015.json: \
 	) | shuf > $@
 
 
+
+############################# Vietnamese Wikipedia ################################
+
+datasets/viwiki.sampled_revisions.500k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/65793/output/0/json-lines?download=true > $@
+
+datasets/viwiki.autolabeled_revisions.500k_2015.json: \
+		datasets/viwiki.sampled_revisions.500k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://vi.wikipedia.org \
+		--trusted-groups=checkuser,bureaucrat,sysop,eliminator,bot \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/viwiki.revisions_for_review.5k_2015.json: \
+		datasets/viwiki.autolabeled_revisions.500k_2015.json
+	( \
+	 cat $< | \
+	 grep '"needs_review": true' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep '"needs_review": false' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json: \
+		datasets/viwiki.autolabeled_revisions.500k_2015.json
+	shuf -n 100000 $< | \
+	revscoring extract \
+		editquality.feature_lists.viwiki.reverted \
+		--host https://vi.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/viwiki.reverted.md: \
+		datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.viwiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.019211042993949594" \
+		--pop-rate "false=0.9807889570060504" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/viwiki.reverted.gradient_boosting.model: \
+		datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.viwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features=log2' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.019211042993949594" \
+		--pop-rate "false=0.9807889570060504" \
+		--center --scale > $@
+
+viwiki_models: \
+	models/viwiki.reverted.gradient_boosting.model
+
+viwiki_tuning_reports: \
+	tuning_reports/viwiki.reverted.md
 
 ############################# Chinese Wikipedia ################################
 
