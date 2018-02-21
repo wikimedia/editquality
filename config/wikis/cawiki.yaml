@@ -6,9 +6,12 @@ samples:
     100k_2017:
         quarry_url: "https://quarry.wmflabs.org/run/228948/output/0/json-lines?download=true"
         quarry_page: "https://quarry.wmflabs.org/query/24081"
+    40k_2017:
+        quarry_url: "https://quarry.wmflabs.org/run/237545/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/24913"
 
 unbalanced_5k_set_for_review: true
-
+sample_to_build_review: 40k_2017
 default_sample: 100k_2017
 review_sample: 5k_2017
 
