@@ -345,8 +345,22 @@ datasets/cawiki.autolabeled_revisions.100k_2017.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+# From https://quarry.wmflabs.org/query/24913
+datasets/cawiki.sampled_revisions.40k_2017.json:
+	wget -qO- https://quarry.wmflabs.org/run/237545/output/0/json-lines?download=true > $@
+
+datasets/cawiki.autolabeled_revisions.40k_2017.json: \
+		datasets/cawiki.sampled_revisions.40k_2017.json
+	cat $< | \
+	./utility autolabel --host=https://ca.wikipedia.org \
+		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
 datasets/cawiki.revisions_for_review.5k_2017.json: \
-		datasets/cawiki.autolabeled_revisions.100k_2017.json
+		datasets/cawiki.autolabeled_revisions.40k_2017.json
 	grep '"needs_review": true' $< | shuf > $@
 
 datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json: \
