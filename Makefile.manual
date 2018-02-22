@@ -78,8 +78,8 @@ datasets/cswiki.labeled_revisions.20k_2016.json: \
 		datasets/cswiki.human_labeled_revisions.5k_2016.json
 	( \
 	  ./utility merge_labels \
-	    datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json \
-	    datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json; \
+	    datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json \
+	    datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json; \
 	  cat datasets/cswiki.human_labeled_revisions.5k_2016.json | \
 	  grep '"needs_review": true' | shuf -rn 4558 \
 	) > $@
@@ -241,8 +241,8 @@ datasets/enwiktionary.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/enwiktionary/59/ > $@
 
 datasets/enwiktionary.labeled_revisions.100k_2016.json: \
-		datasets/enwiktionary.human_labeled_revisions.5k_2016.json \
-		datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json
+		datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json \
+		datasets/enwiktionary.human_labeled_revisions.5k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/enwiktionary.labeled_revisions.w_cache.100k_2016.json: \
@@ -339,8 +339,8 @@ datasets/fiwiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/fiwiki/55/ > $@
 
 datasets/fiwiki.labeled_revisions.20k_2016.json: \
-		datasets/fiwiki.human_labeled_revisions.5k_2016.json \
-		datasets/fiwiki.autolabeled_revisions.20k_2016.json
+		datasets/fiwiki.autolabeled_revisions.20k_2016.json \
+		datasets/fiwiki.human_labeled_revisions.5k_2016.json
 	./utility merge_labels $^ | shuf > $@
 
 datasets/fiwiki.combined_labeled_revisions.w_cache.230k_2016.json.bz2: \
@@ -504,8 +504,8 @@ datasets/hewiki.labeled_revisions.20k_2015.json: \
 		datasets/hewiki.human_labeled_revisions.5k_2015.json
 	( \
 	  ./utility merge_labels \
-	    datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json \
-	    datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json; \
+	    datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json \
+	    datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json; \
 	  cat datasets/hewiki.human_labeled_revisions.5k_2015.json | \
 	  grep '"needs_review": true' | shuf -rn 4603 \
 	) > $@
@@ -812,8 +812,8 @@ datasets/svwiki.labeled_revisions.40k_2016.json: \
 		datasets/svwiki.human_labeled_revisions.5k_2016.json
 	( \
 	  ./utility merge_labels \
-	    datasets/svwiki.human_labeled_revisions.5k_2016.no_review.json \
-	    datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json; \
+	    datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json \
+	    datasets/svwiki.human_labeled_revisions.5k_2016.no_review.json; \
 	  cat datasets/svwiki.human_labeled_revisions.5k_2016.json | \
 	  grep '"needs_review": true' \
 	) > $@
@@ -930,8 +930,8 @@ datasets/wikidatawiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/wikidatawiki/19/ > $@
 
 datasets/wikidatawiki.labeled_revisions.20k_2015.json: \
-		datasets/wikidatawiki.human_labeled_revisions.5k_2016.json \
-		datasets/wikidatawiki.autolabeled_revisions.20k_2015.json
+		datasets/wikidatawiki.autolabeled_revisions.20k_2015.json \
+		datasets/wikidatawiki.human_labeled_revisions.5k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json: \
