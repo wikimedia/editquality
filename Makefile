@@ -34,7 +34,6 @@ models: \
 		lvwiki_models \
 		nlwiki_models \
 		nowiki_models \
-		nowiki_models \
 		plwiki_models \
 		ptwiki_models \
 		rowiki_models \
@@ -47,7 +46,6 @@ models: \
 		ukwiki_models \
 		urwiki_models \
 		viwiki_models \
-		viwki_models \
 		wikidatawiki_models \
 		zhwiki_models
 
@@ -81,7 +79,6 @@ tuning_reports: \
 		lvwiki_tuning_reports \
 		nlwiki_tuning_reports \
 		nowiki_tuning_reports \
-		nowiki_tuning_reports \
 		plwiki_tuning_reports \
 		ptwiki_tuning_reports \
 		rowiki_tuning_reports \
@@ -94,7 +91,6 @@ tuning_reports: \
 		ukwiki_tuning_reports \
 		urwiki_tuning_reports \
 		viwiki_tuning_reports \
-		viwki_tuning_reports \
 		wikidatawiki_tuning_reports \
 		zhwiki_tuning_reports
 
@@ -550,7 +546,6 @@ datasets/enwiki.human_labeled_revisions.20k_2015.json:
 		https://labels.wmflabs.org/campaigns/enwiki/4/ > $@
 
 datasets/enwiki.labeled_revisions.20k_2015.json: \
-		datasets/enwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/enwiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -1057,7 +1052,6 @@ datasets/fawiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/fawiki/21/ > $@
 
 datasets/fawiki.labeled_revisions.20k_2015.json: \
-		datasets/fawiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/fawiki.labeled_revisions.20k_2016.json: \
@@ -1883,7 +1877,6 @@ datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ > $@
 
 datasets/ptwiki.labeled_revisions.20k_2015.json: \
-		datasets/ptwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json: \
