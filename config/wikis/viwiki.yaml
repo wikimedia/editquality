@@ -1,0 +1,26 @@
+name: viwiki
+label: Vietnamese Wikipedia
+host: vi.wikipedia.org
+
+samples:
+    500k_2015:
+        quarry_url: "http://quarry.wmflabs.org/run/65793/output/0/json-lines?download=true"
+
+balanced_5k_set_for_review: true
+
+default_sample: 100k_2015
+default_sample_size: 100000
+default_sample_bigger_sample: 500k_2015
+
+review_sample: 5k_2015
+
+models:
+    reverted:
+        pop_rate_true: 0.019211042993949594
+
+trusted_groups:
+    - checkuser
+    - bureaucrat
+    - sysop
+    - eliminator
+    - bot
