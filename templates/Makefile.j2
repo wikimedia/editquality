@@ -74,9 +74,9 @@ datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 	grep '"needs_review": true' $< | shuf > $@
 {% endif %}{% if wiki.merged_samples %}{% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
 datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
-{%- if big_sample.autolabeled_revisions %}
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.json{%- if big_sample.human_labeled_revisions %} \
-		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json{% endif %}{% endif %}
+{%- if big_sample.human_labeled_revisions %}
+		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json{%- if big_sample.autolabeled_revisions %} \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.json{% endif %}{% endif %}
 	./utility merge_labels $^ > $@
 {% endfor %}
 {%- endif %}{% if wiki.models.reverted %}
