@@ -12,7 +12,7 @@ default_sample: 20k_2015
 
 merged_samples:
     20k_2015:
-        20k_2015: "human_labeled_revisions"
+        human_labeled_revisions: "20k_2015"
 
 models:
     damaging:

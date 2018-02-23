@@ -14,8 +14,8 @@ review_sample: 20k_2015
 
 merged_samples:
     20k_2015:
-        20k_2015: "autolabeled_revisions"
-        5k_2015: "human_labeled_revisions"
+        autolabeled_revisions: "20k_2015"
+        human_labeled_revisions: "5k_2015"
 
 models:
     damaging:
