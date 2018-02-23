@@ -34,7 +34,6 @@ models: \
 		lvwiki_models \
 		nlwiki_models \
 		nowiki_models \
-		nowiki_models \
 		plwiki_models \
 		ptwiki_models \
 		rowiki_models \
@@ -47,7 +46,6 @@ models: \
 		ukwiki_models \
 		urwiki_models \
 		viwiki_models \
-		viwki_models \
 		wikidatawiki_models \
 		zhwiki_models
 
@@ -81,7 +79,6 @@ tuning_reports: \
 		lvwiki_tuning_reports \
 		nlwiki_tuning_reports \
 		nowiki_tuning_reports \
-		nowiki_tuning_reports \
 		plwiki_tuning_reports \
 		ptwiki_tuning_reports \
 		rowiki_tuning_reports \
@@ -94,7 +91,6 @@ tuning_reports: \
 		ukwiki_tuning_reports \
 		urwiki_tuning_reports \
 		viwiki_tuning_reports \
-		viwki_tuning_reports \
 		wikidatawiki_tuning_reports \
 		zhwiki_tuning_reports
 
@@ -655,8 +651,8 @@ datasets/eswiki.human_labeled_revisions.5k_2015.json:
 		https://labels.wmflabs.org/campaigns/eswiki/12/ > $@
 
 datasets/eswiki.labeled_revisions.20k_2015.json: \
-		datasets/eswiki.autolabeled_revisions.20k_2015.json \
-		datasets/eswiki.human_labeled_revisions.5k_2015.json
+		datasets/eswiki.human_labeled_revisions.5k_2015.json \
+		datasets/eswiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/eswiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -761,8 +757,8 @@ datasets/eswikibooks.human_labeled_revisions.5k_2015.json:
 		https://labels.wmflabs.org/campaigns/eswikibooks/42/ > $@
 
 datasets/eswikibooks.labeled_revisions.20k_2015.json: \
-		datasets/eswikibooks.autolabeled_revisions.20k_2015.json \
-		datasets/eswikibooks.human_labeled_revisions.5k_2015.json
+		datasets/eswikibooks.human_labeled_revisions.5k_2015.json \
+		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json: \
@@ -934,8 +930,8 @@ datasets/etwiki.human_labeled_revisions.5k_2015.json:
 		https://labels.wmflabs.org/campaigns/etwiki/17/ > $@
 
 datasets/etwiki.labeled_revisions.20k_2015.json: \
-		datasets/etwiki.autolabeled_revisions.20k_2015.json \
-		datasets/etwiki.human_labeled_revisions.5k_2015.json
+		datasets/etwiki.human_labeled_revisions.5k_2015.json \
+		datasets/etwiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/etwiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -1061,8 +1057,8 @@ datasets/fawiki.labeled_revisions.20k_2015.json: \
 	./utility merge_labels $^ > $@
 
 datasets/fawiki.labeled_revisions.20k_2016.json: \
-		datasets/fawiki.autolabeled_revisions.2.20k_2015.json \
-		datasets/fawiki.human_labeled_revisions.5k_2016.json
+		datasets/fawiki.human_labeled_revisions.5k_2016.json \
+		datasets/fawiki.autolabeled_revisions.2.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/fawiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -1205,8 +1201,8 @@ datasets/frwiki.revisions_for_review.5k_2016.json: \
 	) | shuf > $@
 
 datasets/frwiki.labeled_revisions.20k_2016.json: \
-		datasets/frwiki.autolabeled_revisions.20k_2016.json \
-		datasets/frwiki.human_labeled_revisions.5k_2016.json
+		datasets/frwiki.human_labeled_revisions.5k_2016.json \
+		datasets/frwiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/frwiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -1717,8 +1713,8 @@ datasets/nlwiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/nlwiki/14/ > $@
 
 datasets/nlwiki.labeled_revisions.20k_2016.json: \
-		datasets/nlwiki.autolabeled_revisions.20k_2016.json \
-		datasets/nlwiki.human_labeled_revisions.5k_2016.json
+		datasets/nlwiki.human_labeled_revisions.5k_2016.json \
+		datasets/nlwiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -1988,8 +1984,8 @@ datasets/rowiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/rowiki/48/ > $@
 
 datasets/rowiki.labeled_revisions.20k_2016.json: \
-		datasets/rowiki.autolabeled_revisions.20k_2016.json \
-		datasets/rowiki.human_labeled_revisions.5k_2016.json
+		datasets/rowiki.human_labeled_revisions.5k_2016.json \
+		datasets/rowiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -2094,8 +2090,8 @@ datasets/ruwiki.human_labeled_revisions.5k_2015.json:
 		https://labels.wmflabs.org/campaigns/ruwiki/10/ > $@
 
 datasets/ruwiki.labeled_revisions.20k_2015.json: \
-		datasets/ruwiki.autolabeled_revisions.20k_2015.json \
-		datasets/ruwiki.human_labeled_revisions.5k_2015.json
+		datasets/ruwiki.human_labeled_revisions.5k_2015.json \
+		datasets/ruwiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -2201,8 +2197,8 @@ datasets/sqwiki.human_labeled_revisions.5k_2016.json:
 		https://labels.wmflabs.org/campaigns/sqwiki/57/ > $@
 
 datasets/sqwiki.labeled_revisions.20k_2016.json: \
-		datasets/sqwiki.autolabeled_revisions.20k_2016.json \
-		datasets/sqwiki.human_labeled_revisions.5k_2016.json
+		datasets/sqwiki.human_labeled_revisions.5k_2016.json \
+		datasets/sqwiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -2395,8 +2391,8 @@ datasets/trwiki.human_labeled_revisions.5k_2015.json:
 		https://labels.wmflabs.org/campaigns/trwiki/5/ > $@
 
 datasets/trwiki.labeled_revisions.20k_2015.json: \
-		datasets/trwiki.autolabeled_revisions.20k_2015.json \
-		datasets/trwiki.human_labeled_revisions.5k_2015.json
+		datasets/trwiki.human_labeled_revisions.5k_2015.json \
+		datasets/trwiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
