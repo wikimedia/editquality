@@ -43,12 +43,17 @@ def load_wiki(wiki, config):
             continue
         model = wiki["models"][model_name]
         model_defaults = copy.deepcopy(config["model_defaults"])
+
+        # Do not apply default configs for RandomForest models
+        # Because it doesn't make sense for them
         if not model.get('rf'):
             model = util.deep_update(model_defaults, model)
+
         for case in model['tuning_params']:
             value = model['tuning_params'][case]
             if isinstance(value, str):
                 model['tuning_params'][case] = '"%s"' % value
+
         result[model_name] = model
 
     wiki["models"] = result
