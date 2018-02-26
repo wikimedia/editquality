@@ -43,7 +43,8 @@ def load_wiki(wiki, config):
             continue
         model = wiki["models"][model_name]
         model_defaults = copy.deepcopy(config["model_defaults"])
-        model = util.deep_update(model_defaults, model)
+        if not model.get('rf'):
+            model = util.deep_update(model_defaults, model)
         result[model_name] = model
 
     wiki["models"] = result
