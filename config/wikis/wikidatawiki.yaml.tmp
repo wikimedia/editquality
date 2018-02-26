@@ -1,0 +1,35 @@
+name: wikidatawiki
+label: Wikidata
+host: www.wikidata.org
+
+samples:
+    5k_2016:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/wikidatawiki/19/"
+
+merged_samples:
+    20k_2015:
+        human_labeled_revisions: "5k_2016"
+        autolabeled_revisions: "20k_2015"
+
+wikilabels_sample: 5k_2016
+default_sample: 20k_2015
+review_sample: 5k_2016
+
+models:
+    damaging:
+        pop_rate_true: 0.0008668694143782405
+    goodfaith:
+        tuning_params:
+            n_estimators: 300
+            max_depth: 5
+            learning_rate: 0.1
+        pop_rate_true: 0.9998525516181488
+
+trusted_groups:
+    - abusefilter
+    - arbcom
+    - bureaucrat
+    - checkuser
+    - rollbacker
+    - sysop
+    - bot
