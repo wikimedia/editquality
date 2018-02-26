@@ -2,7 +2,7 @@
 Merges human-applied labels into an autolabeled set
 
 Usage:
-    merge_labels <from-human-labels> <to-auto-labels>
+    merge_labels <from-human-labels> [<to-auto-labels>]
                  [--output=<path>]
                  [--debug] [--verbose]
 
@@ -36,8 +36,12 @@ def main(argv=None):
 
     human_labels = (util.normalize_revision(json.loads(line))
                     for line in open(args['<from-human-labels>']))
-    auto_labels = (util.normalize_revision(json.loads(line))
-                   for line in open(args['<to-auto-labels>']))
+
+    if args['<to-auto-labels>']:
+        auto_labels = (util.normalize_revision(json.loads(line))
+                       for line in open(args['<to-auto-labels>']))
+    else:
+        auto_labels = tuple()
 
     if args['--output'] == "<stdout>":
         labels_f = sys.stdout
@@ -53,6 +57,13 @@ def run(human_labels, auto_labels, labels_f, verbose):
     human_rev_map = {int(revision['rev_id']): revision
                      for revision in human_labels}
     human_rev_ids = set(human_rev_map.keys())
+
+    # Output human labels when autolabels is empty
+    if not auto_labels:
+        for rev_id in human_rev_map:
+            labels_f.write(json.dumps(human_rev_map[rev_id]))
+            labels_f.write("\n")
+        return
 
     for revision in auto_labels:
         if revision['rev_id'] in human_rev_map:
