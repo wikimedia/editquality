@@ -177,7 +177,7 @@ models/arwiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.035186595582635184" \
@@ -294,7 +294,7 @@ models/bnwiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.021554310862" \
@@ -397,7 +397,7 @@ models/cawiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.01919" \
@@ -459,7 +459,7 @@ models/dewiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.049775581219426095" \
@@ -526,7 +526,7 @@ models/elwiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.05170687756532186" \
@@ -584,7 +584,7 @@ models/enwiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.034163555464634586" \
@@ -616,7 +616,7 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9671661637600368" \
@@ -690,7 +690,7 @@ models/eswiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.11036013315847877" \
@@ -722,7 +722,7 @@ models/eswiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.11036013315847877" \
@@ -796,7 +796,7 @@ models/eswikibooks.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.1126671580499105" \
@@ -828,7 +828,7 @@ models/eswikibooks.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.5' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9139393939393939" \
@@ -897,7 +897,7 @@ models/eswikiquote.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.089509548245983" \
@@ -969,7 +969,7 @@ models/etwiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.026158257457618593" \
@@ -1001,7 +1001,7 @@ models/etwiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9841038281603702" \
@@ -1108,7 +1108,7 @@ models/fawiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.0297029702970297" \
@@ -1142,7 +1142,7 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9834641681438339" \
@@ -1240,7 +1240,7 @@ models/frwiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.028751753155680224" \
@@ -1272,7 +1272,7 @@ models/frwiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9786115007012622" \
@@ -1341,7 +1341,7 @@ models/hrwiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.07927353670258512" \
@@ -1412,7 +1412,7 @@ models/huwiki.reverted.rf.model: \
 		editquality.feature_lists.huwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).1 \
-		-p 'criterion=entropy' \
+		-p 'criterion="entropy"' \
 		-p 'min_samples_leaf=13' \
 		-p 'n_estimators=320' \
 		--label-weight "true=$(reverted_weight)" \
@@ -1475,7 +1475,7 @@ models/idwiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.02272613605673532" \
@@ -1542,7 +1542,7 @@ models/iswiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.08115405770288514" \
@@ -1604,7 +1604,7 @@ models/itwiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.04628882613957241" \
@@ -1667,7 +1667,7 @@ models/jawiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.03256945140908635" \
@@ -1730,7 +1730,7 @@ models/kowiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.04717122705217348" \
@@ -1824,7 +1824,7 @@ models/nlwiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.05068086413432989" \
@@ -1856,7 +1856,7 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9646257806900789" \
@@ -1931,7 +1931,7 @@ models/nowiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.019061539539679838" \
@@ -1989,7 +1989,7 @@ models/ptwiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.06896029864299047" \
@@ -2021,7 +2021,7 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9397669373959542" \
@@ -2095,7 +2095,7 @@ models/rowiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.04956982793117247" \
@@ -2127,7 +2127,7 @@ models/rowiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).1 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9699379751900761" \
@@ -2201,7 +2201,7 @@ models/ruwiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.053479185657854755" \
@@ -2233,7 +2233,7 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9713866099463182" \
@@ -2308,7 +2308,7 @@ models/sqwiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.0287028702870287" \
@@ -2340,7 +2340,7 @@ models/sqwiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9763476347634763" \
@@ -2430,7 +2430,7 @@ models/tawiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.015904172328753335" \
@@ -2502,7 +2502,7 @@ models/trwiki.damaging.gradient_boosting.model: \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
 		--pop-rate "true=0.0495014425266994" \
@@ -2534,7 +2534,7 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--pop-rate "true=0.9538897605911829" \
@@ -2598,7 +2598,7 @@ models/ukwiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.021877665713282153" \
@@ -2699,7 +2699,7 @@ models/viwiki.reverted.gradient_boosting.model: \
 		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
-		-p 'max_features=log2' \
+		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
 		--pop-rate "true=0.019211042993949594" \
