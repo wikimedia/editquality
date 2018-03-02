@@ -11,4 +11,4 @@ def generate(config_path, templates_path):
     )
 
     template = env.get_template("Makefile.j2")
-    return template.render(variables)
+    return template.render(variables) + "\n"
