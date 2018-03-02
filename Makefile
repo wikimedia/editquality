@@ -359,56 +359,100 @@ datasets/cawiki.autolabeled_revisions.40k_2017.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+datasets/cawiki.human_labeled_revisions.5k_2017.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/cawiki/68/ > $@
+
 datasets/cawiki.revisions_for_review.5k_2017.json: \
 		datasets/cawiki.autolabeled_revisions.40k_2017.json
 	grep '"needs_review": true' $< | shuf > $@
 
-datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json: \
-		datasets/cawiki.autolabeled_revisions.100k_2017.json
+datasets/cawiki.labeled_revisions.40k_2017.json: \
+		datasets/cawiki.human_labeled_revisions.5k_2017.json \
+		datasets/cawiki.autolabeled_revisions.40k_2017.json
+	./utility merge_labels $^ > $@
+
+datasets/cawiki.labeled_revisions.w_cache.40k_2017.json: \
+		datasets/cawiki.labeled_revisions.40k_2017.json
 	cat $< | \
 	revscoring extract \
-		editquality.feature_lists.cawiki.reverted \
+		editquality.feature_lists.cawiki.damaging \
+		editquality.feature_lists.cawiki.goodfaith \
 		--host https://ca.wikipedia.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
 
-tuning_reports/cawiki.reverted.md: \
-		datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json
+tuning_reports/cawiki.damaging.md: \
+		datasets/cawiki.labeled_revisions.w_cache.40k_2017.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.cawiki.reverted \
-		reverted_for_damage \
+		editquality.feature_lists.cawiki.damaging \
+		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.01919" \
-		--pop-rate "false=0.98081" \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.019000475011875295" \
+		--pop-rate "false=0.9809995249881247" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/cawiki.reverted.gradient_boosting.model: \
-		datasets/cawiki.autolabeled_revisions.w_cache.100k_2017.json
+models/cawiki.damaging.gradient_boosting.model: \
+		datasets/cawiki.labeled_revisions.w_cache.40k_2017.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.cawiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		editquality.feature_lists.cawiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.019000475011875295" \
+		--pop-rate "false=0.9809995249881247" \
+		--center --scale > $@
+
+tuning_reports/cawiki.goodfaith.md: \
+		datasets/cawiki.labeled_revisions.w_cache.40k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cawiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9854996374909373" \
+		--pop-rate "false=0.014500362509062725" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/cawiki.goodfaith.gradient_boosting.model: \
+		datasets/cawiki.labeled_revisions.w_cache.40k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.cawiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.1' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.01919" \
-		--pop-rate "false=0.98081" \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9854996374909373" \
+		--pop-rate "false=0.014500362509062725" \
 		--center --scale > $@
 
 cawiki_models: \
-	models/cawiki.reverted.gradient_boosting.model
+	models/cawiki.damaging.gradient_boosting.model \
+	models/cawiki.goodfaith.gradient_boosting.model
 
 cawiki_tuning_reports: \
-	tuning_reports/cawiki.reverted.md
+	tuning_reports/cawiki.damaging.md \
+	tuning_reports/cawiki.goodfaith.md
 
 ############################# German Wikipedia ################################
 

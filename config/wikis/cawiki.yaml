@@ -9,17 +9,28 @@ samples:
     40k_2017:
         quarry_url: "https://quarry.wmflabs.org/run/237545/output/0/json-lines?download=true"
         quarry_page: "https://quarry.wmflabs.org/query/24913"
+    5k_2017:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/cawiki/68/"
 
 unbalanced_5k_set_for_review: true
 sample_to_build_review: 40k_2017
-default_sample: 100k_2017
+default_sample: 40k_2017
 review_sample: 5k_2017
 
+merged_samples:
+    40k_2017:
+        autolabeled_revisions: "40k_2017"
+        human_labeled_revisions: "5k_2017"
+
 models:
-    reverted:
+    damaging:
         tuning_params:
-            n_estimators: 500
-        pop_rate_true: 0.01919
+            max_depth: 5
+        pop_rate_true: 0.019000475011875295
+    goodfaith:
+        tuning_params:
+            learning_rate: 0.1
+        pop_rate_true: 0.9854996374909373
 
 trusted_groups:
     - autopatrolled
