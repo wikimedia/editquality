@@ -144,14 +144,12 @@ models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_bo
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
 {% endfor %}
-{% if wiki.models %}{{ wiki.name }}_models: \
+{{ wiki.name }}_models:{% if wiki.models %} \
 {%- for model_name, model in wiki.models.items() %}
 	models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_boosting{% endif %}.model{% if not loop.last %} \{% endif -%}
-{% endfor %}
+{% endfor %}{% endif %}
 
-{{ wiki.name }}_tuning_reports: \
+{{ wiki.name }}_tuning_reports:{% if wiki.models %} \
 {%- for model_name, model in wiki.models.items() %}
 	tuning_reports/{{ wiki.name }}.{{ model_name }}.md{% if not loop.last %} \{% endif -%}
-{% endfor %}
-{%- endif -%}
-{% endfor %}
+{% endfor %}{% endif %}{% endfor %}
