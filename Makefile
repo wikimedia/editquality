@@ -205,7 +205,9 @@ datasets/azwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+azwiki_models:
 
+azwiki_tuning_reports:
 
 ############################# Bosnian Wikipedia ################################
 
@@ -227,7 +229,9 @@ datasets/bawiki.revisions_for_review.5k_2018.json: \
 		datasets/bawiki.autolabeled_revisions.60k_2018.json
 	grep '"needs_review": true' $< | shuf > $@
 
+bawiki_models:
 
+bawiki_tuning_reports:
 
 ############################# Bengali Wikipedia ################################
 
@@ -316,7 +320,9 @@ datasets/bnwikisource.revisions_for_review.5k_2018.json: \
 		datasets/bnwikisource.autolabeled_revisions.200k_2018.json
 	grep '"needs_review": true' $< | shuf > $@
 
+bnwikisource_models:
 
+bnwikisource_tuning_reports:
 
 ############################# Catalan Wikipedia ################################
 
@@ -1796,7 +1802,9 @@ datasets/lvwiki.revisions_for_review.5k_2016.json: \
 		datasets/lvwiki.autolabeled_revisions.20k_2016.json
 	grep '"needs_review": true' $< | shuf > $@
 
+lvwiki_models:
 
+lvwiki_tuning_reports:
 
 ############################# Dutch Wikipedia ################################
 
@@ -2407,7 +2415,9 @@ datasets/srwiki.revisions_for_review.5k_2017.json: \
 		datasets/srwiki.autolabeled_revisions.120k_2017.json
 	grep '"needs_review": true' $< | shuf > $@
 
+srwiki_models:
 
+srwiki_tuning_reports:
 
 ############################# Tamil Wikipedia ################################
 
@@ -2670,7 +2680,9 @@ datasets/urwiki.revisions_for_review.5k_2015.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
+urwiki_models:
 
+urwiki_tuning_reports:
 
 ############################# Vietnamese Wikipedia ################################
 
@@ -2771,3 +2783,6 @@ datasets/zhwiki.revisions_for_review.5k_2016.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
+zhwiki_models:
+
+zhwiki_tuning_reports:
