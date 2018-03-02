@@ -205,17 +205,6 @@ datasets/azwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-window=48 \
 		--verbose > $@
 
-datasets/azwiki.revisions_for_review.5k_2016.json: \
-		datasets/azwiki.autolabeled_revisions.20k_2016.json
-	( \
-	 cat $< | \
-	 grep '"needs_review": true' | \
-	 shuf -n 2500; \
-	 cat $< | \
-	 grep '"needs_review": false' | \
-	 shuf -n 2500 \
-	) | shuf > $@
-
 
 
 ############################# Bosnian Wikipedia ################################

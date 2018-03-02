@@ -15,6 +15,6 @@ trusted_groups:
     - abusefilter
     - bureaucrat
 
-balanced_5k_set_for_review: true
+balanced_5k_set_for_review: false
 default_sample: 20k_2016
 review_sample: 5k_2016
