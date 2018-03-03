@@ -12,6 +12,7 @@ models: \
 		bnwikisource_models \
 		cawiki_models \
 		cswiki_models \
+		cswiki_models \
 		dewiki_models \
 		elwiki_models \
 		enwiki_models \
@@ -56,6 +57,7 @@ tuning_reports: \
 		bnwiki_tuning_reports \
 		bnwikisource_tuning_reports \
 		cawiki_tuning_reports \
+		cswiki_tuning_reports \
 		cswiki_tuning_reports \
 		dewiki_tuning_reports \
 		elwiki_tuning_reports \
@@ -448,6 +450,123 @@ cawiki_models: \
 cawiki_tuning_reports: \
 	tuning_reports/cawiki.damaging.md \
 	tuning_reports/cawiki.goodfaith.md
+
+############################# Czech Wikipedia ################################
+
+datasets/cswiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/97125/output/0/json-lines?download=true > $@
+
+datasets/cswiki.autolabeled_revisions.20k_2016.json: \
+		datasets/cswiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://cs.wikipedia.org \
+		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/cswiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/cswiki/44/ > $@
+
+datasets/cswiki.revisions_for_review.5k_2016.json: \
+		datasets/cswiki.autolabeled_revisions.20k_2016.json
+	( \
+	 cat $< | \
+	 grep '"needs_review": true' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep '"needs_review": false' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/cswiki.labeled_revisions.20k_2016.json: \
+		datasets/cswiki.human_labeled_revisions.5k_2016.json \
+		datasets/cswiki.autolabeled_revisions.20k_2016.json
+	./utility merge_labels $^ > $@
+
+datasets/cswiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/cswiki.labeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.cswiki.damaging \
+		editquality.feature_lists.cswiki.goodfaith \
+		--host https://cs.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/cswiki.damaging.md: \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cswiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0445968266680014" \
+		--pop-rate "false=0.9554031733319986" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/cswiki.damaging.gradient_boosting.model: \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.cswiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0445968266680014" \
+		--pop-rate "false=0.9554031733319986" \
+		--center --scale > $@
+
+tuning_reports/cswiki.goodfaith.md: \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cswiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.977526402722859" \
+		--pop-rate "false=0.022473597277141044" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/cswiki.goodfaith.gradient_boosting.model: \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.cswiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.977526402722859" \
+		--pop-rate "false=0.022473597277141044" \
+		--center --scale > $@
+
+cswiki_models: \
+	models/cswiki.damaging.gradient_boosting.model \
+	models/cswiki.goodfaith.gradient_boosting.model
+
+cswiki_tuning_reports: \
+	tuning_reports/cswiki.damaging.md \
+	tuning_reports/cswiki.goodfaith.md
 
 ############################# German Wikipedia ################################
 
