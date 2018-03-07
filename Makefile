@@ -843,7 +843,7 @@ datasets/enwiktionary.autolabeled_revisions.200k_2016.json: \
 
 datasets/enwiktionary.revisions_for_review.5k_2016.json: \
 		datasets/enwiktionary.autolabeled_revisions.200k_2016.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep '"needs_review": true' $< | shuf -n 5000 > $@
 
 datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json: \
 		datasets/enwiktionary.autolabeled_revisions.200k_2016.json

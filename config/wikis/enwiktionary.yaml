@@ -15,6 +15,7 @@ default_sample_bigger_sample: 200k_2016
 sample_to_build_review: 200k_2016
 
 review_sample: 5k_2016
+review_sample_size: 5000
 
 models:
     reverted:
