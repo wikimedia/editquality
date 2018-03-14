@@ -733,6 +733,7 @@ datasets/enwiki.human_labeled_revisions.20k_2015.no_review.json: \
 		datasets/enwiki.human_labeled_revisions.20k_2015.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/enwiki.labeled_revisions.20k_2015.json: \
 		datasets/enwiki.human_labeled_revisions.20k_2015.no_review.json
 	( \
@@ -1287,6 +1288,7 @@ datasets/fawiki.human_labeled_revisions.20k_2015.no_review.json: \
 		datasets/fawiki.human_labeled_revisions.20k_2015.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/fawiki.labeled_revisions.20k_2015.json: \
 		datasets/fawiki.human_labeled_revisions.20k_2015.no_review.json
 	( \
@@ -2234,6 +2236,7 @@ datasets/ptwiki.human_labeled_revisions.20k_2015.no_review.json: \
 		datasets/ptwiki.human_labeled_revisions.20k_2015.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/ptwiki.labeled_revisions.20k_2015.json: \
 		datasets/ptwiki.human_labeled_revisions.20k_2015.no_review.json
 	( \
