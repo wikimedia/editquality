@@ -62,29 +62,29 @@ datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.json
 	( \
 	 cat $< | \
-	 grep -P '"needs_review": (true|"True")' | \
+	 grep -E '"needs_review": (true|"True")' | \
 	 shuf -n 2500; \
 	 cat $< | \
-	 grep -P '"needs_review": (false|"False")' | \
+	 grep -E '"needs_review": (false|"False")' | \
 	 shuf -n 2500 \
 	) | shuf > $@
 {% endif %}{% if wiki.unbalanced_5k_set_for_review %}
 datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.sample_to_build_review %}{{ wiki.sample_to_build_review }}{% else %}{{ wiki.default_sample }}{% endif %}.json
-	grep -P '"needs_review": (true|"True")' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 {% endif %}{% if wiki.merged_samples %}{% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
 {%- if big_sample.human_labeled_revisions %}
 datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.no_review.json: \
 		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json
 	cat $< | \
-	grep -P '"needs_review": (false|"False")' > $@
+	grep -E '"needs_review": (false|"False")' > $@
 {% endif -%}
 
 {%- if big_sample.autolabeled_revisions %}
 datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.json
 	cat $< | \
-	grep -P '"needs_review": (false|"False")' > $@
+	grep -E '"needs_review": (false|"False")' > $@
 {% endif -%}
 
 datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
@@ -95,7 +95,7 @@ datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
 	 ./utility merge_labels $^; \
 	 {%- if big_sample.human_labeled_revisions %}
 	  cat datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json | \
-	   grep -P '"needs_review": (true|"True")' \
+	   grep -E '"needs_review": (true|"True")' \
 	 {% endif -%}
 	) > $@
 {% endfor %}
