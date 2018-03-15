@@ -78,15 +78,12 @@ datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_rev
 		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
-{%- endif %}
-
-{% if big_sample.autolabeled_revisions -%}
+{% endif %}{% if big_sample.autolabeled_revisions %}
 datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json: \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
-{% endif -%}
-
+{% endif %}
 datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
 {%- if big_sample.human_labeled_revisions %}
 		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.no_review.json{%- if big_sample.autolabeled_revisions %} \
