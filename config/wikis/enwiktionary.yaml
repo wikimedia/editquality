@@ -2,20 +2,16 @@ name: enwiktionary
 label: English Wiktionary
 host: en.wiktionary.org
 
+# https://quarry.wmflabs.org/query/25502
 samples:
-    200k_2016:
-        quarry_url: "https://quarry.wmflabs.org/run/97131/output/0/json-lines?download=true"
+    92k_2018:
+        quarry_url: "https://quarry.wmflabs.org/run/244906/output/0/json-lines?download=true"
 
 unbalanced_5k_set_for_review: true
 
-default_sample: 20k_2016
-default_sample_size: 20000
-default_sample_bigger_sample: 200k_2016
+default_sample: 92k_2018
 
-sample_to_build_review: 200k_2016
-
-review_sample: 5k_2016
-review_sample_size: 5000
+review_sample: 5k_2018
 
 models:
     reverted:
