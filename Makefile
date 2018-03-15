@@ -373,6 +373,7 @@ datasets/cawiki.autolabeled_revisions.40k_2017.no_review.json: \
 		datasets/cawiki.autolabeled_revisions.40k_2017.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/cawiki.labeled_revisions.40k_2017.json: \
 		datasets/cawiki.human_labeled_revisions.5k_2017.no_review.json \
 		datasets/cawiki.autolabeled_revisions.40k_2017.no_review.json
@@ -503,6 +504,7 @@ datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/cswiki.autolabeled_revisions.20k_2016.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/cswiki.labeled_revisions.20k_2016.json: \
 		datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json \
 		datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json
@@ -852,6 +854,7 @@ datasets/eswiki.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/eswiki.autolabeled_revisions.20k_2015.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/eswiki.labeled_revisions.20k_2015.json: \
 		datasets/eswiki.human_labeled_revisions.5k_2015.no_review.json \
 		datasets/eswiki.autolabeled_revisions.20k_2015.no_review.json
@@ -971,6 +974,7 @@ datasets/eswikibooks.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/eswikibooks.labeled_revisions.20k_2015.json: \
 		datasets/eswikibooks.human_labeled_revisions.5k_2015.no_review.json \
 		datasets/eswikibooks.autolabeled_revisions.20k_2015.no_review.json
@@ -1157,6 +1161,7 @@ datasets/etwiki.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/etwiki.autolabeled_revisions.20k_2015.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/etwiki.labeled_revisions.20k_2015.json: \
 		datasets/etwiki.human_labeled_revisions.5k_2015.no_review.json \
 		datasets/etwiki.autolabeled_revisions.20k_2015.no_review.json
@@ -1306,6 +1311,7 @@ datasets/fawiki.autolabeled_revisions.2.20k_2015.no_review.json: \
 		datasets/fawiki.autolabeled_revisions.2.20k_2015.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/fawiki.labeled_revisions.20k_2016.json: \
 		datasets/fawiki.human_labeled_revisions.5k_2016.no_review.json \
 		datasets/fawiki.autolabeled_revisions.2.20k_2015.no_review.json
@@ -1463,6 +1469,7 @@ datasets/frwiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/frwiki.autolabeled_revisions.20k_2016.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/frwiki.labeled_revisions.20k_2016.json: \
 		datasets/frwiki.human_labeled_revisions.5k_2016.no_review.json \
 		datasets/frwiki.autolabeled_revisions.20k_2016.no_review.json
@@ -2062,6 +2069,7 @@ datasets/nlwiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/nlwiki.autolabeled_revisions.20k_2016.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/nlwiki.labeled_revisions.20k_2016.json: \
 		datasets/nlwiki.human_labeled_revisions.5k_2016.no_review.json \
 		datasets/nlwiki.autolabeled_revisions.20k_2016.no_review.json
@@ -2355,6 +2363,7 @@ datasets/rowiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/rowiki.autolabeled_revisions.20k_2016.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/rowiki.labeled_revisions.20k_2016.json: \
 		datasets/rowiki.human_labeled_revisions.5k_2016.no_review.json \
 		datasets/rowiki.autolabeled_revisions.20k_2016.no_review.json
@@ -2474,6 +2483,7 @@ datasets/ruwiki.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/ruwiki.autolabeled_revisions.20k_2015.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/ruwiki.labeled_revisions.20k_2015.json: \
 		datasets/ruwiki.human_labeled_revisions.5k_2015.no_review.json \
 		datasets/ruwiki.autolabeled_revisions.20k_2015.no_review.json
@@ -2594,6 +2604,7 @@ datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/sqwiki.autolabeled_revisions.20k_2016.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/sqwiki.labeled_revisions.20k_2016.json: \
 		datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json \
 		datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json
@@ -2803,6 +2814,7 @@ datasets/trwiki.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/trwiki.autolabeled_revisions.20k_2015.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
+
 datasets/trwiki.labeled_revisions.20k_2015.json: \
 		datasets/trwiki.human_labeled_revisions.5k_2015.no_review.json \
 		datasets/trwiki.autolabeled_revisions.20k_2015.no_review.json
