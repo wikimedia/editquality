@@ -826,6 +826,72 @@ enwiki_tuning_reports: \
 	tuning_reports/enwiki.damaging.md \
 	tuning_reports/enwiki.goodfaith.md
 
+############################# English Wiktionary ################################
+
+datasets/enwiktionary.sampled_revisions.92k_2018.json:
+	wget -qO- https://quarry.wmflabs.org/run/244906/output/0/json-lines?download=true > $@
+
+datasets/enwiktionary.autolabeled_revisions.92k_2018.json: \
+		datasets/enwiktionary.sampled_revisions.92k_2018.json
+	cat $< | \
+	./utility autolabel --host=https://en.wiktionary.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/enwiktionary.revisions_for_review.5k_2018.json: \
+		datasets/enwiktionary.autolabeled_revisions.92k_2018.json
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
+
+datasets/enwiktionary.autolabeled_revisions.w_cache.92k_2018.json: \
+		datasets/enwiktionary.autolabeled_revisions.92k_2018.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.enwiktionary.reverted \
+		--host https://en.wiktionary.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/enwiktionary.reverted.md: \
+		datasets/enwiktionary.autolabeled_revisions.w_cache.92k_2018.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiktionary.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.004778273117085203" \
+		--pop-rate "false=0.9952217268829148" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/enwiktionary.reverted.rf.model: \
+		datasets/enwiktionary.autolabeled_revisions.w_cache.92k_2018.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.RandomForest \
+		editquality.feature_lists.enwiktionary.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'criterion="entropy"' \
+		-p 'max_features="log2"' \
+		-p 'min_samples_leaf=3' \
+		-p 'n_estimators=320' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.004778273117085203" \
+		--pop-rate "false=0.9952217268829148" \
+		--center --scale > $@
+
+enwiktionary_models: \
+	models/enwiktionary.reverted.rf.model
+
+enwiktionary_tuning_reports: \
+	tuning_reports/enwiktionary.reverted.md
+
 ############################# Spanish Wikipedia ################################
 
 datasets/eswiki.sampled_revisions.20k_2015.json:
@@ -1687,6 +1753,7 @@ models/huwiki.reverted.rf.model: \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).1 \
 		-p 'criterion="entropy"' \
+		-p 'max_features="log2"' \
 		-p 'min_samples_leaf=13' \
 		-p 'n_estimators=320' \
 		--label-weight "true=$(reverted_weight)" \
