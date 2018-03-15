@@ -163,8 +163,8 @@ tuning_reports/arwiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.035186595582635184" \
-		--pop-rate "false=0.9648134044173649" \
+		--pop-rate "true=0.0351865955826" \
+		--pop-rate "false=0.964813404417" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -182,8 +182,8 @@ models/arwiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.035186595582635184" \
-		--pop-rate "false=0.9648134044173649" \
+		--pop-rate "true=0.0351865955826" \
+		--pop-rate "false=0.964813404417" \
 		--center --scale > $@
 
 arwiki_models: \
@@ -402,8 +402,8 @@ tuning_reports/cawiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.019000475011875295" \
-		--pop-rate "false=0.9809995249881247" \
+		--pop-rate "true=0.0190004750119" \
+		--pop-rate "false=0.980999524988" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -421,8 +421,8 @@ models/cawiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.019000475011875295" \
-		--pop-rate "false=0.9809995249881247" \
+		--pop-rate "true=0.0190004750119" \
+		--pop-rate "false=0.980999524988" \
 		--center --scale > $@
 
 tuning_reports/cawiki.goodfaith.md: \
@@ -434,8 +434,8 @@ tuning_reports/cawiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9854996374909373" \
-		--pop-rate "false=0.014500362509062725" \
+		--pop-rate "true=0.985499637491" \
+		--pop-rate "false=0.0145003625091" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -453,8 +453,8 @@ models/cawiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9854996374909373" \
-		--pop-rate "false=0.014500362509062725" \
+		--pop-rate "true=0.985499637491" \
+		--pop-rate "false=0.0145003625091" \
 		--center --scale > $@
 
 cawiki_models: \
@@ -629,8 +629,8 @@ tuning_reports/dewiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.049775581219426095" \
-		--pop-rate "false=0.950224418780574" \
+		--pop-rate "true=0.0497755812194" \
+		--pop-rate "false=0.950224418781" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -648,8 +648,8 @@ models/dewiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.049775581219426095" \
-		--pop-rate "false=0.950224418780574" \
+		--pop-rate "true=0.0497755812194" \
+		--pop-rate "false=0.950224418781" \
 		--center --scale > $@
 
 dewiki_models: \
@@ -696,8 +696,8 @@ tuning_reports/elwiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.05170687756532186" \
-		--pop-rate "false=0.9482931224346781" \
+		--pop-rate "true=0.0517068775653" \
+		--pop-rate "false=0.948293122435" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -715,8 +715,8 @@ models/elwiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.05170687756532186" \
-		--pop-rate "false=0.9482931224346781" \
+		--pop-rate "true=0.0517068775653" \
+		--pop-rate "false=0.948293122435" \
 		--center --scale > $@
 
 elwiki_models: \
@@ -763,8 +763,8 @@ tuning_reports/enwiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.034163555464634586" \
-		--pop-rate "false=0.9658364445353654" \
+		--pop-rate "true=0.0341635554646" \
+		--pop-rate "false=0.965836444535" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -782,8 +782,8 @@ models/enwiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.034163555464634586" \
-		--pop-rate "false=0.9658364445353654" \
+		--pop-rate "true=0.0341635554646" \
+		--pop-rate "false=0.965836444535" \
 		--center --scale > $@
 
 tuning_reports/enwiki.goodfaith.md: \
@@ -795,8 +795,8 @@ tuning_reports/enwiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9671661637600368" \
-		--pop-rate "false=0.032833836239963166" \
+		--pop-rate "true=0.96716616376" \
+		--pop-rate "false=0.03283383624" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -814,8 +814,8 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9671661637600368" \
-		--pop-rate "false=0.032833836239963166" \
+		--pop-rate "true=0.96716616376" \
+		--pop-rate "false=0.03283383624" \
 		--center --scale > $@
 
 enwiki_models: \
@@ -828,11 +828,11 @@ enwiki_tuning_reports: \
 
 ############################# English Wiktionary ################################
 
-datasets/enwiktionary.sampled_revisions.200k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/97131/output/0/json-lines?download=true > $@
+datasets/enwiktionary.sampled_revisions.92k_2018.json:
+	wget -qO- https://quarry.wmflabs.org/run/244906/output/0/json-lines?download=true > $@
 
-datasets/enwiktionary.autolabeled_revisions.200k_2016.json: \
-		datasets/enwiktionary.sampled_revisions.200k_2016.json
+datasets/enwiktionary.autolabeled_revisions.92k_2018.json: \
+		datasets/enwiktionary.sampled_revisions.92k_2018.json
 	cat $< | \
 	./utility autolabel --host=https://en.wiktionary.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
@@ -841,13 +841,13 @@ datasets/enwiktionary.autolabeled_revisions.200k_2016.json: \
 		--revert-window=48 \
 		--verbose > $@
 
-datasets/enwiktionary.revisions_for_review.5k_2016.json: \
-		datasets/enwiktionary.autolabeled_revisions.200k_2016.json
-	grep '"needs_review": true' $< | shuf -n 5000 > $@
+datasets/enwiktionary.revisions_for_review.5k_2018.json: \
+		datasets/enwiktionary.autolabeled_revisions.92k_2018.json
+	grep '"needs_review": true' $< | shuf > $@
 
-datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/enwiktionary.autolabeled_revisions.200k_2016.json
-	shuf -n 20000 $< | \
+datasets/enwiktionary.autolabeled_revisions.w_cache.92k_2018.json: \
+		datasets/enwiktionary.autolabeled_revisions.92k_2018.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.enwiktionary.reverted \
 		--host https://en.wiktionary.org \
@@ -855,7 +855,7 @@ datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json: \
 		--verbose > $@
 
 tuning_reports/enwiktionary.reverted.md: \
-		datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json
+		datasets/enwiktionary.autolabeled_revisions.w_cache.92k_2018.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -863,14 +863,14 @@ tuning_reports/enwiktionary.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.004778273117085203" \
-		--pop-rate "false=0.9952217268829148" \
+		--pop-rate "true=0.00477827311709" \
+		--pop-rate "false=0.995221726883" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
 models/enwiktionary.reverted.rf.model: \
-		datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json
+		datasets/enwiktionary.autolabeled_revisions.w_cache.92k_2018.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.RandomForest \
@@ -882,8 +882,8 @@ models/enwiktionary.reverted.rf.model: \
 		-p 'min_samples_leaf=3' \
 		-p 'n_estimators=320' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.004778273117085203" \
-		--pop-rate "false=0.9952217268829148" \
+		--pop-rate "true=0.00477827311709" \
+		--pop-rate "false=0.995221726883" \
 		--center --scale > $@
 
 enwiktionary_models: \
@@ -949,8 +949,8 @@ tuning_reports/eswiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.11036013315847877" \
-		--pop-rate "false=0.8896398668415212" \
+		--pop-rate "true=0.110360133158" \
+		--pop-rate "false=0.889639866842" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -968,8 +968,8 @@ models/eswiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.11036013315847877" \
-		--pop-rate "false=0.8896398668415212" \
+		--pop-rate "true=0.110360133158" \
+		--pop-rate "false=0.889639866842" \
 		--center --scale > $@
 
 tuning_reports/eswiki.goodfaith.md: \
@@ -981,8 +981,8 @@ tuning_reports/eswiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.11036013315847877" \
-		--pop-rate "false=0.8896398668415212" \
+		--pop-rate "true=0.110360133158" \
+		--pop-rate "false=0.889639866842" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1000,8 +1000,8 @@ models/eswiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.11036013315847877" \
-		--pop-rate "false=0.8896398668415212" \
+		--pop-rate "true=0.110360133158" \
+		--pop-rate "false=0.889639866842" \
 		--center --scale > $@
 
 eswiki_models: \
@@ -1069,8 +1069,8 @@ tuning_reports/eswikibooks.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.1126671580499105" \
-		--pop-rate "false=0.8873328419500895" \
+		--pop-rate "true=0.11266715805" \
+		--pop-rate "false=0.88733284195" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1088,8 +1088,8 @@ models/eswikibooks.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.1126671580499105" \
-		--pop-rate "false=0.8873328419500895" \
+		--pop-rate "true=0.11266715805" \
+		--pop-rate "false=0.88733284195" \
 		--center --scale > $@
 
 tuning_reports/eswikibooks.goodfaith.md: \
@@ -1101,8 +1101,8 @@ tuning_reports/eswikibooks.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9139393939393939" \
-		--pop-rate "false=0.08606060606060606" \
+		--pop-rate "true=0.913939393939" \
+		--pop-rate "false=0.0860606060606" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1120,8 +1120,8 @@ models/eswikibooks.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9139393939393939" \
-		--pop-rate "false=0.08606060606060606" \
+		--pop-rate "true=0.913939393939" \
+		--pop-rate "false=0.0860606060606" \
 		--center --scale > $@
 
 eswikibooks_models: \
@@ -1170,8 +1170,8 @@ tuning_reports/eswikiquote.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.089509548245983" \
-		--pop-rate "false=0.910490451754017" \
+		--pop-rate "true=0.089509548246" \
+		--pop-rate "false=0.910490451754" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1189,8 +1189,8 @@ models/eswikiquote.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.089509548245983" \
-		--pop-rate "false=0.910490451754017" \
+		--pop-rate "true=0.089509548246" \
+		--pop-rate "false=0.910490451754" \
 		--center --scale > $@
 
 eswikiquote_models: \
@@ -1256,8 +1256,8 @@ tuning_reports/etwiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.026158257457618593" \
-		--pop-rate "false=0.9738417425423814" \
+		--pop-rate "true=0.0261582574576" \
+		--pop-rate "false=0.973841742542" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1275,8 +1275,8 @@ models/etwiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.026158257457618593" \
-		--pop-rate "false=0.9738417425423814" \
+		--pop-rate "true=0.0261582574576" \
+		--pop-rate "false=0.973841742542" \
 		--center --scale > $@
 
 tuning_reports/etwiki.goodfaith.md: \
@@ -1288,8 +1288,8 @@ tuning_reports/etwiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9841038281603702" \
-		--pop-rate "false=0.01589617183962977" \
+		--pop-rate "true=0.98410382816" \
+		--pop-rate "false=0.0158961718396" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1307,8 +1307,8 @@ models/etwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9841038281603702" \
-		--pop-rate "false=0.01589617183962977" \
+		--pop-rate "true=0.98410382816" \
+		--pop-rate "false=0.0158961718396" \
 		--center --scale > $@
 
 etwiki_models: \
@@ -1417,8 +1417,8 @@ tuning_reports/fawiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.0297029702970297" \
-		--pop-rate "false=0.9702970297029703" \
+		--pop-rate "true=0.029702970297" \
+		--pop-rate "false=0.970297029703" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1437,8 +1437,8 @@ models/fawiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.0297029702970297" \
-		--pop-rate "false=0.9702970297029703" \
+		--pop-rate "true=0.029702970297" \
+		--pop-rate "false=0.970297029703" \
 		--center --scale > $@
 
 tuning_reports/fawiki.goodfaith.md: \
@@ -1451,8 +1451,8 @@ tuning_reports/fawiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9834641681438339" \
-		--pop-rate "false=0.01653583185616614" \
+		--pop-rate "true=0.983464168144" \
+		--pop-rate "false=0.0165358318562" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1471,8 +1471,8 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9834641681438339" \
-		--pop-rate "false=0.01653583185616614" \
+		--pop-rate "true=0.983464168144" \
+		--pop-rate "false=0.0165358318562" \
 		--center --scale > $@
 
 fawiki_models: \
@@ -1564,8 +1564,8 @@ tuning_reports/frwiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.028751753155680224" \
-		--pop-rate "false=0.9712482468443198" \
+		--pop-rate "true=0.0287517531557" \
+		--pop-rate "false=0.971248246844" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1583,8 +1583,8 @@ models/frwiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.028751753155680224" \
-		--pop-rate "false=0.9712482468443198" \
+		--pop-rate "true=0.0287517531557" \
+		--pop-rate "false=0.971248246844" \
 		--center --scale > $@
 
 tuning_reports/frwiki.goodfaith.md: \
@@ -1596,8 +1596,8 @@ tuning_reports/frwiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9786115007012622" \
-		--pop-rate "false=0.021388499298737762" \
+		--pop-rate "true=0.978611500701" \
+		--pop-rate "false=0.0213884992987" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1615,8 +1615,8 @@ models/frwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9786115007012622" \
-		--pop-rate "false=0.021388499298737762" \
+		--pop-rate "true=0.978611500701" \
+		--pop-rate "false=0.0213884992987" \
 		--center --scale > $@
 
 frwiki_models: \
@@ -1665,8 +1665,8 @@ tuning_reports/hrwiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.07927353670258512" \
-		--pop-rate "false=0.9207264632974149" \
+		--pop-rate "true=0.0792735367026" \
+		--pop-rate "false=0.920726463297" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1684,8 +1684,8 @@ models/hrwiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.07927353670258512" \
-		--pop-rate "false=0.9207264632974149" \
+		--pop-rate "true=0.0792735367026" \
+		--pop-rate "false=0.920726463297" \
 		--center --scale > $@
 
 hrwiki_models: \
@@ -1738,8 +1738,8 @@ tuning_reports/huwiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.014812583163867339" \
-		--pop-rate "false=0.9851874168361326" \
+		--pop-rate "true=0.0148125831639" \
+		--pop-rate "false=0.985187416836" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1757,8 +1757,8 @@ models/huwiki.reverted.rf.model: \
 		-p 'min_samples_leaf=13' \
 		-p 'n_estimators=320' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.014812583163867339" \
-		--pop-rate "false=0.9851874168361326" \
+		--pop-rate "true=0.0148125831639" \
+		--pop-rate "false=0.985187416836" \
 		--center --scale > $@
 
 huwiki_models: \
@@ -1800,8 +1800,8 @@ tuning_reports/idwiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.02272613605673532" \
-		--pop-rate "false=0.9772738639432647" \
+		--pop-rate "true=0.0227261360567" \
+		--pop-rate "false=0.977273863943" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1819,8 +1819,8 @@ models/idwiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.02272613605673532" \
-		--pop-rate "false=0.9772738639432647" \
+		--pop-rate "true=0.0227261360567" \
+		--pop-rate "false=0.977273863943" \
 		--center --scale > $@
 
 idwiki_models: \
@@ -1867,8 +1867,8 @@ tuning_reports/iswiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.08115405770288514" \
-		--pop-rate "false=0.9188459422971149" \
+		--pop-rate "true=0.0811540577029" \
+		--pop-rate "false=0.918845942297" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1886,8 +1886,8 @@ models/iswiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.08115405770288514" \
-		--pop-rate "false=0.9188459422971149" \
+		--pop-rate "true=0.0811540577029" \
+		--pop-rate "false=0.918845942297" \
 		--center --scale > $@
 
 iswiki_models: \
@@ -1929,8 +1929,8 @@ tuning_reports/itwiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.04628882613957241" \
-		--pop-rate "false=0.9537111738604276" \
+		--pop-rate "true=0.0462888261396" \
+		--pop-rate "false=0.95371117386" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -1948,8 +1948,8 @@ models/itwiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.04628882613957241" \
-		--pop-rate "false=0.9537111738604276" \
+		--pop-rate "true=0.0462888261396" \
+		--pop-rate "false=0.95371117386" \
 		--center --scale > $@
 
 itwiki_models: \
@@ -1992,8 +1992,8 @@ tuning_reports/jawiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.03256945140908635" \
-		--pop-rate "false=0.9674305485909136" \
+		--pop-rate "true=0.0325694514091" \
+		--pop-rate "false=0.967430548591" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2011,8 +2011,8 @@ models/jawiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.03256945140908635" \
-		--pop-rate "false=0.9674305485909136" \
+		--pop-rate "true=0.0325694514091" \
+		--pop-rate "false=0.967430548591" \
 		--center --scale > $@
 
 jawiki_models: \
@@ -2055,8 +2055,8 @@ tuning_reports/kowiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.04717122705217348" \
-		--pop-rate "false=0.9528287729478265" \
+		--pop-rate "true=0.0471712270522" \
+		--pop-rate "false=0.952828772948" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2074,8 +2074,8 @@ models/kowiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.04717122705217348" \
-		--pop-rate "false=0.9528287729478265" \
+		--pop-rate "true=0.0471712270522" \
+		--pop-rate "false=0.952828772948" \
 		--center --scale > $@
 
 kowiki_models: \
@@ -2165,8 +2165,8 @@ tuning_reports/nlwiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.05068086413432989" \
-		--pop-rate "false=0.9493191358656701" \
+		--pop-rate "true=0.0506808641343" \
+		--pop-rate "false=0.949319135866" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2184,8 +2184,8 @@ models/nlwiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.05068086413432989" \
-		--pop-rate "false=0.9493191358656701" \
+		--pop-rate "true=0.0506808641343" \
+		--pop-rate "false=0.949319135866" \
 		--center --scale > $@
 
 tuning_reports/nlwiki.goodfaith.md: \
@@ -2197,8 +2197,8 @@ tuning_reports/nlwiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9646257806900789" \
-		--pop-rate "false=0.03537421930992113" \
+		--pop-rate "true=0.96462578069" \
+		--pop-rate "false=0.0353742193099" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2216,8 +2216,8 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9646257806900789" \
-		--pop-rate "false=0.03537421930992113" \
+		--pop-rate "true=0.96462578069" \
+		--pop-rate "false=0.0353742193099" \
 		--center --scale > $@
 
 nlwiki_models: \
@@ -2272,8 +2272,8 @@ tuning_reports/nowiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.019061539539679838" \
-		--pop-rate "false=0.9809384604603202" \
+		--pop-rate "true=0.0190615395397" \
+		--pop-rate "false=0.98093846046" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2291,8 +2291,8 @@ models/nowiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.019061539539679838" \
-		--pop-rate "false=0.9809384604603202" \
+		--pop-rate "true=0.0190615395397" \
+		--pop-rate "false=0.98093846046" \
 		--center --scale > $@
 
 nowiki_models: \
@@ -2339,8 +2339,8 @@ tuning_reports/ptwiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.06896029864299047" \
-		--pop-rate "false=0.9310397013570095" \
+		--pop-rate "true=0.068960298643" \
+		--pop-rate "false=0.931039701357" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2358,8 +2358,8 @@ models/ptwiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.06896029864299047" \
-		--pop-rate "false=0.9310397013570095" \
+		--pop-rate "true=0.068960298643" \
+		--pop-rate "false=0.931039701357" \
 		--center --scale > $@
 
 tuning_reports/ptwiki.goodfaith.md: \
@@ -2371,8 +2371,8 @@ tuning_reports/ptwiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9397669373959542" \
-		--pop-rate "false=0.06023306260404582" \
+		--pop-rate "true=0.939766937396" \
+		--pop-rate "false=0.060233062604" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2390,8 +2390,8 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9397669373959542" \
-		--pop-rate "false=0.06023306260404582" \
+		--pop-rate "true=0.939766937396" \
+		--pop-rate "false=0.060233062604" \
 		--center --scale > $@
 
 ptwiki_models: \
@@ -2459,8 +2459,8 @@ tuning_reports/rowiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.04956982793117247" \
-		--pop-rate "false=0.9504301720688275" \
+		--pop-rate "true=0.0495698279312" \
+		--pop-rate "false=0.950430172069" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2478,8 +2478,8 @@ models/rowiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.04956982793117247" \
-		--pop-rate "false=0.9504301720688275" \
+		--pop-rate "true=0.0495698279312" \
+		--pop-rate "false=0.950430172069" \
 		--center --scale > $@
 
 tuning_reports/rowiki.goodfaith.md: \
@@ -2491,8 +2491,8 @@ tuning_reports/rowiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9699379751900761" \
-		--pop-rate "false=0.030062024809923926" \
+		--pop-rate "true=0.96993797519" \
+		--pop-rate "false=0.0300620248099" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2510,8 +2510,8 @@ models/rowiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9699379751900761" \
-		--pop-rate "false=0.030062024809923926" \
+		--pop-rate "true=0.96993797519" \
+		--pop-rate "false=0.0300620248099" \
 		--center --scale > $@
 
 rowiki_models: \
@@ -2579,8 +2579,8 @@ tuning_reports/ruwiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.053479185657854755" \
-		--pop-rate "false=0.9465208143421453" \
+		--pop-rate "true=0.0534791856579" \
+		--pop-rate "false=0.946520814342" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2598,8 +2598,8 @@ models/ruwiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.053479185657854755" \
-		--pop-rate "false=0.9465208143421453" \
+		--pop-rate "true=0.0534791856579" \
+		--pop-rate "false=0.946520814342" \
 		--center --scale > $@
 
 tuning_reports/ruwiki.goodfaith.md: \
@@ -2611,8 +2611,8 @@ tuning_reports/ruwiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9713866099463182" \
-		--pop-rate "false=0.028613390053681798" \
+		--pop-rate "true=0.971386609946" \
+		--pop-rate "false=0.0286133900537" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2630,8 +2630,8 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9713866099463182" \
-		--pop-rate "false=0.028613390053681798" \
+		--pop-rate "true=0.971386609946" \
+		--pop-rate "false=0.0286133900537" \
 		--center --scale > $@
 
 ruwiki_models: \
@@ -2700,8 +2700,8 @@ tuning_reports/sqwiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.0287028702870287" \
-		--pop-rate "false=0.9712971297129713" \
+		--pop-rate "true=0.028702870287" \
+		--pop-rate "false=0.971297129713" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2719,8 +2719,8 @@ models/sqwiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.0287028702870287" \
-		--pop-rate "false=0.9712971297129713" \
+		--pop-rate "true=0.028702870287" \
+		--pop-rate "false=0.971297129713" \
 		--center --scale > $@
 
 tuning_reports/sqwiki.goodfaith.md: \
@@ -2732,8 +2732,8 @@ tuning_reports/sqwiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9763476347634763" \
-		--pop-rate "false=0.023652365236523698" \
+		--pop-rate "true=0.976347634763" \
+		--pop-rate "false=0.0236523652365" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2751,8 +2751,8 @@ models/sqwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9763476347634763" \
-		--pop-rate "false=0.023652365236523698" \
+		--pop-rate "true=0.976347634763" \
+		--pop-rate "false=0.0236523652365" \
 		--center --scale > $@
 
 sqwiki_models: \
@@ -2824,8 +2824,8 @@ tuning_reports/tawiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.015904172328753335" \
-		--pop-rate "false=0.9840958276712467" \
+		--pop-rate "true=0.0159041723288" \
+		--pop-rate "false=0.984095827671" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2843,8 +2843,8 @@ models/tawiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.015904172328753335" \
-		--pop-rate "false=0.9840958276712467" \
+		--pop-rate "true=0.0159041723288" \
+		--pop-rate "false=0.984095827671" \
 		--center --scale > $@
 
 tawiki_models: \
@@ -2910,8 +2910,8 @@ tuning_reports/trwiki.damaging.md: \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.0495014425266994" \
-		--pop-rate "false=0.9504985574733006" \
+		--pop-rate "true=0.0495014425267" \
+		--pop-rate "false=0.950498557473" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2929,8 +2929,8 @@ models/trwiki.damaging.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.0495014425266994" \
-		--pop-rate "false=0.9504985574733006" \
+		--pop-rate "true=0.0495014425267" \
+		--pop-rate "false=0.950498557473" \
 		--center --scale > $@
 
 tuning_reports/trwiki.goodfaith.md: \
@@ -2942,8 +2942,8 @@ tuning_reports/trwiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9538897605911829" \
-		--pop-rate "false=0.04611023940881709" \
+		--pop-rate "true=0.953889760591" \
+		--pop-rate "false=0.0461102394088" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2961,8 +2961,8 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9538897605911829" \
-		--pop-rate "false=0.04611023940881709" \
+		--pop-rate "true=0.953889760591" \
+		--pop-rate "false=0.0461102394088" \
 		--center --scale > $@
 
 trwiki_models: \
@@ -3006,8 +3006,8 @@ tuning_reports/ukwiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.021877665713282153" \
-		--pop-rate "false=0.9781223342867178" \
+		--pop-rate "true=0.0218776657133" \
+		--pop-rate "false=0.978122334287" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -3025,8 +3025,8 @@ models/ukwiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.021877665713282153" \
-		--pop-rate "false=0.9781223342867178" \
+		--pop-rate "true=0.0218776657133" \
+		--pop-rate "false=0.978122334287" \
 		--center --scale > $@
 
 ukwiki_models: \
@@ -3109,8 +3109,8 @@ tuning_reports/viwiki.reverted.md: \
 		reverted_for_damage \
 		roc_auc.labels.true \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.019211042993949594" \
-		--pop-rate "false=0.9807889570060504" \
+		--pop-rate "true=0.0192110429939" \
+		--pop-rate "false=0.980788957006" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -3128,8 +3128,8 @@ models/viwiki.reverted.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.019211042993949594" \
-		--pop-rate "false=0.9807889570060504" \
+		--pop-rate "true=0.0192110429939" \
+		--pop-rate "false=0.980788957006" \
 		--center --scale > $@
 
 viwiki_models: \
