@@ -9,6 +9,7 @@ ipython/.ipynb_checkpoints/
 
 # Temporary text editor files
 *~
+.*.sw?
 
 # C extensions
 *.so
@@ -26,6 +27,7 @@ lib64/
 parts/
 sdist/
 var/
+/.venv
 *.egg-info/
 .installed.cfg
 *.egg
