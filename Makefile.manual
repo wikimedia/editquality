@@ -2,19 +2,15 @@
 .DELETE_ON_ERROR:
 
 models: \
-		enwiktionary_models \
 		fiwiki_models \
 		hewiki_models \
-		huwiki_models \
 		plwiki_models \
 		svwiki_models \
 		wikidatawiki_models
 
 tuning_reports: \
-		enwiktionary_tuning_reports \
 		fiwiki_tuning_reports \
 		hewiki_tuning_reports \
-		huwiki_tuning_reports \
 		plwiki_tuning_reports \
 		svwiki_tuning_reports \
 		wikidatawiki_tuning_reports
@@ -30,127 +26,6 @@ damaging_weight = 10
 goodfaith_weight = 10
 
 max_extractors = 4
-
-
-############################# English Wiktionary ################################
-
-datasets/enwiktionary.sampled_revisions.200k_2016.json:
-	wget -qO- https://quarry.wmflabs.org/run/97131/output/0/json-lines?download=true > $@
-
-datasets/enwiktionary.autolabeled_revisions.200k_2016.json: \
-		datasets/enwiktionary.sampled_revisions.200k_2016.json
-	cat $< | \
-	./utility autolabel --host=https://en.wiktionary.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
-		--trusted-edits=1000 \
-		--verbose > $@
-
-datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json: \
-		datasets/enwiktionary.autolabeled_revisions.200k_2016.json
-	cat $< | \
-	grep -P '"rev_id": [0-9]+[02468],' > $@
-
-datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.enwiktionary.reverted \
-		--host https://en.wiktionary.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
-datasets/enwiktionary.autolabeled_revisions.weighted.20k_2016.json: \
-		datasets/enwiktionary.autolabeled_revisions.200k_2016.json
-	( \
-	  cat $< | \
-	    grep '"reverted_for_damage": false' | shuf -n 20000; \
-	  cat $< | \
-	    grep '"reverted_for_damage": true' \
-	) | shuf > $@
-
-tuning_reports/enwiktionary.reverted.md: \
-		datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.enwiktionary.reverted \
-		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.004778273117085203" \
-		--pop-rate "false=0.9952217268829148" \
-		--center --scale \
-		--cv-timeout=60 \
-		--debug > $@
-
-models/enwiktionary.reverted.rf.model: \
-		datasets/enwiktionary.autolabeled_revisions.w_cache.20k_2016.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.RandomForest \
-		editquality.feature_lists.enwiktionary.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
-		-p 'criterion="entropy"' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=320' \
-		-p 'min_samples_leaf=3' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.004778273117085203" \
-		--pop-rate "false=0.9952217268829148" \
-		--center --scale > $@
-
-
-datasets/enwiktionary.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/enwiktionary/59/ > $@
-
-datasets/enwiktionary.labeled_revisions.100k_2016.json: \
-		datasets/enwiktionary.human_labeled_revisions.5k_2016.json \
-		datasets/enwiktionary.autolabeled_revisions.evens.100k_2016.json
-	./utility merge_labels $^ > $@
-
-datasets/enwiktionary.labeled_revisions.w_cache.100k_2016.json: \
-		datasets/enwiktionary.labeled_revisions.100k_2016.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.enwiktionary.goodfaith \
-		editquality.feature_lists.enwiktionary.damaging \
-		--host https://en.wiktionary.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
-tuning_reports/enwiktionary.damaging.md: \
-		datasets/enwiktionary.labeled_revisions.w_cache.100k_2016.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.enwiktionary.damaging \
-		damaging \
-		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
-		--fixme \
-		--cv-timeout=60 \
-		--debug > $@
-
-tuning_reports/enwiktionary.goodfaith.md: \
-		datasets/enwiktionary.labeled_revisions.w_cache.100k_2016.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.enwiktionary.goodfaith \
-		goodfaith \
-		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
-		--fixme \
-		--cv-timeout=60 \
-		--debug > $@
-
-enwiktionary_models: \
-	models/enwiktionary.reverted.rf.model
-
-enwiktionary_tuning_reports: \
-	tuning_reports/enwiktionary.reverted.md
 
 
 ############################# Finnish Wikipedia ################################

@@ -1,0 +1,34 @@
+name: enwiktionary
+label: English Wiktionary
+host: en.wiktionary.org
+
+# https://quarry.wmflabs.org/query/25502
+samples:
+    92k_2018:
+        quarry_url: "https://quarry.wmflabs.org/run/244906/output/0/json-lines?download=true"
+
+unbalanced_5k_set_for_review: true
+
+default_sample: 92k_2018
+
+review_sample: 5k_2018
+
+models:
+    reverted:
+        rf: true
+        tuning_params:
+            criterion: entropy
+            n_estimators: 320
+            min_samples_leaf: 3
+            max_features: log2
+        pop_rate_true: 0.004778273117085203
+        build_number: 0
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
