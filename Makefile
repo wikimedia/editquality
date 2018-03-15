@@ -12,6 +12,7 @@ models: \
 		bnwikisource_models \
 		cawiki_models \
 		cswiki_models \
+		cswiki_models \
 		dewiki_models \
 		elwiki_models \
 		enwiki_models \
@@ -56,6 +57,7 @@ tuning_reports: \
 		bnwiki_tuning_reports \
 		bnwikisource_tuning_reports \
 		cawiki_tuning_reports \
+		cswiki_tuning_reports \
 		cswiki_tuning_reports \
 		dewiki_tuning_reports \
 		elwiki_tuning_reports \
@@ -136,10 +138,10 @@ datasets/arwiki.revisions_for_review.5k_2016.json: \
 		datasets/arwiki.autolabeled_revisions.20k_2016.json
 	( \
 	 cat $< | \
-	 grep '"needs_review": true' | \
+	 grep -E '"needs_review": (true|"True")' | \
 	 shuf -n 2500; \
 	 cat $< | \
-	 grep '"needs_review": false' | \
+	 grep -E '"needs_review": (false|"False")' | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
@@ -227,7 +229,7 @@ datasets/bawiki.autolabeled_revisions.60k_2018.json: \
 
 datasets/bawiki.revisions_for_review.5k_2018.json: \
 		datasets/bawiki.autolabeled_revisions.60k_2018.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 bawiki_models:
 
@@ -251,7 +253,7 @@ datasets/bnwiki.autolabeled_revisions.20k_2017.json: \
 
 datasets/bnwiki.revisions_for_review.5k_2017.json: \
 		datasets/bnwiki.autolabeled_revisions.20k_2017.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json: \
 		datasets/bnwiki.autolabeled_revisions.20k_2017.json
@@ -318,7 +320,7 @@ datasets/bnwikisource.autolabeled_revisions.200k_2018.json: \
 
 datasets/bnwikisource.revisions_for_review.5k_2018.json: \
 		datasets/bnwikisource.autolabeled_revisions.200k_2018.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 bnwikisource_models:
 
@@ -360,12 +362,26 @@ datasets/cawiki.human_labeled_revisions.5k_2017.json:
 
 datasets/cawiki.revisions_for_review.5k_2017.json: \
 		datasets/cawiki.autolabeled_revisions.40k_2017.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
+
+datasets/cawiki.human_labeled_revisions.5k_2017.no_review.json: \
+		datasets/cawiki.human_labeled_revisions.5k_2017.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/cawiki.autolabeled_revisions.40k_2017.no_review.json: \
+		datasets/cawiki.autolabeled_revisions.40k_2017.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
 
 datasets/cawiki.labeled_revisions.40k_2017.json: \
-		datasets/cawiki.human_labeled_revisions.5k_2017.json \
-		datasets/cawiki.autolabeled_revisions.40k_2017.json
-	./utility merge_labels $^ > $@
+		datasets/cawiki.human_labeled_revisions.5k_2017.no_review.json \
+		datasets/cawiki.autolabeled_revisions.40k_2017.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/cawiki.human_labeled_revisions.5k_2017.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/cawiki.labeled_revisions.w_cache.40k_2017.json: \
 		datasets/cawiki.labeled_revisions.40k_2017.json
@@ -449,6 +465,137 @@ cawiki_tuning_reports: \
 	tuning_reports/cawiki.damaging.md \
 	tuning_reports/cawiki.goodfaith.md
 
+############################# Czech Wikipedia ################################
+
+datasets/cswiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/97125/output/0/json-lines?download=true > $@
+
+datasets/cswiki.autolabeled_revisions.20k_2016.json: \
+		datasets/cswiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://cs.wikipedia.org \
+		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/cswiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/cswiki/44/ > $@
+
+datasets/cswiki.revisions_for_review.5k_2016.json: \
+		datasets/cswiki.autolabeled_revisions.20k_2016.json
+	( \
+	 cat $< | \
+	 grep -E '"needs_review": (true|"True")' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep -E '"needs_review": (false|"False")' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json: \
+		datasets/cswiki.human_labeled_revisions.5k_2016.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json: \
+		datasets/cswiki.autolabeled_revisions.20k_2016.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/cswiki.labeled_revisions.20k_2016.json: \
+		datasets/cswiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/cswiki.human_labeled_revisions.5k_2016.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
+
+datasets/cswiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/cswiki.labeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.cswiki.damaging \
+		editquality.feature_lists.cswiki.goodfaith \
+		--host https://cs.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/cswiki.damaging.md: \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cswiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0445968266680014" \
+		--pop-rate "false=0.9554031733319986" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/cswiki.damaging.gradient_boosting.model: \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.cswiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0445968266680014" \
+		--pop-rate "false=0.9554031733319986" \
+		--center --scale > $@
+
+tuning_reports/cswiki.goodfaith.md: \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.cswiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.977526402722859" \
+		--pop-rate "false=0.022473597277141044" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/cswiki.goodfaith.gradient_boosting.model: \
+		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.cswiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.977526402722859" \
+		--pop-rate "false=0.022473597277141044" \
+		--center --scale > $@
+
+cswiki_models: \
+	models/cswiki.damaging.gradient_boosting.model \
+	models/cswiki.goodfaith.gradient_boosting.model
+
+cswiki_tuning_reports: \
+	tuning_reports/cswiki.damaging.md \
+	tuning_reports/cswiki.goodfaith.md
+
 ############################# German Wikipedia ################################
 
 datasets/dewiki.sampled_revisions.20k_2015.json:
@@ -529,7 +676,7 @@ datasets/elwiki.autolabeled_revisions.20k_2017.json: \
 
 datasets/elwiki.revisions_for_review.5k_2017.json: \
 		datasets/elwiki.autolabeled_revisions.20k_2017.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json: \
 		datasets/elwiki.autolabeled_revisions.20k_2017.json
@@ -584,9 +731,18 @@ datasets/enwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ > $@
 
-datasets/enwiki.labeled_revisions.20k_2015.json: \
+datasets/enwiki.human_labeled_revisions.20k_2015.no_review.json: \
 		datasets/enwiki.human_labeled_revisions.20k_2015.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/enwiki.labeled_revisions.20k_2015.json: \
+		datasets/enwiki.human_labeled_revisions.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/enwiki.human_labeled_revisions.20k_2015.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/enwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/enwiki.labeled_revisions.20k_2015.json
@@ -689,10 +845,24 @@ datasets/eswiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/eswiki/12/ > $@
 
-datasets/eswiki.labeled_revisions.20k_2015.json: \
-		datasets/eswiki.human_labeled_revisions.5k_2015.json \
+datasets/eswiki.human_labeled_revisions.5k_2015.no_review.json: \
+		datasets/eswiki.human_labeled_revisions.5k_2015.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/eswiki.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/eswiki.autolabeled_revisions.20k_2015.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/eswiki.labeled_revisions.20k_2015.json: \
+		datasets/eswiki.human_labeled_revisions.5k_2015.no_review.json \
+		datasets/eswiki.autolabeled_revisions.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/eswiki.human_labeled_revisions.5k_2015.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/eswiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswiki.labeled_revisions.20k_2015.json
@@ -795,10 +965,24 @@ datasets/eswikibooks.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/eswikibooks/42/ > $@
 
-datasets/eswikibooks.labeled_revisions.20k_2015.json: \
-		datasets/eswikibooks.human_labeled_revisions.5k_2015.json \
+datasets/eswikibooks.human_labeled_revisions.5k_2015.no_review.json: \
+		datasets/eswikibooks.human_labeled_revisions.5k_2015.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/eswikibooks.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/eswikibooks.labeled_revisions.20k_2015.json: \
+		datasets/eswikibooks.human_labeled_revisions.5k_2015.no_review.json \
+		datasets/eswikibooks.autolabeled_revisions.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/eswikibooks.human_labeled_revisions.5k_2015.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswikibooks.labeled_revisions.20k_2015.json
@@ -900,7 +1084,7 @@ datasets/eswikiquote.autolabeled_revisions.12k_2017.json: \
 
 datasets/eswikiquote.revisions_for_review.5k_2017.json: \
 		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json: \
 		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
@@ -968,10 +1152,24 @@ datasets/etwiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/etwiki/17/ > $@
 
-datasets/etwiki.labeled_revisions.20k_2015.json: \
-		datasets/etwiki.human_labeled_revisions.5k_2015.json \
+datasets/etwiki.human_labeled_revisions.5k_2015.no_review.json: \
+		datasets/etwiki.human_labeled_revisions.5k_2015.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/etwiki.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/etwiki.autolabeled_revisions.20k_2015.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/etwiki.labeled_revisions.20k_2015.json: \
+		datasets/etwiki.human_labeled_revisions.5k_2015.no_review.json \
+		datasets/etwiki.autolabeled_revisions.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/etwiki.human_labeled_revisions.5k_2015.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/etwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/etwiki.labeled_revisions.20k_2015.json
@@ -1091,14 +1289,37 @@ datasets/fawiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/21/ > $@
 
-datasets/fawiki.labeled_revisions.20k_2015.json: \
+datasets/fawiki.human_labeled_revisions.20k_2015.no_review.json: \
 		datasets/fawiki.human_labeled_revisions.20k_2015.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/fawiki.labeled_revisions.20k_2015.json: \
+		datasets/fawiki.human_labeled_revisions.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/fawiki.human_labeled_revisions.20k_2015.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
+
+datasets/fawiki.human_labeled_revisions.5k_2016.no_review.json: \
+		datasets/fawiki.human_labeled_revisions.5k_2016.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/fawiki.autolabeled_revisions.2.20k_2015.no_review.json: \
+		datasets/fawiki.autolabeled_revisions.2.20k_2015.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
 
 datasets/fawiki.labeled_revisions.20k_2016.json: \
-		datasets/fawiki.human_labeled_revisions.5k_2016.json \
-		datasets/fawiki.autolabeled_revisions.2.20k_2015.json
-	./utility merge_labels $^ > $@
+		datasets/fawiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/fawiki.autolabeled_revisions.2.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/fawiki.human_labeled_revisions.5k_2016.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/fawiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/fawiki.labeled_revisions.20k_2015.json
@@ -1232,17 +1453,31 @@ datasets/frwiki.revisions_for_review.5k_2016.json: \
 		datasets/frwiki.autolabeled_revisions.20k_2016.json
 	( \
 	 cat $< | \
-	 grep '"needs_review": true' | \
+	 grep -E '"needs_review": (true|"True")' | \
 	 shuf -n 2500; \
 	 cat $< | \
-	 grep '"needs_review": false' | \
+	 grep -E '"needs_review": (false|"False")' | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
-datasets/frwiki.labeled_revisions.20k_2016.json: \
-		datasets/frwiki.human_labeled_revisions.5k_2016.json \
+datasets/frwiki.human_labeled_revisions.5k_2016.no_review.json: \
+		datasets/frwiki.human_labeled_revisions.5k_2016.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/frwiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/frwiki.autolabeled_revisions.20k_2016.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/frwiki.labeled_revisions.20k_2016.json: \
+		datasets/frwiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/frwiki.autolabeled_revisions.20k_2016.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/frwiki.human_labeled_revisions.5k_2016.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/frwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/frwiki.labeled_revisions.20k_2016.json
@@ -1344,7 +1579,7 @@ datasets/hrwiki.autolabeled_revisions.20k_2017.json: \
 
 datasets/hrwiki.revisions_for_review.5k_2017.json: \
 		datasets/hrwiki.autolabeled_revisions.20k_2017.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json: \
 		datasets/hrwiki.autolabeled_revisions.20k_2017.json
@@ -1412,10 +1647,10 @@ datasets/huwiki.revisions_for_review.5k_2016.json: \
 		datasets/huwiki.autolabeled_revisions.40k_2016.json
 	( \
 	 cat $< | \
-	 grep '"needs_review": true' | \
+	 grep -E '"needs_review": (true|"True")' | \
 	 shuf -n 2500; \
 	 cat $< | \
-	 grep '"needs_review": false' | \
+	 grep -E '"needs_review": (false|"False")' | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
@@ -1545,7 +1780,7 @@ datasets/iswiki.autolabeled_revisions.20k_2017.json: \
 
 datasets/iswiki.revisions_for_review.5k_2017.json: \
 		datasets/iswiki.autolabeled_revisions.20k_2017.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 datasets/iswiki.autolabeled_revisions.w_cache.20k_2017.json: \
 		datasets/iswiki.autolabeled_revisions.20k_2017.json
@@ -1800,7 +2035,7 @@ datasets/lvwiki.autolabeled_revisions.20k_2016.json: \
 
 datasets/lvwiki.revisions_for_review.5k_2016.json: \
 		datasets/lvwiki.autolabeled_revisions.20k_2016.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 lvwiki_models:
 
@@ -1825,10 +2060,24 @@ datasets/nlwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/nlwiki/14/ > $@
 
-datasets/nlwiki.labeled_revisions.20k_2016.json: \
-		datasets/nlwiki.human_labeled_revisions.5k_2016.json \
+datasets/nlwiki.human_labeled_revisions.5k_2016.no_review.json: \
+		datasets/nlwiki.human_labeled_revisions.5k_2016.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/nlwiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/nlwiki.autolabeled_revisions.20k_2016.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/nlwiki.labeled_revisions.20k_2016.json: \
+		datasets/nlwiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/nlwiki.autolabeled_revisions.20k_2016.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/nlwiki.human_labeled_revisions.5k_2016.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/nlwiki.labeled_revisions.20k_2016.json
@@ -1931,10 +2180,10 @@ datasets/nowiki.revisions_for_review.5k_2015.json: \
 		datasets/nowiki.autolabeled_revisions.100k_2015.json
 	( \
 	 cat $< | \
-	 grep '"needs_review": true' | \
+	 grep -E '"needs_review": (true|"True")' | \
 	 shuf -n 2500; \
 	 cat $< | \
-	 grep '"needs_review": false' | \
+	 grep -E '"needs_review": (false|"False")' | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
@@ -1991,9 +2240,18 @@ datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ > $@
 
-datasets/ptwiki.labeled_revisions.20k_2015.json: \
+datasets/ptwiki.human_labeled_revisions.20k_2015.no_review.json: \
 		datasets/ptwiki.human_labeled_revisions.20k_2015.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/ptwiki.labeled_revisions.20k_2015.json: \
+		datasets/ptwiki.human_labeled_revisions.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/ptwiki.human_labeled_revisions.20k_2015.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/ptwiki.labeled_revisions.20k_2015.json
@@ -2096,10 +2354,24 @@ datasets/rowiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/rowiki/48/ > $@
 
-datasets/rowiki.labeled_revisions.20k_2016.json: \
-		datasets/rowiki.human_labeled_revisions.5k_2016.json \
+datasets/rowiki.human_labeled_revisions.5k_2016.no_review.json: \
+		datasets/rowiki.human_labeled_revisions.5k_2016.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/rowiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/rowiki.autolabeled_revisions.20k_2016.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/rowiki.labeled_revisions.20k_2016.json: \
+		datasets/rowiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/rowiki.autolabeled_revisions.20k_2016.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/rowiki.human_labeled_revisions.5k_2016.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/rowiki.labeled_revisions.20k_2016.json
@@ -2202,10 +2474,24 @@ datasets/ruwiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ruwiki/10/ > $@
 
-datasets/ruwiki.labeled_revisions.20k_2015.json: \
-		datasets/ruwiki.human_labeled_revisions.5k_2015.json \
+datasets/ruwiki.human_labeled_revisions.5k_2015.no_review.json: \
+		datasets/ruwiki.human_labeled_revisions.5k_2015.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/ruwiki.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/ruwiki.autolabeled_revisions.20k_2015.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/ruwiki.labeled_revisions.20k_2015.json: \
+		datasets/ruwiki.human_labeled_revisions.5k_2015.no_review.json \
+		datasets/ruwiki.autolabeled_revisions.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/ruwiki.human_labeled_revisions.5k_2015.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/ruwiki.labeled_revisions.20k_2015.json
@@ -2309,10 +2595,24 @@ datasets/sqwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/sqwiki/57/ > $@
 
-datasets/sqwiki.labeled_revisions.20k_2016.json: \
-		datasets/sqwiki.human_labeled_revisions.5k_2016.json \
+datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json: \
+		datasets/sqwiki.human_labeled_revisions.5k_2016.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json: \
 		datasets/sqwiki.autolabeled_revisions.20k_2016.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/sqwiki.labeled_revisions.20k_2016.json: \
+		datasets/sqwiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/sqwiki.human_labeled_revisions.5k_2016.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/sqwiki.labeled_revisions.20k_2016.json
@@ -2413,7 +2713,7 @@ datasets/srwiki.autolabeled_revisions.120k_2017.json: \
 
 datasets/srwiki.revisions_for_review.5k_2017.json: \
 		datasets/srwiki.autolabeled_revisions.120k_2017.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 srwiki_models:
 
@@ -2437,7 +2737,7 @@ datasets/tawiki.autolabeled_revisions.20k_2017.json: \
 
 datasets/tawiki.revisions_for_review.5k_2017.json: \
 		datasets/tawiki.autolabeled_revisions.20k_2017.json
-	grep '"needs_review": true' $< | shuf > $@
+	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json: \
 		datasets/tawiki.autolabeled_revisions.20k_2017.json
@@ -2505,10 +2805,24 @@ datasets/trwiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ > $@
 
-datasets/trwiki.labeled_revisions.20k_2015.json: \
-		datasets/trwiki.human_labeled_revisions.5k_2015.json \
+datasets/trwiki.human_labeled_revisions.5k_2015.no_review.json: \
+		datasets/trwiki.human_labeled_revisions.5k_2015.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/trwiki.autolabeled_revisions.20k_2015.no_review.json: \
 		datasets/trwiki.autolabeled_revisions.20k_2015.json
-	./utility merge_labels $^ > $@
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/trwiki.labeled_revisions.20k_2015.json: \
+		datasets/trwiki.human_labeled_revisions.5k_2015.no_review.json \
+		datasets/trwiki.autolabeled_revisions.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/trwiki.human_labeled_revisions.5k_2015.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
 
 datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/trwiki.labeled_revisions.20k_2015.json
@@ -2673,10 +2987,10 @@ datasets/urwiki.revisions_for_review.5k_2015.json: \
 		datasets/urwiki.autolabeled_revisions.500k_2015.json
 	( \
 	 cat $< | \
-	 grep '"needs_review": true' | \
+	 grep -E '"needs_review": (true|"True")' | \
 	 shuf -n 2500; \
 	 cat $< | \
-	 grep '"needs_review": false' | \
+	 grep -E '"needs_review": (false|"False")' | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
@@ -2703,10 +3017,10 @@ datasets/viwiki.revisions_for_review.5k_2015.json: \
 		datasets/viwiki.autolabeled_revisions.500k_2015.json
 	( \
 	 cat $< | \
-	 grep '"needs_review": true' | \
+	 grep -E '"needs_review": (true|"True")' | \
 	 shuf -n 2500; \
 	 cat $< | \
-	 grep '"needs_review": false' | \
+	 grep -E '"needs_review": (false|"False")' | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
@@ -2776,10 +3090,10 @@ datasets/zhwiki.revisions_for_review.5k_2016.json: \
 		datasets/zhwiki.autolabeled_revisions.100k_2016.json
 	( \
 	 cat $< | \
-	 grep '"needs_review": true' | \
+	 grep -E '"needs_review": (true|"True")' | \
 	 shuf -n 2500; \
 	 cat $< | \
-	 grep '"needs_review": false' | \
+	 grep -E '"needs_review": (false|"False")' | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
