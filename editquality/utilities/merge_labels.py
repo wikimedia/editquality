@@ -14,6 +14,7 @@ Options:
     --debug               Print debug logging
     --verbose             Print dots and stuff representing progress
 """
+# TODO: Auto labels should come first, since the last file gets priority.
 import json
 import logging
 import sys
@@ -22,7 +23,8 @@ import docopt
 
 from . import util
 
-DEFAULTS = {'damaging': False, 'goodfaith': True, 'auto-labeled': True}
+LABELS = ('damaging', 'goodfaith')
+DEFAULTS = {'damaging': False, 'goodfaith': True, 'auto_labeled': True}
 logger = logging.getLogger(__name__)
 
 
@@ -56,7 +58,6 @@ def main(argv=None):
 def run(human_labels, auto_labels, labels_f, verbose):
     human_rev_map = {int(revision['rev_id']): revision
                      for revision in human_labels}
-    human_rev_ids = set(human_rev_map.keys())
 
     # Output human labels when autolabels is empty
     if not auto_labels:
@@ -70,21 +71,40 @@ def run(human_labels, auto_labels, labels_f, verbose):
             if not revision['autolabel']['needs_review']:
                 logger.warning("{0} has labels, but was not flagged for review"
                                .format(revision['rev_id']))
+                revision.update(DEFAULTS)
 
-            revision.update(human_rev_map[revision['rev_id']])
-            human_rev_ids.remove(revision['rev_id'])
-            if verbose:
-                sys.stderr.write(".")
-                sys.stderr.flush()
+            human_labeled = human_rev_map[revision['rev_id']]
+            if has_labels(human_labeled):
+                revision.update(human_rev_map[revision['rev_id']])
+                # TODO: Should we keep track of partially human-labeled, partially
+                # autolabeled rows, and record something special in "auto_labeled"?
+
+            progress_char = "."
         else:
             if revision['autolabel']['needs_review']:
                 logger.error("{0} has no labels, but was flagged for review"
                              .format(revision['rev_id']))
-            if verbose:
-                sys.stderr.write("a")
-                sys.stderr.flush()
 
+            progress_char = "a"
             revision.update(DEFAULTS)
 
-        labels_f.write(json.dumps(revision))
-        labels_f.write("\n")
+        if not has_labels(revision):
+            # No labels by this point, drop it.
+            progress_char = "0"
+        else:
+            labels_f.write(json.dumps(revision))
+            labels_f.write("\n")
+
+        if verbose:
+            sys.stderr.write(progress_char)
+            sys.stderr.flush()
+
+
+def has_labels(revision):
+    """
+    Return true if any labels are present.
+    """
+    for label in LABELS:
+        if label in revision:
+            return True
+    return False

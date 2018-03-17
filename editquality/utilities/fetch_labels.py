@@ -92,16 +92,18 @@ def aggregate_labels(label_docs):
             auto_labeled = True
 
         for l in relevant_label_docs:
-            label_lists['damaging'].append(
-                l['data']['damaging'] if l['data']['damaging'] is not None
-                else False)
-            label_lists['goodfaith'].append(
-                l['data']['goodfaith'] if l['data']['goodfaith'] is not None
-                else True)
+            if l['data']['damaging'] is not None:
+                label_lists['damaging'].append(l['data']['damaging'])
+            if l['data']['goodfaith'] is not None:
+                label_lists['goodfaith'].append(l['data']['goodfaith'])
 
-        return {'damaging': mean(label_lists['damaging']) > 0.5,
-                'goodfaith': mean(label_lists['goodfaith']) >= 0.5,
-                'auto_labeled': auto_labeled}
+        out = {'auto_labeled': auto_labeled}
+        if 'damaging' in label_lists:
+            out['damaging'] = mean(label_lists['damaging']) > 0.5
+        if 'goodfaith' in label_lists:
+            out['goodfaith'] = mean(label_lists['goodfaith']) >= 0.5
+
+        return out
 
 
 OPERATORS = {"=": lambda field, value: field == value,
