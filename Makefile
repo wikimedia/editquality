@@ -206,9 +206,7 @@ datasets/azwiki.autolabeled_revisions.20k_2016.json: \
 		--verbose > $@
 
 azwiki_models:
-
 azwiki_tuning_reports:
-
 ############################# Bosnian Wikipedia ################################
 
 # From https://quarry.wmflabs.org/query/24777
@@ -230,9 +228,7 @@ datasets/bawiki.revisions_for_review.5k_2018.json: \
 	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 bawiki_models:
-
 bawiki_tuning_reports:
-
 ############################# Bengali Wikipedia ################################
 
 # From https://quarry.wmflabs.org/query/20229
@@ -321,9 +317,7 @@ datasets/bnwikisource.revisions_for_review.5k_2018.json: \
 	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 bnwikisource_models:
-
 bnwikisource_tuning_reports:
-
 ############################# Catalan Wikipedia ################################
 
 # From https://quarry.wmflabs.org/query/24081
@@ -354,6 +348,7 @@ datasets/cawiki.autolabeled_revisions.40k_2017.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/cawiki.human_labeled_revisions.5k_2017.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/cawiki/68/ > $@
@@ -379,7 +374,7 @@ datasets/cawiki.labeled_revisions.40k_2017.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/cawiki.human_labeled_revisions.5k_2017.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/cawiki.labeled_revisions.w_cache.40k_2017.json: \
 		datasets/cawiki.labeled_revisions.40k_2017.json
@@ -478,6 +473,7 @@ datasets/cswiki.autolabeled_revisions.20k_2016.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/cswiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/cswiki/44/ > $@
@@ -510,7 +506,7 @@ datasets/cswiki.labeled_revisions.20k_2016.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/cswiki.human_labeled_revisions.5k_2016.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/cswiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/cswiki.labeled_revisions.20k_2016.json
@@ -725,6 +721,7 @@ elwiki_tuning_reports: \
 
 ############################# English Wikipedia ################################
 
+
 datasets/enwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ > $@
@@ -740,7 +737,7 @@ datasets/enwiki.labeled_revisions.20k_2015.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/enwiki.human_labeled_revisions.20k_2015.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/enwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/enwiki.labeled_revisions.20k_2015.json
@@ -905,6 +902,7 @@ datasets/eswiki.autolabeled_revisions.20k_2015.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/eswiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/eswiki/12/ > $@
@@ -926,7 +924,7 @@ datasets/eswiki.labeled_revisions.20k_2015.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/eswiki.human_labeled_revisions.5k_2015.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/eswiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswiki.labeled_revisions.20k_2015.json
@@ -1025,6 +1023,7 @@ datasets/eswikibooks.autolabeled_revisions.20k_2015.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/eswikibooks.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/eswikibooks/42/ > $@
@@ -1046,7 +1045,7 @@ datasets/eswikibooks.labeled_revisions.20k_2015.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/eswikibooks.human_labeled_revisions.5k_2015.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/eswikibooks.labeled_revisions.20k_2015.json
@@ -1212,6 +1211,7 @@ datasets/etwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/etwiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/etwiki/17/ > $@
@@ -1233,7 +1233,7 @@ datasets/etwiki.labeled_revisions.20k_2015.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/etwiki.human_labeled_revisions.5k_2015.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/etwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/etwiki.labeled_revisions.20k_2015.json
@@ -1349,6 +1349,7 @@ datasets/fawiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ > $@
 
+
 datasets/fawiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/21/ > $@
@@ -1364,7 +1365,7 @@ datasets/fawiki.labeled_revisions.20k_2015.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/fawiki.human_labeled_revisions.20k_2015.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/fawiki.human_labeled_revisions.5k_2016.no_review.json: \
 		datasets/fawiki.human_labeled_revisions.5k_2016.json
@@ -1383,7 +1384,7 @@ datasets/fawiki.labeled_revisions.20k_2016.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/fawiki.human_labeled_revisions.5k_2016.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/fawiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/fawiki.labeled_revisions.20k_2015.json
@@ -1394,7 +1395,6 @@ datasets/fawiki.labeled_revisions.w_cache.20k_2015.json: \
 		--host https://fa.wikipedia.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
-
 datasets/fawiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/fawiki.labeled_revisions.20k_2016.json
 	cat $< | \
@@ -1509,6 +1509,7 @@ datasets/frwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/frwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/frwiki/38/ > $@
@@ -1541,7 +1542,7 @@ datasets/frwiki.labeled_revisions.20k_2016.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/frwiki.human_labeled_revisions.5k_2016.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/frwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/frwiki.labeled_revisions.20k_2016.json
@@ -1640,6 +1641,7 @@ datasets/hewiki.autolabeled_revisions.20k_2015.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/hewiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/hewiki/25/ > $@
@@ -1672,7 +1674,7 @@ datasets/hewiki.labeled_revisions.20k_2015.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/hewiki.human_labeled_revisions.5k_2015.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/hewiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/hewiki.labeled_revisions.20k_2015.json
@@ -2234,9 +2236,7 @@ datasets/lvwiki.revisions_for_review.5k_2016.json: \
 	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 lvwiki_models:
-
 lvwiki_tuning_reports:
-
 ############################# Dutch Wikipedia ################################
 
 datasets/nlwiki.sampled_revisions.20k_2016.json:
@@ -2251,6 +2251,7 @@ datasets/nlwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
+
 
 datasets/nlwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
@@ -2273,7 +2274,7 @@ datasets/nlwiki.labeled_revisions.20k_2016.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/nlwiki.human_labeled_revisions.5k_2016.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/nlwiki.labeled_revisions.20k_2016.json
@@ -2432,6 +2433,7 @@ nowiki_tuning_reports: \
 
 ############################# Portugueses Wikipedia ################################
 
+
 datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ > $@
@@ -2447,7 +2449,7 @@ datasets/ptwiki.labeled_revisions.20k_2015.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/ptwiki.human_labeled_revisions.20k_2015.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/ptwiki.labeled_revisions.20k_2015.json
@@ -2546,6 +2548,7 @@ datasets/rowiki.autolabeled_revisions.20k_2016.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/rowiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/rowiki/48/ > $@
@@ -2567,7 +2570,7 @@ datasets/rowiki.labeled_revisions.20k_2016.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/rowiki.human_labeled_revisions.5k_2016.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/rowiki.labeled_revisions.20k_2016.json
@@ -2666,6 +2669,7 @@ datasets/ruwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/ruwiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ruwiki/10/ > $@
@@ -2687,7 +2691,7 @@ datasets/ruwiki.labeled_revisions.20k_2015.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/ruwiki.human_labeled_revisions.5k_2015.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/ruwiki.labeled_revisions.20k_2015.json
@@ -2787,6 +2791,7 @@ datasets/sqwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/sqwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/sqwiki/57/ > $@
@@ -2808,7 +2813,7 @@ datasets/sqwiki.labeled_revisions.20k_2016.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/sqwiki.human_labeled_revisions.5k_2016.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
 		datasets/sqwiki.labeled_revisions.20k_2016.json
@@ -2912,9 +2917,7 @@ datasets/srwiki.revisions_for_review.5k_2017.json: \
 	grep -E '"needs_review": (true|"True")' $< | shuf > $@
 
 srwiki_models:
-
 srwiki_tuning_reports:
-
 ############################# Swedish Wikipedia ################################
 
 datasets/svwiki.sampled_revisions.40k_2016.json:
@@ -2929,6 +2932,7 @@ datasets/svwiki.autolabeled_revisions.40k_2016.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
+
 
 datasets/svwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
@@ -2962,7 +2966,7 @@ datasets/svwiki.labeled_revisions.40k_2016.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/svwiki.human_labeled_revisions.5k_2016.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/svwiki.labeled_revisions.w_cache.40k_2016.json: \
 		datasets/svwiki.labeled_revisions.40k_2016.json
@@ -3128,6 +3132,7 @@ datasets/trwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-window=48 \
 		--verbose > $@
 
+
 datasets/trwiki.human_labeled_revisions.5k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ > $@
@@ -3149,7 +3154,7 @@ datasets/trwiki.labeled_revisions.20k_2015.json: \
 	 ./utility merge_labels $^; \
 	  cat datasets/trwiki.human_labeled_revisions.5k_2015.json | \
 	   grep -E '"needs_review": (true|"True")' \
-	 ) > $@
+	) > $@
 
 datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/trwiki.labeled_revisions.20k_2015.json
@@ -3322,9 +3327,7 @@ datasets/urwiki.revisions_for_review.5k_2015.json: \
 	) | shuf > $@
 
 urwiki_models:
-
 urwiki_tuning_reports:
-
 ############################# Vietnamese Wikipedia ################################
 
 datasets/viwiki.sampled_revisions.500k_2015.json:
@@ -3425,5 +3428,5 @@ datasets/zhwiki.revisions_for_review.5k_2016.json: \
 	) | shuf > $@
 
 zhwiki_models:
-
 zhwiki_tuning_reports:
+
