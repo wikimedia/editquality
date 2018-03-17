@@ -59,6 +59,14 @@ datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
+
+datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.no_review.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json
+	cat $< | grep -E '"needs_review": (false|"False")' > $@
+
+datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.review.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json
+	cat $< | grep -E '"needs_review": (true|"True")' > $@
 {% endif %}
 {% if "labeling_campaign" in sample %}
 
@@ -70,21 +78,20 @@ datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
 {% if wiki.balanced_5k_set_for_review %}
 
 datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.review.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.no_review.json
 	( \
-	 cat $< | \
-	 grep -E '"needs_review": (true|"True")' | \
+	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.review.json | \
 	 shuf -n 2500; \
-	 cat $< | \
-	 grep -E '"needs_review": (false|"False")' | \
+	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.no_review.json | \
 	 shuf -n 2500 \
 	) | shuf > $@
 {% endif %}
 {% if wiki.unbalanced_5k_set_for_review %}
 
 datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.sample_to_build_review %}{{ wiki.sample_to_build_review }}{% else %}{{ wiki.default_sample }}{% endif %}.json
-	grep -E '"needs_review": (true|"True")' $< | shuf > $@
+		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.sample_to_build_review %}{{ wiki.sample_to_build_review }}{% else %}{{ wiki.default_sample }}{% endif %}.review.json
+	cat $< | shuf > $@
 {% endif %}
 {% if wiki.merged_samples %}
 {% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
@@ -92,13 +99,6 @@ datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 
 datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.no_review.json: \
 		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json
-	cat $< | \
-	grep -E '"needs_review": (false|"False")' > $@
-{% endif %}
-{% if big_sample.autolabeled_revisions %}
-
-datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.json
 	cat $< | \
 	grep -E '"needs_review": (false|"False")' > $@
 {% endif %}
@@ -120,8 +120,9 @@ datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
 {% if wiki.models.reverted %}
 
 datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.json
-	{%+ if wiki.default_sample_size %}shuf -n {{ wiki.default_sample_size }}{% else %}cat{% endif %} $< | \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.review.json \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.no_review.json
+	{%+ if wiki.default_sample_size %}shuf -n {{ wiki.default_sample_size }}{% else %}cat{% endif %} $^ | \
 	revscoring extract \
 		editquality.feature_lists.{{ wiki.name }}.reverted \
 		--host https://{{ wiki.host }} \
