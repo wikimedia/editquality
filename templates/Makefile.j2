@@ -78,19 +78,19 @@ datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
 {% if wiki.balanced_5k_set_for_review %}
 
 datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.review.json
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.no_review.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json
 	( \
-	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.review.json | \
+	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json | \
 	 shuf -n 2500; \
-	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.no_review.json | \
+	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json | \
 	 shuf -n 2500 \
 	) | shuf > $@
 {% endif %}
 {% if wiki.unbalanced_5k_set_for_review %}
 
 datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.sample_to_build_review %}{{ wiki.sample_to_build_review }}{% else %}{{ wiki.default_sample }}{% endif %}.review.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.sample_to_build_review }}.review.json
 	cat $< | shuf > $@
 {% endif %}
 {% if wiki.merged_samples %}
@@ -107,9 +107,13 @@ datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
 {% if wiki.models.reverted %}
 
 datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.review.json \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.no_review.json
-	{%+ if wiki.default_sample_size %}shuf -n {{ wiki.default_sample_size }}{% else %}cat{% endif %} $^ | \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json
+	{% if wiki.default_sample_size %}
+	shuf -n {{ wiki.default_sample_size }}
+	{%- else %}
+	cat
+	{%- endif %} $^ | \
 	revscoring extract \
 		editquality.feature_lists.{{ wiki.name }}.reverted \
 		--host https://{{ wiki.host }} \
@@ -136,7 +140,8 @@ datasets/{{ wiki.name }}.labeled_revisions.w_cache.{{ big_sample_name }}.json: \
 tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 {% if model.datasets %}
 {% for dataset in model.datasets %}
-		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json{% if not loop.last %} \{% endif %}
+		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json
+		{%- if not loop.last %} \{% endif %}
 
 {% endfor %}
 {% else %}
@@ -146,20 +151,16 @@ tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
-		{% if model_name == "reverted" %}
-		reverted_for_damage \
-		{% else %}
-		{{ model_name }} \
-		{% endif %}
+		{{ model.label }} \
 		roc_auc.labels.true \
-		--label-weight "{% if model_name == "goodfaith" %}false{% else %}true{% endif %}=$({{ model_name }}_weight)" \
+		--label-weight "{{ model.label_weight }}" \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_boosting{% endif %}.model: \
+models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model: \
 {% if model.datasets %}
 {% for dataset in model.datasets %}
 		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json{% if not loop.last %} \{% endif %}
@@ -170,14 +171,14 @@ models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_bo
 {% endif %}
 	cat {% if model.datasets %}$^{% else %}$<{% endif %} | \
 	revscoring cv_train \
-		revscoring.scoring.models.{% if model.rf %}RandomForest{% else %}GradientBoosting{% endif %} \
+		revscoring.scoring.models.{{ model.class_name }} \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
-		{%+ if model_name == "reverted" %}reverted_for_damage{% else %}{{ model_name }}{% endif %} \
-		--version=$({{ model_name }}_major_minor).{{model.build_number}} \
+		{{ model.label }} \
+		--version=$({{ model_name }}_major_minor).{{ model.build_number }} \
 		{% for key, value in model.tuning_params|dictsort %}
 		-p '{{ key }}={{ value }}' \
 		{% endfor %}
-		--label-weight "{% if model_name == "goodfaith" %}false{% else %}true{% endif %}=$({{ model_name }}_weight)" \
+		--label-weight "{{ model.label_weight }}" \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
@@ -185,7 +186,7 @@ models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_bo
 
 {{ wiki.name }}_models:{% if wiki.models %} \
 {% for model_name, model in wiki.models.items() %}
-	models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_boosting{% endif %}.model{% if not loop.last %} \{% endif %}
+	models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model{% if not loop.last %} \{% endif %}
 
 {% endfor %}
 {% endif %}

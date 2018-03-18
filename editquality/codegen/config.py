@@ -1,3 +1,8 @@
+"""
+TODO:
+* Move editquality-specific logic out of this file and into a modular
+preprocessing hook.
+"""
 import collections
 import copy
 import glob
@@ -54,6 +59,19 @@ def load_wiki(wiki, config):
             if isinstance(value, str):
                 model['tuning_params'][case] = '"%s"' % value
 
+        # Normalize for old label.
+        if model_name == 'reverted':
+            model['label'] = 'reverted_for_damage'
+        else:
+            model['label'] = model_name
+
+        target_prediction = 'false' if model_name == 'goodfaith' else 'true'
+        model['label_weight'] = \
+            "{}=$({}_weight)".format(target_prediction, model_name)
+
+        model['algorithm'] = 'rf' if 'rf' in model else 'gradient_boosting'
+        model['class_name'] = 'RandomForest' if 'rf' in model else 'GradientBoosting'
+
         result[model_name] = model
 
     wiki["models"] = result
@@ -66,6 +84,14 @@ def load_wiki(wiki, config):
                 continue
             result[sample] = wiki['samples'][sample]
     wiki['samples'] = result
+
+    # Normalize options
+    if 'default_sample_bigger_sample' not in wiki:
+        wiki['default_sample_bigger_sample'] = wiki['default_sample']
+
+    if 'sample_to_build_review' not in wiki:
+        wiki['sample_to_build_review'] = wiki['default_sample']
+
     return wiki
 
 
