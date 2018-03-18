@@ -1,0 +1,41 @@
+name: svwiki
+label: Swedish Wikipedia
+host: sv.wikipedia.org
+
+samples:
+    5k_2016:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/svwiki/35/"
+    40k_2016:
+        quarry_url: "http://quarry.wmflabs.org/run/79646/output/0/json-lines?download=true"
+
+balanced_5k_set_for_review: true
+
+default_sample: 40k_2016
+review_sample: 5k_2016
+
+merged_samples:
+    40k_2016:
+        autolabeled_revisions: "40k_2016"
+        human_labeled_revisions: "5k_2016"
+
+models:
+    damaging:
+        build_number: 1
+        tuning_params:
+            max_depth: 5
+        pop_rate_true: 0.025209073272463033
+    goodfaith:
+        build_number: 1
+        tuning_params:
+            n_estimators: 500
+        pop_rate_true: 0.9822912868686937
+
+trusted_groups:
+    - sysop
+    - oversight
+    - trusted
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
