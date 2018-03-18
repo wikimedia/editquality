@@ -12,7 +12,6 @@ models: \
 		bnwikisource_models \
 		cawiki_models \
 		cswiki_models \
-		cswiki_models \
 		dewiki_models \
 		elwiki_models \
 		enwiki_models \
@@ -57,7 +56,6 @@ tuning_reports: \
 		bnwiki_tuning_reports \
 		bnwikisource_tuning_reports \
 		cawiki_tuning_reports \
-		cswiki_tuning_reports \
 		cswiki_tuning_reports \
 		dewiki_tuning_reports \
 		elwiki_tuning_reports \
@@ -1627,6 +1625,137 @@ frwiki_tuning_reports: \
 	tuning_reports/frwiki.damaging.md \
 	tuning_reports/frwiki.goodfaith.md
 
+############################# Hebrew Wikipedia ################################
+
+datasets/hewiki.sampled_revisions.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true > $@
+
+datasets/hewiki.autolabeled_revisions.20k_2015.json: \
+		datasets/hewiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://he.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/hewiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/hewiki/25/ > $@
+
+datasets/hewiki.revisions_for_review.5k_2015.json: \
+		datasets/hewiki.autolabeled_revisions.20k_2015.json
+	( \
+	 cat $< | \
+	 grep -E '"needs_review": (true|"True")' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep -E '"needs_review": (false|"False")' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json: \
+		datasets/hewiki.human_labeled_revisions.5k_2015.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json: \
+		datasets/hewiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/hewiki.labeled_revisions.20k_2015.json: \
+		datasets/hewiki.human_labeled_revisions.5k_2015.no_review.json \
+		datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/hewiki.human_labeled_revisions.5k_2015.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
+
+datasets/hewiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/hewiki.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.hewiki.damaging \
+		editquality.feature_lists.hewiki.goodfaith \
+		--host https://he.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/hewiki.damaging.md: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hewiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.046281731975314835" \
+		--pop-rate "false=0.9537182680246852" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/hewiki.damaging.rf.model: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.RandomForest \
+		editquality.feature_lists.hewiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'criterion="entropy"' \
+		-p 'max_features="log2"' \
+		-p 'min_samples_leaf=1' \
+		-p 'n_estimators=320' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.046281731975314835" \
+		--pop-rate "false=0.9537182680246852" \
+		--center --scale > $@
+
+tuning_reports/hewiki.goodfaith.md: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hewiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9718244945060459" \
+		--pop-rate "false=0.02817550549395409" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/hewiki.goodfaith.gradient_boosting.model: \
+		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.hewiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9718244945060459" \
+		--pop-rate "false=0.02817550549395409" \
+		--center --scale > $@
+
+hewiki_models: \
+	models/hewiki.damaging.rf.model \
+	models/hewiki.goodfaith.gradient_boosting.model
+
+hewiki_tuning_reports: \
+	tuning_reports/hewiki.damaging.md \
+	tuning_reports/hewiki.goodfaith.md
+
 ############################# Croatian Wikipedia ################################
 
 # From https://quarry.wmflabs.org/query/21213
@@ -2785,6 +2914,137 @@ datasets/srwiki.revisions_for_review.5k_2017.json: \
 srwiki_models:
 
 srwiki_tuning_reports:
+
+############################# Swedish Wikipedia ################################
+
+datasets/svwiki.sampled_revisions.40k_2016.json:
+	wget -qO- http://quarry.wmflabs.org/run/79646/output/0/json-lines?download=true > $@
+
+datasets/svwiki.autolabeled_revisions.40k_2016.json: \
+		datasets/svwiki.sampled_revisions.40k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://sv.wikipedia.org \
+		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/svwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/svwiki/35/ > $@
+
+datasets/svwiki.revisions_for_review.5k_2016.json: \
+		datasets/svwiki.autolabeled_revisions.40k_2016.json
+	( \
+	 cat $< | \
+	 grep -E '"needs_review": (true|"True")' | \
+	 shuf -n 2500; \
+	 cat $< | \
+	 grep -E '"needs_review": (false|"False")' | \
+	 shuf -n 2500 \
+	) | shuf > $@
+
+datasets/svwiki.human_labeled_revisions.5k_2016.no_review.json: \
+		datasets/svwiki.human_labeled_revisions.5k_2016.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json: \
+		datasets/svwiki.autolabeled_revisions.40k_2016.json
+	cat $< | \
+	grep -E '"needs_review": (false|"False")' > $@
+
+datasets/svwiki.labeled_revisions.40k_2016.json: \
+		datasets/svwiki.human_labeled_revisions.5k_2016.no_review.json \
+		datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json
+	( \
+	 ./utility merge_labels $^; \
+	  cat datasets/svwiki.human_labeled_revisions.5k_2016.json | \
+	   grep -E '"needs_review": (true|"True")' \
+	 ) > $@
+
+datasets/svwiki.labeled_revisions.w_cache.40k_2016.json: \
+		datasets/svwiki.labeled_revisions.40k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.svwiki.damaging \
+		editquality.feature_lists.svwiki.goodfaith \
+		--host https://sv.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/svwiki.damaging.md: \
+		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.svwiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.025209073272463033" \
+		--pop-rate "false=0.974790926727537" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/svwiki.damaging.gradient_boosting.model: \
+		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.svwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.025209073272463033" \
+		--pop-rate "false=0.974790926727537" \
+		--center --scale > $@
+
+tuning_reports/svwiki.goodfaith.md: \
+		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.svwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9822912868686937" \
+		--pop-rate "false=0.017708713131306286" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/svwiki.goodfaith.gradient_boosting.model: \
+		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.svwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9822912868686937" \
+		--pop-rate "false=0.017708713131306286" \
+		--center --scale > $@
+
+svwiki_models: \
+	models/svwiki.damaging.gradient_boosting.model \
+	models/svwiki.goodfaith.gradient_boosting.model
+
+svwiki_tuning_reports: \
+	tuning_reports/svwiki.damaging.md \
+	tuning_reports/svwiki.goodfaith.md
 
 ############################# Tamil Wikipedia ################################
 
