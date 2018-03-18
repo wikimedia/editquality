@@ -95,26 +95,13 @@ datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 {% endif %}
 {% if wiki.merged_samples %}
 {% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
-{% if big_sample.human_labeled_revisions %}
-
-datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.no_review.json: \
-		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json
-	cat $< | \
-	grep -E '"needs_review": (false|"False")' > $@
-{% endif %}
 
 datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
 {% if big_sample.human_labeled_revisions %}
-		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.no_review.json{% if big_sample.autolabeled_revisions %} \
+		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json{% if big_sample.autolabeled_revisions %} \
 		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json{% endif %}{% endif %}
 
-	( \
-	 ./utility merge_labels $^; \
-	 {% if big_sample.human_labeled_revisions %}
-	  cat datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json | \
-	   grep -E '"needs_review": (true|"True")' \
-	 {% endif %}
-	) > $@
+	./utility merge_labels $^ > $@
 {% endfor %}
 {% endif %}
 {% if wiki.models.reverted %}
