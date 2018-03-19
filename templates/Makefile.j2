@@ -98,8 +98,11 @@ datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
 
 datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
 {% if big_sample.human_labeled_revisions %}
-		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json{% if big_sample.autolabeled_revisions %} \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json{% endif %}{% endif %}
+		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json
+		{%- if big_sample.autolabeled_revisions %} \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json
+		{%- endif %}
+{% endif %}
 
 	./utility merge_labels $^ > $@
 {% endfor %}
