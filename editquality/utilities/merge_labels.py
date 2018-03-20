@@ -58,6 +58,7 @@ def main(argv=None):
 def run(human_labels, auto_labels, labels_f, verbose):
     human_rev_map = {int(revision['rev_id']): revision
                      for revision in human_labels}
+    human_rev_ids = set(human_rev_map.keys())
 
     # Output human labels when autolabels is empty
     if not auto_labels:
@@ -74,8 +75,9 @@ def run(human_labels, auto_labels, labels_f, verbose):
                 revision.update(DEFAULTS)
 
             human_labeled = human_rev_map[revision['rev_id']]
+            human_rev_ids.remove(revision['rev_id'])
             if has_labels(human_labeled):
-                revision.update(human_rev_map[revision['rev_id']])
+                revision.update(human_labeled)
                 # TODO: Should we keep track of partially human-labeled, partially
                 # autolabeled rows, and record something special in "auto_labeled"?
 
@@ -98,6 +100,17 @@ def run(human_labels, auto_labels, labels_f, verbose):
         if verbose:
             sys.stderr.write(progress_char)
             sys.stderr.flush()
+
+    # Pass through any human labeled observations not in the autolabeled set,
+    # usually those autolabeled with needs_review.
+    for rev_id in human_rev_ids:
+        human_labeled = human_rev_map[rev_id]
+        if not has_labels(human_labeled):
+            progress_char = "0"
+        else:
+            progress_char = "h"
+            labels_f.write(json.dumps(human_labeled))
+            labels_f.write("\n")
 
 
 def has_labels(revision):
