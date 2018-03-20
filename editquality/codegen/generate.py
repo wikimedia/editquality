@@ -1,12 +1,7 @@
 import jinja2
 
-from . import config
 
-
-def generate(config_path, templates_path):
-    variables = config.load_config(config_path)
-
-    # TODO: map config into domain-specific preprocessed values
+def generate(variables, templates_path, main_template):
 
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(templates_path),
@@ -15,5 +10,5 @@ def generate(config_path, templates_path):
     )
 
     # TODO: main input template should be configuration and parameter
-    template = env.get_template("Makefile.j2")
+    template = env.get_template(main_template)
     return template.render(variables) + "\n"

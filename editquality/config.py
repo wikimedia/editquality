@@ -1,14 +1,15 @@
 """
-TODO:
-* Move editquality-specific logic out of this file and into a modular
-preprocessing hook.
+Loads editquality config, mainly used as template parameters.
+
+The responsibility of this process is to simplify the template's work and other
+consumers, as much as possible.
 """
 import collections
 import copy
 import glob
 import yaml
 
-from . import util
+from .codegen import util
 
 
 def load_config(config_dir=None):
