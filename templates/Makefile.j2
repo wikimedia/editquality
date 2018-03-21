@@ -5,42 +5,28 @@
 .DELETE_ON_ERROR:
 
 models: \
-	{%- for wiki in wiki_names %}
-		{{ wiki }}_models{% if not loop.last %} \{% endif -%}
+	{% for wiki in wiki_names %}
+		{{ wiki }}_models{% if not loop.last %} \{% endif %}
+
 	{% endfor %}
 
 tuning_reports: \
-	{%- for wiki in wiki_names %}
-		{{ wiki }}_tuning_reports{% if not loop.last %} \{% endif -%}
+	{% for wiki in wiki_names %}
+		{{ wiki }}_tuning_reports{% if not loop.last %} \{% endif %}
+
 	{% endfor %}
 
-test_statistics = \
-		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.9)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
-		-s 'recall_at_precision(min_precision=0.995)' \
-		-s 'recall_at_precision(min_precision=0.99)' \
-		-s 'recall_at_precision(min_precision=0.98)' \
-		-s 'recall_at_precision(min_precision=0.90)' \
-		-s 'recall_at_precision(min_precision=0.75)' \
-		-s 'recall_at_precision(min_precision=0.60)' \
-		-s 'recall_at_precision(min_precision=0.45)' \
-		-s 'recall_at_precision(min_precision=0.15)'
-
-major_minor = 0.3
-reverted_major_minor = $(major_minor)
-damaging_major_minor = $(major_minor)
-goodfaith_major_minor = $(major_minor)
-
 include  Makefile.manual
-{% for wiki in wikis %}
 
+
+{% for wiki in wikis %}
 ############################# {{ wiki.label }} ################################
-{% for sample_name, sample in wiki.samples|dictsort %}{%- if "quarry_url" in sample %}
-{%- if "quarry_page" in sample %}
-# From {{ sample.quarry_page }}{% endif %}
+{% for sample_name, sample in wiki.samples|dictsort %}
+
+{% if "quarry_url" in sample %}
+{% if "quarry_page" in sample %}
+# From {{ sample.quarry_page }}
+{% endif %}
 datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json:
 	wget -qO- {{ sample.quarry_url }} > $@
 
@@ -53,120 +39,150 @@ datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
 		--revert-radius=3 \
 		--revert-window=48 \
 		--verbose > $@
-{% endif %}{% if "labeling_campaign" in sample %}
+
+datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.no_review.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json
+	cat $< | grep -E '"needs_review": (false|"False")' > $@
+
+datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.review.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json
+	cat $< | grep -E '"needs_review": (true|"True")' > $@
+{% endif %}
+{% if "labeling_campaign" in sample %}
+
 datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
 	./utility fetch_labels \
 		{{ sample.labeling_campaign }} > $@
-{% endif %}{% endfor %}{% if wiki.balanced_5k_set_for_review %}
+{% endif %}
+{% endfor %}
+{% if wiki.balanced_5k_set_for_review %}
+
 datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json
 	( \
-	 cat $< | \
-	 grep -E '"needs_review": (true|"True")' | \
+	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json | \
 	 shuf -n 2500; \
-	 cat $< | \
-	 grep -E '"needs_review": (false|"False")' | \
+	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json | \
 	 shuf -n 2500 \
 	) | shuf > $@
-{% endif %}{% if wiki.unbalanced_5k_set_for_review %}
-datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.sample_to_build_review %}{{ wiki.sample_to_build_review }}{% else %}{{ wiki.default_sample }}{% endif %}.json
-	grep -E '"needs_review": (true|"True")' $< | shuf > $@
-{% endif %}{% if wiki.merged_samples %}{% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
-{%- if big_sample.human_labeled_revisions %}
-datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.no_review.json: \
-		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json
-	cat $< | \
-	grep -E '"needs_review": (false|"False")' > $@
-{% endif %}{% if big_sample.autolabeled_revisions %}
-datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.json
-	cat $< | \
-	grep -E '"needs_review": (false|"False")' > $@
 {% endif %}
+{% if wiki.unbalanced_5k_set_for_review %}
+
+datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.sample_to_build_review }}.review.json
+	cat $< | shuf > $@
+{% endif %}
+{% if wiki.merged_samples %}
+{% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
+
 datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
-{%- if big_sample.human_labeled_revisions %}
-		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.no_review.json{%- if big_sample.autolabeled_revisions %} \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json{% endif %}{% endif %}
-	( \
-	 ./utility merge_labels $^; \
-	 {%- if big_sample.human_labeled_revisions %}
-	  cat datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json | \
-	   grep -E '"needs_review": (true|"True")' \
-	 {% endif -%}
-	) > $@
+{% if big_sample.human_labeled_revisions %}
+		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json
+		{%- if big_sample.autolabeled_revisions %} \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json
+		{%- endif %}
+{% endif %}
+
+	./utility merge_labels $^ > $@
 {% endfor %}
-{%- endif %}{% if wiki.models.reverted %}
+{% endif %}
+{% if wiki.models.reverted %}
+
 datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{% if wiki.default_sample_bigger_sample %}{{ wiki.default_sample_bigger_sample }}{% else %}{{ wiki.default_sample }}{% endif %}.json
-	{% if wiki.default_sample_size %}shuf -n {{ wiki.default_sample_size }}{% else %}cat{% endif %} $< | \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json
+	{% if wiki.default_sample_size %}
+	shuf -n {{ wiki.default_sample_size }}
+	{%- else %}
+	cat
+	{%- endif %} $^ | \
 	revscoring extract \
 		editquality.feature_lists.{{ wiki.name }}.reverted \
 		--host https://{{ wiki.host }} \
 		--extractor $(max_extractors) \
 		--verbose > $@
-{% endif %}{% if wiki.merged_samples %}
-{%- for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
+{% endif %}
+{% if wiki.merged_samples %}
+
+{% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
 datasets/{{ wiki.name }}.labeled_revisions.w_cache.{{ big_sample_name }}.json: \
 		datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json
 	cat $< | \
 	revscoring extract \
-		{% for model_name, model in wiki.models.items() -%}
+		{% for model_name, model in wiki.models.items() %}
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
-		{% endfor -%}
+		{% endfor %}
 		--host https://{{ wiki.host }} \
 		--extractor $(max_extractors) \
 		--verbose > $@
-{% endfor %}{% endif %}{% for model_name, model in wiki.models.items() %}
+{% endfor %}
+{% endif %}
+{% for model_name, model in wiki.models.items() %}
+
 tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
-{%- if model.datasets %}{%- for dataset in model.datasets %}
-		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json{% if not loop.last %} \{% endif -%}
-{% endfor %}{% else %}
+{% if model.datasets %}
+{% for dataset in model.datasets %}
+		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json
+		{%- if not loop.last %} \{% endif %}
+
+{% endfor %}
+{% else %}
 		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
-{%- endif %}
+{% endif %}
 	cat {% if model.datasets %}$^{% else %}$<{% endif %} | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
-		{%- if model_name == "reverted" %}
-		reverted_for_damage \
-		{% else %}
-		{{ model_name }} \
-		{% endif -%}
+		{{ model.label }} \
 		roc_auc.labels.true \
-		--label-weight "{% if model_name == "goodfaith" %}false{% else %}true{% endif %}=$({{ model_name }}_weight)" \
+		--label-weight "{{ model.label_weight }}" \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_boosting{% endif %}.model: \
-{%- if model.datasets %}{%- for dataset in model.datasets %}
-		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json{% if not loop.last %} \{% endif -%}
-{% endfor %}{% else %}
+models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model: \
+{% if model.datasets %}
+{% for dataset in model.datasets %}
+		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json{% if not loop.last %} \{% endif %}
+
+{% endfor %}
+{% else %}
 		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
-{%- endif %}
+{% endif %}
 	cat {% if model.datasets %}$^{% else %}$<{% endif %} | \
 	revscoring cv_train \
-		revscoring.scoring.models.{% if model.rf %}RandomForest{% else %}GradientBoosting{% endif %} \
+		revscoring.scoring.models.{{ model.class_name }} \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
-		{% if model_name == "reverted" %}reverted_for_damage{% else %}{{ model_name }}{% endif %} \
-		--version=$({{ model_name }}_major_minor).{{model.build_number}} \
-		{% for key, value in model.tuning_params|dictsort -%}
+		{{ model.label }} \
+		--version=$({{ model_name }}_major_minor).{{ model.build_number }} \
+		{% for key, value in model.tuning_params|dictsort %}
 		-p '{{ key }}={{ value }}' \
-		{% endfor -%}
-		--label-weight "{% if model_name == "goodfaith" %}false{% else %}true{% endif %}=$({{ model_name }}_weight)" \
+		{% endfor %}
+		--label-weight "{{ model.label_weight }}" \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
+
+stats/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model_info.txt: \
+		models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model
+	revscoring model_info $< > $@
 {% endfor %}
+
 {{ wiki.name }}_models:{% if wiki.models %} \
-{%- for model_name, model in wiki.models.items() %}
-	models/{{ wiki.name }}.{{ model_name }}.{% if model.rf %}rf{% else %}gradient_boosting{% endif %}.model{% if not loop.last %} \{% endif -%}
-{% endfor %}{% endif %}
+{% for model_name, model in wiki.models.items() %}
+	models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model{% if not loop.last %} \{% endif %}
+
+{% endfor %}
+{% endif %}
 
 {{ wiki.name }}_tuning_reports:{% if wiki.models %} \
-{%- for model_name, model in wiki.models.items() %}
-	tuning_reports/{{ wiki.name }}.{{ model_name }}.md{% if not loop.last %} \{% endif -%}
-{% endfor %}{% endif %}{% endfor %}
+{% for model_name, model in wiki.models.items() %}
+	tuning_reports/{{ wiki.name }}.{{ model_name }}.md{% if not loop.last %} \{% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% endfor %}

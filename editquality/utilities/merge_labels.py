@@ -14,6 +14,7 @@ Options:
     --debug               Print debug logging
     --verbose             Print dots and stuff representing progress
 """
+# TODO: Auto labels should come first, since the last file gets priority.
 import json
 import logging
 import sys
@@ -22,7 +23,9 @@ import docopt
 
 from . import util
 
-DEFAULTS = {'damaging': False, 'goodfaith': True, 'auto-labeled': True}
+LABELS = ('damaging', 'goodfaith')
+AUTO_LABELS = ('auto_labeled', 'autolabel')
+AUTO_DEFAULTS = {'damaging': False, 'goodfaith': True, 'auto_labeled': True}
 logger = logging.getLogger(__name__)
 
 
@@ -65,26 +68,88 @@ def run(human_labels, auto_labels, labels_f, verbose):
             labels_f.write("\n")
         return
 
+    # Use sleazy but reasonable default assumptions to
+    # auto-populate missing fields: that damaging and goodfaith are
+    # usually exclusive.
+    #
+    # TODO: Should we keep track of partially human-labeled, partially
+    # autolabeled rows, and record something special in "auto_labeled"?
+    for revision in human_rev_map.values():
+        if 'damaging' in revision and 'goodfaith' not in revision:
+            revision['goodfaith'] = revision['damaging'] in (False, 'False')
+        elif 'goodfaith' in revision and 'damaging' not in revision:
+            revision['damaging'] = revision['goodfaith'] in (False, 'False')
+
+    # Merge human labels onto autolabeled defaults.
     for revision in auto_labels:
         if revision['rev_id'] in human_rev_map:
             if not revision['autolabel']['needs_review']:
-                logger.warning("{0} has labels, but was not flagged for review"
-                               .format(revision['rev_id']))
+                # TODO: This shouldn't really be a warning?
+                # logger.warning("{0} has labels, but was not flagged for review"
+                #                .format(revision['rev_id']))
+                revision.update(AUTO_DEFAULTS)
 
-            revision.update(human_rev_map[revision['rev_id']])
+            human_labeled = human_rev_map[revision['rev_id']]
+            if has_any_labels(human_labeled, LABELS):
+                # Prefer auto labels from the more recent file, assume that
+                # will always be the autolabeled_revisions input.
+                if has_any_labels(revision, AUTO_LABELS):
+                    for label in AUTO_LABELS:
+                        del(human_labeled[label])
+
+                revision.update(human_labeled)
+                progress_char = "."
+            else:
+                progress_char = "a"
+
+            # Mark this observation as consumed.
             human_rev_ids.remove(revision['rev_id'])
-            if verbose:
-                sys.stderr.write(".")
-                sys.stderr.flush()
+
         else:
             if revision['autolabel']['needs_review']:
-                logger.error("{0} has no labels, but was flagged for review"
-                             .format(revision['rev_id']))
-            if verbose:
-                sys.stderr.write("a")
-                sys.stderr.flush()
+                # TODO: Tally these warnings.
+                logger.warning("{0} has no labels, but was flagged for review"
+                               .format(revision['rev_id']))
+                progress_char = "A"
+            else:
+                revision.update(AUTO_DEFAULTS)
+                progress_char = "a"
 
-            revision.update(DEFAULTS)
+        if not has_any_labels(revision, LABELS):
+            # No labels by this point, drop it.
+            progress_char = "0"
+        else:
+            # Output merged observation.
+            labels_f.write(json.dumps(revision))
+            labels_f.write("\n")
 
-        labels_f.write(json.dumps(revision))
-        labels_f.write("\n")
+        # TODO: progress_hist[progress_char] += 1
+
+        if verbose:
+            sys.stderr.write(progress_char)
+            sys.stderr.flush()
+
+    # Pass through any human labeled observations not in the autolabeled set,
+    # usually those autolabeled with needs_review.
+    for rev_id in human_rev_ids:
+        human_labeled = human_rev_map[rev_id]
+        if not has_any_labels(human_labeled, LABELS):
+            progress_char = "0"
+        else:
+            progress_char = "h"
+            labels_f.write(json.dumps(human_labeled))
+            labels_f.write("\n")
+
+        if verbose:
+            sys.stderr.write(progress_char)
+            sys.stderr.flush()
+
+
+def has_any_labels(revision, labels):
+    """
+    Return true if any labels are present.
+    """
+    for label in labels:
+        if label in revision:
+            return True
+    return False

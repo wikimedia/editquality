@@ -1,3 +1,5 @@
+# FIXME: update to new autolabel signature
+
 # Remove target files after command failure.
 .DELETE_ON_ERROR:
 
