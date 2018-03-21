@@ -2,6 +2,17 @@ import jinja2
 
 
 def generate(variables, templates_path, main_template):
+    """
+    :Parameters:
+        variables : dict
+            Template parameters, passed through.
+        templates_path : str
+            Root directory for transclusions.
+        main_template : str
+            Contents of the main template.
+
+    Returns the rendered output.
+    """
 
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(templates_path),
@@ -9,6 +20,5 @@ def generate(variables, templates_path, main_template):
         trim_blocks=True
     )
 
-    # TODO: main input template should be configuration and parameter
-    template = env.get_template(main_template)
+    template = env.from_string(main_template)
     return template.render(variables) + "\n"
