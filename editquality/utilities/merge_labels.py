@@ -67,6 +67,19 @@ def run(human_labels, auto_labels, labels_f, verbose):
             labels_f.write("\n")
         return
 
+    # Use sleazy but reasonable default assumptions to
+    # auto-populate missing fields: that damaging and goodfaith are
+    # usually exclusive.
+    #
+    # TODO: Should we keep track of partially human-labeled, partially
+    # autolabeled rows, and record something special in "auto_labeled"?
+    for revision in human_rev_map.values():
+        if 'damaging' in revision and 'goodfaith' not in revision:
+            revision['goodfaith'] = revision['damaging'] in (False, 'False')
+        elif 'goodfaith' in revision and 'damaging' not in revision:
+            revision['damaging'] = revision['goodfaith'] in (False, 'False')
+
+    # Merge human labels onto autolabeled defaults.
     for revision in auto_labels:
         if revision['rev_id'] in human_rev_map:
             if not revision['autolabel']['needs_review']:
@@ -76,20 +89,23 @@ def run(human_labels, auto_labels, labels_f, verbose):
                 revision.update(DEFAULTS)
 
             human_labeled = human_rev_map[revision['rev_id']]
-            human_rev_ids.remove(revision['rev_id'])
             if has_labels(human_labeled):
                 revision.update(human_labeled)
-                # TODO: Should we keep track of partially human-labeled, partially
-                # autolabeled rows, and record something special in "auto_labeled"?
+                progress_char = "."
+            else:
+                progress_char = "a"
 
-            progress_char = "."
+            # Mark this observation as consumed.
+            human_rev_ids.remove(revision['rev_id'])
+
         else:
             if revision['autolabel']['needs_review']:
-                logger.error("{0} has no labels, but was flagged for review"
-                             .format(revision['rev_id']))
-
-            progress_char = "a"
-            revision.update(DEFAULTS)
+                # TODO: Tally these warnings.
+                logger.warning("{0} has no labels, but was flagged for review"
+                               .format(revision['rev_id']))
+            else:
+                progress_char = "a"
+                revision.update(DEFAULTS)
 
         if not has_labels(revision):
             # No labels by this point, drop it.
