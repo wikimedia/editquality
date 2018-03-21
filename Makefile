@@ -94,26 +94,6 @@ tuning_reports: \
 		wikidatawiki_tuning_reports \
 		zhwiki_tuning_reports
 
-test_statistics = \
-		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.9)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
-		-s 'recall_at_precision(min_precision=0.995)' \
-		-s 'recall_at_precision(min_precision=0.99)' \
-		-s 'recall_at_precision(min_precision=0.98)' \
-		-s 'recall_at_precision(min_precision=0.90)' \
-		-s 'recall_at_precision(min_precision=0.75)' \
-		-s 'recall_at_precision(min_precision=0.60)' \
-		-s 'recall_at_precision(min_precision=0.45)' \
-		-s 'recall_at_precision(min_precision=0.15)'
-
-major_minor = 0.3
-reverted_major_minor = $(major_minor)
-damaging_major_minor = $(major_minor)
-goodfaith_major_minor = $(major_minor)
-
 include  Makefile.manual
 
 
@@ -192,8 +172,16 @@ models/arwiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9648134044173649" \
 		--center --scale > $@
 
+stats/arwiki.reverted.gradient_boosting.model_info.txt: \
+		models/arwiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+arwiki_reverted_model: \
+	models/arwiki.reverted.gradient_boosting.model \
+	stats/arwiki.reverted.gradient_boosting.model_info.txt
+
 arwiki_models: \
-	models/arwiki.reverted.gradient_boosting.model
+	arwiki_reverted_model
 
 arwiki_tuning_reports: \
 	tuning_reports/arwiki.reverted.md
@@ -323,8 +311,16 @@ models/bnwiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.978445689138" \
 		--center --scale > $@
 
+stats/bnwiki.reverted.gradient_boosting.model_info.txt: \
+		models/bnwiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+bnwiki_reverted_model: \
+	models/bnwiki.reverted.gradient_boosting.model \
+	stats/bnwiki.reverted.gradient_boosting.model_info.txt
+
 bnwiki_models: \
-	models/bnwiki.reverted.gradient_boosting.model
+	bnwiki_reverted_model
 
 bnwiki_tuning_reports: \
 	tuning_reports/bnwiki.reverted.md
@@ -461,6 +457,14 @@ models/cawiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9809995249881247" \
 		--center --scale > $@
 
+stats/cawiki.damaging.gradient_boosting.model_info.txt: \
+		models/cawiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+cawiki_damaging_model: \
+	models/cawiki.damaging.gradient_boosting.model \
+	stats/cawiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/cawiki.goodfaith.md: \
 		datasets/cawiki.labeled_revisions.w_cache.40k_2017.json
 	cat $< | \
@@ -493,9 +497,17 @@ models/cawiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.014500362509062725" \
 		--center --scale > $@
 
+stats/cawiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/cawiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+cawiki_goodfaith_model: \
+	models/cawiki.goodfaith.gradient_boosting.model \
+	stats/cawiki.goodfaith.gradient_boosting.model_info.txt
+
 cawiki_models: \
-	models/cawiki.damaging.gradient_boosting.model \
-	models/cawiki.goodfaith.gradient_boosting.model
+	cawiki_damaging_model \
+	cawiki_goodfaith_model
 
 cawiki_tuning_reports: \
 	tuning_reports/cawiki.damaging.md \
@@ -586,6 +598,14 @@ models/cswiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9554031733319986" \
 		--center --scale > $@
 
+stats/cswiki.damaging.gradient_boosting.model_info.txt: \
+		models/cswiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+cswiki_damaging_model: \
+	models/cswiki.damaging.gradient_boosting.model \
+	stats/cswiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/cswiki.goodfaith.md: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
@@ -618,9 +638,17 @@ models/cswiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.022473597277141044" \
 		--center --scale > $@
 
+stats/cswiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/cswiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+cswiki_goodfaith_model: \
+	models/cswiki.goodfaith.gradient_boosting.model \
+	stats/cswiki.goodfaith.gradient_boosting.model_info.txt
+
 cswiki_models: \
-	models/cswiki.damaging.gradient_boosting.model \
-	models/cswiki.goodfaith.gradient_boosting.model
+	cswiki_damaging_model \
+	cswiki_goodfaith_model
 
 cswiki_tuning_reports: \
 	tuning_reports/cswiki.damaging.md \
@@ -691,8 +719,16 @@ models/dewiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.950224418780574" \
 		--center --scale > $@
 
+stats/dewiki.reverted.gradient_boosting.model_info.txt: \
+		models/dewiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+dewiki_reverted_model: \
+	models/dewiki.reverted.gradient_boosting.model \
+	stats/dewiki.reverted.gradient_boosting.model_info.txt
+
 dewiki_models: \
-	models/dewiki.reverted.gradient_boosting.model
+	dewiki_reverted_model
 
 dewiki_tuning_reports: \
 	tuning_reports/dewiki.reverted.md
@@ -767,8 +803,16 @@ models/elwiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9482931224346781" \
 		--center --scale > $@
 
+stats/elwiki.reverted.gradient_boosting.model_info.txt: \
+		models/elwiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+elwiki_reverted_model: \
+	models/elwiki.reverted.gradient_boosting.model \
+	stats/elwiki.reverted.gradient_boosting.model_info.txt
+
 elwiki_models: \
-	models/elwiki.reverted.gradient_boosting.model
+	elwiki_reverted_model
 
 elwiki_tuning_reports: \
 	tuning_reports/elwiki.reverted.md
@@ -826,6 +870,14 @@ models/enwiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9658364445353654" \
 		--center --scale > $@
 
+stats/enwiki.damaging.gradient_boosting.model_info.txt: \
+		models/enwiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+enwiki_damaging_model: \
+	models/enwiki.damaging.gradient_boosting.model \
+	stats/enwiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/enwiki.goodfaith.md: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
@@ -858,9 +910,17 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.032833836239963166" \
 		--center --scale > $@
 
+stats/enwiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/enwiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+enwiki_goodfaith_model: \
+	models/enwiki.goodfaith.gradient_boosting.model \
+	stats/enwiki.goodfaith.gradient_boosting.model_info.txt
+
 enwiki_models: \
-	models/enwiki.damaging.gradient_boosting.model \
-	models/enwiki.goodfaith.gradient_boosting.model
+	enwiki_damaging_model \
+	enwiki_goodfaith_model
 
 enwiki_tuning_reports: \
 	tuning_reports/enwiki.damaging.md \
@@ -935,8 +995,16 @@ models/enwiktionary.reverted.rf.model: \
 		--pop-rate "false=0.9952217268829148" \
 		--center --scale > $@
 
+stats/enwiktionary.reverted.rf.model_info.txt: \
+		models/enwiktionary.reverted.rf.model
+	revscoring model_info $< > $@
+
+enwiktionary_reverted_model: \
+	models/enwiktionary.reverted.rf.model \
+	stats/enwiktionary.reverted.rf.model_info.txt
+
 enwiktionary_models: \
-	models/enwiktionary.reverted.rf.model
+	enwiktionary_reverted_model
 
 enwiktionary_tuning_reports: \
 	tuning_reports/enwiktionary.reverted.md
@@ -1016,6 +1084,14 @@ models/eswiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.8896398668415212" \
 		--center --scale > $@
 
+stats/eswiki.damaging.gradient_boosting.model_info.txt: \
+		models/eswiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+eswiki_damaging_model: \
+	models/eswiki.damaging.gradient_boosting.model \
+	stats/eswiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/eswiki.goodfaith.md: \
 		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
@@ -1048,9 +1124,17 @@ models/eswiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.8896398668415212" \
 		--center --scale > $@
 
+stats/eswiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/eswiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+eswiki_goodfaith_model: \
+	models/eswiki.goodfaith.gradient_boosting.model \
+	stats/eswiki.goodfaith.gradient_boosting.model_info.txt
+
 eswiki_models: \
-	models/eswiki.damaging.gradient_boosting.model \
-	models/eswiki.goodfaith.gradient_boosting.model
+	eswiki_damaging_model \
+	eswiki_goodfaith_model
 
 eswiki_tuning_reports: \
 	tuning_reports/eswiki.damaging.md \
@@ -1131,6 +1215,14 @@ models/eswikibooks.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.8873328419500895" \
 		--center --scale > $@
 
+stats/eswikibooks.damaging.gradient_boosting.model_info.txt: \
+		models/eswikibooks.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+eswikibooks_damaging_model: \
+	models/eswikibooks.damaging.gradient_boosting.model \
+	stats/eswikibooks.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/eswikibooks.goodfaith.md: \
 		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
@@ -1163,9 +1255,17 @@ models/eswikibooks.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.08606060606060606" \
 		--center --scale > $@
 
+stats/eswikibooks.goodfaith.gradient_boosting.model_info.txt: \
+		models/eswikibooks.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+eswikibooks_goodfaith_model: \
+	models/eswikibooks.goodfaith.gradient_boosting.model \
+	stats/eswikibooks.goodfaith.gradient_boosting.model_info.txt
+
 eswikibooks_models: \
-	models/eswikibooks.damaging.gradient_boosting.model \
-	models/eswikibooks.goodfaith.gradient_boosting.model
+	eswikibooks_damaging_model \
+	eswikibooks_goodfaith_model
 
 eswikibooks_tuning_reports: \
 	tuning_reports/eswikibooks.damaging.md \
@@ -1241,8 +1341,16 @@ models/eswikiquote.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.910490451754017" \
 		--center --scale > $@
 
+stats/eswikiquote.reverted.gradient_boosting.model_info.txt: \
+		models/eswikiquote.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+eswikiquote_reverted_model: \
+	models/eswikiquote.reverted.gradient_boosting.model \
+	stats/eswikiquote.reverted.gradient_boosting.model_info.txt
+
 eswikiquote_models: \
-	models/eswikiquote.reverted.gradient_boosting.model
+	eswikiquote_reverted_model
 
 eswikiquote_tuning_reports: \
 	tuning_reports/eswikiquote.reverted.md
@@ -1322,6 +1430,14 @@ models/etwiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9738417425423814" \
 		--center --scale > $@
 
+stats/etwiki.damaging.gradient_boosting.model_info.txt: \
+		models/etwiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+etwiki_damaging_model: \
+	models/etwiki.damaging.gradient_boosting.model \
+	stats/etwiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/etwiki.goodfaith.md: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
@@ -1354,9 +1470,17 @@ models/etwiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.01589617183962977" \
 		--center --scale > $@
 
+stats/etwiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/etwiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+etwiki_goodfaith_model: \
+	models/etwiki.goodfaith.gradient_boosting.model \
+	stats/etwiki.goodfaith.gradient_boosting.model_info.txt
+
 etwiki_models: \
-	models/etwiki.damaging.gradient_boosting.model \
-	models/etwiki.goodfaith.gradient_boosting.model
+	etwiki_damaging_model \
+	etwiki_goodfaith_model
 
 etwiki_tuning_reports: \
 	tuning_reports/etwiki.damaging.md \
@@ -1477,6 +1601,14 @@ models/fawiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9702970297029703" \
 		--center --scale > $@
 
+stats/fawiki.damaging.gradient_boosting.model_info.txt: \
+		models/fawiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+fawiki_damaging_model: \
+	models/fawiki.damaging.gradient_boosting.model \
+	stats/fawiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/fawiki.goodfaith.md: \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
 		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
@@ -1511,9 +1643,17 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.01653583185616614" \
 		--center --scale > $@
 
+stats/fawiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/fawiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+fawiki_goodfaith_model: \
+	models/fawiki.goodfaith.gradient_boosting.model \
+	stats/fawiki.goodfaith.gradient_boosting.model_info.txt
+
 fawiki_models: \
-	models/fawiki.damaging.gradient_boosting.model \
-	models/fawiki.goodfaith.gradient_boosting.model
+	fawiki_damaging_model \
+	fawiki_goodfaith_model
 
 fawiki_tuning_reports: \
 	tuning_reports/fawiki.damaging.md \
@@ -1625,6 +1765,14 @@ models/frwiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9712482468443198" \
 		--center --scale > $@
 
+stats/frwiki.damaging.gradient_boosting.model_info.txt: \
+		models/frwiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+frwiki_damaging_model: \
+	models/frwiki.damaging.gradient_boosting.model \
+	stats/frwiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/frwiki.goodfaith.md: \
 		datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
@@ -1657,9 +1805,17 @@ models/frwiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.021388499298737762" \
 		--center --scale > $@
 
+stats/frwiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/frwiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+frwiki_goodfaith_model: \
+	models/frwiki.goodfaith.gradient_boosting.model \
+	stats/frwiki.goodfaith.gradient_boosting.model_info.txt
+
 frwiki_models: \
-	models/frwiki.damaging.gradient_boosting.model \
-	models/frwiki.goodfaith.gradient_boosting.model
+	frwiki_damaging_model \
+	frwiki_goodfaith_model
 
 frwiki_tuning_reports: \
 	tuning_reports/frwiki.damaging.md \
@@ -1750,6 +1906,14 @@ models/hewiki.damaging.rf.model: \
 		--pop-rate "false=0.9537182680246852" \
 		--center --scale > $@
 
+stats/hewiki.damaging.rf.model_info.txt: \
+		models/hewiki.damaging.rf.model
+	revscoring model_info $< > $@
+
+hewiki_damaging_model: \
+	models/hewiki.damaging.rf.model \
+	stats/hewiki.damaging.rf.model_info.txt
+
 tuning_reports/hewiki.goodfaith.md: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
@@ -1782,9 +1946,17 @@ models/hewiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.02817550549395409" \
 		--center --scale > $@
 
+stats/hewiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/hewiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+hewiki_goodfaith_model: \
+	models/hewiki.goodfaith.gradient_boosting.model \
+	stats/hewiki.goodfaith.gradient_boosting.model_info.txt
+
 hewiki_models: \
-	models/hewiki.damaging.rf.model \
-	models/hewiki.goodfaith.gradient_boosting.model
+	hewiki_damaging_model \
+	hewiki_goodfaith_model
 
 hewiki_tuning_reports: \
 	tuning_reports/hewiki.damaging.md \
@@ -1860,8 +2032,16 @@ models/hrwiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9207264632974149" \
 		--center --scale > $@
 
+stats/hrwiki.reverted.gradient_boosting.model_info.txt: \
+		models/hrwiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+hrwiki_reverted_model: \
+	models/hrwiki.reverted.gradient_boosting.model \
+	stats/hrwiki.reverted.gradient_boosting.model_info.txt
+
 hrwiki_models: \
-	models/hrwiki.reverted.gradient_boosting.model
+	hrwiki_reverted_model
 
 hrwiki_tuning_reports: \
 	tuning_reports/hrwiki.reverted.md
@@ -1941,8 +2121,16 @@ models/huwiki.reverted.rf.model: \
 		--pop-rate "false=0.9851874168361326" \
 		--center --scale > $@
 
+stats/huwiki.reverted.rf.model_info.txt: \
+		models/huwiki.reverted.rf.model
+	revscoring model_info $< > $@
+
+huwiki_reverted_model: \
+	models/huwiki.reverted.rf.model \
+	stats/huwiki.reverted.rf.model_info.txt
+
 huwiki_models: \
-	models/huwiki.reverted.rf.model
+	huwiki_reverted_model
 
 huwiki_tuning_reports: \
 	tuning_reports/huwiki.reverted.md
@@ -2012,8 +2200,16 @@ models/idwiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9772738639432647" \
 		--center --scale > $@
 
+stats/idwiki.reverted.gradient_boosting.model_info.txt: \
+		models/idwiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+idwiki_reverted_model: \
+	models/idwiki.reverted.gradient_boosting.model \
+	stats/idwiki.reverted.gradient_boosting.model_info.txt
+
 idwiki_models: \
-	models/idwiki.reverted.gradient_boosting.model
+	idwiki_reverted_model
 
 idwiki_tuning_reports: \
 	tuning_reports/idwiki.reverted.md
@@ -2088,8 +2284,16 @@ models/iswiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9188459422971149" \
 		--center --scale > $@
 
+stats/iswiki.reverted.gradient_boosting.model_info.txt: \
+		models/iswiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+iswiki_reverted_model: \
+	models/iswiki.reverted.gradient_boosting.model \
+	stats/iswiki.reverted.gradient_boosting.model_info.txt
+
 iswiki_models: \
-	models/iswiki.reverted.gradient_boosting.model
+	iswiki_reverted_model
 
 iswiki_tuning_reports: \
 	tuning_reports/iswiki.reverted.md
@@ -2159,8 +2363,16 @@ models/itwiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9537111738604276" \
 		--center --scale > $@
 
+stats/itwiki.reverted.gradient_boosting.model_info.txt: \
+		models/itwiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+itwiki_reverted_model: \
+	models/itwiki.reverted.gradient_boosting.model \
+	stats/itwiki.reverted.gradient_boosting.model_info.txt
+
 itwiki_models: \
-	models/itwiki.reverted.gradient_boosting.model
+	itwiki_reverted_model
 
 itwiki_tuning_reports: \
 	tuning_reports/itwiki.reverted.md
@@ -2231,8 +2443,16 @@ models/jawiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9674305485909136" \
 		--center --scale > $@
 
+stats/jawiki.reverted.gradient_boosting.model_info.txt: \
+		models/jawiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+jawiki_reverted_model: \
+	models/jawiki.reverted.gradient_boosting.model \
+	stats/jawiki.reverted.gradient_boosting.model_info.txt
+
 jawiki_models: \
-	models/jawiki.reverted.gradient_boosting.model
+	jawiki_reverted_model
 
 jawiki_tuning_reports: \
 	tuning_reports/jawiki.reverted.md
@@ -2303,8 +2523,16 @@ models/kowiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9528287729478265" \
 		--center --scale > $@
 
+stats/kowiki.reverted.gradient_boosting.model_info.txt: \
+		models/kowiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+kowiki_reverted_model: \
+	models/kowiki.reverted.gradient_boosting.model \
+	stats/kowiki.reverted.gradient_boosting.model_info.txt
+
 kowiki_models: \
-	models/kowiki.reverted.gradient_boosting.model
+	kowiki_reverted_model
 
 kowiki_tuning_reports: \
 	tuning_reports/kowiki.reverted.md
@@ -2414,6 +2642,14 @@ models/nlwiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9493191358656701" \
 		--center --scale > $@
 
+stats/nlwiki.damaging.gradient_boosting.model_info.txt: \
+		models/nlwiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+nlwiki_damaging_model: \
+	models/nlwiki.damaging.gradient_boosting.model \
+	stats/nlwiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/nlwiki.goodfaith.md: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
@@ -2446,9 +2682,17 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.03537421930992113" \
 		--center --scale > $@
 
+stats/nlwiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/nlwiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+nlwiki_goodfaith_model: \
+	models/nlwiki.goodfaith.gradient_boosting.model \
+	stats/nlwiki.goodfaith.gradient_boosting.model_info.txt
+
 nlwiki_models: \
-	models/nlwiki.damaging.gradient_boosting.model \
-	models/nlwiki.goodfaith.gradient_boosting.model
+	nlwiki_damaging_model \
+	nlwiki_goodfaith_model
 
 nlwiki_tuning_reports: \
 	tuning_reports/nlwiki.damaging.md \
@@ -2529,8 +2773,16 @@ models/nowiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9809384604603202" \
 		--center --scale > $@
 
+stats/nowiki.reverted.gradient_boosting.model_info.txt: \
+		models/nowiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+nowiki_reverted_model: \
+	models/nowiki.reverted.gradient_boosting.model \
+	stats/nowiki.reverted.gradient_boosting.model_info.txt
+
 nowiki_models: \
-	models/nowiki.reverted.gradient_boosting.model
+	nowiki_reverted_model
 
 nowiki_tuning_reports: \
 	tuning_reports/nowiki.reverted.md
@@ -2588,6 +2840,14 @@ models/ptwiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9310397013570095" \
 		--center --scale > $@
 
+stats/ptwiki.damaging.gradient_boosting.model_info.txt: \
+		models/ptwiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+ptwiki_damaging_model: \
+	models/ptwiki.damaging.gradient_boosting.model \
+	stats/ptwiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/ptwiki.goodfaith.md: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
@@ -2620,9 +2880,17 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.06023306260404582" \
 		--center --scale > $@
 
+stats/ptwiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/ptwiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+ptwiki_goodfaith_model: \
+	models/ptwiki.goodfaith.gradient_boosting.model \
+	stats/ptwiki.goodfaith.gradient_boosting.model_info.txt
+
 ptwiki_models: \
-	models/ptwiki.damaging.gradient_boosting.model \
-	models/ptwiki.goodfaith.gradient_boosting.model
+	ptwiki_damaging_model \
+	ptwiki_goodfaith_model
 
 ptwiki_tuning_reports: \
 	tuning_reports/ptwiki.damaging.md \
@@ -2703,6 +2971,14 @@ models/rowiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9504301720688275" \
 		--center --scale > $@
 
+stats/rowiki.damaging.gradient_boosting.model_info.txt: \
+		models/rowiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+rowiki_damaging_model: \
+	models/rowiki.damaging.gradient_boosting.model \
+	stats/rowiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/rowiki.goodfaith.md: \
 		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
@@ -2735,9 +3011,17 @@ models/rowiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.030062024809923926" \
 		--center --scale > $@
 
+stats/rowiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/rowiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+rowiki_goodfaith_model: \
+	models/rowiki.goodfaith.gradient_boosting.model \
+	stats/rowiki.goodfaith.gradient_boosting.model_info.txt
+
 rowiki_models: \
-	models/rowiki.damaging.gradient_boosting.model \
-	models/rowiki.goodfaith.gradient_boosting.model
+	rowiki_damaging_model \
+	rowiki_goodfaith_model
 
 rowiki_tuning_reports: \
 	tuning_reports/rowiki.damaging.md \
@@ -2818,6 +3102,14 @@ models/ruwiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9465208143421453" \
 		--center --scale > $@
 
+stats/ruwiki.damaging.gradient_boosting.model_info.txt: \
+		models/ruwiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+ruwiki_damaging_model: \
+	models/ruwiki.damaging.gradient_boosting.model \
+	stats/ruwiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/ruwiki.goodfaith.md: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
@@ -2850,9 +3142,17 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.028613390053681798" \
 		--center --scale > $@
 
+stats/ruwiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/ruwiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+ruwiki_goodfaith_model: \
+	models/ruwiki.goodfaith.gradient_boosting.model \
+	stats/ruwiki.goodfaith.gradient_boosting.model_info.txt
+
 ruwiki_models: \
-	models/ruwiki.damaging.gradient_boosting.model \
-	models/ruwiki.goodfaith.gradient_boosting.model
+	ruwiki_damaging_model \
+	ruwiki_goodfaith_model
 
 ruwiki_tuning_reports: \
 	tuning_reports/ruwiki.damaging.md \
@@ -2934,6 +3234,14 @@ models/sqwiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9712971297129713" \
 		--center --scale > $@
 
+stats/sqwiki.damaging.gradient_boosting.model_info.txt: \
+		models/sqwiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+sqwiki_damaging_model: \
+	models/sqwiki.damaging.gradient_boosting.model \
+	stats/sqwiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/sqwiki.goodfaith.md: \
 		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
@@ -2966,9 +3274,17 @@ models/sqwiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.023652365236523698" \
 		--center --scale > $@
 
+stats/sqwiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/sqwiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+sqwiki_goodfaith_model: \
+	models/sqwiki.goodfaith.gradient_boosting.model \
+	stats/sqwiki.goodfaith.gradient_boosting.model_info.txt
+
 sqwiki_models: \
-	models/sqwiki.damaging.gradient_boosting.model \
-	models/sqwiki.goodfaith.gradient_boosting.model
+	sqwiki_damaging_model \
+	sqwiki_goodfaith_model
 
 sqwiki_tuning_reports: \
 	tuning_reports/sqwiki.damaging.md \
@@ -3088,6 +3404,14 @@ models/svwiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.974790926727537" \
 		--center --scale > $@
 
+stats/svwiki.damaging.gradient_boosting.model_info.txt: \
+		models/svwiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+svwiki_damaging_model: \
+	models/svwiki.damaging.gradient_boosting.model \
+	stats/svwiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/svwiki.goodfaith.md: \
 		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
 	cat $< | \
@@ -3120,9 +3444,17 @@ models/svwiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.017708713131306286" \
 		--center --scale > $@
 
+stats/svwiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/svwiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+svwiki_goodfaith_model: \
+	models/svwiki.goodfaith.gradient_boosting.model \
+	stats/svwiki.goodfaith.gradient_boosting.model_info.txt
+
 svwiki_models: \
-	models/svwiki.damaging.gradient_boosting.model \
-	models/svwiki.goodfaith.gradient_boosting.model
+	svwiki_damaging_model \
+	svwiki_goodfaith_model
 
 svwiki_tuning_reports: \
 	tuning_reports/svwiki.damaging.md \
@@ -3198,8 +3530,16 @@ models/tawiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9840958276712467" \
 		--center --scale > $@
 
+stats/tawiki.reverted.gradient_boosting.model_info.txt: \
+		models/tawiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+tawiki_reverted_model: \
+	models/tawiki.reverted.gradient_boosting.model \
+	stats/tawiki.reverted.gradient_boosting.model_info.txt
+
 tawiki_models: \
-	models/tawiki.reverted.gradient_boosting.model
+	tawiki_reverted_model
 
 tawiki_tuning_reports: \
 	tuning_reports/tawiki.reverted.md
@@ -3279,6 +3619,14 @@ models/trwiki.damaging.gradient_boosting.model: \
 		--pop-rate "false=0.9504985574733006" \
 		--center --scale > $@
 
+stats/trwiki.damaging.gradient_boosting.model_info.txt: \
+		models/trwiki.damaging.gradient_boosting.model
+	revscoring model_info $< > $@
+
+trwiki_damaging_model: \
+	models/trwiki.damaging.gradient_boosting.model \
+	stats/trwiki.damaging.gradient_boosting.model_info.txt
+
 tuning_reports/trwiki.goodfaith.md: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
@@ -3311,9 +3659,17 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		--pop-rate "false=0.04611023940881709" \
 		--center --scale > $@
 
+stats/trwiki.goodfaith.gradient_boosting.model_info.txt: \
+		models/trwiki.goodfaith.gradient_boosting.model
+	revscoring model_info $< > $@
+
+trwiki_goodfaith_model: \
+	models/trwiki.goodfaith.gradient_boosting.model \
+	stats/trwiki.goodfaith.gradient_boosting.model_info.txt
+
 trwiki_models: \
-	models/trwiki.damaging.gradient_boosting.model \
-	models/trwiki.goodfaith.gradient_boosting.model
+	trwiki_damaging_model \
+	trwiki_goodfaith_model
 
 trwiki_tuning_reports: \
 	tuning_reports/trwiki.damaging.md \
@@ -3384,8 +3740,16 @@ models/ukwiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9781223342867178" \
 		--center --scale > $@
 
+stats/ukwiki.reverted.gradient_boosting.model_info.txt: \
+		models/ukwiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+ukwiki_reverted_model: \
+	models/ukwiki.reverted.gradient_boosting.model \
+	stats/ukwiki.reverted.gradient_boosting.model_info.txt
+
 ukwiki_models: \
-	models/ukwiki.reverted.gradient_boosting.model
+	ukwiki_reverted_model
 
 ukwiki_tuning_reports: \
 	tuning_reports/ukwiki.reverted.md
@@ -3500,8 +3864,16 @@ models/viwiki.reverted.gradient_boosting.model: \
 		--pop-rate "false=0.9807889570060504" \
 		--center --scale > $@
 
+stats/viwiki.reverted.gradient_boosting.model_info.txt: \
+		models/viwiki.reverted.gradient_boosting.model
+	revscoring model_info $< > $@
+
+viwiki_reverted_model: \
+	models/viwiki.reverted.gradient_boosting.model \
+	stats/viwiki.reverted.gradient_boosting.model_info.txt
+
 viwiki_models: \
-	models/viwiki.reverted.gradient_boosting.model
+	viwiki_reverted_model
 
 viwiki_tuning_reports: \
 	tuning_reports/viwiki.reverted.md

@@ -169,11 +169,15 @@ models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model: \
 stats/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model_info.txt: \
 		models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model
 	revscoring model_info $< > $@
+
+{{ wiki.name }}_{{ model_name }}_model: \
+	models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model \
+	stats/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model_info.txt
 {% endfor %}
 
 {{ wiki.name }}_models:{% if wiki.models %} \
 {% for model_name, model in wiki.models.items() %}
-	models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model{% if not loop.last %} \{% endif %}
+	{{ wiki.name }}_{{ model_name }}_model{% if not loop.last %} \{% endif %}
 
 {% endfor %}
 {% endif %}
