@@ -16,26 +16,6 @@ tuning_reports: \
 
 	{% endfor %}
 
-test_statistics = \
-		-s 'table' -s 'accuracy' -s 'precision' -s 'recall' \
-		-s 'pr' -s 'roc' \
-		-s 'recall_at_fpr(max_fpr=0.10)' \
-		-s 'filter_rate_at_recall(min_recall=0.9)' \
-		-s 'filter_rate_at_recall(min_recall=0.75)' \
-		-s 'recall_at_precision(min_precision=0.995)' \
-		-s 'recall_at_precision(min_precision=0.99)' \
-		-s 'recall_at_precision(min_precision=0.98)' \
-		-s 'recall_at_precision(min_precision=0.90)' \
-		-s 'recall_at_precision(min_precision=0.75)' \
-		-s 'recall_at_precision(min_precision=0.60)' \
-		-s 'recall_at_precision(min_precision=0.45)' \
-		-s 'recall_at_precision(min_precision=0.15)'
-
-major_minor = 0.3
-reverted_major_minor = $(major_minor)
-damaging_major_minor = $(major_minor)
-goodfaith_major_minor = $(major_minor)
-
 include  Makefile.manual
 
 
@@ -185,6 +165,10 @@ models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model: \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
+
+stats/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model_info.txt: \
+		models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model
+	revscoring model_info $< > $@
 {% endfor %}
 
 {{ wiki.name }}_models:{% if wiki.models %} \
