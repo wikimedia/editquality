@@ -17,7 +17,7 @@ def load_config(config_dir=None):
     wiki_defaults = yaml.safe_load(open(config_dir + path.format('wiki'), "r"))
     manual_wikis = yaml.safe_load(open(config_dir + '/manual_wikis.yaml', "r"))
 
-    all_files = glob.glob(config_dir + "/wikis/*.yaml")
+    all_files = sorted(glob.glob(config_dir + "/wikis/*.yaml"))
     wikis = [yaml.safe_load(open(f, "r")) for f in all_files]
     wiki_names = [i['name'] for i in wikis] + manual_wikis['manual_wikis']
     wiki_names.sort()
