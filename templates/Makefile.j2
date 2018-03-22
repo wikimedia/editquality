@@ -152,7 +152,7 @@ models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model: \
 {% else %}
 		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
 {% endif %}
-	cat {% if model.datasets %}$^{% else %}$<{% endif %} | \
+	cat $^ | \
 	revscoring cv_train \
 		revscoring.scoring.models.{{ model.class_name }} \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
@@ -165,19 +165,13 @@ models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model: \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
-
-model_info/{{ wiki.name }}.{{ model_name }}.md: \
-		models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model
-	revscoring model_info $< > $@
-
-{{ wiki.name }}_{{ model_name }}_model: \
-	models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model \
-	model_info/{{ wiki.name }}.{{ model_name }}.md
+	
+	revscoring model_info $@ > model_info/{{ wiki.name }}.{{ model_name }}.md
 {% endfor %}
 
 {{ wiki.name }}_models:{% if wiki.models %} \
 {% for model_name, model in wiki.models.items() %}
-	{{ wiki.name }}_{{ model_name }}_model{% if not loop.last %} \{% endif %}
+	models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model{% if not loop.last %} \{% endif %}
 
 {% endfor %}
 {% endif %}
