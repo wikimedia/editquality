@@ -6,10 +6,9 @@ consumers, as much as possible.
 """
 import collections
 import copy
+import deep_merge
 import glob
 import yaml
-
-from .codegen import util
 
 
 def load_config(config_dir=None):
@@ -36,8 +35,7 @@ def load_config(config_dir=None):
 
 
 def load_wiki(wiki, config):
-    default_wiki = copy.deepcopy(config["wiki_defaults"])
-    wiki = util.deep_update(default_wiki, wiki)
+    wiki = deep_merge.merge(config["wiki_defaults"], wiki)
     result = collections.OrderedDict()
     if 'models' not in wiki:
         wiki['models'] = {}
@@ -53,7 +51,7 @@ def load_wiki(wiki, config):
         # Do not apply default configs for RandomForest models
         # Because it doesn't make sense for them
         if not model.get('rf'):
-            model = util.deep_update(model_defaults, model)
+            model = deep_merge.merge(model_defaults, model)
 
         for case in model['tuning_params']:
             value = model['tuning_params'][case]
