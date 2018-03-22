@@ -166,13 +166,13 @@ models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model: \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
 
-stats/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model_info.txt: \
+model_info/{{ wiki.name }}.{{ model_name }}.md: \
 		models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model
 	revscoring model_info $< > $@
 
 {{ wiki.name }}_{{ model_name }}_model: \
 	models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model \
-	stats/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model_info.txt
+	model_info/{{ wiki.name }}.{{ model_name }}.md
 {% endfor %}
 
 {{ wiki.name }}_models:{% if wiki.models %} \
