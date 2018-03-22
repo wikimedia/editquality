@@ -1,0 +1,289 @@
+{
+    "model_defaults": {
+        "build_number": 0,
+        "tuning_params": {
+            "learning_rate": 0.01,
+            "max_depth": 7,
+            "max_features": "log2",
+            "n_estimators": 700
+        }
+    },
+    "wiki_defaults": {
+        "balanced_5k_set_for_review": true,
+        "default_sample": "20k_2016",
+        "default_sample_bigger_sample": "60k_2018",
+        "host": "ar.wikipedia.org",
+        "label": "Arabic Wikipedia",
+        "merged_samples": {
+            "20k_2015": {
+                "autolabeled_revisions": "20k_2015",
+                "human_labeled_revisions": "5k_2015"
+            }
+        },
+        "models": {
+            "reverted": {
+                "algorithm": "gradient_boosting",
+                "build_number": 0,
+                "class_name": "GradientBoosting",
+                "label": "reverted_for_damage",
+                "label_weight": "true=$(reverted_weight)",
+                "tuning_params": {
+                    "learning_rate": 0.01,
+                    "max_depth": 7,
+                    "max_features": "\"log2\"",
+                    "n_estimators": 700
+                }
+            }
+        },
+        "name": "arwiki",
+        "review_sample": "5k_2016",
+        "sample_to_build_review": "60k_2018",
+        "samples": {
+            "60k_2018": {
+                "quarry_page": "https://quarry.wmflabs.org/query/24777",
+                "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
+            },
+            "20k_2015": {
+                "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
+            },
+            "20k_2016": {
+                "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
+            },
+            "5k_2015": {
+                "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
+            }
+        },
+        "trusted_groups": [
+            "sysop",
+            "oversight",
+            "editor",
+            "bot",
+            "rollbacker",
+            "checkuser",
+            "abusefilter",
+            "bureaucrat",
+            "bot",
+            "sysop",
+            "bureaucrat",
+            "sysop",
+            "oversight",
+            "bot",
+            "rollbacker",
+            "checkuser",
+            "abusefilter",
+            "bureaucrat"
+        ],
+        "unbalanced_5k_set_for_review": true
+    },
+    "wiki_names": [
+        "arwiki",
+        "bawiki",
+        "fiwiki",
+        "hewiki",
+        "plwiki",
+        "wikidatawiki"
+    ],
+    "wikis": [
+        {
+            "balanced_5k_set_for_review": true,
+            "default_sample": "20k_2016",
+            "default_sample_bigger_sample": "60k_2018",
+            "host": "ar.wikipedia.org",
+            "label": "Arabic Wikipedia",
+            "merged_samples": {
+                "20k_2015": {
+                    "autolabeled_revisions": "20k_2015",
+                    "human_labeled_revisions": "5k_2015"
+                }
+            },
+            "models": {
+                "reverted": {
+                    "algorithm": "gradient_boosting",
+                    "build_number": 0,
+                    "class_name": "GradientBoosting",
+                    "label": "reverted_for_damage",
+                    "label_weight": "true=$(reverted_weight)",
+                    "tuning_params": {
+                        "learning_rate": 0.01,
+                        "max_depth": 7,
+                        "max_features": "\"log2\"",
+                        "n_estimators": 700
+                    }
+                }
+            },
+            "name": "arwiki",
+            "review_sample": "5k_2016",
+            "sample_to_build_review": "60k_2018",
+            "samples": {
+                "60k_2018": {
+                    "quarry_page": "https://quarry.wmflabs.org/query/24777",
+                    "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
+                },
+                "20k_2015": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
+                },
+                "20k_2016": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
+                },
+                "5k_2015": {
+                    "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
+                }
+            },
+            "trusted_groups": [
+                "sysop",
+                "oversight",
+                "editor",
+                "bot",
+                "rollbacker",
+                "checkuser",
+                "abusefilter",
+                "bureaucrat",
+                "bot",
+                "sysop",
+                "bureaucrat",
+                "sysop",
+                "oversight",
+                "bot",
+                "rollbacker",
+                "checkuser",
+                "abusefilter",
+                "bureaucrat"
+            ],
+            "unbalanced_5k_set_for_review": true
+        },
+        {
+            "balanced_5k_set_for_review": true,
+            "default_sample": "20k_2016",
+            "default_sample_bigger_sample": "60k_2018",
+            "host": "ar.wikipedia.org",
+            "label": "Arabic Wikipedia",
+            "merged_samples": {
+                "20k_2015": {
+                    "autolabeled_revisions": "20k_2015",
+                    "human_labeled_revisions": "5k_2015"
+                }
+            },
+            "models": {
+                "reverted": {
+                    "algorithm": "gradient_boosting",
+                    "build_number": 0,
+                    "class_name": "GradientBoosting",
+                    "label": "reverted_for_damage",
+                    "label_weight": "true=$(reverted_weight)",
+                    "tuning_params": {
+                        "learning_rate": 0.01,
+                        "max_depth": 7,
+                        "max_features": "\"log2\"",
+                        "n_estimators": 700
+                    }
+                }
+            },
+            "name": "arwiki",
+            "review_sample": "5k_2016",
+            "sample_to_build_review": "60k_2018",
+            "samples": {
+                "60k_2018": {
+                    "quarry_page": "https://quarry.wmflabs.org/query/24777",
+                    "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
+                },
+                "20k_2015": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
+                },
+                "20k_2016": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
+                },
+                "5k_2015": {
+                    "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
+                }
+            },
+            "trusted_groups": [
+                "sysop",
+                "oversight",
+                "editor",
+                "bot",
+                "rollbacker",
+                "checkuser",
+                "abusefilter",
+                "bureaucrat",
+                "bot",
+                "sysop",
+                "bureaucrat",
+                "sysop",
+                "oversight",
+                "bot",
+                "rollbacker",
+                "checkuser",
+                "abusefilter",
+                "bureaucrat"
+            ],
+            "unbalanced_5k_set_for_review": true
+        },
+        {
+            "balanced_5k_set_for_review": true,
+            "default_sample": "20k_2016",
+            "default_sample_bigger_sample": "60k_2018",
+            "host": "ar.wikipedia.org",
+            "label": "Arabic Wikipedia",
+            "merged_samples": {
+                "20k_2015": {
+                    "autolabeled_revisions": "20k_2015",
+                    "human_labeled_revisions": "5k_2015"
+                }
+            },
+            "models": {
+                "reverted": {
+                    "algorithm": "gradient_boosting",
+                    "build_number": 0,
+                    "class_name": "GradientBoosting",
+                    "label": "reverted_for_damage",
+                    "label_weight": "true=$(reverted_weight)",
+                    "tuning_params": {
+                        "learning_rate": 0.01,
+                        "max_depth": 7,
+                        "max_features": "\"log2\"",
+                        "n_estimators": 700
+                    }
+                }
+            },
+            "name": "arwiki",
+            "review_sample": "5k_2016",
+            "sample_to_build_review": "60k_2018",
+            "samples": {
+                "60k_2018": {
+                    "quarry_page": "https://quarry.wmflabs.org/query/24777",
+                    "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
+                },
+                "20k_2015": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
+                },
+                "20k_2016": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
+                },
+                "5k_2015": {
+                    "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
+                }
+            },
+            "trusted_groups": [
+                "sysop",
+                "oversight",
+                "editor",
+                "bot",
+                "rollbacker",
+                "checkuser",
+                "abusefilter",
+                "bureaucrat",
+                "bot",
+                "sysop",
+                "bureaucrat",
+                "sysop",
+                "oversight",
+                "bot",
+                "rollbacker",
+                "checkuser",
+                "abusefilter",
+                "bureaucrat"
+            ],
+            "unbalanced_5k_set_for_review": true
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+trusted_groups:
+    - sysop
+    - oversight
+    - editor
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
