@@ -1,3 +1,4 @@
+deep_merge
 docopt==0.6.2
 jinja2
 mwapi >= 0.5.1, < 0.5.999

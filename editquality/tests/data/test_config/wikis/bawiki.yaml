@@ -1,0 +1,20 @@
+name: bawiki
+label: Bosnian Wikipedia
+host: ba.wikipedia.org
+
+samples:
+    60k_2018:
+        quarry_url: "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/24777"
+
+unbalanced_5k_set_for_review: true
+
+default_sample: 60k_2018
+review_sample: 5k_2018
+
+#models: {}
+
+trusted_groups:
+    - bot
+    - sysop
+    - bureaucrat
