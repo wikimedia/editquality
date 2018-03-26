@@ -7,6 +7,7 @@ Code-generate Makefile from template and configuration
                  [--config=<path>]
                  [--compare-to=<path>]
                  [--compare-section=<name>]...
+                 [--main=<filename>]
                  [--output=<path>]
                  [--templates=<path>]
                  [--debug]
@@ -19,6 +20,8 @@ Code-generate Makefile from template and configuration
                              is given in English, for example
                              "Spanish Wikibooks"
                             Multiple wikis can be separated by a comma.
+    --main=<filename>       Override to use a main template other than the default.
+                            [default: Makefile.j2]
     --output=<path>         Where to write the Makefile output.
                             [default: <stdout>]
     --templates=<path>      Directory to search for input templates.
@@ -38,10 +41,12 @@ Code-generate Makefile from template and configuration
 #   Original population rates; how we've distorted them.
 
 import logging
+import os.path
 import sys
 
 import docopt
 
+from .. import config
 from ..codegen import differ, generate
 
 logger = logging.getLogger(__name__)
@@ -62,8 +67,16 @@ def main(argv=None):
         else open(args["--output"], "w")
 
     templates_path = args["--templates"]
+    main_template_path = args["--main"]
+    if not os.path.isabs(main_template_path):
+        # Join a filename to the default templates dir.
+        main_template_path = os.path.join(templates_path, main_template_path)
+    with open(main_template_path, "r") as f:
+        main_template = f.read()
 
-    output = generate.generate(config_path, templates_path)
+    variables = config.load_config(config_path)
+
+    output = generate.generate(variables, templates_path, main_template)
     output_f.write(output)
 
     if args['--compare-to'] is not None:
