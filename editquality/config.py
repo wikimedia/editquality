@@ -47,12 +47,11 @@ def load_wiki(wiki, config):
         if model_name not in wiki['models']:
             continue
         model = wiki["models"][model_name]
-        model_defaults = copy.deepcopy(config["model_defaults"])
 
         # Do not apply default configs for RandomForest models
         # Because it doesn't make sense for them
         if not model.get('rf'):
-            model = deep_merge.merge({}, model_defaults, model)
+            model = deep_merge.merge({}, config["model_defaults"], model)
 
         for case in model['tuning_params']:
             value = model['tuning_params'][case]
