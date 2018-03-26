@@ -6,7 +6,6 @@ samples:
     20k_2015:
         labeling_campaign: "https://labels.wmflabs.org/campaigns/ptwiki/7/"
 
-wikilabels_sample: 20k_2015
 default_sample: 20k_2015
 review_sample: 20k_2015
 

@@ -8,7 +8,6 @@ samples:
     20k_2015:
         quarry_url: "http://quarry.wmflabs.org/run/50110/output/0/json-lines?download=true"
 
-wikilabels_sample: 5k_2015
 default_sample: 20k_2015
 review_sample: 5k_2015
 
