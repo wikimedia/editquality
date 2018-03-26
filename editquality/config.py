@@ -1,14 +1,14 @@
 """
-TODO:
-* Move editquality-specific logic out of this file and into a modular
-preprocessing hook.
+Loads editquality config, mainly used as template parameters.
+
+The responsibility of this process is to simplify the template's work and other
+consumers, as much as possible.
 """
 import collections
 import copy
+import deep_merge
 import glob
 import yaml
-
-from . import util
 
 
 def load_config(config_dir=None):
@@ -17,7 +17,7 @@ def load_config(config_dir=None):
     wiki_defaults = yaml.safe_load(open(config_dir + path.format('wiki'), "r"))
     manual_wikis = yaml.safe_load(open(config_dir + '/manual_wikis.yaml', "r"))
 
-    all_files = glob.glob(config_dir + "/wikis/*.yaml")
+    all_files = sorted(glob.glob(config_dir + "/wikis/*.yaml"))
     wikis = [yaml.safe_load(open(f, "r")) for f in all_files]
     wiki_names = [i['name'] for i in wikis] + manual_wikis['manual_wikis']
     wiki_names.sort()
@@ -35,8 +35,7 @@ def load_config(config_dir=None):
 
 
 def load_wiki(wiki, config):
-    default_wiki = copy.deepcopy(config["wiki_defaults"])
-    wiki = util.deep_update(default_wiki, wiki)
+    wiki = deep_merge.merge(config["wiki_defaults"], wiki)
     result = collections.OrderedDict()
     if 'models' not in wiki:
         wiki['models'] = {}
@@ -52,7 +51,7 @@ def load_wiki(wiki, config):
         # Do not apply default configs for RandomForest models
         # Because it doesn't make sense for them
         if not model.get('rf'):
-            model = util.deep_update(model_defaults, model)
+            model = deep_merge.merge(model_defaults, model)
 
         for case in model['tuning_params']:
             value = model['tuning_params'][case]
