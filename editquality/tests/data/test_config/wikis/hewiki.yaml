@@ -1,0 +1,44 @@
+name: hewiki
+label: Hebrew Wikipedia
+host: he.wikipedia.org
+
+samples:
+    5k_2015:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/hewiki/25/"
+    20k_2015:
+        quarry_url: "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
+
+balanced_5k_set_for_review: true
+
+default_sample: 20k_2015
+review_sample: 5k_2015
+
+merged_samples:
+    20k_2015:
+        autolabeled_revisions: "20k_2015"
+        human_labeled_revisions: "5k_2015"
+
+models:
+    damaging:
+        tuning_params:
+            criterion: "entropy"
+            n_estimators: 320
+            max_features: "log2"
+            min_samples_leaf: 1
+        pop_rate_true: 0.046281731975314835
+        build_number: 0
+        rf: true
+    goodfaith:
+        tuning_params:
+            learning_rate: 0.1
+            n_estimators: 300
+        pop_rate_true: 0.9718244945060459
+
+trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat

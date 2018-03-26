@@ -1,12 +1,18 @@
 import jinja2
 
-from . import config
 
+def generate(variables, templates_path, main_template):
+    """
+    :Parameters:
+        variables : dict
+            Template parameters, passed through.
+        templates_path : str
+            Root directory for transclusions.
+        main_template : str
+            Contents of the main template.
 
-def generate(config_path, templates_path):
-    variables = config.load_config(config_path)
-
-    # TODO: map config into domain-specific preprocessed values
+    Returns the rendered output.
+    """
 
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(templates_path),
@@ -14,6 +20,5 @@ def generate(config_path, templates_path):
         trim_blocks=True
     )
 
-    # TODO: main input template should be configuration and parameter
-    template = env.get_template("Makefile.j2")
+    template = env.from_string(main_template)
     return template.render(variables) + "\n"

@@ -1,0 +1,15 @@
+name: arwiki
+label: Arabic Wikipedia
+host: ar.wikipedia.org
+
+samples:
+    20k_2016:
+        quarry_url: "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
+
+balanced_5k_set_for_review: true
+
+default_sample: 20k_2016
+review_sample: 5k_2016
+
+models:
+    - reverted
