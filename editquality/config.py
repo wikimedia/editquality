@@ -35,7 +35,8 @@ def load_config(config_dir=None):
 
 
 def load_wiki(wiki, config):
-    wiki = deep_merge.merge({}, config["wiki_defaults"], wiki)
+    wiki = deep_merge.merge({}, config["wiki_defaults"], wiki,
+                            merge_lists=deep_merge.overwrite)
     result = collections.OrderedDict()
     if 'models' not in wiki:
         wiki['models'] = {}
