@@ -3,17 +3,35 @@ label: Arabic Wikipedia
 host: ar.wikipedia.org
 
 samples:
-    20k_2016:
-        quarry_url: "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
+  5k_2016:
+    labeling_campaign: "https://labels.wmflabs.org/campaigns/arwiki/30/"
+  20k_2016:
+    quarry_url: "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
 
 balanced_5k_set_for_review: true
 
 default_sample: 20k_2016
 review_sample: 5k_2016
 
+merged_samples:
+  20k_2016:
+    autolabeled_revisions: "20k_2016"
+    human_labeled_revisions: "5k_2016"
+
+
+
 models:
-    reverted:
-        tuning_params:
-            max_depth: 5
-        pop_rate_true: 0.035186595582635184
-        build_number: 1
+  damaging:
+    tuning_params:
+      learning_rate: 0.01
+      max_depth: 3
+      n_estimators: 100
+      max_features: "log2"
+    pop_rate_true: 0.021427
+  goodfaith:
+    tuning_params:
+      learning_rate: 0.5
+      n_estimators: 300
+      max_features: "log2"
+      max_depth: 7
+    pop_rate_true: 0.993861
