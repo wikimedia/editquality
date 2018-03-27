@@ -1,33 +1,6 @@
 {
-    "model_defaults": {
-        "tuning_params": {
-            "max_features": "log2",
-            "learning_rate": 0.01,
-            "n_estimators": 700,
-            "max_depth": 7
-        },
-        "build_number": 0
-    },
-    "wiki_names": [
-        "arwiki",
-        "bawiki",
-        "fiwiki",
-        "hewiki",
-        "plwiki",
-        "wikidatawiki"
-    ],
     "wikis": [
         {
-            "name": "arwiki",
-            "host": "ar.wikipedia.org",
-            "sample_to_build_review": "20k_2016",
-            "default_sample_bigger_sample": "20k_2016",
-            "samples": {
-                "20k_2016": {
-                    "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
-                }
-            },
-            "balanced_5k_set_for_review": true,
             "trusted_groups": [
                 "sysop",
                 "oversight",
@@ -38,70 +11,58 @@
                 "abusefilter",
                 "bureaucrat"
             ],
-            "label": "Arabic Wikipedia",
-            "default_sample": "20k_2016",
             "models": {
                 "reverted": {
+                    "class_name": "GradientBoosting",
+                    "build_number": 0,
+                    "label_weight": "true=$(reverted_weight)",
+                    "algorithm": "gradient_boosting",
                     "tuning_params": {
                         "max_depth": 7,
                         "learning_rate": 0.01,
-                        "n_estimators": 700,
-                        "max_features": "\"log2\""
+                        "max_features": "\"log2\"",
+                        "n_estimators": 700
                     },
-                    "build_number": 0,
-                    "algorithm": "gradient_boosting",
-                    "label_weight": "true=$(reverted_weight)",
-                    "class_name": "GradientBoosting",
                     "label": "reverted_for_damage"
                 }
             },
-            "review_sample": "5k_2016"
+            "sample_to_build_review": "20k_2016",
+            "review_sample": "5k_2016",
+            "default_sample": "20k_2016",
+            "host": "ar.wikipedia.org",
+            "balanced_5k_set_for_review": true,
+            "label": "Arabic Wikipedia",
+            "default_sample_bigger_sample": "20k_2016",
+            "samples": {
+                "20k_2016": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
+                }
+            },
+            "name": "arwiki"
         },
         {
-            "name": "bawiki",
+            "trusted_groups": [
+                "bot",
+                "sysop",
+                "bureaucrat"
+            ],
+            "models": {},
+            "sample_to_build_review": "60k_2018",
+            "review_sample": "5k_2018",
+            "default_sample": "60k_2018",
             "host": "ba.wikipedia.org",
-            "unbalanced_5k_set_for_review": true,
             "default_sample_bigger_sample": "60k_2018",
+            "label": "Bosnian Wikipedia",
+            "unbalanced_5k_set_for_review": true,
             "samples": {
                 "60k_2018": {
                     "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true",
                     "quarry_page": "https://quarry.wmflabs.org/query/24777"
                 }
             },
-            "trusted_groups": [
-                "bot",
-                "sysop",
-                "bureaucrat"
-            ],
-            "label": "Bosnian Wikipedia",
-            "sample_to_build_review": "60k_2018",
-            "default_sample": "60k_2018",
-            "models": {},
-            "review_sample": "5k_2018"
+            "name": "bawiki"
         },
         {
-            "name": "hewiki",
-            "default_sample": "20k_2015",
-            "default_sample_bigger_sample": "20k_2015",
-            "label": "Hebrew Wikipedia",
-            "host": "he.wikipedia.org",
-            "sample_to_build_review": "20k_2015",
-            "samples": {
-                "20k_2015": {
-                    "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
-                },
-                "5k_2015": {
-                    "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
-                }
-            },
-            "balanced_5k_set_for_review": true,
-            "merged_samples": {
-                "20k_2015": {
-                    "human_labeled_revisions": "5k_2015",
-                    "autolabeled_revisions": "20k_2015"
-                }
-            },
-            "review_sample": "5k_2015",
             "trusted_groups": [
                 "sysop",
                 "oversight",
@@ -113,37 +74,68 @@
             ],
             "models": {
                 "damaging": {
-                    "tuning_params": {
-                        "min_samples_leaf": 1,
-                        "criterion": "\"entropy\"",
-                        "n_estimators": 320,
-                        "max_features": "\"log2\""
-                    },
-                    "build_number": 0,
-                    "algorithm": "rf",
-                    "label_weight": "true=$(damaging_weight)",
                     "class_name": "RandomForest",
+                    "build_number": 0,
+                    "label_weight": "true=$(damaging_weight)",
+                    "algorithm": "rf",
+                    "tuning_params": {
+                        "n_estimators": 320,
+                        "max_features": "\"log2\"",
+                        "min_samples_leaf": 1,
+                        "criterion": "\"entropy\""
+                    },
+                    "label": "damaging",
                     "pop_rate_true": 0.046281731975314835,
-                    "rf": true,
-                    "label": "damaging"
+                    "rf": true
                 },
                 "goodfaith": {
+                    "class_name": "GradientBoosting",
+                    "build_number": 0,
+                    "label_weight": "false=$(goodfaith_weight)",
+                    "algorithm": "gradient_boosting",
                     "tuning_params": {
                         "max_depth": 7,
                         "learning_rate": 0.1,
-                        "n_estimators": 300,
-                        "max_features": "\"log2\""
+                        "max_features": "\"log2\"",
+                        "n_estimators": 300
                     },
-                    "build_number": 0,
-                    "algorithm": "gradient_boosting",
-                    "label_weight": "false=$(goodfaith_weight)",
-                    "class_name": "GradientBoosting",
-                    "pop_rate_true": 0.9718244945060459,
-                    "label": "goodfaith"
+                    "label": "goodfaith",
+                    "pop_rate_true": 0.9718244945060459
                 }
-            }
+            },
+            "label": "Hebrew Wikipedia",
+            "host": "he.wikipedia.org",
+            "balanced_5k_set_for_review": true,
+            "default_sample_bigger_sample": "20k_2015",
+            "samples": {
+                "20k_2015": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
+                },
+                "5k_2015": {
+                    "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
+                }
+            },
+            "name": "hewiki",
+            "merged_samples": {
+                "20k_2015": {
+                    "human_labeled_revisions": "5k_2015",
+                    "autolabeled_revisions": "20k_2015"
+                }
+            },
+            "sample_to_build_review": "20k_2015",
+            "default_sample": "20k_2015",
+            "review_sample": "5k_2015"
         }
     ],
+    "model_defaults": {
+        "build_number": 0,
+        "tuning_params": {
+            "max_depth": 7,
+            "learning_rate": 0.01,
+            "max_features": "log2",
+            "n_estimators": 700
+        }
+    },
     "wiki_defaults": {
         "trusted_groups": [
             "sysop",
@@ -155,5 +147,13 @@
             "abusefilter",
             "bureaucrat"
         ]
-    }
+    },
+    "wiki_names": [
+        "arwiki",
+        "bawiki",
+        "fiwiki",
+        "hewiki",
+        "plwiki",
+        "wikidatawiki"
+    ]
 }
