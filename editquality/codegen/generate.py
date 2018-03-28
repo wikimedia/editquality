@@ -1,5 +1,10 @@
 import jinja2
 
+ALG_FILE_NAME = {
+    "GradientBoosting": "gradient_boosting",
+    "RandomForest": "rf"
+}
+
 
 def generate(variables, templates_path, main_template):
     """
@@ -19,6 +24,12 @@ def generate(variables, templates_path, main_template):
         lstrip_blocks=True,
         trim_blocks=True
     )
+    app.jinja_env.globals.update(norm_alg_filename=norm_alg_filename)
+
 
     template = env.from_string(main_template)
     return template.render(variables) + "\n"
+
+
+def norm_alg_filename(alg_name):
+    return ALG_FILE_NAME[alg_name]
