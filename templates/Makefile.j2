@@ -21,116 +21,80 @@ include  Makefile.manual
 
 {% for wiki in wikis %}
 ############################# {{ wiki.label }} ################################
-{% for sample_name, sample in wiki.samples|dictsort %}
-
+{%if wiki.external_samples%}
+{% for sample_name, sample in wiki.external_samples|dictsort %}
 {% if "quarry_url" in sample %}
 {% if "quarry_page" in sample %}
 # From {{ sample.quarry_page }}
 {% endif %}
-datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json:
+datasets/{{ wiki.name }}.{{ sample_name }}.json:
 	wget -qO- {{ sample.quarry_url }} > $@
-
-datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
-		datasets/{{ wiki.name }}.sampled_revisions.{{ sample_name }}.json
-	cat $< | \
-	./utility autolabel --host=https://{{ wiki.host }} \
-		--trusted-groups={{ wiki.trusted_groups|join(",") }} \
-		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
-		--verbose > $@
-
-datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.no_review.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.review.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
 {% endif %}
 {% if "labeling_campaign" in sample %}
-
-datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
+datasets/{{ wiki.name }}.{{ sample_name }}.json:
 	./utility fetch_labels \
 		{{ sample.labeling_campaign }} > $@
 {% endif %}
 {% endfor %}
-{% if wiki.balanced_5k_set_for_review %}
+{% endif %}
 
-datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json
+{% if wiki.autolabeled_samples %}
+{% for autolabeled_name, input_name in wiki.autolabeled_samples.samples|dictsort %}
+datasets/{{ wiki.name }}.{{ autolabeled_name }}.json: \
+		datasets/{{ wiki.name }}.{{ input_name }}.json
+	cat $< | \
+	./utility autolabel --host=https://{{ wiki.host }} \
+		--trusted-groups={{ wiki.autolabeled_samples.trusted_groups|join(",") }} \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+{% endfor %}
+{% endif %}
+
+{% if wiki.balanced_5k_samples %}
+{% for balanced_name, input_name in wiki.balanced_5k_samples.samples|dictsort %}
+datasets/{{ wiki.name }}.{{ balanced_name }}.json: \
+		datasets/{{ wiki.name }}.{{ input_name }}.json
 	( \
-	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json | \
+	 cat datasets/{{ wiki.name }}.{{ input_name }}.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json | \
+	 cat datasets/{{ wiki.name }}.{{ input_name }}.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
+{% endfor %}
 {% endif %}
-{% if wiki.unbalanced_5k_set_for_review %}
 
-datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.sample_to_build_review }}.review.json
-	cat $< | shuf > $@
-{% endif %}
 {% if wiki.merged_samples %}
-{% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
-
-datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json: \
-{% if big_sample.human_labeled_revisions %}
-		datasets/{{ wiki.name }}.human_labeled_revisions.{{ big_sample.human_labeled_revisions }}.json
-		{%- if big_sample.autolabeled_revisions %} \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ big_sample.autolabeled_revisions }}.no_review.json
-		{%- endif %}
-{% endif %}
-
+{% for merged_name, input_sample_names in wiki.merged_samples|dictsort %}
+datasets/{{ wiki.name }}.{{ merged_name }}.json: \
+{% for input_sample_name in input_sample_names %}
+		datasets/{{ wiki.name }}.{{ input_sample_name }}.json{% if not loop.last %} \{% endif %}
+{% endfor %}
 	./utility merge_labels $^ > $@
 {% endfor %}
 {% endif %}
-{% if wiki.models.reverted %}
 
-datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json
-	{% if wiki.default_sample_size %}
-	shuf -n {{ wiki.default_sample_size }}
-	{%- else %}
-	cat
-	{%- endif %} $^ | \
+{% if wiki.extracted_samples %}
+{% for extracted_name, extraction in wiki.extracted_samples|dictsort %}
+datasets/{{ wiki.name }}.{{ extracted_name }}.json: \
+		datasets/{{ wiki.name }}.{{ extraction.sample }}.json
 	revscoring extract \
-		editquality.feature_lists.{{ wiki.name }}.reverted \
-		--host https://{{ wiki.host }} \
-		--extractor $(max_extractors) \
-		--verbose > $@
-{% endif %}
-{% if wiki.merged_samples %}
-
-{% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
-datasets/{{ wiki.name }}.labeled_revisions.w_cache.{{ big_sample_name }}.json: \
-		datasets/{{ wiki.name }}.labeled_revisions.{{ big_sample_name }}.json
-	cat $< | \
-	revscoring extract \
-		{% for model_name, model in wiki.models.items() %}
-		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
-		{% endfor %}
+{% for label_name in extraction.features_for %}
+		editquality.feature_lists.{{ wiki.name }}.{{ label_name }} \
+{% endfor %}
 		--host https://{{ wiki.host }} \
 		--extractor $(max_extractors) \
 		--verbose > $@
 {% endfor %}
 {% endif %}
-{% for model_name, model in wiki.models.items() %}
 
+{% if wiki.models %}
+{% for model_name, model in wiki.models|dict_sort %}
+{% if model.tune %}
 tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
-{% if model.datasets %}
-{% for dataset in model.datasets %}
-		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json
-		{%- if not loop.last %} \{% endif %}
-
-{% endfor %}
-{% else %}
-		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
-{% endif %}
-	cat {% if model.datasets %}$^{% else %}$<{% endif %} | \
+		datasets/{{ wiki.name }}.{{ model.sample }}.json
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
@@ -142,44 +106,33 @@ tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
-
-models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model: \
-{% if model.datasets %}
-{% for dataset in model.datasets %}
-		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ dataset }}.json{% if not loop.last %} \{% endif %}
-
-{% endfor %}
-{% else %}
-		datasets/{{ wiki.name }}.{% if model_name == "reverted" %}auto{% endif %}labeled_revisions.w_cache.{{ wiki.default_sample }}.json
 {% endif %}
-	cat $^ | \
-	revscoring cv_train \
-		revscoring.scoring.models.{{ model.class_name }} \
-		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
+{% if model.cv_train %}
+models/{{ wiki.name }}.{{ model_name }}.{{ norm_alg_filename(model.cv_train.algorithm) }}.model: \
+		datasets/{{ wiki.name }}.
+{% endif %}.{{ wiki.name }}.{{ model_name }} \
 		{{ model.label }} \
 		--version=$({{ model_name }}_major_minor).{{ model.build_number }} \
-		{% for key, value in model.tuning_params|dictsort %}
-		-p '{{ key }}={{ value }}' \
+		{% for key, value in model.cv_train.parameters|dictsort %}
+		-p '{{ key }}={{ value|tojson|safe }}' \
 		{% endfor %}
-		--label-weight "{{ model.label_weight }}" \
+		--label-weight $({{ model_name }}_label_weight) \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
-		--center --scale > $@
-	
+		--center --scale > $@;
 	revscoring model_info $@ > model_info/{{ wiki.name }}.{{ model_name }}.md
 {% endfor %}
 
-{{ wiki.name }}_models:{% if wiki.models %} \
-{% for model_name, model in wiki.models.items() %}
-	models/{{ wiki.name }}.{{ model_name }}.{{ model.algorithm }}.model{% if not loop.last %} \{% endif %}
 
+{{ wiki.name }}_models:{% if wiki.models %} \
+{% for model_name, model in wiki.models.items() if model.cv_train %}
+	models/{{ wiki.name }}.{{ model_name }}.{{ norm_alg_filename(model.cv_train.algorithm) }}.model{% if not loop.last %} \{% endif %}
 {% endfor %}
 {% endif %}
 
 {{ wiki.name }}_tuning_reports:{% if wiki.models %} \
-{% for model_name, model in wiki.models.items() %}
+{% for model_name, model in wiki.models.items() if model.tune %}
 	tuning_reports/{{ wiki.name }}.{{ model_name }}.md{% if not loop.last %} \{% endif %}
-
 {% endfor %}
 {% endif %}
 
