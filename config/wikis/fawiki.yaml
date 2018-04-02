@@ -18,7 +18,6 @@ merged_samples:
         autolabeled_revisions: "2.20k_2015"
         human_labeled_revisions: "5k_2016"
 
-wikilabels_sample: 20k_2015
 default_sample: 20k_2015
 review_sample: 20k_2015
 

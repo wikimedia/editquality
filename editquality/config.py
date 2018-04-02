@@ -5,7 +5,6 @@ The responsibility of this process is to simplify the template's work and other
 consumers, as much as possible.
 """
 import collections
-import copy
 import deep_merge
 import glob
 import yaml
@@ -35,7 +34,8 @@ def load_config(config_dir=None):
 
 
 def load_wiki(wiki, config):
-    wiki = deep_merge.merge(config["wiki_defaults"], wiki)
+    wiki = deep_merge.merge({}, config["wiki_defaults"], wiki,
+                            merge_lists=deep_merge.overwrite)
     result = collections.OrderedDict()
     if 'models' not in wiki:
         wiki['models'] = {}
@@ -46,12 +46,11 @@ def load_wiki(wiki, config):
         if model_name not in wiki['models']:
             continue
         model = wiki["models"][model_name]
-        model_defaults = copy.deepcopy(config["model_defaults"])
 
         # Do not apply default configs for RandomForest models
         # Because it doesn't make sense for them
         if not model.get('rf'):
-            model = deep_merge.merge(model_defaults, model)
+            model = deep_merge.merge({}, config["model_defaults"], model)
 
         for case in model['tuning_params']:
             value = model['tuning_params'][case]

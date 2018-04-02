@@ -12,7 +12,6 @@ samples:
         quarry_page: "https://quarry.wmflabs.org/query/19212"
 
 
-wikilabels_sample: 5k_2016
 review_sample: 5k_2016
 default_sample: 20k_2016
 
