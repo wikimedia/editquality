@@ -1,303 +1,13 @@
 {
     "model_defaults": {
         "tuning_params": {
-            "max_depth": 7,
+            "max_features": "log2",
             "learning_rate": 0.01,
             "n_estimators": 700,
-            "max_features": "log2"
+            "max_depth": 7
         },
         "build_number": 0
     },
-    "wikis": [
-        {
-            "samples": {
-                "20k_2016": {
-                    "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
-                },
-                "60k_2018": {
-                    "quarry_page": "https://quarry.wmflabs.org/query/24777",
-                    "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
-                },
-                "20k_2015": {
-                    "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
-                },
-                "5k_2015": {
-                    "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
-                }
-            },
-            "host": "he.wikipedia.org",
-            "models": {
-                "reverted": {
-                    "label_weight": "true=$(reverted_weight)",
-                    "build_number": 0,
-                    "class_name": "GradientBoosting",
-                    "tuning_params": {
-                        "max_features": "\"\"\"log2\"\"\"",
-                        "learning_rate": 0.01,
-                        "n_estimators": 700,
-                        "max_depth": 7
-                    },
-                    "algorithm": "gradient_boosting",
-                    "label": "reverted_for_damage"
-                },
-                "damaging": {
-                    "pop_rate_true": 0.046281731975314835,
-                    "label_weight": "true=$(damaging_weight)",
-                    "rf": true,
-                    "build_number": 0,
-                    "class_name": "RandomForest",
-                    "tuning_params": {
-                        "max_features": "\"log2\"",
-                        "criterion": "\"entropy\"",
-                        "min_samples_leaf": 1,
-                        "n_estimators": 320
-                    },
-                    "algorithm": "rf",
-                    "label": "damaging"
-                },
-                "goodfaith": {
-                    "pop_rate_true": 0.9718244945060459,
-                    "label_weight": "false=$(goodfaith_weight)",
-                    "build_number": 0,
-                    "class_name": "GradientBoosting",
-                    "tuning_params": {
-                        "max_features": "\"log2\"",
-                        "learning_rate": 0.1,
-                        "n_estimators": 300,
-                        "max_depth": 7
-                    },
-                    "algorithm": "gradient_boosting",
-                    "label": "goodfaith"
-                }
-            },
-            "sample_to_build_review": "20k_2016",
-            "balanced_5k_set_for_review": true,
-            "name": "hewiki",
-            "unbalanced_5k_set_for_review": true,
-            "default_sample_bigger_sample": "20k_2016",
-            "merged_samples": {
-                "20k_2015": {
-                    "autolabeled_revisions": "20k_2015",
-                    "human_labeled_revisions": "5k_2015"
-                }
-            },
-            "review_sample": "5k_2015",
-            "label": "Hebrew Wikipedia",
-            "trusted_groups": [
-                "sysop",
-                "oversight",
-                "editor",
-                "bot",
-                "rollbacker",
-                "checkuser",
-                "abusefilter",
-                "bureaucrat",
-                "bot",
-                "sysop",
-                "bureaucrat",
-                "sysop",
-                "oversight",
-                "bot",
-                "rollbacker",
-                "checkuser",
-                "abusefilter",
-                "bureaucrat"
-            ],
-            "default_sample": "20k_2015"
-        },
-        {
-            "samples": {
-                "20k_2016": {
-                    "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
-                },
-                "60k_2018": {
-                    "quarry_page": "https://quarry.wmflabs.org/query/24777",
-                    "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
-                },
-                "20k_2015": {
-                    "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
-                },
-                "5k_2015": {
-                    "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
-                }
-            },
-            "host": "he.wikipedia.org",
-            "models": {
-                "reverted": {
-                    "label_weight": "true=$(reverted_weight)",
-                    "build_number": 0,
-                    "class_name": "GradientBoosting",
-                    "tuning_params": {
-                        "max_features": "\"\"\"log2\"\"\"",
-                        "learning_rate": 0.01,
-                        "n_estimators": 700,
-                        "max_depth": 7
-                    },
-                    "algorithm": "gradient_boosting",
-                    "label": "reverted_for_damage"
-                },
-                "damaging": {
-                    "pop_rate_true": 0.046281731975314835,
-                    "label_weight": "true=$(damaging_weight)",
-                    "rf": true,
-                    "build_number": 0,
-                    "class_name": "RandomForest",
-                    "tuning_params": {
-                        "max_features": "\"log2\"",
-                        "criterion": "\"entropy\"",
-                        "min_samples_leaf": 1,
-                        "n_estimators": 320
-                    },
-                    "algorithm": "rf",
-                    "label": "damaging"
-                },
-                "goodfaith": {
-                    "pop_rate_true": 0.9718244945060459,
-                    "label_weight": "false=$(goodfaith_weight)",
-                    "build_number": 0,
-                    "class_name": "GradientBoosting",
-                    "tuning_params": {
-                        "max_features": "\"log2\"",
-                        "learning_rate": 0.1,
-                        "n_estimators": 300,
-                        "max_depth": 7
-                    },
-                    "algorithm": "gradient_boosting",
-                    "label": "goodfaith"
-                }
-            },
-            "sample_to_build_review": "20k_2016",
-            "balanced_5k_set_for_review": true,
-            "name": "hewiki",
-            "unbalanced_5k_set_for_review": true,
-            "default_sample_bigger_sample": "20k_2016",
-            "merged_samples": {
-                "20k_2015": {
-                    "autolabeled_revisions": "20k_2015",
-                    "human_labeled_revisions": "5k_2015"
-                }
-            },
-            "review_sample": "5k_2015",
-            "label": "Hebrew Wikipedia",
-            "trusted_groups": [
-                "sysop",
-                "oversight",
-                "editor",
-                "bot",
-                "rollbacker",
-                "checkuser",
-                "abusefilter",
-                "bureaucrat",
-                "bot",
-                "sysop",
-                "bureaucrat",
-                "sysop",
-                "oversight",
-                "bot",
-                "rollbacker",
-                "checkuser",
-                "abusefilter",
-                "bureaucrat"
-            ],
-            "default_sample": "20k_2015"
-        },
-        {
-            "samples": {
-                "20k_2016": {
-                    "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
-                },
-                "60k_2018": {
-                    "quarry_page": "https://quarry.wmflabs.org/query/24777",
-                    "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
-                },
-                "20k_2015": {
-                    "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
-                },
-                "5k_2015": {
-                    "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
-                }
-            },
-            "host": "he.wikipedia.org",
-            "models": {
-                "reverted": {
-                    "label_weight": "true=$(reverted_weight)",
-                    "build_number": 0,
-                    "class_name": "GradientBoosting",
-                    "tuning_params": {
-                        "max_features": "\"\"\"log2\"\"\"",
-                        "learning_rate": 0.01,
-                        "n_estimators": 700,
-                        "max_depth": 7
-                    },
-                    "algorithm": "gradient_boosting",
-                    "label": "reverted_for_damage"
-                },
-                "damaging": {
-                    "pop_rate_true": 0.046281731975314835,
-                    "label_weight": "true=$(damaging_weight)",
-                    "rf": true,
-                    "build_number": 0,
-                    "class_name": "RandomForest",
-                    "tuning_params": {
-                        "max_features": "\"log2\"",
-                        "criterion": "\"entropy\"",
-                        "min_samples_leaf": 1,
-                        "n_estimators": 320
-                    },
-                    "algorithm": "rf",
-                    "label": "damaging"
-                },
-                "goodfaith": {
-                    "pop_rate_true": 0.9718244945060459,
-                    "label_weight": "false=$(goodfaith_weight)",
-                    "build_number": 0,
-                    "class_name": "GradientBoosting",
-                    "tuning_params": {
-                        "max_features": "\"log2\"",
-                        "learning_rate": 0.1,
-                        "n_estimators": 300,
-                        "max_depth": 7
-                    },
-                    "algorithm": "gradient_boosting",
-                    "label": "goodfaith"
-                }
-            },
-            "sample_to_build_review": "20k_2016",
-            "balanced_5k_set_for_review": true,
-            "name": "hewiki",
-            "unbalanced_5k_set_for_review": true,
-            "default_sample_bigger_sample": "20k_2016",
-            "merged_samples": {
-                "20k_2015": {
-                    "autolabeled_revisions": "20k_2015",
-                    "human_labeled_revisions": "5k_2015"
-                }
-            },
-            "review_sample": "5k_2015",
-            "label": "Hebrew Wikipedia",
-            "trusted_groups": [
-                "sysop",
-                "oversight",
-                "editor",
-                "bot",
-                "rollbacker",
-                "checkuser",
-                "abusefilter",
-                "bureaucrat",
-                "bot",
-                "sysop",
-                "bureaucrat",
-                "sysop",
-                "oversight",
-                "bot",
-                "rollbacker",
-                "checkuser",
-                "abusefilter",
-                "bureaucrat"
-            ],
-            "default_sample": "20k_2015"
-        }
-    ],
     "wiki_names": [
         "arwiki",
         "bawiki",
@@ -306,80 +16,135 @@
         "plwiki",
         "wikidatawiki"
     ],
+    "wikis": [
+        {
+            "name": "arwiki",
+            "host": "ar.wikipedia.org",
+            "sample_to_build_review": "20k_2016",
+            "default_sample_bigger_sample": "20k_2016",
+            "samples": {
+                "20k_2016": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
+                }
+            },
+            "balanced_5k_set_for_review": true,
+            "trusted_groups": [
+                "sysop",
+                "oversight",
+                "editor",
+                "bot",
+                "rollbacker",
+                "checkuser",
+                "abusefilter",
+                "bureaucrat"
+            ],
+            "label": "Arabic Wikipedia",
+            "default_sample": "20k_2016",
+            "models": {
+                "reverted": {
+                    "tuning_params": {
+                        "max_depth": 7,
+                        "learning_rate": 0.01,
+                        "n_estimators": 700,
+                        "max_features": "\"log2\""
+                    },
+                    "build_number": 0,
+                    "algorithm": "gradient_boosting",
+                    "label_weight": "true=$(reverted_weight)",
+                    "class_name": "GradientBoosting",
+                    "label": "reverted_for_damage"
+                }
+            },
+            "review_sample": "5k_2016"
+        },
+        {
+            "name": "bawiki",
+            "host": "ba.wikipedia.org",
+            "unbalanced_5k_set_for_review": true,
+            "default_sample_bigger_sample": "60k_2018",
+            "samples": {
+                "60k_2018": {
+                    "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true",
+                    "quarry_page": "https://quarry.wmflabs.org/query/24777"
+                }
+            },
+            "trusted_groups": [
+                "bot",
+                "sysop",
+                "bureaucrat"
+            ],
+            "label": "Bosnian Wikipedia",
+            "sample_to_build_review": "60k_2018",
+            "default_sample": "60k_2018",
+            "models": {},
+            "review_sample": "5k_2018"
+        },
+        {
+            "name": "hewiki",
+            "default_sample": "20k_2015",
+            "default_sample_bigger_sample": "20k_2015",
+            "label": "Hebrew Wikipedia",
+            "host": "he.wikipedia.org",
+            "sample_to_build_review": "20k_2015",
+            "samples": {
+                "20k_2015": {
+                    "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
+                },
+                "5k_2015": {
+                    "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
+                }
+            },
+            "balanced_5k_set_for_review": true,
+            "merged_samples": {
+                "20k_2015": {
+                    "human_labeled_revisions": "5k_2015",
+                    "autolabeled_revisions": "20k_2015"
+                }
+            },
+            "review_sample": "5k_2015",
+            "trusted_groups": [
+                "sysop",
+                "oversight",
+                "bot",
+                "rollbacker",
+                "checkuser",
+                "abusefilter",
+                "bureaucrat"
+            ],
+            "models": {
+                "damaging": {
+                    "tuning_params": {
+                        "min_samples_leaf": 1,
+                        "criterion": "\"entropy\"",
+                        "n_estimators": 320,
+                        "max_features": "\"log2\""
+                    },
+                    "build_number": 0,
+                    "algorithm": "rf",
+                    "label_weight": "true=$(damaging_weight)",
+                    "class_name": "RandomForest",
+                    "pop_rate_true": 0.046281731975314835,
+                    "rf": true,
+                    "label": "damaging"
+                },
+                "goodfaith": {
+                    "tuning_params": {
+                        "max_depth": 7,
+                        "learning_rate": 0.1,
+                        "n_estimators": 300,
+                        "max_features": "\"log2\""
+                    },
+                    "build_number": 0,
+                    "algorithm": "gradient_boosting",
+                    "label_weight": "false=$(goodfaith_weight)",
+                    "class_name": "GradientBoosting",
+                    "pop_rate_true": 0.9718244945060459,
+                    "label": "goodfaith"
+                }
+            }
+        }
+    ],
     "wiki_defaults": {
-        "samples": {
-            "20k_2016": {
-                "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
-            },
-            "60k_2018": {
-                "quarry_page": "https://quarry.wmflabs.org/query/24777",
-                "quarry_url": "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
-            },
-            "20k_2015": {
-                "quarry_url": "http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true"
-            },
-            "5k_2015": {
-                "labeling_campaign": "https://labels.wmflabs.org/campaigns/hewiki/25/"
-            }
-        },
-        "host": "he.wikipedia.org",
-        "models": {
-            "reverted": {
-                "label_weight": "true=$(reverted_weight)",
-                "build_number": 0,
-                "class_name": "GradientBoosting",
-                "tuning_params": {
-                    "max_features": "\"\"\"log2\"\"\"",
-                    "learning_rate": 0.01,
-                    "n_estimators": 700,
-                    "max_depth": 7
-                },
-                "algorithm": "gradient_boosting",
-                "label": "reverted_for_damage"
-            },
-            "damaging": {
-                "pop_rate_true": 0.046281731975314835,
-                "label_weight": "true=$(damaging_weight)",
-                "rf": true,
-                "build_number": 0,
-                "class_name": "RandomForest",
-                "tuning_params": {
-                    "max_features": "\"log2\"",
-                    "criterion": "\"entropy\"",
-                    "min_samples_leaf": 1,
-                    "n_estimators": 320
-                },
-                "algorithm": "rf",
-                "label": "damaging"
-            },
-            "goodfaith": {
-                "pop_rate_true": 0.9718244945060459,
-                "label_weight": "false=$(goodfaith_weight)",
-                "build_number": 0,
-                "class_name": "GradientBoosting",
-                "tuning_params": {
-                    "max_features": "\"log2\"",
-                    "learning_rate": 0.1,
-                    "n_estimators": 300,
-                    "max_depth": 7
-                },
-                "algorithm": "gradient_boosting",
-                "label": "goodfaith"
-            }
-        },
-        "sample_to_build_review": "20k_2016",
-        "balanced_5k_set_for_review": true,
-        "name": "hewiki",
-        "unbalanced_5k_set_for_review": true,
-        "default_sample_bigger_sample": "20k_2016",
-        "merged_samples": {
-            "20k_2015": {
-                "autolabeled_revisions": "20k_2015",
-                "human_labeled_revisions": "5k_2015"
-            }
-        },
-        "review_sample": "5k_2015",
-        "label": "Hebrew Wikipedia",
         "trusted_groups": [
             "sysop",
             "oversight",
@@ -388,18 +153,7 @@
             "rollbacker",
             "checkuser",
             "abusefilter",
-            "bureaucrat",
-            "bot",
-            "sysop",
-            "bureaucrat",
-            "sysop",
-            "oversight",
-            "bot",
-            "rollbacker",
-            "checkuser",
-            "abusefilter",
             "bureaucrat"
-        ],
-        "default_sample": "20k_2015"
+        ]
     }
 }
