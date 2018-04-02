@@ -11,7 +11,6 @@ samples:
         quarry_url: "https://quarry.wmflabs.org/run/98251/output/0/json-lines?download=true"
 
 
-wikilabels_sample: 5k_2016
 balanced_5k_set_for_review: true
 review_sample: 5k_2016
 default_sample: 20k_2016

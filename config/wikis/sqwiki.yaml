@@ -9,7 +9,6 @@ samples:
         quarry_url: "https://quarry.wmflabs.org/run/169099/output/0/json-lines?download=true"
         quarry_page: "https://quarry.wmflabs.org/query/17988"
 
-wikilabels_sample: 20k_2016
 default_sample: 20k_2016
 review_sample: 20k_2016
 
