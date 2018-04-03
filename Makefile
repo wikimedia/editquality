@@ -120,6 +120,11 @@ datasets/arwiki.autolabeled_revisions.20k_2016.review.json: \
 		datasets/arwiki.autolabeled_revisions.20k_2016.json
 	cat $< | grep -E '"needs_review": (true|"True")' > $@
 
+
+datasets/arwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/arwiki/30/ > $@
+
 datasets/arwiki.revisions_for_review.5k_2016.json: \
 		datasets/arwiki.autolabeled_revisions.20k_2016.review.json
 		datasets/arwiki.autolabeled_revisions.20k_2016.no_review.json
@@ -130,55 +135,96 @@ datasets/arwiki.revisions_for_review.5k_2016.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
-datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/arwiki.autolabeled_revisions.20k_2016.review.json \
+datasets/arwiki.labeled_revisions.20k_2016.json: \
+		datasets/arwiki.human_labeled_revisions.5k_2016.json \
 		datasets/arwiki.autolabeled_revisions.20k_2016.no_review.json
-	cat $^ | \
+	./utility merge_labels $^ > $@
+
+datasets/arwiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/arwiki.labeled_revisions.20k_2016.json
+	cat $< | \
 	revscoring extract \
-		editquality.feature_lists.arwiki.reverted \
+		editquality.feature_lists.arwiki.damaging \
+		editquality.feature_lists.arwiki.goodfaith \
 		--host https://ar.wikipedia.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
 
-tuning_reports/arwiki.reverted.md: \
-		datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json
+tuning_reports/arwiki.damaging.md: \
+		datasets/arwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.arwiki.reverted \
-		reverted_for_damage \
+		editquality.feature_lists.arwiki.damaging \
+		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.035186595582635184" \
-		--pop-rate "false=0.9648134044173649" \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.021427" \
+		--pop-rate "false=0.978573" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/arwiki.reverted.gradient_boosting.model: \
-		datasets/arwiki.autolabeled_revisions.w_cache.20k_2016.json
+models/arwiki.damaging.gradient_boosting.model: \
+		datasets/arwiki.labeled_revisions.w_cache.20k_2016.json
 	cat $^ | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.arwiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).1 \
+		editquality.feature_lists.arwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
-		-p 'max_depth=5' \
+		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.035186595582635184" \
-		--pop-rate "false=0.9648134044173649" \
+		-p 'n_estimators=100' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.021427" \
+		--pop-rate "false=0.978573" \
 		--center --scale > $@
 	
-	revscoring model_info $@ > model_info/arwiki.reverted.md
+	revscoring model_info $@ > model_info/arwiki.damaging.md
+
+tuning_reports/arwiki.goodfaith.md: \
+		datasets/arwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.arwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.993861" \
+		--pop-rate "false=0.0061390000000000056" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/arwiki.goodfaith.gradient_boosting.model: \
+		datasets/arwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.arwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.5' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=300' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.993861" \
+		--pop-rate "false=0.0061390000000000056" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/arwiki.goodfaith.md
 
 arwiki_models: \
-	models/arwiki.reverted.gradient_boosting.model
+	models/arwiki.damaging.gradient_boosting.model \
+	models/arwiki.goodfaith.gradient_boosting.model
 
 arwiki_tuning_reports: \
-	tuning_reports/arwiki.reverted.md
+	tuning_reports/arwiki.damaging.md \
+	tuning_reports/arwiki.goodfaith.md
 
 ############################# Azeri Wikipedia ################################
 
@@ -2375,12 +2421,106 @@ datasets/lvwiki.autolabeled_revisions.20k_2016.review.json: \
 		datasets/lvwiki.autolabeled_revisions.20k_2016.json
 	cat $< | grep -E '"needs_review": (true|"True")' > $@
 
+
+datasets/lvwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		http://labels.wmflabs.org/campaigns/lvwiki/56/ > $@
+
 datasets/lvwiki.revisions_for_review.5k_2016.json: \
 		datasets/lvwiki.autolabeled_revisions.20k_2016.review.json
 	cat $< | shuf > $@
 
-lvwiki_models:
-lvwiki_tuning_reports:
+datasets/lvwiki.labeled_revisions.20k_2016.json: \
+		datasets/lvwiki.human_labeled_revisions.5k_2016.json \
+		datasets/lvwiki.autolabeled_revisions.20k_2016.no_review.json
+	./utility merge_labels $^ > $@
+
+datasets/lvwiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/lvwiki.labeled_revisions.20k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.lvwiki.damaging \
+		editquality.feature_lists.lvwiki.goodfaith \
+		--host https://lv.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/lvwiki.damaging.md: \
+		datasets/lvwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.lvwiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0293" \
+		--pop-rate "false=0.9707" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/lvwiki.damaging.gradient_boosting.model: \
+		datasets/lvwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.lvwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0293" \
+		--pop-rate "false=0.9707" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/lvwiki.damaging.md
+
+tuning_reports/lvwiki.goodfaith.md: \
+		datasets/lvwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.lvwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.978" \
+		--pop-rate "false=0.02200000000000002" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/lvwiki.goodfaith.gradient_boosting.model: \
+		datasets/lvwiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.lvwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.5' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.978" \
+		--pop-rate "false=0.02200000000000002" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/lvwiki.goodfaith.md
+
+lvwiki_models: \
+	models/lvwiki.damaging.gradient_boosting.model \
+	models/lvwiki.goodfaith.gradient_boosting.model
+
+lvwiki_tuning_reports: \
+	tuning_reports/lvwiki.damaging.md \
+	tuning_reports/lvwiki.goodfaith.md
+
 ############################# Dutch Wikipedia ################################
 
 datasets/nlwiki.sampled_revisions.20k_2016.json:

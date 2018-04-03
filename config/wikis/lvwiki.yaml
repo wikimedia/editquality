@@ -3,9 +3,11 @@ label: Latvian Wikipedia
 host: lv.wikipedia.org
 
 samples:
-    20k_2016:
-        quarry_url: "https://quarry.wmflabs.org/run/169100/output/0/json-lines?download=true"
-        quarry_page: "https://quarry.wmflabs.org/query/17989"
+  20k_2016:
+    quarry_url: "https://quarry.wmflabs.org/run/169100/output/0/json-lines?download=true"
+    quarry_page: "https://quarry.wmflabs.org/query/17989"
+  5k_2016:
+    labeling_campaign: "http://labels.wmflabs.org/campaigns/lvwiki/56/"
 
 trusted_groups:
     - sysop
@@ -19,3 +21,24 @@ trusted_groups:
 unbalanced_5k_set_for_review: true
 default_sample: 20k_2016
 review_sample: 5k_2016
+
+merged_samples:
+    20k_2016:
+        autolabeled_revisions: "20k_2016"
+        human_labeled_revisions: "5k_2016"
+
+models:
+  damaging:
+    pop_rate_true: 0.0293
+    tuning_params:
+      max_depth: 5
+      max_features: "log2"
+      learning_rate: 0.01
+      n_estimators: 500
+  goodfaith:
+    pop_rate_true: 0.978
+    tuning_params:
+      max_features: "log2"
+      learning_rate: 0.5
+      n_estimators: 700
+      max_depth: 7
