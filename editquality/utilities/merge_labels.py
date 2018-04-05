@@ -1,6 +1,18 @@
 """
 Merges human-applied labels into an autolabeled set
 
+If an observation was autolabeled as needing review, but has no human labels,
+we throw it out.  If these observations are partially human-labeled, we fill in
+the other label by assuming that damaging and good-faith are mutually
+exclusive.
+
+Any observation autolabeled as not needing review will default to not-damaging,
+good-faith.  Human labels will override these defaults, when available.
+
+We always take auto-labeled data from the autolabeled file rather than the
+human-labeled file, because these fields in human-labeled data are just a copy,
+and may be stale.
+
 Usage:
     merge_labels <from-human-labels> [<to-auto-labels>]
                  [--output=<path>]
