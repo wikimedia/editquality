@@ -1951,7 +1951,7 @@ datasets/huwiki.autolabeled_revisions.40k_2016.json: \
 		datasets/huwiki.sampled_revisions.40k_2016.json
 	cat $< | \
 	./utility autolabel --host=https://hu.wikipedia.org \
-		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat,editor,templateeditor,interface-editor \
 		--trusted-edits=1000 \
 		--revert-radius=3 \
 		--revert-window=48 \
@@ -1975,55 +1975,81 @@ datasets/huwiki.revisions_for_review.5k_2016.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
-datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json: \
-		datasets/huwiki.autolabeled_revisions.40k_2016.review.json \
-		datasets/huwiki.autolabeled_revisions.40k_2016.no_review.json
-	cat $^ | \
-	revscoring extract \
-		editquality.feature_lists.huwiki.reverted \
-		--host https://hu.wikipedia.org \
-		--extractor $(max_extractors) \
-		--verbose > $@
-
-tuning_reports/huwiki.reverted.md: \
-		datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json
+tuning_reports/huwiki.damaging.md: \
+		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.huwiki.reverted \
-		reverted_for_damage \
+		editquality.feature_lists.huwiki.damaging \
+		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.014812583163867339" \
-		--pop-rate "false=0.9851874168361326" \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.01093805131" \
+		--pop-rate "false=0.98906194869" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/huwiki.reverted.rf.model: \
-		datasets/huwiki.autolabeled_revisions.w_cache.40k_2016.json
+models/huwiki.damaging.gradient_boosting.model: \
+		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
 	cat $^ | \
 	revscoring cv_train \
-		revscoring.scoring.models.RandomForest \
-		editquality.feature_lists.huwiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).1 \
-		-p 'criterion="entropy"' \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.huwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
-		-p 'min_samples_leaf=13' \
-		-p 'n_estimators=320' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.014812583163867339" \
-		--pop-rate "false=0.9851874168361326" \
+		-p 'n_estimators=300' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.01093805131" \
+		--pop-rate "false=0.98906194869" \
 		--center --scale > $@
 	
-	revscoring model_info $@ > model_info/huwiki.reverted.md
+	revscoring model_info $@ > model_info/huwiki.damaging.md
+
+tuning_reports/huwiki.goodfaith.md: \
+		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.huwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.99221230908" \
+		--pop-rate "false=0.007787690919999979" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/huwiki.goodfaith.gradient_boosting.model: \
+		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.huwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.99221230908" \
+		--pop-rate "false=0.007787690919999979" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/huwiki.goodfaith.md
 
 huwiki_models: \
-	models/huwiki.reverted.rf.model
+	models/huwiki.damaging.gradient_boosting.model \
+	models/huwiki.goodfaith.gradient_boosting.model
 
 huwiki_tuning_reports: \
-	tuning_reports/huwiki.reverted.md
+	tuning_reports/huwiki.damaging.md \
+	tuning_reports/huwiki.goodfaith.md
 
 ############################# Indonesian Wikipedia ################################
 
