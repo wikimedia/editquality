@@ -15,6 +15,9 @@ trusted_groups:
     - checkuser
     - abusefilter
     - bureaucrat
+    - editor
+    - templateeditor
+    - interface-editor
 
 balanced_5k_set_for_review: true
 
@@ -22,12 +25,12 @@ default_sample: 40k_2016
 review_sample: 5k_2016
 
 models:
-    reverted:
-        rf: true
+    damaging:
         tuning_params:
-            criterion: entropy
-            n_estimators: 320
-            min_samples_leaf: 13
-            max_features: log2
-        pop_rate_true: 0.014812583163867339
-        build_number: 1
+            max_depth: 5
+            n_estimators: 500
+        pop_rate_true: 0.01093805131
+    goodfaith:
+        tuning_params:
+            learning_rate: 0.1
+        pop_rate_true: 0.99221230908
