@@ -3,8 +3,10 @@ label: Hungarian Wikipedia
 host: hu.wikipedia.org
 
 samples:
+    5k_2016:
+        labeling_campaign: https://labels.wmflabs.org/campaigns/huwiki/33/
     40k_2016:
-        quarry_url: "http://quarry.wmflabs.org/run/79645/output/0/json-lines?download=true"
+        quarry_url: http://quarry.wmflabs.org/run/79645/output/0/json-lines?download=true
 
 trusted_groups:
     - sysop
@@ -23,6 +25,11 @@ balanced_5k_set_for_review: true
 
 default_sample: 40k_2016
 review_sample: 5k_2016
+
+merged_samples:
+    40k_2016:
+        autolabeled_revisions: 40k_2016
+        human_labeled_revisions: 5k_2016
 
 models:
     damaging:
