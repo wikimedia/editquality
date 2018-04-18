@@ -42,6 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 def main(argv=None):
+    # Parse arguments.
     args = docopt.docopt(__doc__, argv=argv)
 
     logging.basicConfig(
@@ -65,20 +66,18 @@ def main(argv=None):
 
     verbose = args['--verbose']
 
-    run(human_labels, auto_labels, labels_f, verbose)
+    # Merge labels.
+    merged_labels = run(human_labels, auto_labels, verbose)
+
+    # Output to stream.
+    jsonlines = [json.dumps(l) for l in merged_labels]
+    labels_f.write("\n".join(jsonlines))
 
 
-def run(human_labels, auto_labels, labels_f, verbose):
+def run(human_labels, auto_labels, verbose):
     human_rev_map = {int(revision['rev_id']): revision
                      for revision in human_labels}
     human_rev_ids = set(human_rev_map.keys())
-
-    # Output human labels when autolabels is empty
-    if not auto_labels:
-        for rev_id in human_rev_map:
-            labels_f.write(json.dumps(human_rev_map[rev_id]))
-            labels_f.write("\n")
-        return
 
     # Use sleazy but reasonable default assumptions to
     # auto-populate missing fields: that damaging and goodfaith are
@@ -91,6 +90,14 @@ def run(human_labels, auto_labels, labels_f, verbose):
             revision['goodfaith'] = revision['damaging'] in (False, 'False')
         elif 'goodfaith' in revision and 'damaging' not in revision:
             revision['damaging'] = revision['goodfaith'] in (False, 'False')
+
+    # Output human labels when autolabels is empty
+    if not auto_labels:
+        for rev_id in human_rev_map:
+            revision = human_rev_map[rev_id]
+            if has_all_labels(revision, LABELS):
+                yield human_rev_map[rev_id]
+        return
 
     # Merge human labels onto autolabeled defaults.
     for revision in auto_labels:
@@ -132,8 +139,7 @@ def run(human_labels, auto_labels, labels_f, verbose):
             progress_char = "0"
         else:
             # Output merged observation.
-            labels_f.write(json.dumps(revision))
-            labels_f.write("\n")
+            yield revision
 
         # TODO: progress_hist[progress_char] += 1
 
@@ -149,8 +155,7 @@ def run(human_labels, auto_labels, labels_f, verbose):
             progress_char = "0"
         else:
             progress_char = "h"
-            labels_f.write(json.dumps(human_labeled))
-            labels_f.write("\n")
+            yield human_labeled
 
         if verbose:
             sys.stderr.write(progress_char)
@@ -165,3 +170,13 @@ def has_any_labels(revision, labels):
         if label in revision:
             return True
     return False
+
+
+def has_all_labels(revision, labels):
+    """
+    Return true if all labels are present.
+    """
+    for label in labels:
+        if label not in revision:
+            return False
+    return True
