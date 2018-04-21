@@ -30,7 +30,7 @@ datasets/fiwiki.flaggedrevs_approved_raw.210k_2017.json:
 
 datasets/fiwiki.flaggedrevs_approved.210k_2017.json: \
 		datasets/fiwiki.flaggedrevs_approved_raw.210k_2017.json
-	cat $< | sed -r 's/"(true|false)"/\1/g' | > $@
+	cat $< | sed -r 's/"(true|false)"/\1/g' > $@
 
 datasets/fiwiki.autolabeled_revisions.20k_2016.json: \
 		datasets/fiwiki.sampled_revisions.20k_2016.json
