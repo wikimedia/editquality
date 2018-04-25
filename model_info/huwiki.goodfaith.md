@@ -1,9 +1,9 @@
 Model Information:
 	 - type: GradientBoosting
 	 - version: 0.4.0
-	 - params: {'label_weights': {False: 10}, 'warm_start': False, 'n_estimators': 700, 'scale': True, 'max_depth': 7, 'random_state': None, 'min_samples_leaf': 1, 'max_features': 'log2', 'min_weight_fraction_leaf': 0.0, 'min_samples_split': 2, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'loss': 'deviance', 'verbose': 0, 'center': True, 'subsample': 1.0, 'labels': [True, False], 'population_rates': None, 'init': None, 'presort': 'auto'}
+	 - params: {'random_state': None, 'loss': 'deviance', 'n_estimators': 700, 'multilabel': False, 'subsample': 1.0, 'warm_start': False, 'center': True, 'min_samples_leaf': 1, 'labels': [True, False], 'min_impurity_decrease': 0.0, 'max_features': 'log2', 'min_impurity_split': None, 'label_weights': OrderedDict([(False, 10)]), 'min_weight_fraction_leaf': 0.0, 'init': None, 'population_rates': None, 'max_depth': 7, 'min_samples_split': 2, 'criterion': 'friedman_mse', 'learning_rate': 0.1, 'presort': 'auto', 'verbose': 0, 'scale': True, 'max_leaf_nodes': None}
 	Environment:
-	 - revscoring_version: '2.0.8'
+	 - revscoring_version: '2.2.2'
 	 - platform: 'Linux-4.9.0-6-amd64-x86_64-with-debian-9.4'
 	 - machine: 'x86_64'
 	 - version: '#1 SMP Debian 4.9.82-1+deb9u3 (2018-03-02)'
@@ -18,11 +18,11 @@ Model Information:
 	 - release: '4.9.0-6-amd64'
 	
 	Statistics:
-	counts (n=39674):
+	counts (n=37959):
 		label        n         ~True    ~False
 		-------  -----  ---  -------  --------
-		True     39366  -->    39312        54
-		False      308  -->      274        34
+		True     37648  -->    37619        29
+		False      311  -->      251        60
 	rates:
 		              True    False
 		----------  ------  -------
@@ -36,46 +36,46 @@ Model Information:
 		  False    True
 		-------  ------
 		  0.998   0.002
-	recall (micro=0.992, macro=0.555):
+	recall (micro=0.993, macro=0.596):
 		  False    True
 		-------  ------
-		   0.11   0.999
-	!recall (micro=0.117, macro=0.555):
+		  0.193   0.999
+	!recall (micro=0.199, macro=0.596):
 		  False    True
 		-------  ------
-		  0.999    0.11
-	precision (micro=0.988, macro=0.69):
+		  0.999   0.193
+	precision (micro=0.991, macro=0.828):
 		  False    True
 		-------  ------
-		  0.387   0.993
-	!precision (micro=0.392, macro=0.69):
+		  0.663   0.994
+	!precision (micro=0.665, macro=0.828):
 		  False    True
 		-------  ------
-		  0.993   0.387
-	f1 (micro=0.989, macro=0.584):
+		  0.994   0.663
+	f1 (micro=0.991, macro=0.648):
 		  False    True
 		-------  ------
-		  0.172   0.996
-	!f1 (micro=0.178, macro=0.584):
+		  0.299   0.996
+	!f1 (micro=0.304, macro=0.648):
 		  False    True
 		-------  ------
-		  0.996   0.172
-	accuracy (micro=0.992, macro=0.992):
+		  0.996   0.299
+	accuracy (micro=0.993, macro=0.993):
 		  False    True
 		-------  ------
-		  0.992   0.992
-	fpr (micro=0.883, macro=0.445):
+		  0.993   0.993
+	fpr (micro=0.801, macro=0.404):
 		  False    True
 		-------  ------
-		  0.001    0.89
-	roc_auc (micro=0.981, macro=0.881):
+		  0.001   0.807
+	roc_auc (micro=0.987, macro=0.906):
 		  False    True
 		-------  ------
-		  0.779   0.983
-	pr_auc (micro=0.99, macro=0.596):
+		  0.822   0.989
+	pr_auc (micro=0.992, macro=0.687):
 		  False    True
 		-------  ------
-		  0.195   0.997
+		  0.377   0.997
 	
-	 - score_schema: {'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'bool'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'properties': {'true': 'number', 'false': 'number'}, 'type': 'object'}}, 'type': 'object', 'title': 'Scikit learn-based classifier score with probability'}
+	 - score_schema: {'type': 'object', 'title': 'Scikit learn-based classifier score with probability', 'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'bool'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object', 'properties': {'true': 'number', 'false': 'number'}}}}
 
