@@ -2722,7 +2722,8 @@ datasets/nowiki.revisions_for_review.5k_2015.json: \
 datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json: \
 		datasets/nowiki.autolabeled_revisions.100k_2015.review.json \
 		datasets/nowiki.autolabeled_revisions.100k_2015.no_review.json
-	shuf -n 40000 $^ | \
+	cat $^ | \
+	shuf -n 40000 | \
 	revscoring extract \
 		editquality.feature_lists.nowiki.reverted \
 		--host https://no.wikipedia.org \
@@ -3723,7 +3724,8 @@ datasets/viwiki.revisions_for_review.5k_2015.json: \
 datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json: \
 		datasets/viwiki.autolabeled_revisions.500k_2015.review.json \
 		datasets/viwiki.autolabeled_revisions.500k_2015.no_review.json
-	shuf -n 100000 $^ | \
+	cat $^ | \
+	shuf -n 100000 | \
 	revscoring extract \
 		editquality.feature_lists.viwiki.reverted \
 		--host https://vi.wikipedia.org \
