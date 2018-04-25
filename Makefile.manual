@@ -204,7 +204,7 @@ datasets/plwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/plwiki/24/ > $@
 
-datasets/plwiki.labeled_revisions.resampled_15k_2016.json: \
+datasets/plwiki.labeled_revisions.no_defaults.resampled_15k_2016.json: \
 		datasets/plwiki.human_labeled_revisions.5k_2016.json
 	( \
 		cat $< | \
@@ -212,6 +212,10 @@ datasets/plwiki.labeled_revisions.resampled_15k_2016.json: \
 		cat $< | \
  		grep '"needs_review": false' | shuf -r -n 12651 \
 	) | shuf > $@
+
+datasets/plwiki.labeled_revisions.resampled_15k_2016.json: \
+               datasets/plwiki.labeled_revisions.no_defaults.resampled_15k_2016.json
+       ./utility merge_labels $^ > $@
 
 datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json: \
 		datasets/plwiki.labeled_revisions.resampled_15k_2016.json
