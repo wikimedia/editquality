@@ -215,7 +215,7 @@ datasets/plwiki.labeled_revisions.no_defaults.resampled_15k_2016.json: \
 
 datasets/plwiki.labeled_revisions.resampled_15k_2016.json: \
                datasets/plwiki.labeled_revisions.no_defaults.resampled_15k_2016.json
-       ./utility merge_labels $^ > $@
+	./utility merge_labels $^ > $@
 
 datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json: \
 		datasets/plwiki.labeled_revisions.resampled_15k_2016.json
