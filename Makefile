@@ -10,6 +10,7 @@ models: \
 		bawiki_models \
 		bnwiki_models \
 		bnwikisource_models \
+		bswiki_models \
 		cawiki_models \
 		cswiki_models \
 		dewiki_models \
@@ -55,6 +56,7 @@ tuning_reports: \
 		bawiki_tuning_reports \
 		bnwiki_tuning_reports \
 		bnwikisource_tuning_reports \
+		bswiki_tuning_reports \
 		cawiki_tuning_reports \
 		cswiki_tuning_reports \
 		dewiki_tuning_reports \
@@ -93,6 +95,10 @@ tuning_reports: \
 		viwiki_tuning_reports \
 		wikidatawiki_tuning_reports \
 		zhwiki_tuning_reports
+
+touch:
+	touch datasets/*
+	touch models/*
 
 include  Makefile.manual
 
@@ -251,7 +257,7 @@ datasets/azwiki.autolabeled_revisions.20k_2016.review.json: \
 
 azwiki_models:
 azwiki_tuning_reports:
-############################# Bosnian Wikipedia ################################
+############################# Bashkir Wikipedia ################################
 
 # From https://quarry.wmflabs.org/query/24777
 datasets/bawiki.sampled_revisions.60k_2018.json:
@@ -389,6 +395,36 @@ datasets/bnwikisource.revisions_for_review.5k_2018.json: \
 
 bnwikisource_models:
 bnwikisource_tuning_reports:
+############################# Bosnian Wikipedia ################################
+
+# From https://quarry.wmflabs.org/query/26936
+datasets/bswiki.sampled_revisions.40k_2018.json:
+	wget -qO- https://quarry.wmflabs.org/run/261117/output/0/json-lines?download=true > $@
+
+datasets/bswiki.autolabeled_revisions.40k_2018.json: \
+		datasets/bswiki.sampled_revisions.40k_2018.json
+	cat $< | \
+	./utility autolabel --host=https://bs.wikipedia.org \
+		--trusted-groups=bot,sysop,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/bswiki.autolabeled_revisions.40k_2018.no_review.json: \
+		datasets/bswiki.autolabeled_revisions.40k_2018.json
+	cat $< | grep -E '"needs_review": (false|"False")' > $@
+
+datasets/bswiki.autolabeled_revisions.40k_2018.review.json: \
+		datasets/bswiki.autolabeled_revisions.40k_2018.json
+	cat $< | grep -E '"needs_review": (true|"True")' > $@
+
+datasets/bswiki.revisions_for_review.5k_2018.json: \
+		datasets/bswiki.autolabeled_revisions.40k_2018.review.json
+	cat $< | shuf > $@
+
+bswiki_models:
+bswiki_tuning_reports:
 ############################# Catalan Wikipedia ################################
 
 # From https://quarry.wmflabs.org/query/24081

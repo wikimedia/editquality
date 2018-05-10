@@ -1,0 +1,20 @@
+name: bswiki
+label: Bosnian Wikipedia
+host: bs.wikipedia.org
+
+samples:
+    40k_2018:
+        quarry_url: "https://quarry.wmflabs.org/run/261117/output/0/json-lines?download=true"
+        quarry_page: "https://quarry.wmflabs.org/query/26936"
+
+unbalanced_5k_set_for_review: true
+
+default_sample: 40k_2018
+review_sample: 5k_2018
+
+models: {}
+
+trusted_groups:
+    - bot
+    - sysop
+    - bureaucrat
