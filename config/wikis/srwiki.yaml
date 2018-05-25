@@ -5,6 +5,26 @@ host: sr.wikipedia.org
 samples:
     120k_2017:
         quarry_url: "https://quarry.wmflabs.org/run/211097/output/0/json-lines?download=true"
+    5k_2017:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/srwiki/62/"
+
+unbalanced_5k_set_for_review: true
+
+default_sample: 120k_2017
+review_sample: 5k_2017
+
+merged_samples:
+    120k_2017:
+        autolabeled_revisions: "120k_2017"
+        human_labeled_revisions: "5k_2017"
+
+models:
+    damaging:
+        pop_rate_true: 0.0056294177044766075
+    goodfaith:
+        tuning_params:
+            learning_rate: 0.1
+        pop_rate_true: 0.9961881521373275
 
 trusted_groups:
     - autopatrolled
@@ -14,6 +34,3 @@ trusted_groups:
     - rollbacker
     - sysop
 
-unbalanced_5k_set_for_review: true
-default_sample: 120k_2017
-review_sample: 5k_2017
