@@ -3284,12 +3284,106 @@ datasets/srwiki.autolabeled_revisions.120k_2017.review.json: \
 		datasets/srwiki.autolabeled_revisions.120k_2017.json
 	cat $< | grep -E '"needs_review": (true|"True")' > $@
 
+
+datasets/srwiki.human_labeled_revisions.5k_2017.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/srwiki/62/ > $@
+
 datasets/srwiki.revisions_for_review.5k_2017.json: \
 		datasets/srwiki.autolabeled_revisions.120k_2017.review.json
 	cat $< | shuf > $@
 
-srwiki_models:
-srwiki_tuning_reports:
+datasets/srwiki.labeled_revisions.120k_2017.json: \
+		datasets/srwiki.human_labeled_revisions.5k_2017.json \
+		datasets/srwiki.autolabeled_revisions.120k_2017.no_review.json
+	./utility merge_labels $^ > $@
+
+datasets/srwiki.labeled_revisions.w_cache.120k_2017.json: \
+		datasets/srwiki.labeled_revisions.120k_2017.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.srwiki.damaging \
+		editquality.feature_lists.srwiki.goodfaith \
+		--host https://sr.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/srwiki.damaging.md: \
+		datasets/srwiki.labeled_revisions.w_cache.120k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.srwiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0056294177044766075" \
+		--pop-rate "false=0.9943705822955234" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/srwiki.damaging.gradient_boosting.model: \
+		datasets/srwiki.labeled_revisions.w_cache.120k_2017.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.srwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.0056294177044766075" \
+		--pop-rate "false=0.9943705822955234" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/srwiki.damaging.md
+
+tuning_reports/srwiki.goodfaith.md: \
+		datasets/srwiki.labeled_revisions.w_cache.120k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.srwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9961881521373275" \
+		--pop-rate "false=0.003811847862672524" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/srwiki.goodfaith.gradient_boosting.model: \
+		datasets/srwiki.labeled_revisions.w_cache.120k_2017.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.srwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9961881521373275" \
+		--pop-rate "false=0.003811847862672524" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/srwiki.goodfaith.md
+
+srwiki_models: \
+	models/srwiki.damaging.gradient_boosting.model \
+	models/srwiki.goodfaith.gradient_boosting.model
+
+srwiki_tuning_reports: \
+	tuning_reports/srwiki.damaging.md \
+	tuning_reports/srwiki.goodfaith.md
+
 ############################# Swedish Wikipedia ################################
 
 datasets/svwiki.sampled_revisions.40k_2016.json:
