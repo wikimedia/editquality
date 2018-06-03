@@ -6,13 +6,33 @@ samples:
     40k_2018:
         quarry_url: "https://quarry.wmflabs.org/run/261117/output/0/json-lines?download=true"
         quarry_page: "https://quarry.wmflabs.org/query/26936"
+    5k_2018:
+        labeling_campaign: "https://labels.wmflabs.org/campaigns/bswiki/78/"
 
 unbalanced_5k_set_for_review: true
 
 default_sample: 40k_2018
 review_sample: 5k_2018
 
-models: {}
+merged_samples:
+    40k_2018:
+        autolabeled_revisions: "40k_2018"
+        human_labeled_revisions: "5k_2018"
+
+models:
+    damaging:
+        tuning_params:
+            criterion: "entropy"
+            n_estimators: 320
+            max_features: "log2"
+            min_samples_leaf: 7
+        build_number: 0
+        rf: true
+        pop_rate_true: 0.028101164191087918
+    goodfaith:
+        tuning_params:
+            learning_rate: 0.5
+        pop_rate_true: 0.9774939783219591
 
 trusted_groups:
     - bot
