@@ -419,12 +419,106 @@ datasets/bswiki.autolabeled_revisions.40k_2018.review.json: \
 		datasets/bswiki.autolabeled_revisions.40k_2018.json
 	cat $< | grep -E '"needs_review": (true|"True")' > $@
 
+
+datasets/bswiki.human_labeled_revisions.5k_2018.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/bswiki/78/ > $@
+
 datasets/bswiki.revisions_for_review.5k_2018.json: \
 		datasets/bswiki.autolabeled_revisions.40k_2018.review.json
 	cat $< | shuf > $@
 
-bswiki_models:
-bswiki_tuning_reports:
+datasets/bswiki.labeled_revisions.40k_2018.json: \
+		datasets/bswiki.human_labeled_revisions.5k_2018.json \
+		datasets/bswiki.autolabeled_revisions.40k_2018.no_review.json
+	./utility merge_labels $^ > $@
+
+datasets/bswiki.labeled_revisions.w_cache.40k_2018.json: \
+		datasets/bswiki.labeled_revisions.40k_2018.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.bswiki.damaging \
+		editquality.feature_lists.bswiki.goodfaith \
+		--host https://bs.wikipedia.org \
+		--extractor $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/bswiki.damaging.md: \
+		datasets/bswiki.labeled_revisions.w_cache.40k_2018.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.bswiki.damaging \
+		damaging \
+		roc_auc.labels.true \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.028101164191087918" \
+		--pop-rate "false=0.9718988358089121" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/bswiki.damaging.rf.model: \
+		datasets/bswiki.labeled_revisions.w_cache.40k_2018.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.RandomForest \
+		editquality.feature_lists.bswiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'criterion="entropy"' \
+		-p 'max_features="log2"' \
+		-p 'min_samples_leaf=7' \
+		-p 'n_estimators=320' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.028101164191087918" \
+		--pop-rate "false=0.9718988358089121" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/bswiki.damaging.md
+
+tuning_reports/bswiki.goodfaith.md: \
+		datasets/bswiki.labeled_revisions.w_cache.40k_2018.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.bswiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9774939783219591" \
+		--pop-rate "false=0.022506021678040944" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/bswiki.goodfaith.gradient_boosting.model: \
+		datasets/bswiki.labeled_revisions.w_cache.40k_2018.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.bswiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.5' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9774939783219591" \
+		--pop-rate "false=0.022506021678040944" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/bswiki.goodfaith.md
+
+bswiki_models: \
+	models/bswiki.damaging.rf.model \
+	models/bswiki.goodfaith.gradient_boosting.model
+
+bswiki_tuning_reports: \
+	tuning_reports/bswiki.damaging.md \
+	tuning_reports/bswiki.goodfaith.md
+
 ############################# Catalan Wikipedia ################################
 
 # From https://quarry.wmflabs.org/query/24081
