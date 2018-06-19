@@ -63,7 +63,7 @@ diff = [
         name="revision.diff.words_change"),
     sub(wikitext.revision.markups,
         wikitext.revision.parent.markups,
-        name="revision.diff.words_change"),
+        name="revision.diff.markups_change"),
     sub(wikitext.revision.headings,
         wikitext.revision.parent.headings,
         name="revision.diff.headings_change"),
