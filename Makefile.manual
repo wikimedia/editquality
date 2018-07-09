@@ -214,7 +214,7 @@ datasets/plwiki.labeled_revisions.no_defaults.resampled_15k_2016.json: \
 	) | shuf > $@
 
 datasets/plwiki.labeled_revisions.resampled_15k_2016.json: \
-               datasets/plwiki.labeled_revisions.no_defaults.resampled_15k_2016.json
+	       datasets/plwiki.labeled_revisions.no_defaults.resampled_15k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/plwiki.labeled_revisions.w_cache.resampled_15k_2016.json: \
@@ -330,6 +330,24 @@ datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		--host https://wikidata.org \
 		--verbose > $@
+
+# https://quarry.wmflabs.org/query/27882
+datasets/wikidatawiki.sampled_revisions.125k_2018.json:
+	wget -qO- https://quarry.wmflabs.org/run/273805/output/0/json-lines?download=true > $@
+
+datasets/wikidatawiki.autolabeled_revisions.125k_2018.json: \
+		datasets/wikidatawiki.sampled_revisions.125k_2018.json
+	cat $< | \
+	./utility autolabel --host=https://www.wikidata.org \
+		--trusted-groups=bot,sysop,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=3 \
+		--revert-window=48 \
+		--verbose > $@
+
+datasets/wikidatawiki.autolabeled_revisions.125k_2018.review.json: \
+		datasets/wikidatawiki.autolabeled_revisions.125k_2018.json
+	cat $< | grep -E '"needs_review": (true|"True")' > $@
 
 tuning_reports/wikidatawiki.damaging.md: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
