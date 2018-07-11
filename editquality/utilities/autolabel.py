@@ -195,16 +195,16 @@ def autolabeler(session, trusted_groups, trusted_edits,
                     # All anon edits get review
                     autolabel = {'needs_review': True,
                                  'review_reason': "anon"}
+                elif trusted_groups is not None and \
+                        user_in_trusted_group(session, user_text, trusted_groups):
+                    # Non-reverted edits users in trusted groups
+                    # don't need review
+                    autolabel = {'needs_review': False,
+                                 'review_reason': "trusted user"}
                 elif user_was_blocked(session, user_text):
                     # All blocked users get review
                     autolabel = {'needs_review': True,
                                  'review_reason': "blocked user"}
-                elif trusted_groups is not None and \
-                        user_in_trusted_group(session, user_text, trusted_groups):
-                    # Non-reverted edits by non-blocked users in trusted groups
-                    # don't need review
-                    autolabel = {'needs_review': False,
-                                 'review_reason': "trusted user"}
                 elif trusted_edits is not None and \
                         user_has_trusted_edits(session, user_text, trusted_edits):
                     # Non-reverted edits by non-blocked users with trusted
