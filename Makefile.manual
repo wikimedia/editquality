@@ -332,11 +332,11 @@ datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json: \
 		--verbose > $@
 
 # https://quarry.wmflabs.org/query/27882
-datasets/wikidatawiki.sampled_revisions.125k_2018.json:
-	wget -qO- https://quarry.wmflabs.org/run/273805/output/0/json-lines?download=true > $@
+datasets/wikidatawiki.sampled_revisions.500k_2018.json:
+	wget -qO- https://quarry.wmflabs.org/run/275172/output/0/json-lines?download=true > $@
 
-datasets/wikidatawiki.autolabeled_revisions.125k_2018.json: \
-		datasets/wikidatawiki.sampled_revisions.125k_2018.json
+datasets/wikidatawiki.autolabeled_revisions.500k_2018.json: \
+		datasets/wikidatawiki.sampled_revisions.500k_2018.json
 	cat $< | \
 	./utility autolabel --host=https://www.wikidata.org \
 		--trusted-groups=bot,sysop,bureaucrat \
@@ -345,9 +345,9 @@ datasets/wikidatawiki.autolabeled_revisions.125k_2018.json: \
 		--revert-window=48 \
 		--verbose > $@
 
-datasets/wikidatawiki.autolabeled_revisions.125k_2018.review.json: \
-		datasets/wikidatawiki.autolabeled_revisions.125k_2018.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
+datasets/wikidatawiki.autolabeled_revisions.500k_2018.review.json: \
+		datasets/wikidatawiki.autolabeled_revisions.500k_2018.json
+	cat $< | grep -E '"needs_review": (true|"True")' | grep -v '"review_reason": "blocked user"' > $@
 
 tuning_reports/wikidatawiki.damaging.md: \
 		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
