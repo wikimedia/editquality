@@ -53,6 +53,7 @@ from functools import lru_cache
 from itertools import islice, tee
 from multiprocessing import cpu_count
 from tqdm import tqdm
+from mwapi.errors import APIError
 
 import docopt
 import mwapi
@@ -237,6 +238,8 @@ def check_reverted_status(session, rev_id, page_id,
                                     window=revert_window,
                                     rvprop={'user', 'comment', 'ids'})
         except KeyError:
+            return None, None
+        except APIError:
             return None, None
         else:
             was_reverted_at_all = reverted is not None
