@@ -55,6 +55,12 @@ def _process_longest_repeated_char(text):
         return 1
 
 
+def _process_longest_repeated_uppercase_char(comment):
+    if re.findall(r"[A-Z]+", comment):
+        return max([len(i) for i in re.findall(r"[A-Z]+", comment)])
+    return 0
+
+
 def _process_english_bad_words(comment):
     return len(
         english.badwords.revision.datasources.matches.process(comment))
@@ -75,6 +81,12 @@ comment_uppercase_ratio = Feature(
     "revision.comment.comment_uppercase_ratio",
     _process_uppercase_ratio,
     returns=float,
+    depends_on=[revision_oriented.revision.datasources.comment])
+
+comment_longest_repeated_uppercase_char = Feature(
+    "revision.comment.comment_longest_repeated_uppercase_char",
+    _process_longest_repeated_uppercase_char,
+    returns=int,
     depends_on=[revision_oriented.revision.datasources.comment])
 
 comment_numbers_ratio = Feature(
@@ -123,6 +135,18 @@ is_restore = revision_oriented.revision.comment_matches(
 is_item_creation = revision_oriented.revision.comment_matches(
     r"^\/\* (wbsetentity|wbeditentity-create\:0\|) \*\/",
     name=name + ".is_item_creation")
+comment_has_url = revision_oriented.revision.comment_matches(
+    r"https?\:\/\/",
+    name=name + ".comment_has_url")
+comment_has_first_person_pronouns_en = revision_oriented.revision.comment_matches(
+    r"\b(I|me|we|my|mine|us|our|ours)\b",
+    name=name + ".comment_has_first_person_pronouns_en")
+comment_has_second_person_pronouns_en = revision_oriented.revision.comment_matches(
+    r"\b(you|your|yours)\b",
+    name=name + ".comment_contains_second_person_pronouns_en")
+comment_has_do_or_dont_en = revision_oriented.revision.comment_matches(
+    r"\b(dont|don't|do)\b",
+    name=name + ".comment_has_do_or_dont_en")
 
 # Properties changed
 diff = wikibase_features.revision.diff
@@ -153,7 +177,6 @@ official_website_changed = diff.property_changed(
 en_label_changed = bools.item_in_set(
     'en', diff.datasources.labels_changed,
     name=name + '.en_label_changed')
-
 
 # Status
 revision = wikibase_features.revision
@@ -192,7 +215,12 @@ comment_related = [
     comment_numbers_ratio,
     comment_whitespace_ratio,
     comment_english_bad_words,
-    comment_english_informals
+    comment_english_informals,
+    comment_longest_repeated_uppercase_char,
+    comment_has_url,
+    comment_has_first_person_pronouns_en,
+    comment_has_second_person_pronouns_en,
+    comment_has_do_or_dont_en,
 ]
 damaging = mediawiki.comment + mediawiki.user_rights + \
     mediawiki.protected_user + wikibase.parent + wikibase.diff + \
