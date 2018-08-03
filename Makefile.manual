@@ -404,10 +404,10 @@ models/wikidatawiki.goodfaith.gradient_boosting.model: \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
-		-p 'max_depth=5' \
+		-p 'max_depth=7' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=300' \
+		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
 		--labels "true,false" \
 		--center --scale > $@
