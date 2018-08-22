@@ -120,7 +120,8 @@ def run(api_host, revisions, labels_f, trusted_groups, trusted_edits,
 
     # Construct our API session
     session = mwapi.Session(
-        api_host, user_agent="wikimedia scoring platform/editquality -- autolabel script")
+        api_host,
+        user_agent="wikimedia scoring platform/editquality -- autolabel script")
 
     autolabel = autolabeler(session, trusted_groups, trusted_edits,
                             revert_radius, revert_window, exclude_reverted,
