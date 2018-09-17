@@ -5,8 +5,6 @@ Code-generate Makefile from template and configuration
     generate_make -h | --help
     generate_make
                  [--config=<path>]
-                 [--compare-to=<path>]
-                 [--compare-section=<name>]...
                  [--main=<filename>]
                  [--output=<path>]
                  [--templates=<path>]
@@ -15,11 +13,6 @@ Code-generate Makefile from template and configuration
 :Options:
     --config=<path>         Directory to search for configuration files
                             [default: config/]
-    --compare-to=<path>     If specified, compare output to an old Makefile
-    --compare-section=<name> Only compare sections, don't generate.  Wiki name
-                             is given in English, for example
-                             "Spanish Wikibooks"
-                            Multiple wikis can be separated by a comma.
     --main=<filename>       Override to use a main template other than the default.
                             [default: Makefile.j2]
     --output=<path>         Where to write the Makefile output.
@@ -47,7 +40,7 @@ import sys
 import docopt
 
 from .. import config
-from ..codegen import differ, generate
+from ..codegen import generate
 
 logger = logging.getLogger(__name__)
 
@@ -78,10 +71,3 @@ def main(argv=None):
 
     output = generate.generate(variables, templates_path, main_template)
     output_f.write(output)
-
-    if args['--compare-to'] is not None:
-        compare_to_f = open(args['--compare-to'])
-        section_names = args['--compare-section']
-
-        sys.stderr.write("".join(differ.diff(
-            compare_to_f.read(), output, section_names)) + "\n")
