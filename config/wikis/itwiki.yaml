@@ -3,20 +3,39 @@ label: Italian Wikipedia
 host: it.wikipedia.org
 
 samples:
-    20k_2015:
-        quarry_url: "http://quarry.wmflabs.org/run/42224/output/0/json-lines?download=true"
+  5k_2015:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/itwiki/18/
+  20k_2015:
+    quarry_url: "http://quarry.wmflabs.org/run/42224/output/0/json-lines?download=true"
+
 
 trusted_groups:
-    - sysop
-    - oversight
-    - bot
-    - rollbacker
-    - checkuser
-    - abusefilter
-    - bureaucrat
+  - sysop
+  - oversight
+  - bot
+  - rollbacker
+  - checkuser
+  - abusefilter
+  - bureaucrat
 
+review_sample: 5k_2016
 default_sample: 20k_2015
 
+merged_samples:
+  20k_2015:
+    autolabeled_revisions: 20k_2015
+    human_labeled_revisions: 5k_2015
+
 models:
-    reverted:
-        pop_rate_true: 0.04628882613957241
+    damaging:
+      pop_rate_true: 0.038665452792802445
+      n_estimators: 700
+      max_features: log2
+      learning_rate: 0.01
+      max_depth: 5
+    goodfaith:
+      pop_rate_true: 0.019225619878969636
+      max_features: log2
+      n_estimators: 500
+      max_depth: 3
+      learning_rate: 1
