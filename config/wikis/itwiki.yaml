@@ -29,5 +29,13 @@ merged_samples:
 models:
     damaging:
       pop_rate_true: 0.038665452792802445
+      n_estimators: 700
+      max_features: log2
+      learning_rate: 0.01
+      max_depth: 5
     goodfaith:
       pop_rate_true: 0.019225619878969636
+      max_features: log2
+      n_estimators: 500
+      max_depth: 3
+      learning_rate: 1
