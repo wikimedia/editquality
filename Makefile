@@ -2375,55 +2375,101 @@ datasets/itwiki.autolabeled_revisions.20k_2015.review.json: \
 		datasets/itwiki.autolabeled_revisions.20k_2015.json
 	cat $< | grep -E '"needs_review": (true|"True")' > $@
 
-datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/itwiki.autolabeled_revisions.20k_2015.review.json \
+
+datasets/itwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/itwiki/18/ > $@
+
+datasets/itwiki.labeled_revisions.20k_2015.json: \
+		datasets/itwiki.human_labeled_revisions.5k_2015.json \
 		datasets/itwiki.autolabeled_revisions.20k_2015.no_review.json
-	cat $^ | \
+	./utility merge_labels $^ > $@
+
+datasets/itwiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/itwiki.labeled_revisions.20k_2015.json
+	cat $< | \
 	revscoring extract \
-		editquality.feature_lists.itwiki.reverted \
+		editquality.feature_lists.itwiki.damaging \
+		editquality.feature_lists.itwiki.goodfaith \
 		--host https://it.wikipedia.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
 
-tuning_reports/itwiki.reverted.md: \
-		datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json
+tuning_reports/itwiki.damaging.md: \
+		datasets/itwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.itwiki.reverted \
-		reverted_for_damage \
+		editquality.feature_lists.itwiki.damaging \
+		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.04628882613957241" \
-		--pop-rate "false=0.9537111738604276" \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.038665452792802445" \
+		--pop-rate "false=0.9613345472071976" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/itwiki.reverted.gradient_boosting.model: \
-		datasets/itwiki.autolabeled_revisions.w_cache.20k_2015.json
+models/itwiki.damaging.gradient_boosting.model: \
+		datasets/itwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $^ | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.itwiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		editquality.feature_lists.itwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.04628882613957241" \
-		--pop-rate "false=0.9537111738604276" \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.038665452792802445" \
+		--pop-rate "false=0.9613345472071976" \
 		--center --scale > $@
 	
-	revscoring model_info $@ > model_info/itwiki.reverted.md
+	revscoring model_info $@ > model_info/itwiki.damaging.md
+
+tuning_reports/itwiki.goodfaith.md: \
+		datasets/itwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.itwiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.019225619878969636" \
+		--pop-rate "false=0.9807743801210304" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/itwiki.goodfaith.gradient_boosting.model: \
+		datasets/itwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.itwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.019225619878969636" \
+		--pop-rate "false=0.9807743801210304" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/itwiki.goodfaith.md
 
 itwiki_models: \
-	models/itwiki.reverted.gradient_boosting.model
+	models/itwiki.damaging.gradient_boosting.model \
+	models/itwiki.goodfaith.gradient_boosting.model
 
 itwiki_tuning_reports: \
-	tuning_reports/itwiki.reverted.md
+	tuning_reports/itwiki.damaging.md \
+	tuning_reports/itwiki.goodfaith.md
 
 ############################# Japanese Wikipedia ################################
 
