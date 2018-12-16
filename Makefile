@@ -817,55 +817,101 @@ datasets/dewiki.autolabeled_revisions.20k_2015.review.json: \
 		datasets/dewiki.autolabeled_revisions.20k_2015.json
 	cat $< | grep -E '"needs_review": (true|"True")' > $@
 
-datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/dewiki.autolabeled_revisions.20k_2015.review.json \
+
+datasets/dewiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/dewiki/16/ > $@
+
+datasets/dewiki.labeled_revisions.20k_2015.json: \
+		datasets/dewiki.human_labeled_revisions.5k_2015.json \
 		datasets/dewiki.autolabeled_revisions.20k_2015.no_review.json
-	cat $^ | \
+	./utility merge_labels $^ > $@
+
+datasets/dewiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/dewiki.labeled_revisions.20k_2015.json
+	cat $< | \
 	revscoring extract \
-		editquality.feature_lists.dewiki.reverted \
+		editquality.feature_lists.dewiki.damaging \
+		editquality.feature_lists.dewiki.goodfaith \
 		--host https://de.wikipedia.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
 
-tuning_reports/dewiki.reverted.md: \
-		datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json
+tuning_reports/dewiki.damaging.md: \
+		datasets/dewiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.dewiki.reverted \
-		reverted_for_damage \
+		editquality.feature_lists.dewiki.damaging \
+		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.049775581219426095" \
-		--pop-rate "false=0.950224418780574" \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.029975955116216937" \
+		--pop-rate "false=0.970024044883783" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/dewiki.reverted.gradient_boosting.model: \
-		datasets/dewiki.autolabeled_revisions.w_cache.20k_2015.json
+models/dewiki.damaging.gradient_boosting.model: \
+		datasets/dewiki.labeled_revisions.w_cache.20k_2015.json
 	cat $^ | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.dewiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		editquality.feature_lists.dewiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=300' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.049775581219426095" \
-		--pop-rate "false=0.950224418780574" \
+		-p 'n_estimators=100' \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.029975955116216937" \
+		--pop-rate "false=0.970024044883783" \
 		--center --scale > $@
 	
-	revscoring model_info $@ > model_info/dewiki.reverted.md
+	revscoring model_info $@ > model_info/dewiki.damaging.md
+
+tuning_reports/dewiki.goodfaith.md: \
+		datasets/dewiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.dewiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9806572268234037" \
+		--pop-rate "false=0.019342773176596273" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/dewiki.goodfaith.gradient_boosting.model: \
+		datasets/dewiki.labeled_revisions.w_cache.20k_2015.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.dewiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.5' \
+		-p 'max_depth=5' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9806572268234037" \
+		--pop-rate "false=0.019342773176596273" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/dewiki.goodfaith.md
 
 dewiki_models: \
-	models/dewiki.reverted.gradient_boosting.model
+	models/dewiki.damaging.gradient_boosting.model \
+	models/dewiki.goodfaith.gradient_boosting.model
 
 dewiki_tuning_reports: \
-	tuning_reports/dewiki.reverted.md
+	tuning_reports/dewiki.damaging.md \
+	tuning_reports/dewiki.goodfaith.md
 
 ############################# Greek Wikipedia ################################
 
