@@ -300,6 +300,77 @@ plwiki_tuning_reports: \
 		tuning_reports/plwiki.damaging.md \
 		tuning_reports/plwiki.goodfaith.md
 
+
+
+#################################### Translate wiki ###########################
+
+datasets/translatewiki.revision_sample.2018.json:
+	./utility get_revisions https://translatewiki.net \
+		20171212000000 20181212000000 --verbose > $@
+
+datasets/translatewiki.autolabeled_revisions.2018.json: \
+		datasets/translatewiki.revision_sample.2018.json
+	cat $< | \
+	./utility autolabel --host=https://translatewiki.net \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-edits=1000 \
+		--threads=2 \
+		--verbose > $@
+
+datasets/translatewiki.stratified_revisions.25k_2018.json: \
+		datasets/translatewiki.autolabeled_revisions.2018.json
+	(cat $< | grep '"reverted_for_damage": true'; \
+	 cat $< | grep '"reverted_for_damage": false' | shuf -n 20000) > $@
+
+datasets/translatewiki.stratified_revisions.w_cache.25k_2018.json: \
+		datasets/translatewiki.stratified_revisions.25k_2018.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.translatewiki.reverted \
+		editquality.feature_lists.translatewiki.damaging \
+		editquality.feature_lists.translatewiki.goodfaith \
+		--host https://translatewiki.net \
+		--verbose > $@
+
+tuning_reports/translatewiki.reverted.md: \
+		datasets/translatewiki.stratified_revisions.w_cache.25k_2018.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.translatewiki.reverted \
+		reverted_for_damage \
+		roc_auc.labels.true \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.00073" \
+		--pop-rate "false=0.99927" \
+		--labels "true,false" \
+		--center --scale \
+		--cv-timeout=60 \
+		--debug > $@
+
+
+models/translatewiki.reverted.gradient_boosting.model: \
+		datasets/translatewiki.stratified_revisions.w_cache.25k_2018.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.translatewiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'max_depth=7' \
+		-p 'learning_rate=0.1' \
+		-p 'n_estimators=500' \
+		-p 'max_features="log2"' \
+		--label-weight "true=$(reverted_weight)" \
+		--labels "true,false" \
+		--center --scale > $@
+
+translatewiki_models: \
+                models/translatewiki.reverted.random_forest.model
+
+translatewiki_tuning_reports: \
+                tuning_reports/translatewiki.reverted.md
+
 ################################### Wikidata ##################################
 
 # wikidatawiki.balanced_revisions.20k_2015.json is check into the repo
@@ -419,4 +490,3 @@ wikidatawiki_models: \
 wikidatawiki_tuning_reports: \
 		tuning_reports/wikidatawiki.damaging.md \
 		tuning_reports/wikidatawiki.goodfaith.md
-
