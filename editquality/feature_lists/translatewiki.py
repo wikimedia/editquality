@@ -1,13 +1,14 @@
-import langdetect
-from revscoring.datasources import revision_oriented as ro
-from revscoring import Feature, Datasource
-from revscoring.datasources.meta import frequencies, mappers, dicts
-from revscoring.features.meta import aggregators, vectorizers
-from . import enwiki
-from . import wikitext
-from . import mediawiki
-
+import statistics
 from collections import defaultdict
+
+import langdetect
+from revscoring import Datasource, Feature
+from revscoring.datasources import revision_oriented as ro
+from revscoring.datasources.meta import dicts, frequencies, indexable, mappers
+from revscoring.features import wikitext as wt
+from revscoring.features.meta import aggregators, vectorizers
+
+from . import enwiki, mediawiki, wikitext
 
 
 def process_is_a_translation_page(namespace_id, title):
@@ -20,7 +21,64 @@ is_a_translation_page = Feature(
     depends_on=[ro.revision.page.namespace.id,
                 ro.revision.page.title])
 
-translatewiki = [is_a_translation_page]
+
+def process_is_a_default(text):
+    return text == "-"
+
+
+revision_is_a_default = Feature(
+    "revision.is_a_default", process_is_a_default,
+    returns=bool, depends_on=[ro.revision.text])
+
+parent_was_a_default = Feature(
+    "revision.parent.is_a_default", process_is_a_default,
+    returns=bool, depends_on=[ro.revision.parent.text])
+
+
+# Unicode ranges
+def process_unicode_stats(words):
+    code_points = [ord(c) for w in words for c in w] or [ord("-"), ord("/")]
+    return (statistics.mean(code_points), statistics.median(code_points),
+            statistics.stdev(code_points))
+
+
+revision_unicode_stats = Datasource(
+    "revision.unicode_stats", process_unicode_stats,
+    depends_on=[wt.revision.datasources.words])
+revision_unicode_mean = indexable.index(0, revision_unicode_stats)
+revision_unicode_median = indexable.index(1, revision_unicode_stats)
+revision_unicode_stdev = indexable.index(2, revision_unicode_stats)
+parent_unicode_stats = Datasource(
+    "revision.parent.unicode_stats", process_unicode_stats,
+    depends_on=[wt.revision.parent.datasources.words])
+parent_unicode_mean = indexable.index(0, parent_unicode_stats)
+parent_unicode_median = indexable.index(1, parent_unicode_stats)
+parent_unicode_stdev = indexable.index(2, parent_unicode_stats)
+
+
+def diff(val1, val2):
+    return float(val2 - val1)
+
+
+mean_unicode_diff = Feature(
+    "revision.diff.mean_unicode_diff", diff, returns=float,
+    depends_on=[parent_unicode_mean, revision_unicode_mean])
+median_unicode_diff = Feature(
+    "revision.diff.median_unicode_diff", diff, returns=float,
+    depends_on=[parent_unicode_median, revision_unicode_median])
+stdev_unicode_diff = Feature(
+    "revision.diff.stdev_unicode_diff", diff, returns=float,
+    depends_on=[parent_unicode_stdev, revision_unicode_stdev])
+
+
+# Introduction of tags
+XSS_TAGS = ["source", "img", "iframe", "input", "style", "body", "svg"]
+xss_tags = wt.revision.tag_names_matching(
+    "|".join(XSS_TAGS), name="revision.xss_tags")
+
+translatewiki = [is_a_translation_page, revision_is_a_default,
+                 parent_was_a_default, xss_tags, mean_unicode_diff,
+                 median_unicode_diff, stdev_unicode_diff]
 
 
 def process_translation_title_lang(title):
@@ -47,7 +105,9 @@ COMMONLY_CONFUSED_LANGUAGE_GROUPS = [
     # Serbian is confused with Macedonian and Bulgarian
     {"sr", "mk", "bg"},
     # Indonesian and Tagalog get confused
-    {"id", "tl"}
+    {"id", "tl"},
+    # Norweigian languages
+    {"no", "nb", "nn"}
 ]
 COMMON_LANGUAGE_MAP = {ll: "-".join(sorted(lg))
                        for lg in COMMONLY_CONFUSED_LANGUAGE_GROUPS
@@ -103,6 +163,7 @@ match_lang_delta = Feature("revision.diff.match_lang_delta",
                            depends_on=[translation_title_lang,
                                        lang_delta],
                            returns=float)
+
 
 detected_langs = [parent_lang_vector, lang_delta_vector, lang_delta_sum_diff,
                   parent_lang_match, match_lang_delta]
