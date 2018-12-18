@@ -317,13 +317,13 @@ datasets/translatewiki.autolabeled_revisions.2018.json: \
 		--threads=2 \
 		--verbose > $@
 
-datasets/translatewiki.stratified_revisions.25k_2018.json: \
+datasets/translatewiki.stratified_revisions.105k_2018.json: \
 		datasets/translatewiki.autolabeled_revisions.2018.json
 	(cat $< | grep '"reverted_for_damage": true'; \
-	 cat $< | grep '"reverted_for_damage": false' | shuf -n 20000) > $@
+	 cat $< | grep '"reverted_for_damage": false' | shuf -n 100000) > $@
 
-datasets/translatewiki.stratified_revisions.w_cache.25k_2018.json: \
-		datasets/translatewiki.stratified_revisions.25k_2018.json
+datasets/translatewiki.stratified_revisions.w_cache.105k_2018.json: \
+		datasets/translatewiki.stratified_revisions.105k_2018.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.translatewiki.reverted \
@@ -333,7 +333,7 @@ datasets/translatewiki.stratified_revisions.w_cache.25k_2018.json: \
 		--verbose > $@
 
 tuning_reports/translatewiki.reverted.md: \
-		datasets/translatewiki.stratified_revisions.w_cache.25k_2018.json
+		datasets/translatewiki.stratified_revisions.w_cache.105k_2018.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -350,7 +350,7 @@ tuning_reports/translatewiki.reverted.md: \
 
 
 models/translatewiki.reverted.gradient_boosting.model: \
-		datasets/translatewiki.stratified_revisions.w_cache.25k_2018.json
+		datasets/translatewiki.stratified_revisions.w_cache.105k_2018.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
