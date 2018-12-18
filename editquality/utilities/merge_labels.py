@@ -103,9 +103,6 @@ def run(human_labels, auto_labels, verbose):
     for revision in auto_labels:
         if revision['rev_id'] in human_rev_map:
             if not revision['autolabel']['needs_review']:
-                # TODO: This shouldn't really be a warning?
-                # logger.warning("{0} has labels, but was not flagged for review"
-                #                .format(revision['rev_id']))
                 revision.update(AUTO_DEFAULTS)
 
             human_labeled = human_rev_map[revision['rev_id']]

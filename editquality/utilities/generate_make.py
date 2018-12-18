@@ -13,8 +13,8 @@ Code-generate Makefile from template and configuration
 :Options:
     --config=<path>         Directory to search for configuration files
                             [default: config/]
-    --main=<filename>       Override to use a main template other than the default.
-                            [default: Makefile.j2]
+    --main=<filename>       Override to use a main template other than the
+                            default [default: Makefile.j2]
     --output=<path>         Where to write the Makefile output.
                             [default: <stdout>]
     --templates=<path>      Directory to search for input templates.

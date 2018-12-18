@@ -23,8 +23,9 @@ user_rights = [
         {'sysop'}, name="revision.user.is_admin"),
     revision_oriented.revision.user.in_group(
         {'browsearchive', 'deletedhistory', 'interface-editor',
-         'noratelimit', 'accountcreator', 'massmessage-sender', 'templateeditor',
-         'autopatrolled', 'propertycreator', 'centralnoticeadmin'},
+         'noratelimit', 'accountcreator', 'massmessage-sender',
+         'templateeditor', 'autopatrolled', 'propertycreator',
+         'centralnoticeadmin'},
         name="revision.user.is_trusted"),
     revision_oriented.revision.user.in_group(
         {'rollback', 'abusefilter', 'patroller',
