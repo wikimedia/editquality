@@ -361,6 +361,8 @@ models/translatewiki.reverted.gradient_boosting.model: \
 		-p 'learning_rate=0.1' \
 		-p 'n_estimators=500' \
 		-p 'max_features="log2"' \
+		--pop-rate "true=0.00073" \
+		--pop-rate "false=0.99927" \
 		--label-weight "true=$(reverted_weight)" \
 		--labels "true,false" \
 		--center --scale > $@
