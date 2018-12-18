@@ -5,14 +5,16 @@ The responsibility of this process is to simplify the template's work and other
 consumers, as much as possible.
 """
 import collections
-import deep_merge
 import glob
+
+import deep_merge
 import yaml
 
 
 def load_config(config_dir=None):
     path = "/{0}_defaults.yaml"
-    model_defaults = yaml.safe_load(open(config_dir + path.format('model'), "r"))
+    model_defaults = yaml.safe_load(
+        open(config_dir + path.format('model'), "r"))
     wiki_defaults = yaml.safe_load(open(config_dir + path.format('wiki'), "r"))
     manual_wikis = yaml.safe_load(open(config_dir + '/manual_wikis.yaml', "r"))
 
@@ -68,7 +70,8 @@ def load_wiki(wiki, config):
             "{}=$({}_weight)".format(target_prediction, model_name)
 
         model['algorithm'] = 'rf' if 'rf' in model else 'gradient_boosting'
-        model['class_name'] = 'RandomForest' if 'rf' in model else 'GradientBoosting'
+        model['class_name'] = \
+            'RandomForest' if 'rf' in model else 'GradientBoosting'
 
         result[model_name] = model
 
