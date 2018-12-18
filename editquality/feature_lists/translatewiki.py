@@ -37,7 +37,9 @@ parent_was_a_default = Feature(
 
 # Unicode ranges
 def process_unicode_stats(words):
-    code_points = [ord(c) for w in words for c in w] or [ord("-"), ord("/")]
+    code_points = [ord(c) for w in words for c in w]
+    while len(code_points) < 2:
+        code_points.append(ord("-"))
     return (statistics.mean(code_points), statistics.median(code_points),
             statistics.stdev(code_points))
 
