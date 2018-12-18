@@ -1,13 +1,14 @@
-from revscoring.features import revision_oriented, wikibase as wikibase_features
-from revscoring.features.meta import bools
+import re
+from itertools import groupby
+
+from revscoring.features import wikibase as wikibase_features
+from revscoring.features import revision_oriented
 from revscoring.features.feature import Feature
+from revscoring.features.meta import bools
 from revscoring.features.modifiers import not_
 from revscoring.languages import english
 
 from . import mediawiki, wikibase
-
-import re
-from itertools import groupby
 
 name = "wikidatawiki"
 
@@ -138,12 +139,14 @@ is_item_creation = revision_oriented.revision.comment_matches(
 comment_has_url = revision_oriented.revision.comment_matches(
     r"https?\:\/\/",
     name=name + ".comment_has_url")
-comment_has_first_person_pronouns_en = revision_oriented.revision.comment_matches(
-    r"\b(I|me|we|my|mine|us|our|ours)\b",
-    name=name + ".comment_has_first_person_pronouns_en")
-comment_has_second_person_pronouns_en = revision_oriented.revision.comment_matches(
-    r"\b(you|your|yours)\b",
-    name=name + ".comment_contains_second_person_pronouns_en")
+comment_has_first_person_pronouns_en = \
+    revision_oriented.revision.comment_matches(
+        r"\b(I|me|we|my|mine|us|our|ours)\b",
+        name=name + ".comment_has_first_person_pronouns_en")
+comment_has_second_person_pronouns_en = \
+    revision_oriented.revision.comment_matches(
+        r"\b(you|your|yours)\b",
+        name=name + ".comment_contains_second_person_pronouns_en")
 comment_has_do_or_dont_en = revision_oriented.revision.comment_matches(
     r"\b(dont|don't|do)\b",
     name=name + ".comment_has_do_or_dont_en")

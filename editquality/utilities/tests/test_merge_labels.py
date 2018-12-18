@@ -83,7 +83,8 @@ from .. import merge_labels
         [],
         [{
             "rev_id": 12345,
-            "autolabel": {"review_reason": "trusted user", "needs_review": False},
+            "autolabel": {"review_reason": "trusted user",
+                          "needs_review": False},
             "reverted_for_damage": False
         }],
         [{
@@ -92,7 +93,8 @@ from .. import merge_labels
             'reverted_for_damage': False,
             'damaging': False,
             'goodfaith': True,
-            'autolabel': {'needs_review': False, 'review_reason': 'trusted user'}
+            'autolabel': {'needs_review': False,
+                          'review_reason': 'trusted user'}
         }]
     ),
     # Merge when partial human labeling was done.
@@ -105,7 +107,8 @@ from .. import merge_labels
         }],
         [{
             "rev_id": 12345,
-            "autolabel": {"review_reason": "trusted user", "needs_review": False},
+            "autolabel": {"review_reason": "trusted user",
+                          "needs_review": False},
             "reverted_for_damage": False
         }],
         [{
@@ -114,7 +117,8 @@ from .. import merge_labels
             'reverted_for_damage': False,
             'damaging': True,
             'goodfaith': False,
-            'autolabel': {'needs_review': False, 'review_reason': 'trusted user'}
+            'autolabel': {'needs_review': False,
+                          'review_reason': 'trusted user'}
         }]
     ),
     # Merge when null human labeling was done.  auto_labeled field is
@@ -124,7 +128,8 @@ from .. import merge_labels
         [{"auto_labeled": False, "autolabel": {}, "rev_id": 12345}],
         [{
             "rev_id": 12345,
-            "autolabel": {"review_reason": "trusted user", "needs_review": False},
+            "autolabel": {"review_reason": "trusted user",
+                          "needs_review": False},
             "reverted_for_damage": False
         }],
         [{
@@ -133,7 +138,8 @@ from .. import merge_labels
             'reverted_for_damage': False,
             'damaging': False,
             'goodfaith': True,
-            'autolabel': {'needs_review': False, 'review_reason': 'trusted user'}
+            'autolabel': {'needs_review': False,
+                          'review_reason': 'trusted user'}
         }]
     ),
 ])

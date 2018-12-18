@@ -170,8 +170,9 @@ match_lang_delta = Feature("revision.diff.match_lang_delta",
 detected_langs = [parent_lang_vector, lang_delta_vector, lang_delta_sum_diff,
                   parent_lang_match, match_lang_delta]
 
-damaging = enwiki.badwords + enwiki.informals + wikitext.diff + \
-           mediawiki.protected_user + mediawiki.user_rights + \
-           wikitext.parent + translatewiki + detected_langs
+damaging = \
+    enwiki.badwords + enwiki.informals + wikitext.diff + \
+    mediawiki.protected_user + mediawiki.user_rights + \
+    wikitext.parent + translatewiki + detected_langs
 reverted = damaging
 goodfaith = damaging
