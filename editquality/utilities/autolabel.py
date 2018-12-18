@@ -52,13 +52,13 @@ import traceback
 from functools import lru_cache
 from itertools import islice, tee
 from multiprocessing import cpu_count
-from tqdm import tqdm
-from mwapi.errors import APIError
 
 import docopt
 import mwapi
 import mwreverts.api
 import para
+from mwapi.errors import APIError
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +121,7 @@ def run(api_host, revisions, labels_f, trusted_groups, trusted_edits,
     # Construct our API session
     session = mwapi.Session(
         api_host,
-        user_agent="wikimedia scoring platform/editquality -- autolabel script")
+        user_agent="wikimedia scoring platform/editquality -- autolabel")
 
     autolabel = autolabeler(session, trusted_groups, trusted_edits,
                             revert_radius, revert_window, exclude_reverted,
@@ -201,14 +201,14 @@ def autolabeler(session, trusted_groups, trusted_edits,
                     # All blocked users get review
                     autolabel = {'needs_review': True,
                                  'review_reason': "blocked user"}
-                elif trusted_groups is not None and \
-                        user_in_trusted_group(session, user_text, trusted_groups):
+                elif (trusted_groups is not None and
+                      user_in_trusted_group(session, user_text, trusted_groups)):
                     # Non-reverted edits by non-blocked users in trusted groups
                     # don't need review
                     autolabel = {'needs_review': False,
                                  'review_reason': "trusted user"}
-                elif trusted_edits is not None and \
-                        user_has_trusted_edits(session, user_text, trusted_edits):
+                elif (trusted_edits is not None and
+                      user_has_trusted_edits(session, user_text, trusted_edits)):
                     # Non-reverted edits by non-blocked users with trusted
                     # number of edits don't need review
                     autolabel = {'needs_review': False,

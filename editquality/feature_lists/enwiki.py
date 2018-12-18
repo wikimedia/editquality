@@ -1,4 +1,5 @@
-from revscoring.features import revision_oriented, wikitext as wikitext_features
+from revscoring.features import wikitext as wikitext_features
+from revscoring.features import revision_oriented
 from revscoring.features.modifiers import sub
 from revscoring.languages import english
 
