@@ -3,7 +3,7 @@
 # Remove target files after command failure.
 .DELETE_ON_ERROR:
 
-major_minor = 0.4
+major_minor = 0.5
 reverted_major_minor = $(major_minor)
 damaging_major_minor = $(major_minor)
 goodfaith_major_minor = $(major_minor)
@@ -368,7 +368,7 @@ models/translatewiki.reverted.gradient_boosting.model: \
 		--center --scale > $@
 
 translatewiki_models: \
-                models/translatewiki.reverted.random_forest.model
+                models/translatewiki.reverted.gradient_boosting.model
 
 translatewiki_tuning_reports: \
                 tuning_reports/translatewiki.reverted.md
