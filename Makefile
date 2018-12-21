@@ -43,6 +43,7 @@ models: \
 		srwiki_models \
 		svwiki_models \
 		tawiki_models \
+		translatewiki_models \
 		trwiki_models \
 		ukwiki_models \
 		urwiki_models \
@@ -89,6 +90,7 @@ tuning_reports: \
 		srwiki_tuning_reports \
 		svwiki_tuning_reports \
 		tawiki_tuning_reports \
+		translatewiki_tuning_reports \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
 		urwiki_tuning_reports \
