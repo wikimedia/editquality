@@ -1,12 +1,12 @@
 Model Information:
 	 - type: GradientBoosting
-	 - version: 0.4.1
-	 - params: {'n_estimators': 300, 'subsample': 1.0, 'max_features': 'log2', 'min_impurity_decrease': 0.0, 'multilabel': False, 'min_weight_fraction_leaf': 0.0, 'label_weights': OrderedDict([(False, 10)]), 'random_state': None, 'labels': [True, False], 'warm_start': False, 'verbose': 0, 'init': None, 'population_rates': None, 'loss': 'deviance', 'center': True, 'min_samples_leaf': 1, 'presort': 'auto', 'max_depth': 3, 'scale': True, 'criterion': 'friedman_mse', 'min_samples_split': 2, 'learning_rate': 0.1, 'min_impurity_split': None, 'max_leaf_nodes': None}
+	 - version: 0.5.1
+	 - params: {'n_estimators': 300, 'center': True, 'loss': 'deviance', 'multilabel': False, 'criterion': 'friedman_mse', 'min_samples_leaf': 1, 'labels': [True, False], 'max_depth': 3, 'presort': 'auto', 'max_features': 'log2', 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'subsample': 1.0, 'verbose': 0, 'min_impurity_decrease': 0.0, 'init': None, 'learning_rate': 0.1, 'random_state': None, 'population_rates': None, 'max_leaf_nodes': None, 'warm_start': False, 'label_weights': OrderedDict([(False, 10)]), 'min_impurity_split': None, 'scale': True}
 	Environment:
-	 - revscoring_version: '2.2.5'
-	 - platform: 'Linux-4.9.0-6-amd64-x86_64-with-debian-9.4'
+	 - revscoring_version: '2.3.0'
+	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
 	 - machine: 'x86_64'
-	 - version: '#1 SMP Debian 4.9.82-1+deb9u3 (2018-03-02)'
+	 - version: '#1 SMP Debian 4.9.110-3+deb9u6 (2018-10-08)'
 	 - system: 'Linux'
 	 - processor: ''
 	 - python_build: ('default', 'Jan 19 2017 14:11:04')
@@ -15,14 +15,14 @@ Model Information:
 	 - python_implementation: 'CPython'
 	 - python_revision: ''
 	 - python_version: '3.5.3'
-	 - release: '4.9.0-6-amd64'
+	 - release: '4.9.0-8-amd64'
 	
 	Statistics:
-	counts (n=19779):
+	counts (n=19783):
 		label        n         ~True    ~False
 		-------  -----  ---  -------  --------
-		True     19230  -->    18320       910
-		False      549  -->      122       427
+		True     19234  -->    18318       916
+		False      549  -->      126       423
 	rates:
 		              True    False
 		----------  ------  -------
@@ -36,46 +36,46 @@ Model Information:
 		  False    True
 		-------  ------
 		  0.931   0.069
-	recall (micro=0.947, macro=0.865):
+	recall (micro=0.947, macro=0.861):
 		  False    True
 		-------  ------
-		  0.778   0.953
-	!recall (micro=0.783, macro=0.865):
+		   0.77   0.952
+	!recall (micro=0.776, macro=0.861):
 		  False    True
 		-------  ------
-		  0.953   0.778
-	precision (micro=0.973, macro=0.665):
+		  0.952    0.77
+	precision (micro=0.973, macro=0.663):
 		  False    True
 		-------  ------
-		  0.337   0.993
-	!precision (micro=0.357, macro=0.665):
+		  0.334   0.993
+	!precision (micro=0.354, macro=0.663):
 		  False    True
 		-------  ------
-		  0.993   0.337
-	f1 (micro=0.957, macro=0.722):
+		  0.993   0.334
+	f1 (micro=0.957, macro=0.719):
 		  False    True
 		-------  ------
-		  0.471   0.972
-	!f1 (micro=0.486, macro=0.722):
+		  0.466   0.972
+	!f1 (micro=0.481, macro=0.719):
 		  False    True
 		-------  ------
-		  0.972   0.471
+		  0.972   0.466
 	accuracy (micro=0.947, macro=0.947):
 		  False    True
 		-------  ------
 		  0.947   0.947
-	fpr (micro=0.217, macro=0.135):
+	fpr (micro=0.224, macro=0.139):
 		  False    True
 		-------  ------
-		  0.047   0.222
-	roc_auc (micro=0.959, macro=0.959):
+		  0.048    0.23
+	roc_auc (micro=0.96, macro=0.96):
 		  False    True
 		-------  ------
-		   0.96   0.959
-	pr_auc (micro=0.983, macro=0.743):
+		   0.96    0.96
+	pr_auc (micro=0.984, macro=0.75):
 		  False    True
 		-------  ------
-		  0.487   0.999
+		  0.501   0.999
 	
-	 - score_schema: {'properties': {'prediction': {'type': 'bool', 'description': 'The most likely label predicted by the estimator'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'properties': {'true': 'number', 'false': 'number'}, 'type': 'object'}}, 'title': 'Scikit learn-based classifier score with probability', 'type': 'object'}
+	 - score_schema: {'title': 'Scikit learn-based classifier score with probability', 'type': 'object', 'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object', 'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}}}}
 
