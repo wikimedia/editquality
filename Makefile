@@ -1429,105 +1429,59 @@ datasets/eswikiquote.autolabeled_revisions.12k_2017.review.json: \
 		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
 	cat $< | grep -E '"needs_review": (true|"True")' > $@
 
-
-datasets/eswikiquote.human_labeled_revisions.5k_2017.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/eswikiquote/64/ > $@
-
 datasets/eswikiquote.revisions_for_review.5k_2017.json: \
 		datasets/eswikiquote.autolabeled_revisions.12k_2017.review.json
 	cat $< | shuf > $@
 
-datasets/eswikiquote.labeled_revisions.12k_2017.json: \
-		datasets/eswikiquote.human_labeled_revisions.5k_2017.json \
+datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json: \
+		datasets/eswikiquote.autolabeled_revisions.12k_2017.review.json \
 		datasets/eswikiquote.autolabeled_revisions.12k_2017.no_review.json
-	./utility merge_labels $^ > $@
-
-datasets/eswikiquote.labeled_revisions.w_cache.12k_2017.json: \
-		datasets/eswikiquote.labeled_revisions.12k_2017.json
-	cat $< | \
+	cat $^ | \
 	revscoring extract \
-		editquality.feature_lists.eswikiquote.damaging \
-		editquality.feature_lists.eswikiquote.goodfaith \
+		editquality.feature_lists.eswikiquote.reverted \
 		--host https://es.wikiquote.org \
 		--extractor $(max_extractors) \
 		--verbose > $@
 
-tuning_reports/eswikiquote.damaging.md: \
-		datasets/eswikiquote.labeled_revisions.w_cache.12k_2017.json
+tuning_reports/eswikiquote.reverted.md: \
+		datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.eswikiquote.damaging \
-		damaging \
+		editquality.feature_lists.eswikiquote.reverted \
+		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.08707101597009854" \
-		--pop-rate "false=0.9129289840299014" \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.089509548245983" \
+		--pop-rate "false=0.910490451754017" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/eswikiquote.damaging.gradient_boosting.model: \
-		datasets/eswikiquote.labeled_revisions.w_cache.12k_2017.json
+models/eswikiquote.reverted.gradient_boosting.model: \
+		datasets/eswikiquote.autolabeled_revisions.w_cache.12k_2017.json
 	cat $^ | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.eswikiquote.damaging \
-		damaging \
-		--version=$(damaging_major_minor).0 \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
+		editquality.feature_lists.eswikiquote.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
-		--pop-rate "true=0.08707101597009854" \
-		--pop-rate "false=0.9129289840299014" \
+		-p 'n_estimators=500' \
+		--label-weight "true=$(reverted_weight)" \
+		--pop-rate "true=0.089509548245983" \
+		--pop-rate "false=0.910490451754017" \
 		--center --scale > $@
 	
-	revscoring model_info $@ > model_info/eswikiquote.damaging.md
-
-tuning_reports/eswikiquote.goodfaith.md: \
-		datasets/eswikiquote.labeled_revisions.w_cache.12k_2017.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.eswikiquote.goodfaith \
-		goodfaith \
-		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9356099218484539" \
-		--pop-rate "false=0.06439007815154607" \
-		--center --scale \
-		--cv-timeout 60 \
-		--debug > $@
-
-models/eswikiquote.goodfaith.gradient_boosting.model: \
-		datasets/eswikiquote.labeled_revisions.w_cache.12k_2017.json
-	cat $^ | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.eswikiquote.goodfaith \
-		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
-		-p 'learning_rate=1' \
-		-p 'max_depth=7' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.9356099218484539" \
-		--pop-rate "false=0.06439007815154607" \
-		--center --scale > $@
-	
-	revscoring model_info $@ > model_info/eswikiquote.goodfaith.md
+	revscoring model_info $@ > model_info/eswikiquote.reverted.md
 
 eswikiquote_models: \
-	models/eswikiquote.damaging.gradient_boosting.model \
-	models/eswikiquote.goodfaith.gradient_boosting.model
+	models/eswikiquote.reverted.gradient_boosting.model
 
 eswikiquote_tuning_reports: \
-	tuning_reports/eswikiquote.damaging.md \
-	tuning_reports/eswikiquote.goodfaith.md
+	tuning_reports/eswikiquote.reverted.md
 
 ############################# Estonian Wikipedia ################################
 
