@@ -103,7 +103,7 @@ datasets/{{ wiki.name }}.autolabeled_revisions.w_cache.{{ wiki.default_sample }}
 	revscoring extract \
 		editquality.feature_lists.{{ wiki.name }}.reverted \
 		--host https://{{ wiki.host }} \
-		--extractor $(max_extractors) \
+		--extractors $(max_extractors) \
 		--verbose > $@
 {% endif %}
 {% if wiki.merged_samples %}
