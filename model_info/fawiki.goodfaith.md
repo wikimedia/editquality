@@ -1,7 +1,7 @@
 Model Information:
 	 - type: GradientBoosting
 	 - version: 0.5.0
-	 - params: {'label_weights': OrderedDict([(False, 10)]), 'max_leaf_nodes': None, 'min_impurity_decrease': 0.0, 'random_state': None, 'min_impurity_split': None, 'center': True, 'multilabel': False, 'verbose': 0, 'population_rates': None, 'loss': 'deviance', 'learning_rate': 0.01, 'min_weight_fraction_leaf': 0.0, 'labels': [True, False], 'max_features': 'log2', 'min_samples_leaf': 1, 'subsample': 1.0, 'presort': 'auto', 'init': None, 'min_samples_split': 2, 'scale': True, 'n_estimators': 500, 'criterion': 'friedman_mse', 'max_depth': 7, 'warm_start': False}
+	 - params: {'verbose': 0, 'max_leaf_nodes': None, 'labels': [True, False], 'min_impurity_split': None, 'label_weights': OrderedDict([(False, 10)]), 'min_impurity_decrease': 0.0, 'warm_start': False, 'subsample': 1.0, 'presort': 'auto', 'init': None, 'max_features': 'log2', 'criterion': 'friedman_mse', 'population_rates': None, 'min_weight_fraction_leaf': 0.0, 'max_depth': 7, 'center': True, 'min_samples_leaf': 1, 'learning_rate': 0.01, 'scale': True, 'random_state': None, 'n_estimators': 500, 'min_samples_split': 2, 'loss': 'deviance', 'multilabel': False}
 	Environment:
 	 - revscoring_version: '2.3.0'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -18,64 +18,64 @@ Model Information:
 	 - release: '4.9.0-8-amd64'
 	
 	Statistics:
-	counts (n=38798):
+	counts (n=38829):
 		label        n         ~True    ~False
 		-------  -----  ---  -------  --------
-		True     38155  -->    36990      1165
-		False      643  -->      315       328
+		True     38186  -->    36999      1187
+		False      643  -->      296       347
 	rates:
 		              True    False
 		----------  ------  -------
 		sample       0.983    0.017
 		population   0.983    0.017
-	match_rate (micro=0.946, macro=0.5):
+	match_rate (micro=0.945, macro=0.5):
 		  False    True
 		-------  ------
-		  0.038   0.962
-	filter_rate (micro=0.054, macro=0.5):
+		  0.039   0.961
+	filter_rate (micro=0.055, macro=0.5):
 		  False    True
 		-------  ------
-		  0.962   0.038
-	recall (micro=0.962, macro=0.74):
+		  0.961   0.039
+	recall (micro=0.962, macro=0.754):
 		  False    True
 		-------  ------
-		   0.51   0.969
-	!recall (micro=0.518, macro=0.74):
+		   0.54   0.969
+	!recall (micro=0.547, macro=0.754):
 		  False    True
 		-------  ------
-		  0.969    0.51
-	precision (micro=0.979, macro=0.605):
+		  0.969    0.54
+	precision (micro=0.979, macro=0.609):
 		  False    True
 		-------  ------
-		  0.219   0.992
-	!precision (micro=0.232, macro=0.605):
+		  0.226   0.992
+	!precision (micro=0.239, macro=0.609):
 		  False    True
 		-------  ------
-		  0.992   0.219
-	f1 (micro=0.969, macro=0.644):
+		  0.992   0.226
+	f1 (micro=0.969, macro=0.649):
 		  False    True
 		-------  ------
-		  0.307    0.98
-	!f1 (micro=0.318, macro=0.644):
+		  0.319    0.98
+	!f1 (micro=0.329, macro=0.649):
 		  False    True
 		-------  ------
-		   0.98   0.307
+		   0.98   0.319
 	accuracy (micro=0.962, macro=0.962):
 		  False    True
 		-------  ------
 		  0.962   0.962
-	fpr (micro=0.482, macro=0.26):
+	fpr (micro=0.453, macro=0.246):
 		  False    True
 		-------  ------
-		  0.031    0.49
+		  0.031    0.46
 	roc_auc (micro=0.96, macro=0.96):
 		  False    True
 		-------  ------
-		   0.96    0.96
-	pr_auc (micro=0.987, macro=0.624):
+		  0.959    0.96
+	pr_auc (micro=0.987, macro=0.626):
 		  False    True
 		-------  ------
-		  0.249   0.999
+		  0.253   0.999
 	
-	 - score_schema: {'properties': {'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'type': 'object'}, 'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}}, 'type': 'object', 'title': 'Scikit learn-based classifier score with probability'}
+	 - score_schema: {'title': 'Scikit learn-based classifier score with probability', 'properties': {'probability': {'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object'}, 'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}}, 'type': 'object'}
 

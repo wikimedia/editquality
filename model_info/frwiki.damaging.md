@@ -1,7 +1,7 @@
 Model Information:
 	 - type: GradientBoosting
 	 - version: 0.5.0
-	 - params: {'min_impurity_decrease': 0.0, 'multilabel': False, 'max_depth': 7, 'label_weights': OrderedDict([(True, 10)]), 'population_rates': None, 'max_features': 'log2', 'min_samples_split': 2, 'presort': 'auto', 'min_samples_leaf': 1, 'min_weight_fraction_leaf': 0.0, 'max_leaf_nodes': None, 'learning_rate': 0.01, 'criterion': 'friedman_mse', 'min_impurity_split': None, 'verbose': 0, 'scale': True, 'n_estimators': 300, 'init': None, 'labels': [True, False], 'warm_start': False, 'random_state': None, 'subsample': 1.0, 'loss': 'deviance', 'center': True}
+	 - params: {'max_leaf_nodes': None, 'warm_start': False, 'n_estimators': 300, 'max_features': 'log2', 'verbose': 0, 'learning_rate': 0.01, 'center': True, 'min_impurity_decrease': 0.0, 'multilabel': False, 'subsample': 1.0, 'presort': 'auto', 'min_impurity_split': None, 'init': None, 'min_samples_split': 2, 'max_depth': 7, 'labels': [True, False], 'criterion': 'friedman_mse', 'min_weight_fraction_leaf': 0.0, 'population_rates': None, 'random_state': None, 'loss': 'deviance', 'min_samples_leaf': 1, 'scale': True, 'label_weights': OrderedDict([(True, 10)])}
 	Environment:
 	 - revscoring_version: '2.3.0'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -18,11 +18,11 @@ Model Information:
 	 - release: '4.9.0-8-amd64'
 	
 	Statistics:
-	counts (n=17797):
+	counts (n=17754):
 		label        n         ~True    ~False
 		-------  -----  ---  -------  --------
-		True       566  -->      320       246
-		False    17231  -->      686     16545
+		True       566  -->      332       234
+		False    17188  -->      678     16510
 	rates:
 		              True    False
 		----------  ------  -------
@@ -36,46 +36,46 @@ Model Information:
 		  False    True
 		-------  ------
 		  0.055   0.945
-	recall (micro=0.949, macro=0.763):
+	recall (micro=0.95, macro=0.774):
 		  False    True
 		-------  ------
-		   0.96   0.565
-	!recall (micro=0.577, macro=0.763):
+		  0.961   0.587
+	!recall (micro=0.597, macro=0.774):
 		  False    True
 		-------  ------
-		  0.565    0.96
-	precision (micro=0.967, macro=0.641):
+		  0.587   0.961
+	precision (micro=0.968, macro=0.647):
 		  False    True
 		-------  ------
-		  0.987   0.296
-	!precision (micro=0.316, macro=0.641):
+		  0.987   0.306
+	!precision (micro=0.325, macro=0.647):
 		  False    True
 		-------  ------
-		  0.296   0.987
-	f1 (micro=0.956, macro=0.681):
+		  0.306   0.987
+	f1 (micro=0.957, macro=0.688):
 		  False    True
 		-------  ------
-		  0.973   0.389
-	!f1 (micro=0.405, macro=0.681):
+		  0.974   0.402
+	!f1 (micro=0.418, macro=0.688):
 		  False    True
 		-------  ------
-		  0.389   0.973
-	accuracy (micro=0.949, macro=0.949):
+		  0.402   0.974
+	accuracy (micro=0.95, macro=0.95):
 		  False    True
 		-------  ------
-		  0.949   0.949
-	fpr (micro=0.423, macro=0.237):
+		   0.95    0.95
+	fpr (micro=0.403, macro=0.226):
 		  False    True
 		-------  ------
-		  0.435    0.04
-	roc_auc (micro=0.904, macro=0.903):
+		  0.413   0.039
+	roc_auc (micro=0.903, macro=0.903):
 		  False    True
 		-------  ------
-		  0.904   0.903
-	pr_auc (micro=0.978, macro=0.692):
+		  0.903   0.903
+	pr_auc (micro=0.978, macro=0.695):
 		  False    True
 		-------  ------
-		  0.996   0.388
+		  0.996   0.395
 	
-	 - score_schema: {'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}, 'type': 'object'}}, 'type': 'object', 'title': 'Scikit learn-based classifier score with probability'}
+	 - score_schema: {'type': 'object', 'title': 'Scikit learn-based classifier score with probability', 'properties': {'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}, 'probability': {'type': 'object', 'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels'}}}
 
