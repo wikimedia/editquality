@@ -1038,7 +1038,7 @@ models/enwiki.damaging.gradient_boosting.model: \
 		damaging \
 		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
+		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "true=$(damaging_weight)" \
@@ -1071,7 +1071,7 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		editquality.feature_lists.enwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
-		-p 'learning_rate=0.01' \
+		-p 'learning_rate=0.5' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \

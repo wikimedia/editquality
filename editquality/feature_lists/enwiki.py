@@ -54,10 +54,16 @@ dict_words = [
     english.dictionary.revision.diff.non_dict_word_prop_delta_decrease
 ]
 
+words_to_watch = [
+    english.words_to_watch.revision.diff.match_delta_sum,
+    english.words_to_watch.revision.diff.match_delta_increase,
+    english.words_to_watch.revision.diff.match_delta_decrease,
+]
+
 damaging = wikipedia.page + \
     wikitext.parent + wikitext.diff + mediawiki.user_rights + \
     mediawiki.protected_user + mediawiki.comment + \
-    badwords + informals + dict_words
+    badwords + informals + dict_words + words_to_watch
 
 reverted = damaging
 goodfaith = damaging
