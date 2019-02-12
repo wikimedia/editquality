@@ -2532,8 +2532,8 @@ tuning_reports/itwiki.goodfaith.md: \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.019225619878969636" \
-		--pop-rate "false=0.9807743801210304" \
+		--pop-rate "true=0.9807743801210304" \
+		--pop-rate "false=0.019225619878969646" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
@@ -2551,8 +2551,8 @@ models/itwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
 		--label-weight "false=$(goodfaith_weight)" \
-		--pop-rate "true=0.019225619878969636" \
-		--pop-rate "false=0.9807743801210304" \
+		--pop-rate "true=0.9807743801210304" \
+		--pop-rate "false=0.019225619878969646" \
 		--center --scale > $@
 	
 	revscoring model_info $@ > model_info/itwiki.goodfaith.md
