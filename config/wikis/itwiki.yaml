@@ -34,7 +34,7 @@ models:
       learning_rate: 0.01
       max_depth: 5
     goodfaith:
-      pop_rate_true: 0.019225619878969636
+      pop_rate_true: 0.9807743801210304
       max_features: log2
       n_estimators: 500
       max_depth: 3
