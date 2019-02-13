@@ -3,7 +3,7 @@ label: Korean Wikipedia
 host: ko.wikipedia.org
 
 samples:
-    5k_2015:
+    5k_2016:
       labeling_campaign: https://labels.wmflabs.org/campaigns/kowiki/50/
     20k_2016:
       quarry_url: "https://quarry.wmflabs.org/run/165613/output/0/json-lines?download=true"
@@ -38,6 +38,6 @@ models:
     goodfaith:
       pop_rate_true: 0.9807743801210304
       max_features: log2
-      n_estimators: 500
-      max_depth: 3
-      learning_rate: 1
+      n_estimators: 700
+      max_depth: 7
+      learning_rate: 0.5

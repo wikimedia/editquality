@@ -2635,55 +2635,101 @@ datasets/kowiki.autolabeled_revisions.20k_2016.review.json: \
 		datasets/kowiki.autolabeled_revisions.20k_2016.json
 	cat $< | grep -E '"needs_review": (true|"True")' > $@
 
-datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json: \
-		datasets/kowiki.autolabeled_revisions.20k_2016.review.json \
+
+datasets/kowiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/kowiki/50/ > $@
+
+datasets/kowiki.labeled_revisions.20k_2016.json: \
+		datasets/kowiki.human_labeled_revisions.5k_2016.json \
 		datasets/kowiki.autolabeled_revisions.20k_2016.no_review.json
-	cat $^ | \
+	./utility merge_labels $^ > $@
+
+datasets/kowiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/kowiki.labeled_revisions.20k_2016.json
+	cat $< | \
 	revscoring extract \
-		editquality.feature_lists.kowiki.reverted \
+		editquality.feature_lists.kowiki.damaging \
+		editquality.feature_lists.kowiki.goodfaith \
 		--host https://ko.wikipedia.org \
 		--extractors $(max_extractors) \
 		--verbose > $@
 
-tuning_reports/kowiki.reverted.md: \
-		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+tuning_reports/kowiki.damaging.md: \
+		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.kowiki.reverted \
-		reverted_for_damage \
+		editquality.feature_lists.kowiki.damaging \
+		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.04717122705217348" \
-		--pop-rate "false=0.9528287729478265" \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.038665452792802445" \
+		--pop-rate "false=0.9613345472071976" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/kowiki.reverted.gradient_boosting.model: \
-		datasets/kowiki.autolabeled_revisions.w_cache.20k_2016.json
+models/kowiki.damaging.gradient_boosting.model: \
+		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
 	cat $^ | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.kowiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		editquality.feature_lists.kowiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
-		--pop-rate "true=0.04717122705217348" \
-		--pop-rate "false=0.9528287729478265" \
+		--label-weight "true=$(damaging_weight)" \
+		--pop-rate "true=0.038665452792802445" \
+		--pop-rate "false=0.9613345472071976" \
 		--center --scale > $@
 	
-	revscoring model_info $@ > model_info/kowiki.reverted.md
+	revscoring model_info $@ > model_info/kowiki.damaging.md
+
+tuning_reports/kowiki.goodfaith.md: \
+		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.kowiki.goodfaith \
+		goodfaith \
+		roc_auc.labels.true \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9807743801210304" \
+		--pop-rate "false=0.019225619878969646" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/kowiki.goodfaith.gradient_boosting.model: \
+		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
+	cat $^ | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.kowiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight "false=$(goodfaith_weight)" \
+		--pop-rate "true=0.9807743801210304" \
+		--pop-rate "false=0.019225619878969646" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/kowiki.goodfaith.md
 
 kowiki_models: \
-	models/kowiki.reverted.gradient_boosting.model
+	models/kowiki.damaging.gradient_boosting.model \
+	models/kowiki.goodfaith.gradient_boosting.model
 
 kowiki_tuning_reports: \
-	tuning_reports/kowiki.reverted.md
+	tuning_reports/kowiki.damaging.md \
+	tuning_reports/kowiki.goodfaith.md
 
 ############################# Latvian Wikipedia ################################
 
