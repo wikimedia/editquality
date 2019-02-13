@@ -117,7 +117,7 @@ datasets/{{ wiki.name }}.labeled_revisions.w_cache.{{ big_sample_name }}.json: \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
 		{% endfor %}
 		--host https://{{ wiki.host }} \
-		--extractor $(max_extractors) \
+		--extractors $(max_extractors) \
 		--verbose > $@
 {% endfor %}
 {% endif %}
