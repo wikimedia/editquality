@@ -24,8 +24,7 @@ def generate(variables, templates_path, main_template):
         lstrip_blocks=True,
         trim_blocks=True
     )
-    app.jinja_env.globals.update(norm_alg_filename=norm_alg_filename)
-
+    env.globals.update(norm_alg_filename=norm_alg_filename)
 
     template = env.from_string(main_template)
     return template.render(variables) + "\n"
