@@ -1,16 +1,16 @@
 Model Information:
 	 - type: GradientBoosting
 	 - version: 0.5.0
-	 - params: {'warm_start': False, 'min_impurity_split': None, 'subsample': 1.0, 'min_impurity_decrease': 0.0, 'min_samples_split': 2, 'max_leaf_nodes': None, 'random_state': None, 'criterion': 'friedman_mse', 'multilabel': False, 'verbose': 0, 'label_weights': OrderedDict([(False, 10)]), 'scale': True, 'min_samples_leaf': 1, 'max_features': 'log2', 'min_weight_fraction_leaf': 0.0, 'presort': 'auto', 'max_depth': 7, 'n_estimators': 300, 'population_rates': None, 'learning_rate': 0.5, 'center': True, 'loss': 'deviance', 'init': None, 'labels': [True, False]}
+	 - params: {'min_samples_leaf': 1, 'min_impurity_split': None, 'max_leaf_nodes': None, 'min_weight_fraction_leaf': 0.0, 'label_weights': OrderedDict([(False, 10)]), 'labels': [True, False], 'min_samples_split': 2, 'random_state': None, 'init': None, 'max_depth': 7, 'learning_rate': 0.5, 'subsample': 1.0, 'warm_start': False, 'multilabel': False, 'presort': 'auto', 'loss': 'deviance', 'criterion': 'friedman_mse', 'verbose': 0, 'population_rates': None, 'n_estimators': 300, 'center': True, 'min_impurity_decrease': 0.0, 'scale': True, 'max_features': 'log2'}
 	Environment:
-	 - revscoring_version: '2.3.3'
+	 - revscoring_version: '2.3.4'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
 	 - machine: 'x86_64'
 	 - version: '#1 SMP Debian 4.9.110-3+deb9u6 (2018-10-08)'
 	 - system: 'Linux'
 	 - processor: ''
-	 - python_build: ('default', 'Jan 19 2017 14:11:04')
-	 - python_compiler: 'GCC 6.3.0 20170118'
+	 - python_build: ('default', 'Sep 27 2018 17:25:39')
+	 - python_compiler: 'GCC 6.3.0 20170516'
 	 - python_branch: ''
 	 - python_implementation: 'CPython'
 	 - python_revision: ''
@@ -18,10 +18,10 @@ Model Information:
 	 - release: '4.9.0-8-amd64'
 	
 	Statistics:
-	counts (n=18623):
+	counts (n=18530):
 		label        n         ~True    ~False
 		-------  -----  ---  -------  --------
-		True     18536  -->    18523        13
+		True     18443  -->    18423        20
 		False       87  -->       86         1
 	rates:
 		              True    False
@@ -44,22 +44,22 @@ Model Information:
 		  False    True
 		-------  ------
 		  0.999   0.011
-	precision (micro=0.988, macro=0.543):
+	precision (micro=0.988, macro=0.528):
 		  False    True
 		-------  ------
-		  0.092   0.994
-	!precision (micro=0.097, macro=0.543):
+		  0.061   0.994
+	!precision (micro=0.067, macro=0.528):
 		  False    True
 		-------  ------
-		  0.994   0.092
-	f1 (micro=0.991, macro=0.509):
+		  0.994   0.061
+	f1 (micro=0.99, macro=0.508):
 		  False    True
 		-------  ------
-		   0.02   0.997
-	!f1 (micro=0.026, macro=0.509):
+		  0.019   0.996
+	!f1 (micro=0.025, macro=0.508):
 		  False    True
 		-------  ------
-		  0.997    0.02
+		  0.996   0.019
 	accuracy (micro=0.993, macro=0.993):
 		  False    True
 		-------  ------
@@ -68,14 +68,14 @@ Model Information:
 		  False    True
 		-------  ------
 		  0.001   0.989
-	roc_auc (micro=0.978, macro=0.792):
+	roc_auc (micro=0.978, macro=0.82):
 		  False    True
 		-------  ------
-		  0.604   0.981
-	pr_auc (micro=0.989, macro=0.518):
+		   0.66    0.98
+	pr_auc (micro=0.99, macro=0.525):
 		  False    True
 		-------  ------
-		  0.041   0.995
+		  0.055   0.996
 	
-	 - score_schema: {'properties': {'probability': {'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'type': 'object', 'description': 'A mapping of probabilities onto each of the potential output labels'}, 'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}}, 'type': 'object', 'title': 'Scikit learn-based classifier score with probability'}
+	 - score_schema: {'properties': {'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}, 'probability': {'type': 'object', 'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels'}}, 'title': 'Scikit learn-based classifier score with probability', 'type': 'object'}
 

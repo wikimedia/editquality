@@ -116,8 +116,7 @@ datasets/arwiki.autolabeled_revisions.20k_2016.json: \
 	./utility autolabel --host=https://ar.wikipedia.org \
 		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/arwiki.autolabeled_revisions.20k_2016.no_review.json: \
@@ -245,8 +244,7 @@ datasets/azwiki.autolabeled_revisions.20k_2016.json: \
 	./utility autolabel --host=https://az.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/azwiki.autolabeled_revisions.20k_2016.no_review.json: \
@@ -271,8 +269,7 @@ datasets/bawiki.autolabeled_revisions.60k_2018.json: \
 	./utility autolabel --host=https://ba.wikipedia.org \
 		--trusted-groups=bot,sysop,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/bawiki.autolabeled_revisions.60k_2018.no_review.json: \
@@ -301,8 +298,7 @@ datasets/bnwiki.autolabeled_revisions.20k_2017.json: \
 	./utility autolabel --host=https://bn.wikipedia.org \
 		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/bnwiki.autolabeled_revisions.20k_2017.no_review.json: \
@@ -379,8 +375,7 @@ datasets/bnwikisource.autolabeled_revisions.200k_2018.json: \
 	./utility autolabel --host=https://bn.wikisource.org \
 		--trusted-groups=bot,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/bnwikisource.autolabeled_revisions.200k_2018.no_review.json: \
@@ -409,8 +404,7 @@ datasets/bswiki.autolabeled_revisions.40k_2018.json: \
 	./utility autolabel --host=https://bs.wikipedia.org \
 		--trusted-groups=bot,sysop,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/bswiki.autolabeled_revisions.40k_2018.no_review.json: \
@@ -533,8 +527,7 @@ datasets/cawiki.autolabeled_revisions.100k_2017.json: \
 	./utility autolabel --host=https://ca.wikipedia.org \
 		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/cawiki.autolabeled_revisions.100k_2017.no_review.json: \
@@ -555,8 +548,7 @@ datasets/cawiki.autolabeled_revisions.40k_2017.json: \
 	./utility autolabel --host=https://ca.wikipedia.org \
 		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/cawiki.autolabeled_revisions.40k_2017.no_review.json: \
@@ -678,8 +670,7 @@ datasets/cswiki.autolabeled_revisions.20k_2016.json: \
 	./utility autolabel --host=https://cs.wikipedia.org \
 		--trusted-groups=sysop,oversight,editor,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json: \
@@ -807,8 +798,7 @@ datasets/dewiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://de.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/dewiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -927,8 +917,7 @@ datasets/elwiki.autolabeled_revisions.20k_2017.json: \
 	./utility autolabel --host=https://el.wikipedia.org \
 		--trusted-groups=bot,bureaucrat,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/elwiki.autolabeled_revisions.20k_2017.no_review.json: \
@@ -1101,8 +1090,7 @@ datasets/enwiktionary.autolabeled_revisions.92k_2018.json: \
 	./utility autolabel --host=https://en.wiktionary.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/enwiktionary.autolabeled_revisions.92k_2018.no_review.json: \
@@ -1178,8 +1166,7 @@ datasets/eswiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://es.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/eswiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -1297,8 +1284,7 @@ datasets/eswikibooks.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://es.wikibooks.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/eswikibooks.autolabeled_revisions.20k_2015.no_review.json: \
@@ -1417,8 +1403,7 @@ datasets/eswikiquote.autolabeled_revisions.12k_2017.json: \
 	./utility autolabel --host=https://es.wikiquote.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/eswikiquote.autolabeled_revisions.12k_2017.no_review.json: \
@@ -1540,8 +1525,7 @@ datasets/etwiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://et.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/etwiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -1659,8 +1643,7 @@ datasets/fawiki.autolabeled_revisions.2.20k_2015.json: \
 	./utility autolabel --host=https://fa.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/fawiki.autolabeled_revisions.2.20k_2015.no_review.json: \
@@ -1680,8 +1663,7 @@ datasets/fawiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://fa.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/fawiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -1820,8 +1802,7 @@ datasets/frwiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://fr.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/frwiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -1841,8 +1822,7 @@ datasets/frwiki.autolabeled_revisions.20k_2016.json: \
 	./utility autolabel --host=https://fr.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/frwiki.autolabeled_revisions.20k_2016.no_review.json: \
@@ -1970,8 +1950,7 @@ datasets/hewiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://he.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -2100,8 +2079,7 @@ datasets/hrwiki.autolabeled_revisions.20k_2017.json: \
 	./utility autolabel --host=https://hr.wikipedia.org \
 		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/hrwiki.autolabeled_revisions.20k_2017.no_review.json: \
@@ -2177,8 +2155,7 @@ datasets/huwiki.autolabeled_revisions.40k_2016.json: \
 	./utility autolabel --host=https://hu.wikipedia.org \
 		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat,editor,templateeditor,interface-editor \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/huwiki.autolabeled_revisions.40k_2016.no_review.json: \
@@ -2306,8 +2283,7 @@ datasets/idwiki.autolabeled_revisions.100k_2016.json: \
 	./utility autolabel --host=https://id.wikipedia.org \
 		--trusted-groups=autoreview,bot,bureaucrat,checkuser,editor,flow-bot,oversight,reviewer,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/idwiki.autolabeled_revisions.100k_2016.no_review.json: \
@@ -2380,8 +2356,7 @@ datasets/iswiki.autolabeled_revisions.20k_2017.json: \
 	./utility autolabel --host=https://is.wikipedia.org \
 		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/iswiki.autolabeled_revisions.20k_2017.no_review.json: \
@@ -2457,8 +2432,7 @@ datasets/itwiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://it.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/itwiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -2577,8 +2551,7 @@ datasets/jawiki.autolabeled_revisions.40k_2016.json: \
 	./utility autolabel --host=https://ja.wikipedia.org \
 		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/jawiki.autolabeled_revisions.40k_2016.no_review.json: \
@@ -2651,8 +2624,7 @@ datasets/kowiki.autolabeled_revisions.20k_2016.json: \
 	./utility autolabel --host=https://ko.wikipedia.org \
 		--trusted-groups=abusefilter,bot,bureaucrat,checkuser,eliminator,interface-editor,oversight,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/kowiki.autolabeled_revisions.20k_2016.no_review.json: \
@@ -2725,8 +2697,7 @@ datasets/lvwiki.autolabeled_revisions.20k_2016.json: \
 	./utility autolabel --host=https://lv.wikipedia.org \
 		--trusted-groups=sysop,bureaucrat,bot,oversight,checkuser,patroller,autopatrolled \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/lvwiki.autolabeled_revisions.20k_2016.no_review.json: \
@@ -2848,8 +2819,7 @@ datasets/nlwiki.autolabeled_revisions.20k_2016.json: \
 	./utility autolabel --host=https://nl.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/nlwiki.autolabeled_revisions.20k_2016.no_review.json: \
@@ -2967,8 +2937,7 @@ datasets/nowiki.autolabeled_revisions.100k_2015.json: \
 	./utility autolabel --host=https://no.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/nowiki.autolabeled_revisions.100k_2015.no_review.json: \
@@ -3148,8 +3117,7 @@ datasets/rowiki.autolabeled_revisions.20k_2016.json: \
 	./utility autolabel --host=https://ro.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot,templateeditor,patroller,autopatrolled \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/rowiki.autolabeled_revisions.20k_2016.no_review.json: \
@@ -3267,8 +3235,7 @@ datasets/ruwiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://ru.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/ruwiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -3387,8 +3354,7 @@ datasets/sqwiki.autolabeled_revisions.20k_2016.json: \
 	./utility autolabel --host=https://sq.wikipedia.org \
 		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json: \
@@ -3506,8 +3472,7 @@ datasets/srwiki.autolabeled_revisions.120k_2017.json: \
 	./utility autolabel --host=https://sr.wikipedia.org \
 		--trusted-groups=autopatrolled,bot,bureaucrat,patroller,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/srwiki.autolabeled_revisions.120k_2017.no_review.json: \
@@ -3629,8 +3594,7 @@ datasets/svwiki.autolabeled_revisions.40k_2016.json: \
 	./utility autolabel --host=https://sv.wikipedia.org \
 		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json: \
@@ -3759,8 +3723,7 @@ datasets/tawiki.autolabeled_revisions.20k_2017.json: \
 	./utility autolabel --host=https://ta.wikipedia.org \
 		--trusted-groups=autopatrolled,bot,bureaucrat,patroller,rollbacker,sysop \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/tawiki.autolabeled_revisions.20k_2017.no_review.json: \
@@ -3836,8 +3799,7 @@ datasets/trwiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://tr.wikipedia.org \
 		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/trwiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -3955,8 +3917,7 @@ datasets/ukwiki.autolabeled_revisions.20k_2015.json: \
 	./utility autolabel --host=https://uk.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/ukwiki.autolabeled_revisions.20k_2015.no_review.json: \
@@ -4028,8 +3989,7 @@ datasets/urwiki.autolabeled_revisions.500k_2015.json: \
 	./utility autolabel --host=https://ur.wikipedia.org \
 		--trusted-groups=bot,bureaucrat,sysop,rollbackers \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/urwiki.autolabeled_revisions.500k_2015.no_review.json: \
@@ -4063,8 +4023,7 @@ datasets/viwiki.autolabeled_revisions.500k_2015.json: \
 	./utility autolabel --host=https://vi.wikipedia.org \
 		--trusted-groups=checkuser,bureaucrat,sysop,eliminator,bot \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/viwiki.autolabeled_revisions.500k_2015.no_review.json: \
@@ -4147,8 +4106,7 @@ datasets/zhwiki.autolabeled_revisions.100k_2016.json: \
 	./utility autolabel --host=https://zh.wikipedia.org \
 		--trusted-groups=checkuser,bureaucrat,sysop,eliminator,bot \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/zhwiki.autolabeled_revisions.100k_2016.no_review.json: \
