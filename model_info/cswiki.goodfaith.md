@@ -1,7 +1,7 @@
 Model Information:
 	 - type: GradientBoosting
-	 - version: 0.5.0
-	 - params: {'presort': 'auto', 'max_features': 'log2', 'min_impurity_decrease': 0.0, 'scale': True, 'learning_rate': 0.01, 'min_samples_split': 2, 'min_samples_leaf': 1, 'min_impurity_split': None, 'min_weight_fraction_leaf': 0.0, 'random_state': None, 'criterion': 'friedman_mse', 'init': None, 'label_weights': OrderedDict([(False, 10)]), 'n_estimators': 500, 'warm_start': False, 'subsample': 1.0, 'max_leaf_nodes': None, 'loss': 'deviance', 'max_depth': 5, 'labels': [True, False], 'multilabel': False, 'center': True, 'verbose': 0, 'population_rates': None}
+	 - version: 0.6.0
+	 - params: {'subsample': 1.0, 'max_features': 'log2', 'max_depth': 5, 'label_weights': OrderedDict([(False, 10)]), 'init': None, 'n_estimators': 500, 'min_impurity_split': None, 'loss': 'deviance', 'scale': True, 'warm_start': False, 'max_leaf_nodes': None, 'verbose': 0, 'min_samples_leaf': 1, 'center': True, 'min_samples_split': 2, 'presort': 'auto', 'population_rates': None, 'criterion': 'friedman_mse', 'random_state': None, 'min_impurity_decrease': 0.0, 'labels': [True, False], 'min_weight_fraction_leaf': 0.0, 'multilabel': False, 'learning_rate': 0.01}
 	Environment:
 	 - revscoring_version: '2.3.4'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -77,5 +77,5 @@ Model Information:
 		-------  ------
 		  0.589   0.999
 	
-	 - score_schema: {'type': 'object', 'title': 'Scikit learn-based classifier score with probability', 'properties': {'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object', 'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}}, 'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}}}
+	 - score_schema: {'type': 'object', 'properties': {'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}, 'probability': {'type': 'object', 'description': 'A mapping of probabilities onto each of the potential output labels', 'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}}}, 'title': 'Scikit learn-based classifier score with probability'}
 

@@ -1,7 +1,7 @@
 Model Information:
 	 - type: GradientBoosting
-	 - version: 0.5.0
-	 - params: {'random_state': None, 'scale': True, 'labels': [True, False], 'learning_rate': 0.01, 'max_leaf_nodes': None, 'criterion': 'friedman_mse', 'presort': 'auto', 'min_samples_leaf': 1, 'min_weight_fraction_leaf': 0.0, 'loss': 'deviance', 'verbose': 0, 'label_weights': OrderedDict([(True, 10)]), 'subsample': 1.0, 'min_samples_split': 2, 'center': True, 'population_rates': None, 'min_impurity_split': None, 'multilabel': False, 'max_depth': 7, 'n_estimators': 500, 'init': None, 'warm_start': False, 'min_impurity_decrease': 0.0, 'max_features': 'log2'}
+	 - version: 0.6.0
+	 - params: {'min_impurity_decrease': 0.0, 'min_samples_leaf': 1, 'learning_rate': 0.01, 'min_weight_fraction_leaf': 0.0, 'population_rates': None, 'verbose': 0, 'max_depth': 7, 'center': True, 'label_weights': OrderedDict([(True, 10)]), 'n_estimators': 500, 'criterion': 'friedman_mse', 'scale': True, 'min_impurity_split': None, 'subsample': 1.0, 'warm_start': False, 'loss': 'deviance', 'max_leaf_nodes': None, 'max_features': 'log2', 'init': None, 'labels': [True, False], 'presort': 'auto', 'random_state': None, 'multilabel': False, 'min_samples_split': 2}
 	Environment:
 	 - revscoring_version: '2.3.4'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -77,5 +77,5 @@ Model Information:
 		-------  ------
 		  0.995   0.502
 	
-	 - score_schema: {'type': 'object', 'title': 'Scikit learn-based classifier score with probability', 'properties': {'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}, 'probability': {'type': 'object', 'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels'}}}
+	 - score_schema: {'properties': {'probability': {'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object'}, 'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}}, 'type': 'object', 'title': 'Scikit learn-based classifier score with probability'}
 

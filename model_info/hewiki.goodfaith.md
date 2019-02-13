@@ -1,7 +1,7 @@
 Model Information:
 	 - type: GradientBoosting
-	 - version: 0.5.0
-	 - params: {'verbose': 0, 'n_estimators': 300, 'max_depth': 7, 'max_leaf_nodes': None, 'min_impurity_split': None, 'min_samples_split': 2, 'scale': True, 'labels': [True, False], 'presort': 'auto', 'learning_rate': 0.1, 'init': None, 'warm_start': False, 'subsample': 1.0, 'population_rates': None, 'center': True, 'criterion': 'friedman_mse', 'multilabel': False, 'min_impurity_decrease': 0.0, 'max_features': 'log2', 'random_state': None, 'min_weight_fraction_leaf': 0.0, 'min_samples_leaf': 1, 'loss': 'deviance', 'label_weights': OrderedDict([(False, 10)])}
+	 - version: 0.6.0
+	 - params: {'warm_start': False, 'min_weight_fraction_leaf': 0.0, 'max_depth': 7, 'n_estimators': 300, 'population_rates': None, 'min_impurity_split': None, 'criterion': 'friedman_mse', 'min_impurity_decrease': 0.0, 'max_leaf_nodes': None, 'labels': [True, False], 'loss': 'deviance', 'multilabel': False, 'learning_rate': 0.1, 'scale': True, 'min_samples_leaf': 1, 'init': None, 'presort': 'auto', 'center': True, 'min_samples_split': 2, 'max_features': 'log2', 'verbose': 0, 'random_state': None, 'label_weights': OrderedDict([(False, 10)]), 'subsample': 1.0}
 	Environment:
 	 - revscoring_version: '2.3.4'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -77,5 +77,5 @@ Model Information:
 		-------  ------
 		  0.433   0.994
 	
-	 - score_schema: {'title': 'Scikit learn-based classifier score with probability', 'properties': {'probability': {'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object'}, 'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}}, 'type': 'object'}
+	 - score_schema: {'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'type': 'object'}}, 'type': 'object', 'title': 'Scikit learn-based classifier score with probability'}
 

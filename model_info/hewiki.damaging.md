@@ -1,7 +1,7 @@
 Model Information:
 	 - type: RandomForest
-	 - version: 0.5.0
-	 - params: {'n_jobs': 1, 'random_state': None, 'max_leaf_nodes': None, 'population_rates': None, 'center': True, 'min_samples_split': 2, 'labels': [True, False], 'bootstrap': True, 'min_impurity_split': None, 'warm_start': False, 'criterion': 'entropy', 'min_impurity_decrease': 0.0, 'max_depth': None, 'min_weight_fraction_leaf': 0.0, 'min_samples_leaf': 1, 'max_features': 'log2', 'verbose': 0, 'class_weight': None, 'oob_score': False, 'label_weights': OrderedDict([(True, 10)]), 'multilabel': False, 'scale': True, 'n_estimators': 320}
+	 - version: 0.6.0
+	 - params: {'criterion': 'entropy', 'bootstrap': True, 'max_depth': None, 'center': True, 'oob_score': False, 'labels': [True, False], 'scale': True, 'multilabel': False, 'n_estimators': 320, 'class_weight': None, 'label_weights': OrderedDict([(True, 10)]), 'max_leaf_nodes': None, 'max_features': 'log2', 'min_impurity_decrease': 0.0, 'min_weight_fraction_leaf': 0.0, 'population_rates': None, 'verbose': 0, 'random_state': None, 'min_samples_leaf': 1, 'n_jobs': 1, 'min_samples_split': 2, 'min_impurity_split': None, 'warm_start': False}
 	Environment:
 	 - revscoring_version: '2.3.4'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -77,5 +77,5 @@ Model Information:
 		-------  ------
 		  0.993   0.463
 	
-	 - score_schema: {'type': 'object', 'title': 'Scikit learn-based classifier score with probability', 'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object', 'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}}}}
+	 - score_schema: {'type': 'object', 'title': 'Scikit learn-based classifier score with probability', 'properties': {'probability': {'type': 'object', 'description': 'A mapping of probabilities onto each of the potential output labels', 'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}}, 'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}}}
 
