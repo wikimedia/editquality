@@ -40,8 +40,7 @@ datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.json: \
 	./utility autolabel --host=https://{{ wiki.host }} \
 		--trusted-groups={{ wiki.trusted_groups|join(",") }} \
 		--trusted-edits=1000 \
-		--revert-radius=3 \
-		--revert-window=48 \
+		--revert-radius=5 \
 		--verbose > $@
 
 datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample_name }}.no_review.json: \
