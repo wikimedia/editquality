@@ -2,44 +2,17 @@ name: fawiki
 label: Persian Wikipedia
 host: fa.wikipedia.org
 
-samples:
-    5k_2016:
-        labeling_campaign: "https://labels.wmflabs.org/campaigns/fawiki/21/"
-    20k_2015:
-        quarry_url: "http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true"
-        labeling_campaign: "https://labels.wmflabs.org/campaigns/fawiki/6/"
-    2.20k_2015:
-        quarry_url: "http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true"
+external_samples:
+  labeled_revisions.20k_2015: # Generated before pre-autolabel
+    labeling_campaign: "https://labels.wmflabs.org/campaigns/fawiki/6/"
+  sampled_revisions.20k_2016:
+    quarry_url: "http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true"
+  human_labeled_revisions.5k_2016:
+      labeling_campaign: "https://labels.wmflabs.org/campaigns/fawiki/21/"
 
-merged_samples:
-    20k_2015:
-        human_labeled_revisions: "20k_2015"
-    20k_2016:
-        autolabeled_revisions: "2.20k_2015"
-        human_labeled_revisions: "5k_2016"
-
-default_sample: 20k_2015
-review_sample: 20k_2015
-
-models:
-    damaging:
-        tuning_params:
-            n_estimators: 300
-            max_depth: 3
-            learning_rate: 0.1
-        pop_rate_true: 0.0297029702970297
-        datasets:
-             - 20k_2015
-             - 20k_2016
-    goodfaith:
-        tuning_params:
-            n_estimators: 500
-        pop_rate_true: 0.9834641681438339
-        datasets:
-             - 20k_2015
-             - 20k_2016
-
-trusted_groups:
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
     - sysop
     - oversight
     - bot
@@ -48,3 +21,46 @@ trusted_groups:
     - abusefilter
     - bureaucrat
     - flow-bot
+  labeled_samples:
+    autolabeled_revisions.20k_2016: sampled_revisions.20k_2016
+
+merged_samples:
+  labeled_revisions.20k_2016:
+    - autolabeled_revisions.20k_2016
+    - human_labeled_revisions.5k_2016
+
+concatenated_samples:
+  labeled_revisions.40k_2015_2016:
+    - labeled_revisions.20k_2015
+    - labeled_revisions.20k_2016
+
+extracted_samples:
+  labeled_revisions.w_cache.40k_2015_2016:
+    sample: labeled_revisions.40k_2015_2016
+    features_for: [damaging, goodfaith]
+
+models:
+  damaging:
+    observations: labeled_revisions.w_cache.40k_2015_2016
+    label: damaging
+    pop_rate_true: 0.0297029702970297
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        max_depth: 3
+        learning_rate: 0.1
+        max_features: log2
+        n_estimators: 300
+  goodfaith:
+    observations: labeled_revisions.w_cache.40k_2015_2016
+    label: goodfaith
+    pop_rate_true: 0.9834641681438339
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        max_depth: 7
+        learning_rate: 0.01
+        max_features: log2
+        n_estimators: 500

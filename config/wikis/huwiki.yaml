@@ -35,8 +35,8 @@ merged_samples:
 
 extracted_samples:
   labeled_revisions.w_cache.40k_2016:
-    sample: labeled_revisions.20k_2016
-    features_for: [damaging, goodfaith]
+    sample: labeled_revisions.40k_2016
+    features_for: ["damaging", "goodfaith"]
 
 
 models:
