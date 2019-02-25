@@ -10,7 +10,9 @@ samples:
         quarry_page: "https://quarry.wmflabs.org/query/17988"
 
 default_sample: 20k_2016
-review_sample: 20k_2016
+review_samples:
+    20k_2016:
+        bigger_sample: 20k_2016
 
 merged_samples:
     20k_2016:

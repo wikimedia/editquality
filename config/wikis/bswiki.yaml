@@ -9,10 +9,12 @@ samples:
     5k_2018:
         labeling_campaign: "https://labels.wmflabs.org/campaigns/bswiki/78/"
 
-unbalanced_5k_set_for_review: true
+review_samples:
+    5k_2018:
+        unbalanced: true
+        bigger_sample: 40k_2018
 
 default_sample: 40k_2018
-review_sample: 5k_2018
 
 merged_samples:
     40k_2018:

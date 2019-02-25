@@ -6,6 +6,10 @@ samples:
     20k_2016:
         quarry_url: "https://quarry.wmflabs.org/run/99533/output/0/json-lines?download=true"
 
+review_samples:
+    5k_2016:
+        bigger_sample: 20k_2016
+
 trusted_groups:
     - sysop
     - oversight
@@ -15,6 +19,4 @@ trusted_groups:
     - abusefilter
     - bureaucrat
 
-balanced_5k_set_for_review: false
 default_sample: 20k_2016
-review_sample: 5k_2016

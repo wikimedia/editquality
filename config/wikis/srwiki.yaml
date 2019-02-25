@@ -8,10 +8,12 @@ samples:
     5k_2017:
         labeling_campaign: "https://labels.wmflabs.org/campaigns/srwiki/62/"
 
-unbalanced_5k_set_for_review: true
-
 default_sample: 120k_2017
-review_sample: 5k_2017
+
+review_samples:
+    5k_2017:
+        unbalanced: true
+        bigger_sample: 120k_2017
 
 merged_samples:
     120k_2017:

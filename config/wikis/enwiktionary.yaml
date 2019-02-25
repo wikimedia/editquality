@@ -7,11 +7,12 @@ samples:
     92k_2018:
         quarry_url: "https://quarry.wmflabs.org/run/244906/output/0/json-lines?download=true"
 
-unbalanced_5k_set_for_review: true
+review_samples:
+    5k_2018:
+        unbalanced: true
+        bigger_sample: 92k_2018
 
 default_sample: 92k_2018
-
-review_sample: 5k_2018
 
 models:
     reverted:

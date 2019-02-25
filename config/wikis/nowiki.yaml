@@ -6,13 +6,14 @@ samples:
     100k_2015:
         quarry_url: "https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true"
 
-balanced_5k_set_for_review: true
+review_samples:
+    5k_2015:
+        balanced: true
+        bigger_sample: 100k_2015
 
 default_sample: 40k_2015
 default_sample_size: 40000
 default_sample_bigger_sample: 100k_2015
-
-review_sample: 5k_2015
 
 models:
     reverted:

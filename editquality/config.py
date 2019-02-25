@@ -86,12 +86,12 @@ def load_wiki(wiki, config):
             result[sample] = wiki['samples'][sample]
     wiki['samples'] = result
 
+    if 'review_samples' not in wiki:
+        wiki['review_samples'] = {}
+
     # Normalize options
     if 'default_sample_bigger_sample' not in wiki:
         wiki['default_sample_bigger_sample'] = wiki['default_sample']
-
-    if 'sample_to_build_review' not in wiki:
-        wiki['sample_to_build_review'] = wiki['default_sample']
 
     return wiki
 

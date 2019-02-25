@@ -8,10 +8,12 @@ samples:
     40k_2016:
         quarry_url: "http://quarry.wmflabs.org/run/79646/output/0/json-lines?download=true"
 
-balanced_5k_set_for_review: true
-
 default_sample: 40k_2016
-review_sample: 5k_2016
+
+review_samples:
+    5k_2016:
+        balanced: true
+        bigger_sample: 40k_2016
 
 merged_samples:
     40k_2016:

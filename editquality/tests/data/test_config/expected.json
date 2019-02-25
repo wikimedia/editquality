@@ -1,15 +1,13 @@
 {
     "wikis": [
         {
-            "review_sample": "5k_2016",
+            "review_samples": {"5k_2016": {"balanced": true, "bigger_sample": "20k_2016"}},
             "samples": {
                 "20k_2016": {
                     "quarry_url": "http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true"
                 }
             },
-            "sample_to_build_review": "20k_2016",
             "name": "arwiki",
-            "balanced_5k_set_for_review": true,
             "host": "ar.wikipedia.org",
             "default_sample": "20k_2016",
             "trusted_groups": [
@@ -41,9 +39,7 @@
             "label": "Arabic Wikipedia"
         },
         {
-            "review_sample": "5k_2018",
-            "unbalanced_5k_set_for_review": true,
-            "sample_to_build_review": "60k_2018",
+            "review_samples": {"5k_2018": {"unbalanced": true, "bigger_sample": "60k_2018"}},
             "name": "bawiki",
             "samples": {
                 "60k_2018": {
@@ -63,10 +59,8 @@
             "label": "Bosnian Wikipedia"
         },
         {
-            "review_sample": "5k_2015",
-            "sample_to_build_review": "20k_2015",
+            "review_samples": {"5k_2015": {"balanced": true, "bigger_sample": "20k_2015"}},
             "name": "hewiki",
-            "balanced_5k_set_for_review": true,
             "host": "he.wikipedia.org",
             "default_sample": "20k_2015",
             "trusted_groups": [

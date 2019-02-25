@@ -12,10 +12,12 @@ samples:
     5k_2017:
         labeling_campaign: "https://labels.wmflabs.org/campaigns/cawiki/68/"
 
-unbalanced_5k_set_for_review: true
-sample_to_build_review: 40k_2017
+review_samples:
+    5k_2017:
+        unbalanced: true
+        bigger_sample: 40k_2017
+
 default_sample: 40k_2017
-review_sample: 5k_2017
 
 merged_samples:
     40k_2017:

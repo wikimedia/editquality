@@ -58,24 +58,26 @@ datasets/{{ wiki.name }}.human_labeled_revisions.{{ sample_name }}.json:
 		{{ sample.labeling_campaign }} > $@
 {% endif %}
 {% endfor %}
-{% if wiki.balanced_5k_set_for_review %}
+{% for sample_name, sample in wiki.review_samples|dictsort %}
+{% if sample.balanced %}
 
-datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json
+datasets/{{ wiki.name }}.revisions_for_review.{{ sample_name }}.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample.bigger_sample }}.review.json
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample.bigger_sample }}.no_review.json
 	( \
-	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.review.json | \
+	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample.bigger_sample }}.review.json | \
 	 shuf -n 2500; \
-	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.default_sample_bigger_sample }}.no_review.json | \
+	 cat datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample.bigger_sample }}.no_review.json | \
 	 shuf -n 2500 \
 	) | shuf > $@
 {% endif %}
-{% if wiki.unbalanced_5k_set_for_review %}
+{% if sample.unbalanced %}
 
-datasets/{{ wiki.name }}.revisions_for_review.{{ wiki.review_sample }}.json: \
-		datasets/{{ wiki.name }}.autolabeled_revisions.{{ wiki.sample_to_build_review }}.review.json
+datasets/{{ wiki.name }}.revisions_for_review.{{ sample_name }}.json: \
+		datasets/{{ wiki.name }}.autolabeled_revisions.{{ sample.bigger_sample }}.review.json
 	cat $< | shuf > $@
 {% endif %}
+{% endfor %}
 {% if wiki.merged_samples %}
 {% for big_sample_name, big_sample in wiki.merged_samples|dictsort %}
 

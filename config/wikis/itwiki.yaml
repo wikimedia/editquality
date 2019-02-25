@@ -18,7 +18,10 @@ trusted_groups:
   - abusefilter
   - bureaucrat
 
-review_sample: 5k_2016
+review_samples:
+    5k_2016:
+        bigger_sample: 20k_2016
+  
 default_sample: 20k_2015
 
 merged_samples:

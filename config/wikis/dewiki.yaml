@@ -8,8 +8,11 @@ samples:
     5k_2015:
         labeling_campaign: "https://labels.wmflabs.org/campaigns/dewiki/16/"
 
+review_samples:
+    5k_2015:
+        bigger_sample: 20k_2015
+
 default_sample: 20k_2015
-review_sample: 5k_2015
 
 merged_samples:
   20k_2015:

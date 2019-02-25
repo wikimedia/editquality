@@ -7,7 +7,10 @@ samples:
         labeling_campaign: "https://labels.wmflabs.org/campaigns/ptwiki/7/"
 
 default_sample: 20k_2015
-review_sample: 20k_2015
+
+review_samples:
+    20k_2015:
+        bigger_sample: 20k_2015
 
 merged_samples:
     20k_2015:

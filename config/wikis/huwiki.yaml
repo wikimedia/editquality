@@ -21,10 +21,12 @@ trusted_groups:
     - templateeditor
     - interface-editor
 
-balanced_5k_set_for_review: true
-
 default_sample: 40k_2016
-review_sample: 5k_2016
+
+review_samples:
+    5k_2016:
+        balanced: true
+        bigger_sample: 40k_2016
 
 merged_samples:
     40k_2016:

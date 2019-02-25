@@ -13,6 +13,9 @@ trusted_groups:
     - eliminator
     - bot
 
-balanced_5k_set_for_review: true
 default_sample: 100k_2016
-review_sample: 5k_2016
+
+review_samples:
+    5k_2016:
+        balanced: true
+        bigger_sample: 100k_2016

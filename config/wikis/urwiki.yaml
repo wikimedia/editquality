@@ -12,6 +12,9 @@ trusted_groups:
     - sysop
     - rollbackers
 
-balanced_5k_set_for_review: true
 default_sample: 500k_2015
-review_sample: 5k_2015
+
+review_samples:
+    5k_2015:
+        balanced: true
+        bigger_sample: 500k_2015

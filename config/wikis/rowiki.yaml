@@ -9,7 +9,10 @@ samples:
         quarry_url: "https://quarry.wmflabs.org/run/146926/output/0/json-lines?download=true"
 
 default_sample: 20k_2016
-review_sample: 20k_2016
+
+review_samples:
+    5k_2016:
+        bigger_sample: 20k_2016
 
 merged_samples:
     20k_2016:
