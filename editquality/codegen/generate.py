@@ -1,10 +1,5 @@
 import jinja2
 
-ALG_FILE_NAME = {
-    "GradientBoosting": "gradient_boosting",
-    "RandomForest": "rf"
-}
-
 
 def generate(variables, templates_path, main_template):
     """
@@ -24,11 +19,15 @@ def generate(variables, templates_path, main_template):
         lstrip_blocks=True,
         trim_blocks=True
     )
+
+    def norm_alg_filename(alg_name):
+        if alg_name in variables['globals']['algorithm_filename_parts']:
+            return variables['globals']['algorithm_filename_parts'][alg_name]
+        else:
+            raise KeyError("{0} not found in globals.algorithm_filename_parts"
+                           .format(alg_name))
+
     env.globals.update(norm_alg_filename=norm_alg_filename)
 
     template = env.from_string(main_template)
     return template.render(variables) + "\n"
-
-
-def norm_alg_filename(alg_name):
-    return ALG_FILE_NAME[alg_name]

@@ -1,4 +1,6 @@
-trusted_groups:
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
     - sysop
     - oversight
     - editor

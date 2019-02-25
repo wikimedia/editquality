@@ -6,17 +6,21 @@ consumers, as much as possible.
 """
 import collections
 import glob
+import os
 
 import deep_merge
 import yaml
 
 
 def load_config(config_dir=None):
-    path = "/{0}_defaults.yaml"
     model_defaults = yaml.safe_load(
-        open(config_dir + path.format('model'), "r"))
-    wiki_defaults = yaml.safe_load(open(config_dir + path.format('wiki'), "r"))
-    manual_wikis = yaml.safe_load(open(config_dir + '/manual_wikis.yaml', "r"))
+        open(os.path.join(config_dir, "model_defaults.yaml")))
+    wiki_defaults = yaml.safe_load(
+        open(os.path.join(config_dir, "wiki_defaults.yaml")))
+    manual_wikis = yaml.safe_load(
+        open(os.path.join(config_dir, "manual_wikis.yaml")))
+    globals = yaml.safe_load(
+        open(os.path.join(config_dir, "globals.yaml")))
 
     all_files = sorted(glob.glob(config_dir + "/wikis/*.yaml"))
     wikis = [yaml.safe_load(open(f, "r")) for f in all_files]
@@ -26,6 +30,7 @@ def load_config(config_dir=None):
     config = {
         "model_defaults": model_defaults,
         "wiki_defaults": wiki_defaults,
+        "globals": globals,
         "wikis": wikis,
         'wiki_names': wiki_names,
     }
