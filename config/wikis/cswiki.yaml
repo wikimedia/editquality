@@ -2,29 +2,54 @@ name: cswiki
 label: Czech Wikipedia
 host: cs.wikipedia.org
 
-samples:
-    5k_2016:
-        labeling_campaign: "https://labels.wmflabs.org/campaigns/cswiki/44/"
-    20k_2016:
-        quarry_url: "https://quarry.wmflabs.org/run/97125/output/0/json-lines?download=true"
+external_samples:
+  sampled_revisions.20k_2016:
+    quarry_url: https://quarry.wmflabs.org/run/97125/output/0/json-lines?download=true
+  human_labeled_revisions.5k_2016:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/cswiki/44/
 
-balanced_5k_set_for_review: true
+autolabeled_samples:
+  trusted_edits: 1000
+  labeled_samples:
+    autolabeled_revisions.20k_2016: sampled_revisions.20k_2016
 
-default_sample: 20k_2016
-review_sample: 5k_2016
+balanced_5k_samples:
+  revisions_for_review.5k_2016: autolabeled_revisions.20k_2016
 
 merged_samples:
-    20k_2016:
-        autolabeled_revisions: "20k_2016"
-        human_labeled_revisions: "5k_2016"
+  labeled_revisions.20k_2016:
+    - autolabeled_revisions.20k_2016
+    - human_labeled_revisions.5k_2016
+
+extracted_samples:
+  labeled_revisions.w_cache.20k_2016:
+    sample: labeled_revisions.20k_2016
+    features_for:
+      - damaging
+      - goodfaith
 
 models:
-    damaging:
-        tuning_params:
-            n_estimators: 500
-        pop_rate_true: 0.0445968266680014
-    goodfaith:
-        tuning_params:
-            max_depth: 5
-            n_estimators: 500
-        pop_rate_true: 0.977526402722859
+  damaging:
+    observations: labeled_revisions.w_cache.20k_2016
+    label: damaging
+    pop_rate_true: 0.0445968266680014
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 500
+  goodfaith:
+    observations: labeled_revisions.w_cache.20k_2016
+    label: goodfaith
+    pop_rate_true: 0.977526402722859
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 5
+        max_features: log2
+        n_estimators: 500

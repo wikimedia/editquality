@@ -2,41 +2,64 @@ name: cawiki
 label: Catalan Wikipedia
 host: ca.wikipedia.org
 
-samples:
-    100k_2017:
-        quarry_url: "https://quarry.wmflabs.org/run/228948/output/0/json-lines?download=true"
-        quarry_page: "https://quarry.wmflabs.org/query/24081"
-    40k_2017:
-        quarry_url: "https://quarry.wmflabs.org/run/237545/output/0/json-lines?download=true"
-        quarry_page: "https://quarry.wmflabs.org/query/24913"
-    5k_2017:
-        labeling_campaign: "https://labels.wmflabs.org/campaigns/cawiki/68/"
+external_samples:
+# Commented out because this is unused.
+#  sampled_revisions.100k_2017:
+#    quarry_page: https://quarry.wmflabs.org/query/24081
+#    quarry_url: https://quarry.wmflabs.org/run/228948/output/0/json-lines?download=true
+  sampled_revisions.40k_2017:
+    quarry_page: https://quarry.wmflabs.org/query/24913
+    quarry_url: https://quarry.wmflabs.org/run/237545/output/0/json-lines?download=true
+  human_labeled_revisions.5k_2017:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/cawiki/68/
 
-unbalanced_5k_set_for_review: true
-sample_to_build_review: 40k_2017
-default_sample: 40k_2017
-review_sample: 5k_2017
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - autopatrolled
+   - bot
+   - bureaucrat
+   - checkuser
+   - reviewer
+   - rollbacker
+   - sysop
+  labeled_samples:
+    autolabeled_revisions.40k_2017: sampled_revisions.40k_2017
 
 merged_samples:
-    40k_2017:
-        autolabeled_revisions: "40k_2017"
-        human_labeled_revisions: "5k_2017"
+  labeled_revisions.40k_2017:
+    - autolabeled_revisions.40k_2017
+    - human_labeled_revisions.5k_2017
+
+extracted_samples:
+  labeled_revisions.w_cache.40k_2017:
+    sample: labeled_revisions.40k_2017
+    features_for:
+      - damaging
+      - goodfaith
 
 models:
-    damaging:
-        tuning_params:
-            max_depth: 5
-        pop_rate_true: 0.019000475011875295
-    goodfaith:
-        tuning_params:
-            learning_rate: 0.1
-        pop_rate_true: 0.9854996374909373
-
-trusted_groups:
-    - autopatrolled
-    - bot
-    - bureaucrat
-    - checkuser
-    - reviewer
-    - rollbacker
-    - sysop
+  damaging:
+    observations: labeled_revisions.w_cache.40k_2017
+    label: damaging
+    pop_rate_true: 0.019000475011875295
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 5
+        max_features: log2
+        n_estimators: 700
+  goodfaith:
+    observations: labeled_revisions.w_cache.40k_2017
+    label: goodfaith
+    pop_rate_true: 0.9854996374909373
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.1
+        max_depth: 7
+        max_features: log2
+        n_estimators: 700

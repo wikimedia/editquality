@@ -37,7 +37,9 @@ concatenated_samples:
 extracted_samples:
   labeled_revisions.w_cache.40k_2015_2016:
     sample: labeled_revisions.40k_2015_2016
-    features_for: [damaging, goodfaith]
+    features_for:
+      - damaging
+      - goodfaith
 
 models:
   damaging:

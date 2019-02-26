@@ -2,19 +2,22 @@ name: azwiki
 label: Azeri Wikipedia
 host: az.wikipedia.org
 
-samples:
-    20k_2016:
-        quarry_url: "https://quarry.wmflabs.org/run/99533/output/0/json-lines?download=true"
+external_samples:
+  sampled_revisions.20k_2016:
+    quarry_url: https://quarry.wmflabs.org/run/99533/output/0/json-lines?download=true
 
-trusted_groups:
-    - sysop
-    - oversight
-    - bot
-    - rollbacker
-    - checkuser
-    - abusefilter
-    - bureaucrat
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - sysop
+   - oversight
+   - bot
+   - rollbacker
+   - checkuser
+   - abusefilter
+   - bureaucrat
+  labeled_samples:
+    autolabeled_revisions.20k_2016: sampled_revisions.20k_2016
 
-balanced_5k_set_for_review: false
-default_sample: 20k_2016
-review_sample: 5k_2016
+
+
