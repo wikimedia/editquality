@@ -105,7 +105,11 @@ touch:
 include  Makefile.manual
 
 
+
 ############################# Arabic Wikipedia ################################
+datasets/arwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/arwiki/30/ > $@
 
 datasets/arwiki.sampled_revisions.20k_2016.json:
 	wget -qO- http://quarry.wmflabs.org/run/65713/output/0/json-lines?download=true > $@
@@ -119,32 +123,18 @@ datasets/arwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/arwiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/arwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/arwiki.autolabeled_revisions.20k_2016.review.json: \
-		datasets/arwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/arwiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/arwiki/30/ > $@
-
 datasets/arwiki.revisions_for_review.5k_2016.json: \
-		datasets/arwiki.autolabeled_revisions.20k_2016.review.json
-		datasets/arwiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/arwiki.autolabeled_revisions.20k_2016.json
 	( \
-	 cat datasets/arwiki.autolabeled_revisions.20k_2016.review.json | \
+	 cat datasets/arwiki.autolabeled_revisions.20k_2016.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/arwiki.autolabeled_revisions.20k_2016.no_review.json | \
+	 cat datasets/arwiki.autolabeled_revisions.20k_2016.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
 datasets/arwiki.labeled_revisions.20k_2016.json: \
 		datasets/arwiki.human_labeled_revisions.5k_2016.json \
-		datasets/arwiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/arwiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/arwiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -165,7 +155,7 @@ tuning_reports/arwiki.damaging.md: \
 		editquality.feature_lists.arwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.021427" \
 		--pop-rate "false=0.978573" \
 		--center --scale \
@@ -174,7 +164,7 @@ tuning_reports/arwiki.damaging.md: \
 
 models/arwiki.damaging.gradient_boosting.model: \
 		datasets/arwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.arwiki.damaging \
@@ -184,11 +174,11 @@ models/arwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=100' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.021427" \
 		--pop-rate "false=0.978573" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/arwiki.damaging.md
 
 tuning_reports/arwiki.goodfaith.md: \
@@ -199,7 +189,7 @@ tuning_reports/arwiki.goodfaith.md: \
 		editquality.feature_lists.arwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.993861" \
 		--pop-rate "false=0.0061390000000000056" \
 		--center --scale \
@@ -208,7 +198,7 @@ tuning_reports/arwiki.goodfaith.md: \
 
 models/arwiki.goodfaith.gradient_boosting.model: \
 		datasets/arwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.arwiki.goodfaith \
@@ -218,11 +208,11 @@ models/arwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.993861" \
 		--pop-rate "false=0.0061390000000000056" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/arwiki.goodfaith.md
 
 arwiki_models: \
@@ -233,8 +223,8 @@ arwiki_tuning_reports: \
 	tuning_reports/arwiki.damaging.md \
 	tuning_reports/arwiki.goodfaith.md
 
-############################# Azeri Wikipedia ################################
 
+############################# Azeri Wikipedia ################################
 datasets/azwiki.sampled_revisions.20k_2016.json:
 	wget -qO- https://quarry.wmflabs.org/run/99533/output/0/json-lines?download=true > $@
 
@@ -247,18 +237,11 @@ datasets/azwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/azwiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/azwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/azwiki.autolabeled_revisions.20k_2016.review.json: \
-		datasets/azwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
 azwiki_models:
-azwiki_tuning_reports:
-############################# Bashkir Wikipedia ################################
 
+azwiki_tuning_reports:
+
+############################# Bashkir Wikipedia ################################
 # From https://quarry.wmflabs.org/query/24777
 datasets/bawiki.sampled_revisions.60k_2018.json:
 	wget -qO- https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true > $@
@@ -272,22 +255,11 @@ datasets/bawiki.autolabeled_revisions.60k_2018.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/bawiki.autolabeled_revisions.60k_2018.no_review.json: \
-		datasets/bawiki.autolabeled_revisions.60k_2018.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/bawiki.autolabeled_revisions.60k_2018.review.json: \
-		datasets/bawiki.autolabeled_revisions.60k_2018.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-datasets/bawiki.revisions_for_review.5k_2018.json: \
-		datasets/bawiki.autolabeled_revisions.60k_2018.review.json
-	cat $< | shuf > $@
-
 bawiki_models:
-bawiki_tuning_reports:
-############################# Bengali Wikipedia ################################
 
+bawiki_tuning_reports:
+
+############################# Bengali Wikipedia ################################
 # From https://quarry.wmflabs.org/query/20229
 datasets/bnwiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/190661/output/0/json-lines?download=true > $@
@@ -301,22 +273,9 @@ datasets/bnwiki.autolabeled_revisions.20k_2017.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/bnwiki.autolabeled_revisions.20k_2017.no_review.json: \
-		datasets/bnwiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/bnwiki.autolabeled_revisions.20k_2017.review.json: \
-		datasets/bnwiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-datasets/bnwiki.revisions_for_review.5k_2017.json: \
-		datasets/bnwiki.autolabeled_revisions.20k_2017.review.json
-	cat $< | shuf > $@
-
 datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json: \
-		datasets/bnwiki.autolabeled_revisions.20k_2017.review.json \
-		datasets/bnwiki.autolabeled_revisions.20k_2017.no_review.json
-	cat $^ | \
+		datasets/bnwiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.bnwiki.reverted \
 		--host https://bn.wikipedia.org \
@@ -331,7 +290,7 @@ tuning_reports/bnwiki.reverted.md: \
 		editquality.feature_lists.bnwiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.021554310862" \
 		--pop-rate "false=0.978445689138" \
 		--center --scale \
@@ -340,7 +299,7 @@ tuning_reports/bnwiki.reverted.md: \
 
 models/bnwiki.reverted.gradient_boosting.model: \
 		datasets/bnwiki.autolabeled_revisions.w_cache.20k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.bnwiki.reverted \
@@ -350,11 +309,11 @@ models/bnwiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.021554310862" \
 		--pop-rate "false=0.978445689138" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/bnwiki.reverted.md
 
 bnwiki_models: \
@@ -363,8 +322,8 @@ bnwiki_models: \
 bnwiki_tuning_reports: \
 	tuning_reports/bnwiki.reverted.md
 
-############################# Bengali Wikisource ################################
 
+############################# Bengali Wikisource ################################
 # From https://quarry.wmflabs.org/query/24776
 datasets/bnwikisource.sampled_revisions.200k_2018.json:
 	wget -qO- https://quarry.wmflabs.org/run/236208/output/0/json-lines?download=true > $@
@@ -378,21 +337,14 @@ datasets/bnwikisource.autolabeled_revisions.200k_2018.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/bnwikisource.autolabeled_revisions.200k_2018.no_review.json: \
-		datasets/bnwikisource.autolabeled_revisions.200k_2018.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/bnwikisource.autolabeled_revisions.200k_2018.review.json: \
-		datasets/bnwikisource.autolabeled_revisions.200k_2018.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-datasets/bnwikisource.revisions_for_review.5k_2018.json: \
-		datasets/bnwikisource.autolabeled_revisions.200k_2018.review.json
-	cat $< | shuf > $@
-
 bnwikisource_models:
+
 bnwikisource_tuning_reports:
+
 ############################# Bosnian Wikipedia ################################
+datasets/bswiki.human_labeled_revisions.5k_2018.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/bswiki/78/ > $@
 
 # From https://quarry.wmflabs.org/query/26936
 datasets/bswiki.sampled_revisions.40k_2018.json:
@@ -407,26 +359,9 @@ datasets/bswiki.autolabeled_revisions.40k_2018.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/bswiki.autolabeled_revisions.40k_2018.no_review.json: \
-		datasets/bswiki.autolabeled_revisions.40k_2018.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/bswiki.autolabeled_revisions.40k_2018.review.json: \
-		datasets/bswiki.autolabeled_revisions.40k_2018.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/bswiki.human_labeled_revisions.5k_2018.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/bswiki/78/ > $@
-
-datasets/bswiki.revisions_for_review.5k_2018.json: \
-		datasets/bswiki.autolabeled_revisions.40k_2018.review.json
-	cat $< | shuf > $@
-
 datasets/bswiki.labeled_revisions.40k_2018.json: \
 		datasets/bswiki.human_labeled_revisions.5k_2018.json \
-		datasets/bswiki.autolabeled_revisions.40k_2018.no_review.json
+		datasets/bswiki.autolabeled_revisions.40k_2018.json
 	./utility merge_labels $^ > $@
 
 datasets/bswiki.labeled_revisions.w_cache.40k_2018.json: \
@@ -447,7 +382,7 @@ tuning_reports/bswiki.damaging.md: \
 		editquality.feature_lists.bswiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.028101164191087918" \
 		--pop-rate "false=0.9718988358089121" \
 		--center --scale \
@@ -456,7 +391,7 @@ tuning_reports/bswiki.damaging.md: \
 
 models/bswiki.damaging.rf.model: \
 		datasets/bswiki.labeled_revisions.w_cache.40k_2018.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.RandomForest \
 		editquality.feature_lists.bswiki.damaging \
@@ -466,11 +401,11 @@ models/bswiki.damaging.rf.model: \
 		-p 'max_features="log2"' \
 		-p 'min_samples_leaf=7' \
 		-p 'n_estimators=320' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.028101164191087918" \
 		--pop-rate "false=0.9718988358089121" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/bswiki.damaging.md
 
 tuning_reports/bswiki.goodfaith.md: \
@@ -481,7 +416,7 @@ tuning_reports/bswiki.goodfaith.md: \
 		editquality.feature_lists.bswiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9774939783219591" \
 		--pop-rate "false=0.022506021678040944" \
 		--center --scale \
@@ -490,7 +425,7 @@ tuning_reports/bswiki.goodfaith.md: \
 
 models/bswiki.goodfaith.gradient_boosting.model: \
 		datasets/bswiki.labeled_revisions.w_cache.40k_2018.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.bswiki.goodfaith \
@@ -500,11 +435,11 @@ models/bswiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9774939783219591" \
 		--pop-rate "false=0.022506021678040944" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/bswiki.goodfaith.md
 
 bswiki_models: \
@@ -515,28 +450,11 @@ bswiki_tuning_reports: \
 	tuning_reports/bswiki.damaging.md \
 	tuning_reports/bswiki.goodfaith.md
 
+
 ############################# Catalan Wikipedia ################################
-
-# From https://quarry.wmflabs.org/query/24081
-datasets/cawiki.sampled_revisions.100k_2017.json:
-	wget -qO- https://quarry.wmflabs.org/run/228948/output/0/json-lines?download=true > $@
-
-datasets/cawiki.autolabeled_revisions.100k_2017.json: \
-		datasets/cawiki.sampled_revisions.100k_2017.json
-	cat $< | \
-	./utility autolabel --host=https://ca.wikipedia.org \
-		--trusted-groups=autopatrolled,bot,bureaucrat,checkuser,reviewer,rollbacker,sysop \
-		--trusted-edits=1000 \
-		--revert-radius=5 \
-		--verbose > $@
-
-datasets/cawiki.autolabeled_revisions.100k_2017.no_review.json: \
-		datasets/cawiki.autolabeled_revisions.100k_2017.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/cawiki.autolabeled_revisions.100k_2017.review.json: \
-		datasets/cawiki.autolabeled_revisions.100k_2017.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
+datasets/cawiki.human_labeled_revisions.5k_2017.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/cawiki/68/ > $@
 
 # From https://quarry.wmflabs.org/query/24913
 datasets/cawiki.sampled_revisions.40k_2017.json:
@@ -551,26 +469,9 @@ datasets/cawiki.autolabeled_revisions.40k_2017.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/cawiki.autolabeled_revisions.40k_2017.no_review.json: \
-		datasets/cawiki.autolabeled_revisions.40k_2017.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/cawiki.autolabeled_revisions.40k_2017.review.json: \
-		datasets/cawiki.autolabeled_revisions.40k_2017.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/cawiki.human_labeled_revisions.5k_2017.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/cawiki/68/ > $@
-
-datasets/cawiki.revisions_for_review.5k_2017.json: \
-		datasets/cawiki.autolabeled_revisions.40k_2017.review.json
-	cat $< | shuf > $@
-
 datasets/cawiki.labeled_revisions.40k_2017.json: \
 		datasets/cawiki.human_labeled_revisions.5k_2017.json \
-		datasets/cawiki.autolabeled_revisions.40k_2017.no_review.json
+		datasets/cawiki.autolabeled_revisions.40k_2017.json
 	./utility merge_labels $^ > $@
 
 datasets/cawiki.labeled_revisions.w_cache.40k_2017.json: \
@@ -591,7 +492,7 @@ tuning_reports/cawiki.damaging.md: \
 		editquality.feature_lists.cawiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.019000475011875295" \
 		--pop-rate "false=0.9809995249881247" \
 		--center --scale \
@@ -600,7 +501,7 @@ tuning_reports/cawiki.damaging.md: \
 
 models/cawiki.damaging.gradient_boosting.model: \
 		datasets/cawiki.labeled_revisions.w_cache.40k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cawiki.damaging \
@@ -610,11 +511,11 @@ models/cawiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.019000475011875295" \
 		--pop-rate "false=0.9809995249881247" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/cawiki.damaging.md
 
 tuning_reports/cawiki.goodfaith.md: \
@@ -625,7 +526,7 @@ tuning_reports/cawiki.goodfaith.md: \
 		editquality.feature_lists.cawiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9854996374909373" \
 		--pop-rate "false=0.014500362509062725" \
 		--center --scale \
@@ -634,7 +535,7 @@ tuning_reports/cawiki.goodfaith.md: \
 
 models/cawiki.goodfaith.gradient_boosting.model: \
 		datasets/cawiki.labeled_revisions.w_cache.40k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cawiki.goodfaith \
@@ -644,11 +545,11 @@ models/cawiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9854996374909373" \
 		--pop-rate "false=0.014500362509062725" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/cawiki.goodfaith.md
 
 cawiki_models: \
@@ -659,7 +560,11 @@ cawiki_tuning_reports: \
 	tuning_reports/cawiki.damaging.md \
 	tuning_reports/cawiki.goodfaith.md
 
+
 ############################# Czech Wikipedia ################################
+datasets/cswiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/cswiki/44/ > $@
 
 datasets/cswiki.sampled_revisions.20k_2016.json:
 	wget -qO- https://quarry.wmflabs.org/run/97125/output/0/json-lines?download=true > $@
@@ -673,32 +578,18 @@ datasets/cswiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/cswiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/cswiki.autolabeled_revisions.20k_2016.review.json: \
-		datasets/cswiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/cswiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/cswiki/44/ > $@
-
 datasets/cswiki.revisions_for_review.5k_2016.json: \
-		datasets/cswiki.autolabeled_revisions.20k_2016.review.json
-		datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/cswiki.autolabeled_revisions.20k_2016.json
 	( \
-	 cat datasets/cswiki.autolabeled_revisions.20k_2016.review.json | \
+	 cat datasets/cswiki.autolabeled_revisions.20k_2016.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json | \
+	 cat datasets/cswiki.autolabeled_revisions.20k_2016.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
 datasets/cswiki.labeled_revisions.20k_2016.json: \
 		datasets/cswiki.human_labeled_revisions.5k_2016.json \
-		datasets/cswiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/cswiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/cswiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -719,7 +610,7 @@ tuning_reports/cswiki.damaging.md: \
 		editquality.feature_lists.cswiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.0445968266680014" \
 		--pop-rate "false=0.9554031733319986" \
 		--center --scale \
@@ -728,7 +619,7 @@ tuning_reports/cswiki.damaging.md: \
 
 models/cswiki.damaging.gradient_boosting.model: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cswiki.damaging \
@@ -738,11 +629,11 @@ models/cswiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0445968266680014" \
 		--pop-rate "false=0.9554031733319986" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/cswiki.damaging.md
 
 tuning_reports/cswiki.goodfaith.md: \
@@ -753,7 +644,7 @@ tuning_reports/cswiki.goodfaith.md: \
 		editquality.feature_lists.cswiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.977526402722859" \
 		--pop-rate "false=0.022473597277141044" \
 		--center --scale \
@@ -762,7 +653,7 @@ tuning_reports/cswiki.goodfaith.md: \
 
 models/cswiki.goodfaith.gradient_boosting.model: \
 		datasets/cswiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cswiki.goodfaith \
@@ -772,11 +663,11 @@ models/cswiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.977526402722859" \
 		--pop-rate "false=0.022473597277141044" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/cswiki.goodfaith.md
 
 cswiki_models: \
@@ -787,7 +678,11 @@ cswiki_tuning_reports: \
 	tuning_reports/cswiki.damaging.md \
 	tuning_reports/cswiki.goodfaith.md
 
+
 ############################# German Wikipedia ################################
+datasets/dewiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/dewiki/16/ > $@
 
 datasets/dewiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/42223/output/0/json-lines?download=true > $@
@@ -801,22 +696,9 @@ datasets/dewiki.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/dewiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/dewiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/dewiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/dewiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/dewiki.human_labeled_revisions.5k_2015.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/dewiki/16/ > $@
-
 datasets/dewiki.labeled_revisions.20k_2015.json: \
 		datasets/dewiki.human_labeled_revisions.5k_2015.json \
-		datasets/dewiki.autolabeled_revisions.20k_2015.no_review.json
+		datasets/dewiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/dewiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -837,7 +719,7 @@ tuning_reports/dewiki.damaging.md: \
 		editquality.feature_lists.dewiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.029975955116216937" \
 		--pop-rate "false=0.970024044883783" \
 		--center --scale \
@@ -846,7 +728,7 @@ tuning_reports/dewiki.damaging.md: \
 
 models/dewiki.damaging.gradient_boosting.model: \
 		datasets/dewiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.dewiki.damaging \
@@ -856,11 +738,11 @@ models/dewiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=100' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.029975955116216937" \
 		--pop-rate "false=0.970024044883783" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/dewiki.damaging.md
 
 tuning_reports/dewiki.goodfaith.md: \
@@ -871,7 +753,7 @@ tuning_reports/dewiki.goodfaith.md: \
 		editquality.feature_lists.dewiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9806572268234037" \
 		--pop-rate "false=0.019342773176596273" \
 		--center --scale \
@@ -880,7 +762,7 @@ tuning_reports/dewiki.goodfaith.md: \
 
 models/dewiki.goodfaith.gradient_boosting.model: \
 		datasets/dewiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.dewiki.goodfaith \
@@ -890,11 +772,11 @@ models/dewiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9806572268234037" \
 		--pop-rate "false=0.019342773176596273" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/dewiki.goodfaith.md
 
 dewiki_models: \
@@ -905,8 +787,8 @@ dewiki_tuning_reports: \
 	tuning_reports/dewiki.damaging.md \
 	tuning_reports/dewiki.goodfaith.md
 
-############################# Greek Wikipedia ################################
 
+############################# Greek Wikipedia ################################
 # From https://quarry.wmflabs.org/query/20231
 datasets/elwiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/190663/output/0/json-lines?download=true > $@
@@ -920,22 +802,9 @@ datasets/elwiki.autolabeled_revisions.20k_2017.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/elwiki.autolabeled_revisions.20k_2017.no_review.json: \
-		datasets/elwiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/elwiki.autolabeled_revisions.20k_2017.review.json: \
-		datasets/elwiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-datasets/elwiki.revisions_for_review.5k_2017.json: \
-		datasets/elwiki.autolabeled_revisions.20k_2017.review.json
-	cat $< | shuf > $@
-
 datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json: \
-		datasets/elwiki.autolabeled_revisions.20k_2017.review.json \
-		datasets/elwiki.autolabeled_revisions.20k_2017.no_review.json
-	cat $^ | \
+		datasets/elwiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.elwiki.reverted \
 		--host https://el.wikipedia.org \
@@ -950,7 +819,7 @@ tuning_reports/elwiki.reverted.md: \
 		editquality.feature_lists.elwiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.05170687756532186" \
 		--pop-rate "false=0.9482931224346781" \
 		--center --scale \
@@ -959,7 +828,7 @@ tuning_reports/elwiki.reverted.md: \
 
 models/elwiki.reverted.gradient_boosting.model: \
 		datasets/elwiki.autolabeled_revisions.w_cache.20k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.elwiki.reverted \
@@ -969,11 +838,11 @@ models/elwiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.05170687756532186" \
 		--pop-rate "false=0.9482931224346781" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/elwiki.reverted.md
 
 elwiki_models: \
@@ -982,9 +851,8 @@ elwiki_models: \
 elwiki_tuning_reports: \
 	tuning_reports/elwiki.reverted.md
 
+
 ############################# English Wikipedia ################################
-
-
 datasets/enwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ > $@
@@ -1011,7 +879,7 @@ tuning_reports/enwiki.damaging.md: \
 		editquality.feature_lists.enwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.034163555464634586" \
 		--pop-rate "false=0.9658364445353654" \
 		--center --scale \
@@ -1020,7 +888,7 @@ tuning_reports/enwiki.damaging.md: \
 
 models/enwiki.damaging.gradient_boosting.model: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.enwiki.damaging \
@@ -1030,11 +898,11 @@ models/enwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.034163555464634586" \
 		--pop-rate "false=0.9658364445353654" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/enwiki.damaging.md
 
 tuning_reports/enwiki.goodfaith.md: \
@@ -1045,7 +913,7 @@ tuning_reports/enwiki.goodfaith.md: \
 		editquality.feature_lists.enwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9671661637600368" \
 		--pop-rate "false=0.032833836239963166" \
 		--center --scale \
@@ -1054,7 +922,7 @@ tuning_reports/enwiki.goodfaith.md: \
 
 models/enwiki.goodfaith.gradient_boosting.model: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.enwiki.goodfaith \
@@ -1064,11 +932,11 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9671661637600368" \
 		--pop-rate "false=0.032833836239963166" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/enwiki.goodfaith.md
 
 enwiki_models: \
@@ -1079,8 +947,8 @@ enwiki_tuning_reports: \
 	tuning_reports/enwiki.damaging.md \
 	tuning_reports/enwiki.goodfaith.md
 
-############################# English Wiktionary ################################
 
+############################# English Wiktionary ################################
 datasets/enwiktionary.sampled_revisions.92k_2018.json:
 	wget -qO- https://quarry.wmflabs.org/run/244906/output/0/json-lines?download=true > $@
 
@@ -1093,22 +961,9 @@ datasets/enwiktionary.autolabeled_revisions.92k_2018.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/enwiktionary.autolabeled_revisions.92k_2018.no_review.json: \
-		datasets/enwiktionary.autolabeled_revisions.92k_2018.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/enwiktionary.autolabeled_revisions.92k_2018.review.json: \
-		datasets/enwiktionary.autolabeled_revisions.92k_2018.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-datasets/enwiktionary.revisions_for_review.5k_2018.json: \
-		datasets/enwiktionary.autolabeled_revisions.92k_2018.review.json
-	cat $< | shuf > $@
-
 datasets/enwiktionary.autolabeled_revisions.w_cache.92k_2018.json: \
-		datasets/enwiktionary.autolabeled_revisions.92k_2018.review.json \
-		datasets/enwiktionary.autolabeled_revisions.92k_2018.no_review.json
-	cat $^ | \
+		datasets/enwiktionary.autolabeled_revisions.92k_2018.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.enwiktionary.reverted \
 		--host https://en.wiktionary.org \
@@ -1123,7 +978,7 @@ tuning_reports/enwiktionary.reverted.md: \
 		editquality.feature_lists.enwiktionary.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.004778273117085203" \
 		--pop-rate "false=0.9952217268829148" \
 		--center --scale \
@@ -1132,7 +987,7 @@ tuning_reports/enwiktionary.reverted.md: \
 
 models/enwiktionary.reverted.rf.model: \
 		datasets/enwiktionary.autolabeled_revisions.w_cache.92k_2018.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.RandomForest \
 		editquality.feature_lists.enwiktionary.reverted \
@@ -1142,11 +997,11 @@ models/enwiktionary.reverted.rf.model: \
 		-p 'max_features="log2"' \
 		-p 'min_samples_leaf=3' \
 		-p 'n_estimators=320' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.004778273117085203" \
 		--pop-rate "false=0.9952217268829148" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/enwiktionary.reverted.md
 
 enwiktionary_models: \
@@ -1155,7 +1010,11 @@ enwiktionary_models: \
 enwiktionary_tuning_reports: \
 	tuning_reports/enwiktionary.reverted.md
 
+
 ############################# Spanish Wikipedia ################################
+datasets/eswiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/eswiki/12/ > $@
 
 datasets/eswiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/42221/output/0/json-lines?download=true > $@
@@ -1169,22 +1028,9 @@ datasets/eswiki.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/eswiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/eswiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/eswiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/eswiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/eswiki.human_labeled_revisions.5k_2015.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/eswiki/12/ > $@
-
 datasets/eswiki.labeled_revisions.20k_2015.json: \
 		datasets/eswiki.human_labeled_revisions.5k_2015.json \
-		datasets/eswiki.autolabeled_revisions.20k_2015.no_review.json
+		datasets/eswiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/eswiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -1205,7 +1051,7 @@ tuning_reports/eswiki.damaging.md: \
 		editquality.feature_lists.eswiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.11036013315847877" \
 		--pop-rate "false=0.8896398668415212" \
 		--center --scale \
@@ -1214,7 +1060,7 @@ tuning_reports/eswiki.damaging.md: \
 
 models/eswiki.damaging.gradient_boosting.model: \
 		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.eswiki.damaging \
@@ -1224,11 +1070,11 @@ models/eswiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.11036013315847877" \
 		--pop-rate "false=0.8896398668415212" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/eswiki.damaging.md
 
 tuning_reports/eswiki.goodfaith.md: \
@@ -1239,7 +1085,7 @@ tuning_reports/eswiki.goodfaith.md: \
 		editquality.feature_lists.eswiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.11036013315847877" \
 		--pop-rate "false=0.8896398668415212" \
 		--center --scale \
@@ -1248,7 +1094,7 @@ tuning_reports/eswiki.goodfaith.md: \
 
 models/eswiki.goodfaith.gradient_boosting.model: \
 		datasets/eswiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.eswiki.goodfaith \
@@ -1258,11 +1104,11 @@ models/eswiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.11036013315847877" \
 		--pop-rate "false=0.8896398668415212" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/eswiki.goodfaith.md
 
 eswiki_models: \
@@ -1273,7 +1119,11 @@ eswiki_tuning_reports: \
 	tuning_reports/eswiki.damaging.md \
 	tuning_reports/eswiki.goodfaith.md
 
+
 ############################# Spanish Wikibooks ################################
+datasets/eswikibooks.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/eswikibooks/42/ > $@
 
 datasets/eswikibooks.sampled_revisions.20k_2015.json:
 	wget -qO- https://quarry.wmflabs.org/run/113419/output/0/json-lines?download=true > $@
@@ -1287,22 +1137,9 @@ datasets/eswikibooks.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/eswikibooks.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/eswikibooks.autolabeled_revisions.20k_2015.review.json: \
-		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/eswikibooks.human_labeled_revisions.5k_2015.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/eswikibooks/42/ > $@
-
 datasets/eswikibooks.labeled_revisions.20k_2015.json: \
 		datasets/eswikibooks.human_labeled_revisions.5k_2015.json \
-		datasets/eswikibooks.autolabeled_revisions.20k_2015.no_review.json
+		datasets/eswikibooks.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json: \
@@ -1323,7 +1160,7 @@ tuning_reports/eswikibooks.damaging.md: \
 		editquality.feature_lists.eswikibooks.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.1126671580499105" \
 		--pop-rate "false=0.8873328419500895" \
 		--center --scale \
@@ -1332,7 +1169,7 @@ tuning_reports/eswikibooks.damaging.md: \
 
 models/eswikibooks.damaging.gradient_boosting.model: \
 		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.eswikibooks.damaging \
@@ -1342,11 +1179,11 @@ models/eswikibooks.damaging.gradient_boosting.model: \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.1126671580499105" \
 		--pop-rate "false=0.8873328419500895" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/eswikibooks.damaging.md
 
 tuning_reports/eswikibooks.goodfaith.md: \
@@ -1357,7 +1194,7 @@ tuning_reports/eswikibooks.goodfaith.md: \
 		editquality.feature_lists.eswikibooks.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9139393939393939" \
 		--pop-rate "false=0.08606060606060606" \
 		--center --scale \
@@ -1366,7 +1203,7 @@ tuning_reports/eswikibooks.goodfaith.md: \
 
 models/eswikibooks.goodfaith.gradient_boosting.model: \
 		datasets/eswikibooks.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.eswikibooks.goodfaith \
@@ -1376,11 +1213,11 @@ models/eswikibooks.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9139393939393939" \
 		--pop-rate "false=0.08606060606060606" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/eswikibooks.goodfaith.md
 
 eswikibooks_models: \
@@ -1391,7 +1228,11 @@ eswikibooks_tuning_reports: \
 	tuning_reports/eswikibooks.damaging.md \
 	tuning_reports/eswikibooks.goodfaith.md
 
+
 ############################# Spanish Wikiquote ################################
+datasets/eswikiquote.human_labeled_revisions.5k_2017.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/eswikiquote/64/ > $@
 
 # From https://quarry.wmflabs.org/query/23421
 datasets/eswikiquote.sampled_revisions.12k_2017.json:
@@ -1406,26 +1247,9 @@ datasets/eswikiquote.autolabeled_revisions.12k_2017.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/eswikiquote.autolabeled_revisions.12k_2017.no_review.json: \
-		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/eswikiquote.autolabeled_revisions.12k_2017.review.json: \
-		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/eswikiquote.human_labeled_revisions.5k_2017.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/eswikiquote/64/ > $@
-
-datasets/eswikiquote.revisions_for_review.5k_2017.json: \
-		datasets/eswikiquote.autolabeled_revisions.12k_2017.review.json
-	cat $< | shuf > $@
-
 datasets/eswikiquote.labeled_revisions.12k_2017.json: \
 		datasets/eswikiquote.human_labeled_revisions.5k_2017.json \
-		datasets/eswikiquote.autolabeled_revisions.12k_2017.no_review.json
+		datasets/eswikiquote.autolabeled_revisions.12k_2017.json
 	./utility merge_labels $^ > $@
 
 datasets/eswikiquote.labeled_revisions.w_cache.12k_2017.json: \
@@ -1446,7 +1270,7 @@ tuning_reports/eswikiquote.damaging.md: \
 		editquality.feature_lists.eswikiquote.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.08707101597009854" \
 		--pop-rate "false=0.9129289840299014" \
 		--center --scale \
@@ -1455,7 +1279,7 @@ tuning_reports/eswikiquote.damaging.md: \
 
 models/eswikiquote.damaging.gradient_boosting.model: \
 		datasets/eswikiquote.labeled_revisions.w_cache.12k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.eswikiquote.damaging \
@@ -1465,11 +1289,11 @@ models/eswikiquote.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.08707101597009854" \
 		--pop-rate "false=0.9129289840299014" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/eswikiquote.damaging.md
 
 tuning_reports/eswikiquote.goodfaith.md: \
@@ -1480,7 +1304,7 @@ tuning_reports/eswikiquote.goodfaith.md: \
 		editquality.feature_lists.eswikiquote.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9356099218484539" \
 		--pop-rate "false=0.06439007815154607" \
 		--center --scale \
@@ -1489,7 +1313,7 @@ tuning_reports/eswikiquote.goodfaith.md: \
 
 models/eswikiquote.goodfaith.gradient_boosting.model: \
 		datasets/eswikiquote.labeled_revisions.w_cache.12k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.eswikiquote.goodfaith \
@@ -1499,11 +1323,11 @@ models/eswikiquote.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9356099218484539" \
 		--pop-rate "false=0.06439007815154607" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/eswikiquote.goodfaith.md
 
 eswikiquote_models: \
@@ -1514,7 +1338,11 @@ eswikiquote_tuning_reports: \
 	tuning_reports/eswikiquote.damaging.md \
 	tuning_reports/eswikiquote.goodfaith.md
 
+
 ############################# Estonian Wikipedia ################################
+datasets/etwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/etwiki/17/ > $@
 
 datasets/etwiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/50110/output/0/json-lines?download=true > $@
@@ -1528,22 +1356,9 @@ datasets/etwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/etwiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/etwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/etwiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/etwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/etwiki.human_labeled_revisions.5k_2015.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/etwiki/17/ > $@
-
 datasets/etwiki.labeled_revisions.20k_2015.json: \
 		datasets/etwiki.human_labeled_revisions.5k_2015.json \
-		datasets/etwiki.autolabeled_revisions.20k_2015.no_review.json
+		datasets/etwiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/etwiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -1564,7 +1379,7 @@ tuning_reports/etwiki.damaging.md: \
 		editquality.feature_lists.etwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.026158257457618593" \
 		--pop-rate "false=0.9738417425423814" \
 		--center --scale \
@@ -1573,7 +1388,7 @@ tuning_reports/etwiki.damaging.md: \
 
 models/etwiki.damaging.gradient_boosting.model: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.etwiki.damaging \
@@ -1583,11 +1398,11 @@ models/etwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.026158257457618593" \
 		--pop-rate "false=0.9738417425423814" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/etwiki.damaging.md
 
 tuning_reports/etwiki.goodfaith.md: \
@@ -1598,7 +1413,7 @@ tuning_reports/etwiki.goodfaith.md: \
 		editquality.feature_lists.etwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9841038281603702" \
 		--pop-rate "false=0.01589617183962977" \
 		--center --scale \
@@ -1607,7 +1422,7 @@ tuning_reports/etwiki.goodfaith.md: \
 
 models/etwiki.goodfaith.gradient_boosting.model: \
 		datasets/etwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.etwiki.goodfaith \
@@ -1617,11 +1432,11 @@ models/etwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9841038281603702" \
 		--pop-rate "false=0.01589617183962977" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/etwiki.goodfaith.md
 
 etwiki_models: \
@@ -1632,56 +1447,27 @@ etwiki_tuning_reports: \
 	tuning_reports/etwiki.damaging.md \
 	tuning_reports/etwiki.goodfaith.md
 
+
 ############################# Persian Wikipedia ################################
-
-datasets/fawiki.sampled_revisions.2.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true > $@
-
-datasets/fawiki.autolabeled_revisions.2.20k_2015.json: \
-		datasets/fawiki.sampled_revisions.2.20k_2015.json
-	cat $< | \
-	./utility autolabel --host=https://fa.wikipedia.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
-		--trusted-edits=1000 \
-		--revert-radius=5 \
-		--verbose > $@
-
-datasets/fawiki.autolabeled_revisions.2.20k_2015.no_review.json: \
-		datasets/fawiki.autolabeled_revisions.2.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/fawiki.autolabeled_revisions.2.20k_2015.review.json: \
-		datasets/fawiki.autolabeled_revisions.2.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-datasets/fawiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true > $@
-
-datasets/fawiki.autolabeled_revisions.20k_2015.json: \
-		datasets/fawiki.sampled_revisions.20k_2015.json
-	cat $< | \
-	./utility autolabel --host=https://fa.wikipedia.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
-		--trusted-edits=1000 \
-		--revert-radius=5 \
-		--verbose > $@
-
-datasets/fawiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/fawiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/fawiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/fawiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
 datasets/fawiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/6/ > $@
 
-
 datasets/fawiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/fawiki/21/ > $@
+
+datasets/fawiki.sampled_revisions.20k_2016.json:
+	wget -qO- http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true > $@
+
+datasets/fawiki.autolabeled_revisions.20k_2016.json: \
+		datasets/fawiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://fa.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
 
 datasets/fawiki.labeled_revisions.20k_2015.json: \
 		datasets/fawiki.human_labeled_revisions.20k_2015.json
@@ -1689,20 +1475,16 @@ datasets/fawiki.labeled_revisions.20k_2015.json: \
 
 datasets/fawiki.labeled_revisions.20k_2016.json: \
 		datasets/fawiki.human_labeled_revisions.5k_2016.json \
-		datasets/fawiki.autolabeled_revisions.2.20k_2015.no_review.json
+		datasets/fawiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
-datasets/fawiki.labeled_revisions.w_cache.20k_2015.json: \
-		datasets/fawiki.labeled_revisions.20k_2015.json
-	cat $< | \
-	revscoring extract \
-		editquality.feature_lists.fawiki.damaging \
-		editquality.feature_lists.fawiki.goodfaith \
-		--host https://fa.wikipedia.org \
-		--extractors $(max_extractors) \
-		--verbose > $@
-datasets/fawiki.labeled_revisions.w_cache.20k_2016.json: \
+datasets/fawiki.labeled_revisions.40k_2015_2016.json: \
+		datasets/fawiki.labeled_revisions.20k_2015.json \
 		datasets/fawiki.labeled_revisions.20k_2016.json
+	cat $^ > $@
+
+datasets/fawiki.labeled_revisions.w_cache.40k_2015_2016.json: \
+		datasets/fawiki.labeled_revisions.40k_2015_2016.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.fawiki.damaging \
@@ -1712,15 +1494,14 @@ datasets/fawiki.labeled_revisions.w_cache.20k_2016.json: \
 		--verbose > $@
 
 tuning_reports/fawiki.damaging.md: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+		datasets/fawiki.labeled_revisions.w_cache.40k_2015_2016.json
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.0297029702970297" \
 		--pop-rate "false=0.9702970297029703" \
 		--center --scale \
@@ -1728,9 +1509,8 @@ tuning_reports/fawiki.damaging.md: \
 		--debug > $@
 
 models/fawiki.damaging.gradient_boosting.model: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+		datasets/fawiki.labeled_revisions.w_cache.40k_2015_2016.json
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fawiki.damaging \
@@ -1740,23 +1520,22 @@ models/fawiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0297029702970297" \
 		--pop-rate "false=0.9702970297029703" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/fawiki.damaging.md
 
 tuning_reports/fawiki.goodfaith.md: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+		datasets/fawiki.labeled_revisions.w_cache.40k_2015_2016.json
+	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9834641681438339" \
 		--pop-rate "false=0.01653583185616614" \
 		--center --scale \
@@ -1764,9 +1543,8 @@ tuning_reports/fawiki.goodfaith.md: \
 		--debug > $@
 
 models/fawiki.goodfaith.gradient_boosting.model: \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2015.json \
-		datasets/fawiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+		datasets/fawiki.labeled_revisions.w_cache.40k_2015_2016.json
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.fawiki.goodfaith \
@@ -1776,11 +1554,11 @@ models/fawiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9834641681438339" \
 		--pop-rate "false=0.01653583185616614" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/fawiki.goodfaith.md
 
 fawiki_models: \
@@ -1791,27 +1569,11 @@ fawiki_tuning_reports: \
 	tuning_reports/fawiki.damaging.md \
 	tuning_reports/fawiki.goodfaith.md
 
+
 ############################# French Wikipedia ################################
-
-datasets/frwiki.sampled_revisions.20k_2015.json:
-	wget -qO- https://quarry.wmflabs.org/run/48090/output/0/json-lines?download=true > $@
-
-datasets/frwiki.autolabeled_revisions.20k_2015.json: \
-		datasets/frwiki.sampled_revisions.20k_2015.json
-	cat $< | \
-	./utility autolabel --host=https://fr.wikipedia.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
-		--trusted-edits=1000 \
-		--revert-radius=5 \
-		--verbose > $@
-
-datasets/frwiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/frwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/frwiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/frwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
+datasets/frwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/frwiki/38/ > $@
 
 datasets/frwiki.sampled_revisions.20k_2016.json:
 	wget -qO- https://quarry.wmflabs.org/run/98251/output/0/json-lines?download=true > $@
@@ -1825,32 +1587,18 @@ datasets/frwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/frwiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/frwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/frwiki.autolabeled_revisions.20k_2016.review.json: \
-		datasets/frwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/frwiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/frwiki/38/ > $@
-
 datasets/frwiki.revisions_for_review.5k_2016.json: \
-		datasets/frwiki.autolabeled_revisions.20k_2016.review.json
-		datasets/frwiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/frwiki.autolabeled_revisions.20k_2016.json
 	( \
-	 cat datasets/frwiki.autolabeled_revisions.20k_2016.review.json | \
+	 cat datasets/frwiki.autolabeled_revisions.20k_2016.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/frwiki.autolabeled_revisions.20k_2016.no_review.json | \
+	 cat datasets/frwiki.autolabeled_revisions.20k_2016.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
 datasets/frwiki.labeled_revisions.20k_2016.json: \
 		datasets/frwiki.human_labeled_revisions.5k_2016.json \
-		datasets/frwiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/frwiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/frwiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -1871,7 +1619,7 @@ tuning_reports/frwiki.damaging.md: \
 		editquality.feature_lists.frwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.028751753155680224" \
 		--pop-rate "false=0.9712482468443198" \
 		--center --scale \
@@ -1880,7 +1628,7 @@ tuning_reports/frwiki.damaging.md: \
 
 models/frwiki.damaging.gradient_boosting.model: \
 		datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.frwiki.damaging \
@@ -1890,11 +1638,11 @@ models/frwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.028751753155680224" \
 		--pop-rate "false=0.9712482468443198" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/frwiki.damaging.md
 
 tuning_reports/frwiki.goodfaith.md: \
@@ -1905,7 +1653,7 @@ tuning_reports/frwiki.goodfaith.md: \
 		editquality.feature_lists.frwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9786115007012622" \
 		--pop-rate "false=0.021388499298737762" \
 		--center --scale \
@@ -1914,7 +1662,7 @@ tuning_reports/frwiki.goodfaith.md: \
 
 models/frwiki.goodfaith.gradient_boosting.model: \
 		datasets/frwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.frwiki.goodfaith \
@@ -1924,11 +1672,11 @@ models/frwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9786115007012622" \
 		--pop-rate "false=0.021388499298737762" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/frwiki.goodfaith.md
 
 frwiki_models: \
@@ -1939,7 +1687,11 @@ frwiki_tuning_reports: \
 	tuning_reports/frwiki.damaging.md \
 	tuning_reports/frwiki.goodfaith.md
 
+
 ############################# Hebrew Wikipedia ################################
+datasets/hewiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/hewiki/25/ > $@
 
 datasets/hewiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true > $@
@@ -1953,32 +1705,18 @@ datasets/hewiki.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/hewiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/hewiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/hewiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/hewiki.human_labeled_revisions.5k_2015.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/hewiki/25/ > $@
-
 datasets/hewiki.revisions_for_review.5k_2015.json: \
-		datasets/hewiki.autolabeled_revisions.20k_2015.review.json
-		datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json
+		datasets/hewiki.autolabeled_revisions.20k_2015.json
 	( \
-	 cat datasets/hewiki.autolabeled_revisions.20k_2015.review.json | \
+	 cat datasets/hewiki.autolabeled_revisions.20k_2015.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json | \
+	 cat datasets/hewiki.autolabeled_revisions.20k_2015.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
 datasets/hewiki.labeled_revisions.20k_2015.json: \
 		datasets/hewiki.human_labeled_revisions.5k_2015.json \
-		datasets/hewiki.autolabeled_revisions.20k_2015.no_review.json
+		datasets/hewiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/hewiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -1999,7 +1737,7 @@ tuning_reports/hewiki.damaging.md: \
 		editquality.feature_lists.hewiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.046281731975314835" \
 		--pop-rate "false=0.9537182680246852" \
 		--center --scale \
@@ -2008,7 +1746,7 @@ tuning_reports/hewiki.damaging.md: \
 
 models/hewiki.damaging.rf.model: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.RandomForest \
 		editquality.feature_lists.hewiki.damaging \
@@ -2018,11 +1756,11 @@ models/hewiki.damaging.rf.model: \
 		-p 'max_features="log2"' \
 		-p 'min_samples_leaf=1' \
 		-p 'n_estimators=320' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.046281731975314835" \
 		--pop-rate "false=0.9537182680246852" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/hewiki.damaging.md
 
 tuning_reports/hewiki.goodfaith.md: \
@@ -2033,7 +1771,7 @@ tuning_reports/hewiki.goodfaith.md: \
 		editquality.feature_lists.hewiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9718244945060459" \
 		--pop-rate "false=0.02817550549395409" \
 		--center --scale \
@@ -2042,7 +1780,7 @@ tuning_reports/hewiki.goodfaith.md: \
 
 models/hewiki.goodfaith.gradient_boosting.model: \
 		datasets/hewiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.hewiki.goodfaith \
@@ -2052,11 +1790,11 @@ models/hewiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9718244945060459" \
 		--pop-rate "false=0.02817550549395409" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/hewiki.goodfaith.md
 
 hewiki_models: \
@@ -2067,8 +1805,8 @@ hewiki_tuning_reports: \
 	tuning_reports/hewiki.damaging.md \
 	tuning_reports/hewiki.goodfaith.md
 
-############################# Croatian Wikipedia ################################
 
+############################# Croatian Wikipedia ################################
 # From https://quarry.wmflabs.org/query/21213
 datasets/hrwiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/200064/output/0/json-lines?download=true > $@
@@ -2082,22 +1820,9 @@ datasets/hrwiki.autolabeled_revisions.20k_2017.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/hrwiki.autolabeled_revisions.20k_2017.no_review.json: \
-		datasets/hrwiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/hrwiki.autolabeled_revisions.20k_2017.review.json: \
-		datasets/hrwiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-datasets/hrwiki.revisions_for_review.5k_2017.json: \
-		datasets/hrwiki.autolabeled_revisions.20k_2017.review.json
-	cat $< | shuf > $@
-
 datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json: \
-		datasets/hrwiki.autolabeled_revisions.20k_2017.review.json \
-		datasets/hrwiki.autolabeled_revisions.20k_2017.no_review.json
-	cat $^ | \
+		datasets/hrwiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.hrwiki.reverted \
 		--host https://hr.wikipedia.org \
@@ -2112,7 +1837,7 @@ tuning_reports/hrwiki.reverted.md: \
 		editquality.feature_lists.hrwiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.07927353670258512" \
 		--pop-rate "false=0.9207264632974149" \
 		--center --scale \
@@ -2121,7 +1846,7 @@ tuning_reports/hrwiki.reverted.md: \
 
 models/hrwiki.reverted.gradient_boosting.model: \
 		datasets/hrwiki.autolabeled_revisions.w_cache.20k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.hrwiki.reverted \
@@ -2131,11 +1856,11 @@ models/hrwiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.07927353670258512" \
 		--pop-rate "false=0.9207264632974149" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/hrwiki.reverted.md
 
 hrwiki_models: \
@@ -2144,7 +1869,11 @@ hrwiki_models: \
 hrwiki_tuning_reports: \
 	tuning_reports/hrwiki.reverted.md
 
+
 ############################# Hungarian Wikipedia ################################
+datasets/huwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/huwiki/33/ > $@
 
 datasets/huwiki.sampled_revisions.40k_2016.json:
 	wget -qO- http://quarry.wmflabs.org/run/79645/output/0/json-lines?download=true > $@
@@ -2158,32 +1887,18 @@ datasets/huwiki.autolabeled_revisions.40k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/huwiki.autolabeled_revisions.40k_2016.no_review.json: \
-		datasets/huwiki.autolabeled_revisions.40k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/huwiki.autolabeled_revisions.40k_2016.review.json: \
-		datasets/huwiki.autolabeled_revisions.40k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/huwiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/huwiki/33/ > $@
-
 datasets/huwiki.revisions_for_review.5k_2016.json: \
-		datasets/huwiki.autolabeled_revisions.40k_2016.review.json
-		datasets/huwiki.autolabeled_revisions.40k_2016.no_review.json
+		datasets/huwiki.autolabeled_revisions.40k_2016.json
 	( \
-	 cat datasets/huwiki.autolabeled_revisions.40k_2016.review.json | \
+	 cat datasets/huwiki.autolabeled_revisions.40k_2016.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/huwiki.autolabeled_revisions.40k_2016.no_review.json | \
+	 cat datasets/huwiki.autolabeled_revisions.40k_2016.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
 datasets/huwiki.labeled_revisions.40k_2016.json: \
 		datasets/huwiki.human_labeled_revisions.5k_2016.json \
-		datasets/huwiki.autolabeled_revisions.40k_2016.no_review.json
+		datasets/huwiki.autolabeled_revisions.40k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/huwiki.labeled_revisions.w_cache.40k_2016.json: \
@@ -2204,7 +1919,7 @@ tuning_reports/huwiki.damaging.md: \
 		editquality.feature_lists.huwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.01093805131" \
 		--pop-rate "false=0.98906194869" \
 		--center --scale \
@@ -2213,7 +1928,7 @@ tuning_reports/huwiki.damaging.md: \
 
 models/huwiki.damaging.gradient_boosting.model: \
 		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.huwiki.damaging \
@@ -2223,11 +1938,11 @@ models/huwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.01093805131" \
 		--pop-rate "false=0.98906194869" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/huwiki.damaging.md
 
 tuning_reports/huwiki.goodfaith.md: \
@@ -2238,7 +1953,7 @@ tuning_reports/huwiki.goodfaith.md: \
 		editquality.feature_lists.huwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.99221230908" \
 		--pop-rate "false=0.007787690919999979" \
 		--center --scale \
@@ -2247,7 +1962,7 @@ tuning_reports/huwiki.goodfaith.md: \
 
 models/huwiki.goodfaith.gradient_boosting.model: \
 		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.huwiki.goodfaith \
@@ -2257,11 +1972,11 @@ models/huwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.99221230908" \
 		--pop-rate "false=0.007787690919999979" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/huwiki.goodfaith.md
 
 huwiki_models: \
@@ -2272,8 +1987,8 @@ huwiki_tuning_reports: \
 	tuning_reports/huwiki.damaging.md \
 	tuning_reports/huwiki.goodfaith.md
 
-############################# Indonesian Wikipedia ################################
 
+############################# Indonesian Wikipedia ################################
 datasets/idwiki.sampled_revisions.100k_2016.json:
 	wget -qO- http://quarry.wmflabs.org/run/135748/output/0/json-lines?download=true > $@
 
@@ -2286,18 +2001,9 @@ datasets/idwiki.autolabeled_revisions.100k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/idwiki.autolabeled_revisions.100k_2016.no_review.json: \
-		datasets/idwiki.autolabeled_revisions.100k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/idwiki.autolabeled_revisions.100k_2016.review.json: \
-		datasets/idwiki.autolabeled_revisions.100k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
 datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json: \
-		datasets/idwiki.autolabeled_revisions.100k_2016.review.json \
-		datasets/idwiki.autolabeled_revisions.100k_2016.no_review.json
-	cat $^ | \
+		datasets/idwiki.autolabeled_revisions.100k_2016.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.idwiki.reverted \
 		--host https://id.wikipedia.org \
@@ -2312,7 +2018,7 @@ tuning_reports/idwiki.reverted.md: \
 		editquality.feature_lists.idwiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.02272613605673532" \
 		--pop-rate "false=0.9772738639432647" \
 		--center --scale \
@@ -2321,7 +2027,7 @@ tuning_reports/idwiki.reverted.md: \
 
 models/idwiki.reverted.gradient_boosting.model: \
 		datasets/idwiki.autolabeled_revisions.w_cache.100k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.idwiki.reverted \
@@ -2331,11 +2037,11 @@ models/idwiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.02272613605673532" \
 		--pop-rate "false=0.9772738639432647" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/idwiki.reverted.md
 
 idwiki_models: \
@@ -2344,8 +2050,8 @@ idwiki_models: \
 idwiki_tuning_reports: \
 	tuning_reports/idwiki.reverted.md
 
-############################# Icelandic Wikipedia ################################
 
+############################# Icelandic Wikipedia ################################
 # From https://quarry.wmflabs.org/query/23305
 datasets/iswiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/218976/output/0/json-lines?download=true > $@
@@ -2359,22 +2065,9 @@ datasets/iswiki.autolabeled_revisions.20k_2017.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/iswiki.autolabeled_revisions.20k_2017.no_review.json: \
-		datasets/iswiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/iswiki.autolabeled_revisions.20k_2017.review.json: \
-		datasets/iswiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-datasets/iswiki.revisions_for_review.5k_2017.json: \
-		datasets/iswiki.autolabeled_revisions.20k_2017.review.json
-	cat $< | shuf > $@
-
 datasets/iswiki.autolabeled_revisions.w_cache.20k_2017.json: \
-		datasets/iswiki.autolabeled_revisions.20k_2017.review.json \
-		datasets/iswiki.autolabeled_revisions.20k_2017.no_review.json
-	cat $^ | \
+		datasets/iswiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.iswiki.reverted \
 		--host https://is.wikipedia.org \
@@ -2389,7 +2082,7 @@ tuning_reports/iswiki.reverted.md: \
 		editquality.feature_lists.iswiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.08115405770288514" \
 		--pop-rate "false=0.9188459422971149" \
 		--center --scale \
@@ -2398,7 +2091,7 @@ tuning_reports/iswiki.reverted.md: \
 
 models/iswiki.reverted.gradient_boosting.model: \
 		datasets/iswiki.autolabeled_revisions.w_cache.20k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.iswiki.reverted \
@@ -2408,11 +2101,11 @@ models/iswiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.08115405770288514" \
 		--pop-rate "false=0.9188459422971149" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/iswiki.reverted.md
 
 iswiki_models: \
@@ -2421,7 +2114,11 @@ iswiki_models: \
 iswiki_tuning_reports: \
 	tuning_reports/iswiki.reverted.md
 
+
 ############################# Italian Wikipedia ################################
+datasets/itwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/itwiki/18/ > $@
 
 datasets/itwiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/42224/output/0/json-lines?download=true > $@
@@ -2435,22 +2132,9 @@ datasets/itwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/itwiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/itwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/itwiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/itwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/itwiki.human_labeled_revisions.5k_2015.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/itwiki/18/ > $@
-
 datasets/itwiki.labeled_revisions.20k_2015.json: \
 		datasets/itwiki.human_labeled_revisions.5k_2015.json \
-		datasets/itwiki.autolabeled_revisions.20k_2015.no_review.json
+		datasets/itwiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/itwiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -2471,7 +2155,7 @@ tuning_reports/itwiki.damaging.md: \
 		editquality.feature_lists.itwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.038665452792802445" \
 		--pop-rate "false=0.9613345472071976" \
 		--center --scale \
@@ -2480,7 +2164,7 @@ tuning_reports/itwiki.damaging.md: \
 
 models/itwiki.damaging.gradient_boosting.model: \
 		datasets/itwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.itwiki.damaging \
@@ -2490,11 +2174,11 @@ models/itwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.038665452792802445" \
 		--pop-rate "false=0.9613345472071976" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/itwiki.damaging.md
 
 tuning_reports/itwiki.goodfaith.md: \
@@ -2505,7 +2189,7 @@ tuning_reports/itwiki.goodfaith.md: \
 		editquality.feature_lists.itwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9807743801210304" \
 		--pop-rate "false=0.019225619878969646" \
 		--center --scale \
@@ -2514,7 +2198,7 @@ tuning_reports/itwiki.goodfaith.md: \
 
 models/itwiki.goodfaith.gradient_boosting.model: \
 		datasets/itwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.itwiki.goodfaith \
@@ -2524,11 +2208,11 @@ models/itwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9807743801210304" \
 		--pop-rate "false=0.019225619878969646" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/itwiki.goodfaith.md
 
 itwiki_models: \
@@ -2539,8 +2223,8 @@ itwiki_tuning_reports: \
 	tuning_reports/itwiki.damaging.md \
 	tuning_reports/itwiki.goodfaith.md
 
-############################# Japanese Wikipedia ################################
 
+############################# Japanese Wikipedia ################################
 # From https://quarry.wmflabs.org/query/9927
 datasets/jawiki.sampled_revisions.40k_2016.json:
 	wget -qO- https://quarry.wmflabs.org/run/89016/output/0/json-lines?download=true > $@
@@ -2554,18 +2238,9 @@ datasets/jawiki.autolabeled_revisions.40k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/jawiki.autolabeled_revisions.40k_2016.no_review.json: \
-		datasets/jawiki.autolabeled_revisions.40k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/jawiki.autolabeled_revisions.40k_2016.review.json: \
-		datasets/jawiki.autolabeled_revisions.40k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
 datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json: \
-		datasets/jawiki.autolabeled_revisions.40k_2016.review.json \
-		datasets/jawiki.autolabeled_revisions.40k_2016.no_review.json
-	cat $^ | \
+		datasets/jawiki.autolabeled_revisions.40k_2016.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.jawiki.reverted \
 		--host https://ja.wikipedia.org \
@@ -2580,7 +2255,7 @@ tuning_reports/jawiki.reverted.md: \
 		editquality.feature_lists.jawiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.03256945140908635" \
 		--pop-rate "false=0.9674305485909136" \
 		--center --scale \
@@ -2589,7 +2264,7 @@ tuning_reports/jawiki.reverted.md: \
 
 models/jawiki.reverted.gradient_boosting.model: \
 		datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.jawiki.reverted \
@@ -2599,11 +2274,11 @@ models/jawiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.03256945140908635" \
 		--pop-rate "false=0.9674305485909136" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/jawiki.reverted.md
 
 jawiki_models: \
@@ -2612,7 +2287,11 @@ jawiki_models: \
 jawiki_tuning_reports: \
 	tuning_reports/jawiki.reverted.md
 
+
 ############################# Korean Wikipedia ################################
+datasets/kowiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/kowiki/50/ > $@
 
 # From https://quarry.wmflabs.org/query/17645
 datasets/kowiki.sampled_revisions.20k_2016.json:
@@ -2627,22 +2306,9 @@ datasets/kowiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/kowiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/kowiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/kowiki.autolabeled_revisions.20k_2016.review.json: \
-		datasets/kowiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/kowiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/kowiki/50/ > $@
-
 datasets/kowiki.labeled_revisions.20k_2016.json: \
 		datasets/kowiki.human_labeled_revisions.5k_2016.json \
-		datasets/kowiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/kowiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/kowiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -2663,7 +2329,7 @@ tuning_reports/kowiki.damaging.md: \
 		editquality.feature_lists.kowiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.038665452792802445" \
 		--pop-rate "false=0.9613345472071976" \
 		--center --scale \
@@ -2672,7 +2338,7 @@ tuning_reports/kowiki.damaging.md: \
 
 models/kowiki.damaging.gradient_boosting.model: \
 		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.kowiki.damaging \
@@ -2682,11 +2348,11 @@ models/kowiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.038665452792802445" \
 		--pop-rate "false=0.9613345472071976" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/kowiki.damaging.md
 
 tuning_reports/kowiki.goodfaith.md: \
@@ -2697,7 +2363,7 @@ tuning_reports/kowiki.goodfaith.md: \
 		editquality.feature_lists.kowiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9807743801210304" \
 		--pop-rate "false=0.019225619878969646" \
 		--center --scale \
@@ -2706,7 +2372,7 @@ tuning_reports/kowiki.goodfaith.md: \
 
 models/kowiki.goodfaith.gradient_boosting.model: \
 		datasets/kowiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.kowiki.goodfaith \
@@ -2716,11 +2382,11 @@ models/kowiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9807743801210304" \
 		--pop-rate "false=0.019225619878969646" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/kowiki.goodfaith.md
 
 kowiki_models: \
@@ -2731,7 +2397,11 @@ kowiki_tuning_reports: \
 	tuning_reports/kowiki.damaging.md \
 	tuning_reports/kowiki.goodfaith.md
 
+
 ############################# Latvian Wikipedia ################################
+datasets/lvwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		http://labels.wmflabs.org/campaigns/lvwiki/56/ > $@
 
 # From https://quarry.wmflabs.org/query/17989
 datasets/lvwiki.sampled_revisions.20k_2016.json:
@@ -2746,26 +2416,9 @@ datasets/lvwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/lvwiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/lvwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/lvwiki.autolabeled_revisions.20k_2016.review.json: \
-		datasets/lvwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/lvwiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		http://labels.wmflabs.org/campaigns/lvwiki/56/ > $@
-
-datasets/lvwiki.revisions_for_review.5k_2016.json: \
-		datasets/lvwiki.autolabeled_revisions.20k_2016.review.json
-	cat $< | shuf > $@
-
 datasets/lvwiki.labeled_revisions.20k_2016.json: \
 		datasets/lvwiki.human_labeled_revisions.5k_2016.json \
-		datasets/lvwiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/lvwiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/lvwiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -2786,7 +2439,7 @@ tuning_reports/lvwiki.damaging.md: \
 		editquality.feature_lists.lvwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.0293" \
 		--pop-rate "false=0.9707" \
 		--center --scale \
@@ -2795,7 +2448,7 @@ tuning_reports/lvwiki.damaging.md: \
 
 models/lvwiki.damaging.gradient_boosting.model: \
 		datasets/lvwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.lvwiki.damaging \
@@ -2805,11 +2458,11 @@ models/lvwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0293" \
 		--pop-rate "false=0.9707" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/lvwiki.damaging.md
 
 tuning_reports/lvwiki.goodfaith.md: \
@@ -2820,7 +2473,7 @@ tuning_reports/lvwiki.goodfaith.md: \
 		editquality.feature_lists.lvwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.978" \
 		--pop-rate "false=0.02200000000000002" \
 		--center --scale \
@@ -2829,7 +2482,7 @@ tuning_reports/lvwiki.goodfaith.md: \
 
 models/lvwiki.goodfaith.gradient_boosting.model: \
 		datasets/lvwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.lvwiki.goodfaith \
@@ -2839,11 +2492,11 @@ models/lvwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.978" \
 		--pop-rate "false=0.02200000000000002" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/lvwiki.goodfaith.md
 
 lvwiki_models: \
@@ -2854,7 +2507,11 @@ lvwiki_tuning_reports: \
 	tuning_reports/lvwiki.damaging.md \
 	tuning_reports/lvwiki.goodfaith.md
 
+
 ############################# Dutch Wikipedia ################################
+datasets/nlwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/nlwiki/14/ > $@
 
 datasets/nlwiki.sampled_revisions.20k_2016.json:
 	wget -qO- http://quarry.wmflabs.org/run/42225/output/0/json-lines?download=true > $@
@@ -2868,22 +2525,9 @@ datasets/nlwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/nlwiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/nlwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/nlwiki.autolabeled_revisions.20k_2016.review.json: \
-		datasets/nlwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/nlwiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/nlwiki/14/ > $@
-
 datasets/nlwiki.labeled_revisions.20k_2016.json: \
 		datasets/nlwiki.human_labeled_revisions.5k_2016.json \
-		datasets/nlwiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/nlwiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -2904,7 +2548,7 @@ tuning_reports/nlwiki.damaging.md: \
 		editquality.feature_lists.nlwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.05068086413432989" \
 		--pop-rate "false=0.9493191358656701" \
 		--center --scale \
@@ -2913,7 +2557,7 @@ tuning_reports/nlwiki.damaging.md: \
 
 models/nlwiki.damaging.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nlwiki.damaging \
@@ -2923,11 +2567,11 @@ models/nlwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.05068086413432989" \
 		--pop-rate "false=0.9493191358656701" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/nlwiki.damaging.md
 
 tuning_reports/nlwiki.goodfaith.md: \
@@ -2938,7 +2582,7 @@ tuning_reports/nlwiki.goodfaith.md: \
 		editquality.feature_lists.nlwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9646257806900789" \
 		--pop-rate "false=0.03537421930992113" \
 		--center --scale \
@@ -2947,7 +2591,7 @@ tuning_reports/nlwiki.goodfaith.md: \
 
 models/nlwiki.goodfaith.gradient_boosting.model: \
 		datasets/nlwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nlwiki.goodfaith \
@@ -2957,11 +2601,11 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9646257806900789" \
 		--pop-rate "false=0.03537421930992113" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/nlwiki.goodfaith.md
 
 nlwiki_models: \
@@ -2972,8 +2616,8 @@ nlwiki_tuning_reports: \
 	tuning_reports/nlwiki.damaging.md \
 	tuning_reports/nlwiki.goodfaith.md
 
-############################# Norwegian Wikipedia ################################
 
+############################# Norwegian Wikipedia ################################
 datasets/nowiki.sampled_revisions.100k_2015.json:
 	wget -qO- https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true > $@
 
@@ -2986,29 +2630,22 @@ datasets/nowiki.autolabeled_revisions.100k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/nowiki.autolabeled_revisions.100k_2015.no_review.json: \
-		datasets/nowiki.autolabeled_revisions.100k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/nowiki.autolabeled_revisions.100k_2015.review.json: \
-		datasets/nowiki.autolabeled_revisions.100k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
 datasets/nowiki.revisions_for_review.5k_2015.json: \
-		datasets/nowiki.autolabeled_revisions.100k_2015.review.json
-		datasets/nowiki.autolabeled_revisions.100k_2015.no_review.json
+		datasets/nowiki.autolabeled_revisions.100k_2015.json
 	( \
-	 cat datasets/nowiki.autolabeled_revisions.100k_2015.review.json | \
+	 cat datasets/nowiki.autolabeled_revisions.100k_2015.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/nowiki.autolabeled_revisions.100k_2015.no_review.json | \
+	 cat datasets/nowiki.autolabeled_revisions.100k_2015.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
+datasets/nowiki.autolabeled_revisions.40k_2015.json: \
+		datasets/nowiki.autolabeled_revisions.100k_2015.json
+	cat $^ | shuf -n 40000 > $@
+
 datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json: \
-		datasets/nowiki.autolabeled_revisions.100k_2015.review.json \
-		datasets/nowiki.autolabeled_revisions.100k_2015.no_review.json
-	cat $^ | \
-	shuf -n 40000 | \
+		datasets/nowiki.autolabeled_revisions.40k_2015.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.nowiki.reverted \
 		--host https://no.wikipedia.org \
@@ -3023,7 +2660,7 @@ tuning_reports/nowiki.reverted.md: \
 		editquality.feature_lists.nowiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.019061539539679838" \
 		--pop-rate "false=0.9809384604603202" \
 		--center --scale \
@@ -3032,21 +2669,21 @@ tuning_reports/nowiki.reverted.md: \
 
 models/nowiki.reverted.gradient_boosting.model: \
 		datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nowiki.reverted \
 		reverted_for_damage \
-		--version=$(reverted_major_minor).1 \
+		--version=$(reverted_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.019061539539679838" \
 		--pop-rate "false=0.9809384604603202" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/nowiki.reverted.md
 
 nowiki_models: \
@@ -3055,9 +2692,8 @@ nowiki_models: \
 nowiki_tuning_reports: \
 	tuning_reports/nowiki.reverted.md
 
+
 ############################# Portugueses Wikipedia ################################
-
-
 datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ > $@
@@ -3084,7 +2720,7 @@ tuning_reports/ptwiki.damaging.md: \
 		editquality.feature_lists.ptwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.06896029864299047" \
 		--pop-rate "false=0.9310397013570095" \
 		--center --scale \
@@ -3093,7 +2729,7 @@ tuning_reports/ptwiki.damaging.md: \
 
 models/ptwiki.damaging.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ptwiki.damaging \
@@ -3103,11 +2739,11 @@ models/ptwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.06896029864299047" \
 		--pop-rate "false=0.9310397013570095" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/ptwiki.damaging.md
 
 tuning_reports/ptwiki.goodfaith.md: \
@@ -3118,7 +2754,7 @@ tuning_reports/ptwiki.goodfaith.md: \
 		editquality.feature_lists.ptwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9397669373959542" \
 		--pop-rate "false=0.06023306260404582" \
 		--center --scale \
@@ -3127,7 +2763,7 @@ tuning_reports/ptwiki.goodfaith.md: \
 
 models/ptwiki.goodfaith.gradient_boosting.model: \
 		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ptwiki.goodfaith \
@@ -3137,11 +2773,11 @@ models/ptwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9397669373959542" \
 		--pop-rate "false=0.06023306260404582" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/ptwiki.goodfaith.md
 
 ptwiki_models: \
@@ -3152,7 +2788,11 @@ ptwiki_tuning_reports: \
 	tuning_reports/ptwiki.damaging.md \
 	tuning_reports/ptwiki.goodfaith.md
 
+
 ############################# Romanian Wikipedia ################################
+datasets/rowiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/rowiki/48/ > $@
 
 datasets/rowiki.sampled_revisions.20k_2016.json:
 	wget -qO- https://quarry.wmflabs.org/run/146926/output/0/json-lines?download=true > $@
@@ -3166,22 +2806,9 @@ datasets/rowiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/rowiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/rowiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/rowiki.autolabeled_revisions.20k_2016.review.json: \
-		datasets/rowiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/rowiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/rowiki/48/ > $@
-
 datasets/rowiki.labeled_revisions.20k_2016.json: \
 		datasets/rowiki.human_labeled_revisions.5k_2016.json \
-		datasets/rowiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/rowiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/rowiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -3202,7 +2829,7 @@ tuning_reports/rowiki.damaging.md: \
 		editquality.feature_lists.rowiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.04956982793117247" \
 		--pop-rate "false=0.9504301720688275" \
 		--center --scale \
@@ -3211,21 +2838,21 @@ tuning_reports/rowiki.damaging.md: \
 
 models/rowiki.damaging.gradient_boosting.model: \
 		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).1 \
+		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.04956982793117247" \
 		--pop-rate "false=0.9504301720688275" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/rowiki.damaging.md
 
 tuning_reports/rowiki.goodfaith.md: \
@@ -3236,7 +2863,7 @@ tuning_reports/rowiki.goodfaith.md: \
 		editquality.feature_lists.rowiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9699379751900761" \
 		--pop-rate "false=0.030062024809923926" \
 		--center --scale \
@@ -3245,21 +2872,21 @@ tuning_reports/rowiki.goodfaith.md: \
 
 models/rowiki.goodfaith.gradient_boosting.model: \
 		datasets/rowiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).1 \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9699379751900761" \
 		--pop-rate "false=0.030062024809923926" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/rowiki.goodfaith.md
 
 rowiki_models: \
@@ -3270,7 +2897,11 @@ rowiki_tuning_reports: \
 	tuning_reports/rowiki.damaging.md \
 	tuning_reports/rowiki.goodfaith.md
 
+
 ############################# Russian Wikipedia ################################
+datasets/ruwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/ruwiki/10/ > $@
 
 datasets/ruwiki.sampled_revisions.20k_2015.json:
 	wget -qO- https://quarry.wmflabs.org/run/48649/output/0/json-lines?download=true > $@
@@ -3284,22 +2915,9 @@ datasets/ruwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/ruwiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/ruwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/ruwiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/ruwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/ruwiki.human_labeled_revisions.5k_2015.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/ruwiki/10/ > $@
-
 datasets/ruwiki.labeled_revisions.20k_2015.json: \
 		datasets/ruwiki.human_labeled_revisions.5k_2015.json \
-		datasets/ruwiki.autolabeled_revisions.20k_2015.no_review.json
+		datasets/ruwiki.autolabeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -3320,7 +2938,7 @@ tuning_reports/ruwiki.damaging.md: \
 		editquality.feature_lists.ruwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.053479185657854755" \
 		--pop-rate "false=0.9465208143421453" \
 		--center --scale \
@@ -3329,7 +2947,7 @@ tuning_reports/ruwiki.damaging.md: \
 
 models/ruwiki.damaging.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ruwiki.damaging \
@@ -3339,11 +2957,11 @@ models/ruwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.053479185657854755" \
 		--pop-rate "false=0.9465208143421453" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/ruwiki.damaging.md
 
 tuning_reports/ruwiki.goodfaith.md: \
@@ -3354,7 +2972,7 @@ tuning_reports/ruwiki.goodfaith.md: \
 		editquality.feature_lists.ruwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9713866099463182" \
 		--pop-rate "false=0.028613390053681798" \
 		--center --scale \
@@ -3363,7 +2981,7 @@ tuning_reports/ruwiki.goodfaith.md: \
 
 models/ruwiki.goodfaith.gradient_boosting.model: \
 		datasets/ruwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ruwiki.goodfaith \
@@ -3373,11 +2991,11 @@ models/ruwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=300' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9713866099463182" \
 		--pop-rate "false=0.028613390053681798" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/ruwiki.goodfaith.md
 
 ruwiki_models: \
@@ -3388,7 +3006,11 @@ ruwiki_tuning_reports: \
 	tuning_reports/ruwiki.damaging.md \
 	tuning_reports/ruwiki.goodfaith.md
 
+
 ############################# Albanian Wikipedia ################################
+datasets/sqwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/sqwiki/57/ > $@
 
 # From https://quarry.wmflabs.org/query/17988
 datasets/sqwiki.sampled_revisions.20k_2016.json:
@@ -3403,22 +3025,9 @@ datasets/sqwiki.autolabeled_revisions.20k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json: \
-		datasets/sqwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/sqwiki.autolabeled_revisions.20k_2016.review.json: \
-		datasets/sqwiki.autolabeled_revisions.20k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/sqwiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/sqwiki/57/ > $@
-
 datasets/sqwiki.labeled_revisions.20k_2016.json: \
 		datasets/sqwiki.human_labeled_revisions.5k_2016.json \
-		datasets/sqwiki.autolabeled_revisions.20k_2016.no_review.json
+		datasets/sqwiki.autolabeled_revisions.20k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json: \
@@ -3439,7 +3048,7 @@ tuning_reports/sqwiki.damaging.md: \
 		editquality.feature_lists.sqwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.0287028702870287" \
 		--pop-rate "false=0.9712971297129713" \
 		--center --scale \
@@ -3448,7 +3057,7 @@ tuning_reports/sqwiki.damaging.md: \
 
 models/sqwiki.damaging.gradient_boosting.model: \
 		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.sqwiki.damaging \
@@ -3458,11 +3067,11 @@ models/sqwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0287028702870287" \
 		--pop-rate "false=0.9712971297129713" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/sqwiki.damaging.md
 
 tuning_reports/sqwiki.goodfaith.md: \
@@ -3473,7 +3082,7 @@ tuning_reports/sqwiki.goodfaith.md: \
 		editquality.feature_lists.sqwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9763476347634763" \
 		--pop-rate "false=0.023652365236523698" \
 		--center --scale \
@@ -3482,7 +3091,7 @@ tuning_reports/sqwiki.goodfaith.md: \
 
 models/sqwiki.goodfaith.gradient_boosting.model: \
 		datasets/sqwiki.labeled_revisions.w_cache.20k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.sqwiki.goodfaith \
@@ -3492,11 +3101,11 @@ models/sqwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9763476347634763" \
 		--pop-rate "false=0.023652365236523698" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/sqwiki.goodfaith.md
 
 sqwiki_models: \
@@ -3507,7 +3116,11 @@ sqwiki_tuning_reports: \
 	tuning_reports/sqwiki.damaging.md \
 	tuning_reports/sqwiki.goodfaith.md
 
+
 ############################# Serbian Wikipedia ################################
+datasets/srwiki.human_labeled_revisions.5k_2017.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/srwiki/62/ > $@
 
 datasets/srwiki.sampled_revisions.120k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/211097/output/0/json-lines?download=true > $@
@@ -3521,26 +3134,9 @@ datasets/srwiki.autolabeled_revisions.120k_2017.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/srwiki.autolabeled_revisions.120k_2017.no_review.json: \
-		datasets/srwiki.autolabeled_revisions.120k_2017.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/srwiki.autolabeled_revisions.120k_2017.review.json: \
-		datasets/srwiki.autolabeled_revisions.120k_2017.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/srwiki.human_labeled_revisions.5k_2017.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/srwiki/62/ > $@
-
-datasets/srwiki.revisions_for_review.5k_2017.json: \
-		datasets/srwiki.autolabeled_revisions.120k_2017.review.json
-	cat $< | shuf > $@
-
 datasets/srwiki.labeled_revisions.120k_2017.json: \
 		datasets/srwiki.human_labeled_revisions.5k_2017.json \
-		datasets/srwiki.autolabeled_revisions.120k_2017.no_review.json
+		datasets/srwiki.autolabeled_revisions.120k_2017.json
 	./utility merge_labels $^ > $@
 
 datasets/srwiki.labeled_revisions.w_cache.120k_2017.json: \
@@ -3561,7 +3157,7 @@ tuning_reports/srwiki.damaging.md: \
 		editquality.feature_lists.srwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.0056294177044766075" \
 		--pop-rate "false=0.9943705822955234" \
 		--center --scale \
@@ -3570,7 +3166,7 @@ tuning_reports/srwiki.damaging.md: \
 
 models/srwiki.damaging.gradient_boosting.model: \
 		datasets/srwiki.labeled_revisions.w_cache.120k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.srwiki.damaging \
@@ -3580,11 +3176,11 @@ models/srwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0056294177044766075" \
 		--pop-rate "false=0.9943705822955234" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/srwiki.damaging.md
 
 tuning_reports/srwiki.goodfaith.md: \
@@ -3595,7 +3191,7 @@ tuning_reports/srwiki.goodfaith.md: \
 		editquality.feature_lists.srwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9961881521373275" \
 		--pop-rate "false=0.003811847862672524" \
 		--center --scale \
@@ -3604,7 +3200,7 @@ tuning_reports/srwiki.goodfaith.md: \
 
 models/srwiki.goodfaith.gradient_boosting.model: \
 		datasets/srwiki.labeled_revisions.w_cache.120k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.srwiki.goodfaith \
@@ -3614,11 +3210,11 @@ models/srwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9961881521373275" \
 		--pop-rate "false=0.003811847862672524" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/srwiki.goodfaith.md
 
 srwiki_models: \
@@ -3629,7 +3225,11 @@ srwiki_tuning_reports: \
 	tuning_reports/srwiki.damaging.md \
 	tuning_reports/srwiki.goodfaith.md
 
+
 ############################# Swedish Wikipedia ################################
+datasets/svwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/svwiki/35/ > $@
 
 datasets/svwiki.sampled_revisions.40k_2016.json:
 	wget -qO- http://quarry.wmflabs.org/run/79646/output/0/json-lines?download=true > $@
@@ -3643,32 +3243,18 @@ datasets/svwiki.autolabeled_revisions.40k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json: \
-		datasets/svwiki.autolabeled_revisions.40k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/svwiki.autolabeled_revisions.40k_2016.review.json: \
-		datasets/svwiki.autolabeled_revisions.40k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/svwiki.human_labeled_revisions.5k_2016.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/svwiki/35/ > $@
-
 datasets/svwiki.revisions_for_review.5k_2016.json: \
-		datasets/svwiki.autolabeled_revisions.40k_2016.review.json
-		datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json
+		datasets/svwiki.autolabeled_revisions.40k_2016.json
 	( \
-	 cat datasets/svwiki.autolabeled_revisions.40k_2016.review.json | \
+	 cat datasets/svwiki.autolabeled_revisions.40k_2016.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json | \
+	 cat datasets/svwiki.autolabeled_revisions.40k_2016.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
 datasets/svwiki.labeled_revisions.40k_2016.json: \
 		datasets/svwiki.human_labeled_revisions.5k_2016.json \
-		datasets/svwiki.autolabeled_revisions.40k_2016.no_review.json
+		datasets/svwiki.autolabeled_revisions.40k_2016.json
 	./utility merge_labels $^ > $@
 
 datasets/svwiki.labeled_revisions.w_cache.40k_2016.json: \
@@ -3689,7 +3275,7 @@ tuning_reports/svwiki.damaging.md: \
 		editquality.feature_lists.svwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.025209073272463033" \
 		--pop-rate "false=0.974790926727537" \
 		--center --scale \
@@ -3698,21 +3284,21 @@ tuning_reports/svwiki.damaging.md: \
 
 models/svwiki.damaging.gradient_boosting.model: \
 		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.svwiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).1 \
+		--version=$(damaging_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.025209073272463033" \
 		--pop-rate "false=0.974790926727537" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/svwiki.damaging.md
 
 tuning_reports/svwiki.goodfaith.md: \
@@ -3723,7 +3309,7 @@ tuning_reports/svwiki.goodfaith.md: \
 		editquality.feature_lists.svwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9822912868686937" \
 		--pop-rate "false=0.017708713131306286" \
 		--center --scale \
@@ -3732,21 +3318,21 @@ tuning_reports/svwiki.goodfaith.md: \
 
 models/svwiki.goodfaith.gradient_boosting.model: \
 		datasets/svwiki.labeled_revisions.w_cache.40k_2016.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.svwiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).1 \
+		--version=$(goodfaith_major_minor).0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9822912868686937" \
 		--pop-rate "false=0.017708713131306286" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/svwiki.goodfaith.md
 
 svwiki_models: \
@@ -3757,8 +3343,8 @@ svwiki_tuning_reports: \
 	tuning_reports/svwiki.damaging.md \
 	tuning_reports/svwiki.goodfaith.md
 
-############################# Tamil Wikipedia ################################
 
+############################# Tamil Wikipedia ################################
 # From https://quarry.wmflabs.org/query/20230
 datasets/tawiki.sampled_revisions.20k_2017.json:
 	wget -qO- https://quarry.wmflabs.org/run/190662/output/0/json-lines?download=true > $@
@@ -3772,22 +3358,9 @@ datasets/tawiki.autolabeled_revisions.20k_2017.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/tawiki.autolabeled_revisions.20k_2017.no_review.json: \
-		datasets/tawiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/tawiki.autolabeled_revisions.20k_2017.review.json: \
-		datasets/tawiki.autolabeled_revisions.20k_2017.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-datasets/tawiki.revisions_for_review.5k_2017.json: \
-		datasets/tawiki.autolabeled_revisions.20k_2017.review.json
-	cat $< | shuf > $@
-
 datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json: \
-		datasets/tawiki.autolabeled_revisions.20k_2017.review.json \
-		datasets/tawiki.autolabeled_revisions.20k_2017.no_review.json
-	cat $^ | \
+		datasets/tawiki.autolabeled_revisions.20k_2017.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.tawiki.reverted \
 		--host https://ta.wikipedia.org \
@@ -3802,7 +3375,7 @@ tuning_reports/tawiki.reverted.md: \
 		editquality.feature_lists.tawiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.015904172328753335" \
 		--pop-rate "false=0.9840958276712467" \
 		--center --scale \
@@ -3811,7 +3384,7 @@ tuning_reports/tawiki.reverted.md: \
 
 models/tawiki.reverted.gradient_boosting.model: \
 		datasets/tawiki.autolabeled_revisions.w_cache.20k_2017.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.tawiki.reverted \
@@ -3821,11 +3394,11 @@ models/tawiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=500' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.015904172328753335" \
 		--pop-rate "false=0.9840958276712467" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/tawiki.reverted.md
 
 tawiki_models: \
@@ -3834,36 +3407,17 @@ tawiki_models: \
 tawiki_tuning_reports: \
 	tuning_reports/tawiki.reverted.md
 
+
 ############################# Turkish Wikipedia ################################
+datasets/trwiki.human_labeled_revisions.20k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/trwiki/5/ > $@
 
 datasets/trwiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true > $@
 
-datasets/trwiki.autolabeled_revisions.20k_2015.json: \
-		datasets/trwiki.sampled_revisions.20k_2015.json
-	cat $< | \
-	./utility autolabel --host=https://tr.wikipedia.org \
-		--trusted-groups=sysop,oversight,trusted,bot,rollbacker,checkuser,abusefilter,bureaucrat \
-		--trusted-edits=1000 \
-		--revert-radius=5 \
-		--verbose > $@
-
-datasets/trwiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/trwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/trwiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/trwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
-
-datasets/trwiki.human_labeled_revisions.5k_2015.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/trwiki/5/ > $@
-
 datasets/trwiki.labeled_revisions.20k_2015.json: \
-		datasets/trwiki.human_labeled_revisions.5k_2015.json \
-		datasets/trwiki.autolabeled_revisions.20k_2015.no_review.json
+		datasets/trwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
 datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
@@ -3884,7 +3438,7 @@ tuning_reports/trwiki.damaging.md: \
 		editquality.feature_lists.trwiki.damaging \
 		damaging \
 		roc_auc.labels.true \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_label_weight) \
 		--pop-rate "true=0.0495014425266994" \
 		--pop-rate "false=0.9504985574733006" \
 		--center --scale \
@@ -3893,7 +3447,7 @@ tuning_reports/trwiki.damaging.md: \
 
 models/trwiki.damaging.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.trwiki.damaging \
@@ -3903,11 +3457,11 @@ models/trwiki.damaging.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(damaging_weight)" \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0495014425266994" \
 		--pop-rate "false=0.9504985574733006" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/trwiki.damaging.md
 
 tuning_reports/trwiki.goodfaith.md: \
@@ -3918,7 +3472,7 @@ tuning_reports/trwiki.goodfaith.md: \
 		editquality.feature_lists.trwiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_label_weight) \
 		--pop-rate "true=0.9538897605911829" \
 		--pop-rate "false=0.04611023940881709" \
 		--center --scale \
@@ -3927,7 +3481,7 @@ tuning_reports/trwiki.goodfaith.md: \
 
 models/trwiki.goodfaith.gradient_boosting.model: \
 		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.trwiki.goodfaith \
@@ -3937,11 +3491,11 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "false=$(goodfaith_weight)" \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9538897605911829" \
 		--pop-rate "false=0.04611023940881709" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/trwiki.goodfaith.md
 
 trwiki_models: \
@@ -3952,8 +3506,8 @@ trwiki_tuning_reports: \
 	tuning_reports/trwiki.damaging.md \
 	tuning_reports/trwiki.goodfaith.md
 
-############################# Ukranian Wikipedia ################################
 
+############################# Ukranian Wikipedia ################################
 datasets/ukwiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/48597/output/0/json-lines?download=true > $@
 
@@ -3966,18 +3520,9 @@ datasets/ukwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/ukwiki.autolabeled_revisions.20k_2015.no_review.json: \
-		datasets/ukwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/ukwiki.autolabeled_revisions.20k_2015.review.json: \
-		datasets/ukwiki.autolabeled_revisions.20k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
 datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json: \
-		datasets/ukwiki.autolabeled_revisions.20k_2015.review.json \
-		datasets/ukwiki.autolabeled_revisions.20k_2015.no_review.json
-	cat $^ | \
+		datasets/ukwiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.ukwiki.reverted \
 		--host https://uk.wikipedia.org \
@@ -3992,7 +3537,7 @@ tuning_reports/ukwiki.reverted.md: \
 		editquality.feature_lists.ukwiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.021877665713282153" \
 		--pop-rate "false=0.9781223342867178" \
 		--center --scale \
@@ -4001,7 +3546,7 @@ tuning_reports/ukwiki.reverted.md: \
 
 models/ukwiki.reverted.gradient_boosting.model: \
 		datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
-	cat $^ | \
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ukwiki.reverted \
@@ -4011,11 +3556,11 @@ models/ukwiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.021877665713282153" \
 		--pop-rate "false=0.9781223342867178" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/ukwiki.reverted.md
 
 ukwiki_models: \
@@ -4024,8 +3569,8 @@ ukwiki_models: \
 ukwiki_tuning_reports: \
 	tuning_reports/ukwiki.reverted.md
 
-############################# Urdu Wikipedia ################################
 
+############################# Urdu Wikipedia ################################
 datasets/urwiki.sampled_revisions.500k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/64277/output/0/json-lines?download=true > $@
 
@@ -4038,28 +3583,20 @@ datasets/urwiki.autolabeled_revisions.500k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/urwiki.autolabeled_revisions.500k_2015.no_review.json: \
-		datasets/urwiki.autolabeled_revisions.500k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/urwiki.autolabeled_revisions.500k_2015.review.json: \
-		datasets/urwiki.autolabeled_revisions.500k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
 datasets/urwiki.revisions_for_review.5k_2015.json: \
-		datasets/urwiki.autolabeled_revisions.500k_2015.review.json
-		datasets/urwiki.autolabeled_revisions.500k_2015.no_review.json
+		datasets/urwiki.autolabeled_revisions.500k_2015.json
 	( \
-	 cat datasets/urwiki.autolabeled_revisions.500k_2015.review.json | \
+	 cat datasets/urwiki.autolabeled_revisions.500k_2015.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/urwiki.autolabeled_revisions.500k_2015.no_review.json | \
+	 cat datasets/urwiki.autolabeled_revisions.500k_2015.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
 urwiki_models:
-urwiki_tuning_reports:
-############################# Vietnamese Wikipedia ################################
 
+urwiki_tuning_reports:
+
+############################# Vietnamese Wikipedia ################################
 datasets/viwiki.sampled_revisions.500k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/65793/output/0/json-lines?download=true > $@
 
@@ -4072,29 +3609,18 @@ datasets/viwiki.autolabeled_revisions.500k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/viwiki.autolabeled_revisions.500k_2015.no_review.json: \
-		datasets/viwiki.autolabeled_revisions.500k_2015.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/viwiki.autolabeled_revisions.500k_2015.review.json: \
-		datasets/viwiki.autolabeled_revisions.500k_2015.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
 datasets/viwiki.revisions_for_review.5k_2015.json: \
-		datasets/viwiki.autolabeled_revisions.500k_2015.review.json
-		datasets/viwiki.autolabeled_revisions.500k_2015.no_review.json
+		datasets/viwiki.autolabeled_revisions.500k_2015.json
 	( \
-	 cat datasets/viwiki.autolabeled_revisions.500k_2015.review.json | \
+	 cat datasets/viwiki.autolabeled_revisions.500k_2015.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/viwiki.autolabeled_revisions.500k_2015.no_review.json | \
+	 cat datasets/viwiki.autolabeled_revisions.500k_2015.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
-datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json: \
-		datasets/viwiki.autolabeled_revisions.500k_2015.review.json \
-		datasets/viwiki.autolabeled_revisions.500k_2015.no_review.json
-	cat $^ | \
-	shuf -n 100000 | \
+datasets/viwiki.autolabeled_revisions.w_cache.500k_2015.json: \
+		datasets/viwiki.autolabeled_revisions.500k_2015.json
+	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.viwiki.reverted \
 		--host https://vi.wikipedia.org \
@@ -4102,14 +3628,14 @@ datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json: \
 		--verbose > $@
 
 tuning_reports/viwiki.reverted.md: \
-		datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
+		datasets/viwiki.autolabeled_revisions.w_cache.500k_2015.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.viwiki.reverted \
 		reverted_for_damage \
 		roc_auc.labels.true \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_label_weight) \
 		--pop-rate "true=0.019211042993949594" \
 		--pop-rate "false=0.9807889570060504" \
 		--center --scale \
@@ -4117,8 +3643,8 @@ tuning_reports/viwiki.reverted.md: \
 		--debug > $@
 
 models/viwiki.reverted.gradient_boosting.model: \
-		datasets/viwiki.autolabeled_revisions.w_cache.100k_2015.json
-	cat $^ | \
+		datasets/viwiki.autolabeled_revisions.w_cache.500k_2015.json
+	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.viwiki.reverted \
@@ -4128,11 +3654,11 @@ models/viwiki.reverted.gradient_boosting.model: \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight "true=$(reverted_weight)" \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.019211042993949594" \
 		--pop-rate "false=0.9807889570060504" \
 		--center --scale > $@
-	
+
 	revscoring model_info $@ > model_info/viwiki.reverted.md
 
 viwiki_models: \
@@ -4141,8 +3667,8 @@ viwiki_models: \
 viwiki_tuning_reports: \
 	tuning_reports/viwiki.reverted.md
 
-############################# Chinese Wikipedia ################################
 
+############################# Chinese Wikipedia ################################
 datasets/zhwiki.sampled_revisions.100k_2016.json:
 	wget -qO- https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true > $@
 
@@ -4155,24 +3681,16 @@ datasets/zhwiki.autolabeled_revisions.100k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/zhwiki.autolabeled_revisions.100k_2016.no_review.json: \
-		datasets/zhwiki.autolabeled_revisions.100k_2016.json
-	cat $< | grep -E '"needs_review": (false|"False")' > $@
-
-datasets/zhwiki.autolabeled_revisions.100k_2016.review.json: \
-		datasets/zhwiki.autolabeled_revisions.100k_2016.json
-	cat $< | grep -E '"needs_review": (true|"True")' > $@
-
 datasets/zhwiki.revisions_for_review.5k_2016.json: \
-		datasets/zhwiki.autolabeled_revisions.100k_2016.review.json
-		datasets/zhwiki.autolabeled_revisions.100k_2016.no_review.json
+		datasets/zhwiki.autolabeled_revisions.100k_2016.json
 	( \
-	 cat datasets/zhwiki.autolabeled_revisions.100k_2016.review.json | \
+	 cat datasets/zhwiki.autolabeled_revisions.100k_2016.json | grep '"needs_review": (true|"True") | \
 	 shuf -n 2500; \
-	 cat datasets/zhwiki.autolabeled_revisions.100k_2016.no_review.json | \
+	 cat datasets/zhwiki.autolabeled_revisions.100k_2016.json | grep '"needs_review": (false|"False") | \
 	 shuf -n 2500 \
 	) | shuf > $@
 
 zhwiki_models:
+
 zhwiki_tuning_reports:
 

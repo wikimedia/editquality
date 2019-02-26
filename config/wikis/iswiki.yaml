@@ -21,14 +21,14 @@ autolabeled_samples:
     autolabeled_revisions.20k_2017: sampled_revisions.20k_2017
 
 extracted_samples:
-  labeled_revisions.w_cache.20k_2017:
-    sample: labeled_revisions.20k_2017
+  autolabeled_revisions.w_cache.20k_2017:
+    sample: autolabeled_revisions.20k_2017
     features_for:
       - reverted
 
 models:
   reverted:
-    observations: labeled_revisions.w_cache.20k_2017
+    observations: autolabeled_revisions.w_cache.20k_2017
     label: reverted_for_damage
     pop_rate_true: 0.08115405770288514
     tune: true

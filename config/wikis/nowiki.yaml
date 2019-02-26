@@ -22,15 +22,20 @@ autolabeled_samples:
 balanced_5k_samples:
   revisions_for_review.5k_2015: autolabeled_revisions.100k_2015
 
+random_samples:
+  autolabeled_revisions.40k_2015:
+    n: 40000
+    input_name: autolabeled_revisions.100k_2015
+
 extracted_samples:
-  labeled_revisions.w_cache.100k_2015:
-    sample: labeled_revisions.100k_2015
+  autolabeled_revisions.w_cache.40k_2015:
+    sample: autolabeled_revisions.40k_2015
     features_for:
       - reverted
 
 models:
   reverted:
-    observations: labeled_revisions.w_cache.100k_2015
+    observations: autolabeled_revisions.w_cache.40k_2015
     label: reverted_for_damage
     pop_rate_true: 0.019061539539679838
     tune: true

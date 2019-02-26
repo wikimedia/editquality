@@ -8,15 +8,15 @@ models: \
 	{% for wiki in wiki_names %}
 		{{ wiki }}_models{% if not loop.last %} \
 {% endif %}
-
 	{% endfor %}
+
 
 tuning_reports: \
 	{% for wiki in wiki_names %}
 		{{ wiki }}_tuning_reports{% if not loop.last %} \
 {% endif %}
-
 	{% endfor %}
+
 
 touch:
 	touch datasets/*
@@ -45,8 +45,7 @@ datasets/{{ wiki.name }}.{{ sample_name }}.json:
 
 {% endfor %}
 {% endif %}
-
-{% if wiki.autolabeled_samples %}
+{% if wiki.autolabeled_samples and wiki.autolabeled_samples.labeled_samples %}
 {% for autolabeled_name, input_name in wiki.autolabeled_samples.labeled_samples|dictsort %}
 datasets/{{ wiki.name }}.{{ autolabeled_name }}.json: \
 		datasets/{{ wiki.name }}.{{ input_name }}.json
@@ -56,9 +55,9 @@ datasets/{{ wiki.name }}.{{ autolabeled_name }}.json: \
 		--trusted-edits=1000 \
 		--revert-radius=5 \
 		--verbose > $@
+
 {% endfor %}
 {% endif %}
-
 {% if wiki.balanced_5k_samples %}
 {% for balanced_name, input_name in wiki.balanced_5k_samples|dictsort %}
 datasets/{{ wiki.name }}.{{ balanced_name }}.json: \
@@ -72,37 +71,41 @@ datasets/{{ wiki.name }}.{{ balanced_name }}.json: \
 
 {% endfor %}
 {% endif %}
-
 {% if wiki.merged_samples %}
 {% for merged_name, input_sample_names in wiki.merged_samples|dictsort %}
 datasets/{{ wiki.name }}.{{ merged_name }}.json: \
 {% for input_sample_name in input_sample_names %}
-		datasets/{{ wiki.name }}.{{ input_sample_name }}.json{% if not loop.last %} \
-{% endif %}
-{% endfor %}
+		datasets/{{ wiki.name }}.{{ input_sample_name }}.json{% if not loop.last %} \{% endif %}
 
+{% endfor %}
 	./utility merge_labels $^ > $@
 
 {% endfor %}
 {% endif %}
-
 {% if wiki.concatenated_samples %}
 {% for concatenated_name, input_names in wiki.concatenated_samples|dictsort %}
 datasets/{{ wiki.name }}.{{ concatenated_name }}.json: \
 {% for input_name in input_names %}
-		datasets/{{ wiki.name }}.{{ input_name }}.json{% if not loop.last %} \
-{% endif %}
-{% endfor %}
+		datasets/{{ wiki.name }}.{{ input_name }}.json{% if not loop.last %} \{% endif %}
 
+{% endfor %}
 	cat $^ > $@
 
 {% endfor %}
 {% endif %}
+{% if wiki.random_samples %}
+{% for sample_name, random_params in wiki.random_samples|dictsort %}
+datasets/{{ wiki.name }}.{{ sample_name }}.json: \
+		datasets/{{ wiki.name }}.{{ random_params.input_name }}.json
+	cat $^ | shuf -n {{ random_params.n }} > $@
 
+{% endfor %}
+{% endif %}
 {% if wiki.extracted_samples %}
 {% for extracted_name, extraction in wiki.extracted_samples|dictsort %}
 datasets/{{ wiki.name }}.{{ extracted_name }}.json: \
 		datasets/{{ wiki.name }}.{{ extraction.sample }}.json
+	cat $< | \
 	revscoring extract \
 {% for label_name in extraction.features_for %}
 		editquality.feature_lists.{{ wiki.name }}.{{ label_name }} \
@@ -113,7 +116,6 @@ datasets/{{ wiki.name }}.{{ extracted_name }}.json: \
 
 {% endfor %}
 {% endif %}
-
 {% if wiki.models %}
 {% for model_name, model in wiki.models|dictsort %}{% if model.tune %}
 tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
@@ -130,19 +132,21 @@ tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
-{% endif %}
 
+{% endif %}
 {% if model.cv_train %}
 models/{{ wiki.name }}.{{ model_name }}.{{ norm_alg_filename(model.cv_train.algorithm) }}.model: \
 		datasets/{{ wiki.name }}.{{ model.observations }}.json
 	cat $< | \
-	revscoring cv_train
+	revscoring cv_train \
+		revscoring.scoring.models.{{ model.cv_train.algorithm }} \
+		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
 		{{ model.label }} \
-		--version=$({{ model_name }}_major_minor).{{ model.build_number }} \
+		--version=$({{ model_name }}_major_minor).{{ model.cv_train.build_number }} \
 {% for key, value in model.cv_train.parameters|dictsort %}
 		-p '{{ key }}={{ value|tojson }}' \
 {% endfor %}
-		--label-weight $({{ model_name }}_label_weight) \
+		--label-weight $({{ model_name }}_weight) \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale > $@
@@ -152,19 +156,19 @@ models/{{ wiki.name }}.{{ model_name }}.{{ norm_alg_filename(model.cv_train.algo
 
 {% endfor %}
 {% endif %}
-
 {{ wiki.name }}_models:{% if wiki.models %} \
-{% for model_name, model in wiki.models.items() if model.cv_train %}
-	models/{{ wiki.name }}.{{ model_name }}.{{ norm_alg_filename(model.cv_train.algorithm) }}.model{% if not loop.last %} \
-{% endif %}
-{% endfor %}
-{% endif %}
+{% for model_name, model in wiki.models|dictsort if model.cv_train %}
+	models/{{ wiki.name }}.{{ model_name }}.{{ norm_alg_filename(model.cv_train.algorithm) }}.model{% if not loop.last %} \{% endif %}
 
+{% endfor %}
+{% else %}
+
+{% endif %}
 
 {{ wiki.name }}_tuning_reports:{% if wiki.models %} \
-{% for model_name, model in wiki.models.items() if model.tune %}
-	tuning_reports/{{ wiki.name }}.{{ model_name }}.md{% if not loop.last %} \
-{% endif %}
+{% for model_name, model in wiki.models|dictsort if model.tune %}
+	tuning_reports/{{ wiki.name }}.{{ model_name }}.md{% if not loop.last %} \{% endif %}
+
 {% endfor %}
 {% endif %}
 

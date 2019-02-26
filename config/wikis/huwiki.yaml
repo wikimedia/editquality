@@ -30,8 +30,8 @@ balanced_5k_samples:
 
 merged_samples:
   labeled_revisions.40k_2016:
-    - autolabeled_revisions.40k_2016
     - human_labeled_revisions.5k_2016
+    - autolabeled_revisions.40k_2016
 
 extracted_samples:
   labeled_revisions.w_cache.40k_2016:

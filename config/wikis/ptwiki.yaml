@@ -3,8 +3,12 @@ label: Portugueses Wikipedia
 host: pt.wikipedia.org
 
 external_samples:
-  labeled_revisions.20k_2015:
+  human_labeled_revisions.20k_2015:
     labeling_campaign: https://labels.wmflabs.org/campaigns/ptwiki/7/
+
+merged_samples:
+  labeled_revisions.20k_2015:
+    - human_labeled_revisions.20k_2015
 
 extracted_samples:
   labeled_revisions.w_cache.20k_2015:
@@ -15,6 +19,7 @@ extracted_samples:
 
 models:
   damaging:
+    observations: labeled_revisions.w_cache.20k_2015
     label: damaging
     pop_rate_true: 0.06896029864299047
     tune: true
@@ -26,6 +31,7 @@ models:
         max_features: log2
         n_estimators: 700
   goodfaith:
+    observations: labeled_revisions.w_cache.20k_2015
     label: goodfaith
     pop_rate_true: 0.9397669373959542
     tune: true
