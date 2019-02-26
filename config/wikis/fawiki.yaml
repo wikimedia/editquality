@@ -3,7 +3,7 @@ label: Persian Wikipedia
 host: fa.wikipedia.org
 
 external_samples:
-  labeled_revisions.20k_2015: # Generated before pre-autolabel
+  human_labeled_revisions.20k_2015: # Generated before autolabel
     labeling_campaign: "https://labels.wmflabs.org/campaigns/fawiki/6/"
   sampled_revisions.20k_2016:
     quarry_url: "http://quarry.wmflabs.org/run/59580/output/0/json-lines?download=true"
@@ -26,8 +26,10 @@ autolabeled_samples:
 
 merged_samples:
   labeled_revisions.20k_2016:
-    - autolabeled_revisions.20k_2016
     - human_labeled_revisions.5k_2016
+    - autolabeled_revisions.20k_2016
+  labeled_revisions.20k_2015:
+    - human_labeled_revisions.20k_2015
 
 concatenated_samples:
   labeled_revisions.40k_2015_2016:

@@ -5,8 +5,12 @@ host: tr.wikipedia.org
 external_samples:
   sampled_revisions.20k_2015:
     quarry_url: http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true
-  labeled_revisions.20k_2015:
+  human_labeled_revisions.20k_2015:
     labeling_campaign: https://labels.wmflabs.org/campaigns/trwiki/5/
+
+merged_samples:
+  labeled_revisions.20k_2015:
+    - human_labeled_revisions.20k_2015
 
 extracted_samples:
   labeled_revisions.w_cache.20k_2015:

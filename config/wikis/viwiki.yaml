@@ -21,14 +21,14 @@ balanced_5k_samples:
   revisions_for_review.5k_2015: autolabeled_revisions.500k_2015
 
 extracted_samples:
-  labeled_revisions.w_cache.500k_2015:
-    sample: labeled_revisions.500k_2015
+  autolabeled_revisions.w_cache.500k_2015:
+    sample: autolabeled_revisions.500k_2015
     features_for:
       - reverted
 
 models:
   reverted:
-    observations: labeled_revisions.w_cache.500k_2015
+    observations: autolabeled_revisions.w_cache.500k_2015
     label: reverted_for_damage
     pop_rate_true: 0.019211042993949594
     tune: true

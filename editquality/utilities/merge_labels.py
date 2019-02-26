@@ -72,6 +72,7 @@ def main(argv=None):
     # Output to stream.
     jsonlines = [json.dumps(l) for l in merged_labels]
     labels_f.write("\n".join(jsonlines))
+    labels_f.write("\n")
 
 
 def run(human_labels, auto_labels, verbose):

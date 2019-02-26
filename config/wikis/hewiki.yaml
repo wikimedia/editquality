@@ -26,8 +26,8 @@ balanced_5k_samples:
 
 merged_samples:
   labeled_revisions.20k_2015:
-    - autolabeled_revisions.20k_2015
     - human_labeled_revisions.5k_2015
+    - autolabeled_revisions.20k_2015
 
 extracted_samples:
   labeled_revisions.w_cache.20k_2015:

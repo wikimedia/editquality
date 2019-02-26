@@ -44,7 +44,7 @@ def load_wiki(wiki_config, config):
     # Merge in wiki defaults
     wiki_config = deep_merge.merge({}, config["wiki_defaults"], wiki_config,
                                    merge_lists=deep_merge.overwrite)
-    for model_name, model_config in wiki_config['models'].items():
+    for model_name, model_config in wiki_config.get('models', {}).items():
         # Merge in model defaults
         model_config = deep_merge.merge(
             {}, config["model_defaults"], model_config)

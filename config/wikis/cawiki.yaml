@@ -28,8 +28,8 @@ autolabeled_samples:
 
 merged_samples:
   labeled_revisions.40k_2017:
-    - autolabeled_revisions.40k_2017
     - human_labeled_revisions.5k_2017
+    - autolabeled_revisions.40k_2017
 
 extracted_samples:
   labeled_revisions.w_cache.40k_2017:
