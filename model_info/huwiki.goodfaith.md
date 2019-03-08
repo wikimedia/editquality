@@ -1,7 +1,7 @@
 Model Information:
 	 - type: GradientBoosting
 	 - version: 0.5.0
-	 - params: {'min_samples_split': 2, 'max_features': 'log2', 'presort': 'auto', 'min_samples_leaf': 1, 'verbose': 0, 'min_impurity_split': None, 'loss': 'deviance', 'min_weight_fraction_leaf': 0.0, 'warm_start': False, 'max_leaf_nodes': None, 'init': None, 'min_impurity_decrease': 0.0, 'subsample': 1.0, 'random_state': None, 'center': True, 'scale': True, 'n_estimators': 700, 'max_depth': 7, 'multilabel': False, 'label_weights': OrderedDict([(False, 10)]), 'population_rates': None, 'criterion': 'friedman_mse', 'labels': [True, False], 'learning_rate': 0.1}
+	 - params: {'warm_start': False, 'random_state': None, 'multilabel': False, 'criterion': 'friedman_mse', 'min_impurity_decrease': 0.0, 'center': True, 'labels': [True, False], 'n_estimators': 700, 'scale': True, 'presort': 'auto', 'init': None, 'verbose': 0, 'subsample': 1.0, 'min_impurity_split': None, 'min_samples_split': 2, 'max_features': 'log2', 'population_rates': None, 'loss': 'deviance', 'learning_rate': 0.1, 'max_depth': 7, 'min_weight_fraction_leaf': 0.0, 'max_leaf_nodes': None, 'label_weights': OrderedDict([(False, 10)]), 'min_samples_leaf': 1}
 	Environment:
 	 - revscoring_version: '2.3.4'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -18,11 +18,11 @@ Model Information:
 	 - release: '4.9.0-8-amd64'
 	
 	Statistics:
-	counts (n=37755):
+	counts (n=37750):
 		label        n         ~True    ~False
 		-------  -----  ---  -------  --------
-		True     37445  -->    37408        37
-		False      310  -->      247        63
+		True     37440  -->    37401        39
+		False      310  -->      242        68
 	rates:
 		              True    False
 		----------  ------  -------
@@ -36,46 +36,46 @@ Model Information:
 		  False    True
 		-------  ------
 		  0.997   0.003
-	recall (micro=0.993, macro=0.601):
+	recall (micro=0.993, macro=0.609):
 		  False    True
 		-------  ------
-		  0.203   0.999
-	!recall (micro=0.209, macro=0.601):
+		  0.219   0.999
+	!recall (micro=0.225, macro=0.609):
 		  False    True
 		-------  ------
-		  0.999   0.203
-	precision (micro=0.991, macro=0.806):
+		  0.999   0.219
+	precision (micro=0.991, macro=0.808):
 		  False    True
 		-------  ------
-		  0.617   0.994
-	!precision (micro=0.62, macro=0.806):
+		  0.623   0.994
+	!precision (micro=0.626, macro=0.808):
 		  False    True
 		-------  ------
-		  0.994   0.617
-	f1 (micro=0.991, macro=0.651):
+		  0.994   0.623
+	f1 (micro=0.991, macro=0.66):
 		  False    True
 		-------  ------
-		  0.306   0.996
-	!f1 (micro=0.311, macro=0.651):
+		  0.324   0.996
+	!f1 (micro=0.33, macro=0.66):
 		  False    True
 		-------  ------
-		  0.996   0.306
+		  0.996   0.324
 	accuracy (micro=0.993, macro=0.993):
 		  False    True
 		-------  ------
 		  0.993   0.993
-	fpr (micro=0.791, macro=0.399):
+	fpr (micro=0.775, macro=0.391):
 		  False    True
 		-------  ------
-		  0.001   0.797
-	roc_auc (micro=0.988, macro=0.912):
+		  0.001   0.781
+	roc_auc (micro=0.988, macro=0.909):
 		  False    True
 		-------  ------
-		  0.835   0.989
-	pr_auc (micro=0.993, macro=0.688):
+		   0.83   0.989
+	pr_auc (micro=0.993, macro=0.687):
 		  False    True
 		-------  ------
-		  0.379   0.997
+		  0.377   0.997
 	
-	 - score_schema: {'properties': {'probability': {'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'type': 'object', 'description': 'A mapping of probabilities onto each of the potential output labels'}, 'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}}, 'type': 'object', 'title': 'Scikit learn-based classifier score with probability'}
+	 - score_schema: {'type': 'object', 'properties': {'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}, 'probability': {'type': 'object', 'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels'}}, 'title': 'Scikit learn-based classifier score with probability'}
 

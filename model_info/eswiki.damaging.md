@@ -1,7 +1,7 @@
 Model Information:
 	 - type: GradientBoosting
 	 - version: 0.5.0
-	 - params: {'max_depth': 3, 'min_impurity_decrease': 0.0, 'loss': 'deviance', 'verbose': 0, 'scale': True, 'random_state': None, 'multilabel': False, 'min_weight_fraction_leaf': 0.0, 'min_samples_split': 2, 'min_samples_leaf': 1, 'n_estimators': 300, 'criterion': 'friedman_mse', 'min_impurity_split': None, 'label_weights': OrderedDict([(True, 10)]), 'population_rates': None, 'max_features': 'log2', 'labels': [True, False], 'learning_rate': 0.1, 'center': True, 'warm_start': False, 'subsample': 1.0, 'presort': 'auto', 'max_leaf_nodes': None, 'init': None}
+	 - params: {'min_impurity_decrease': 0.0, 'presort': 'auto', 'init': None, 'warm_start': False, 'max_leaf_nodes': None, 'max_depth': 3, 'n_estimators': 300, 'min_samples_split': 2, 'labels': [True, False], 'min_impurity_split': None, 'max_features': 'log2', 'loss': 'deviance', 'random_state': None, 'criterion': 'friedman_mse', 'scale': True, 'learning_rate': 0.1, 'population_rates': None, 'min_samples_leaf': 1, 'multilabel': False, 'label_weights': OrderedDict([(True, 10)]), 'center': True, 'min_weight_fraction_leaf': 0.0, 'verbose': 0, 'subsample': 1.0}
 	Environment:
 	 - revscoring_version: '2.3.4'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -22,7 +22,7 @@ Model Information:
 		label        n         ~True    ~False
 		-------  -----  ---  -------  --------
 		True      2516  -->     2284       232
-		False    16438  -->     3839     12599
+		False    16438  -->     3840     12598
 	rates:
 		              True    False
 		----------  ------  -------
@@ -68,14 +68,14 @@ Model Information:
 		  False    True
 		-------  ------
 		  0.092   0.234
-	roc_auc (micro=0.922, macro=0.922):
+	roc_auc (micro=0.919, macro=0.92):
 		  False    True
 		-------  ------
-		  0.922   0.922
-	pr_auc (micro=0.952, macro=0.82):
+		  0.918   0.921
+	pr_auc (micro=0.951, macro=0.817):
 		  False    True
 		-------  ------
-		   0.99    0.65
+		  0.989   0.646
 	
-	 - score_schema: {'title': 'Scikit learn-based classifier score with probability', 'properties': {'probability': {'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}, 'type': 'object', 'description': 'A mapping of probabilities onto each of the potential output labels'}, 'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}}, 'type': 'object'}
+	 - score_schema: {'title': 'Scikit learn-based classifier score with probability', 'type': 'object', 'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'type': 'object'}}}
 

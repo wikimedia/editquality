@@ -1,7 +1,7 @@
 Model Information:
 	 - type: GradientBoosting
 	 - version: 0.5.0
-	 - params: {'max_features': 'log2', 'labels': [True, False], 'label_weights': OrderedDict([(False, 10)]), 'max_depth': 7, 'min_samples_leaf': 1, 'min_samples_split': 2, 'learning_rate': 0.1, 'presort': 'auto', 'subsample': 1.0, 'min_weight_fraction_leaf': 0.0, 'criterion': 'friedman_mse', 'scale': True, 'multilabel': False, 'verbose': 0, 'max_leaf_nodes': None, 'loss': 'deviance', 'random_state': None, 'population_rates': None, 'min_impurity_decrease': 0.0, 'n_estimators': 700, 'warm_start': False, 'init': None, 'center': True, 'min_impurity_split': None}
+	 - params: {'loss': 'deviance', 'subsample': 1.0, 'min_impurity_decrease': 0.0, 'max_features': 'log2', 'labels': [True, False], 'max_depth': 7, 'init': None, 'scale': True, 'presort': 'auto', 'min_samples_split': 2, 'max_leaf_nodes': None, 'population_rates': None, 'label_weights': OrderedDict([(False, 10)]), 'center': True, 'min_impurity_split': None, 'n_estimators': 700, 'min_weight_fraction_leaf': 0.0, 'verbose': 0, 'min_samples_leaf': 1, 'learning_rate': 0.1, 'multilabel': False, 'criterion': 'friedman_mse', 'random_state': None, 'warm_start': False}
 	Environment:
 	 - revscoring_version: '2.3.4'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -18,11 +18,11 @@ Model Information:
 	 - release: '4.9.0-8-amd64'
 	
 	Statistics:
-	counts (n=119890):
+	counts (n=119880):
 		label         n         ~True    ~False
 		-------  ------  ---  -------  --------
-		True     119437  -->   119319       118
-		False       453  -->      349       104
+		True     119427  -->   119295       132
+		False       453  -->      357        96
 	rates:
 		              True    False
 		----------  ------  -------
@@ -36,46 +36,46 @@ Model Information:
 		  False    True
 		-------  ------
 		  0.998   0.002
-	recall (micro=0.996, macro=0.614):
+	recall (micro=0.996, macro=0.605):
 		  False    True
 		-------  ------
-		   0.23   0.999
-	!recall (micro=0.233, macro=0.614):
+		  0.212   0.999
+	!recall (micro=0.215, macro=0.605):
 		  False    True
 		-------  ------
-		  0.999    0.23
-	precision (micro=0.995, macro=0.734):
+		  0.999   0.212
+	precision (micro=0.995, macro=0.71):
 		  False    True
 		-------  ------
-		  0.471   0.997
-	!precision (micro=0.473, macro=0.734):
+		  0.423   0.997
+	!precision (micro=0.425, macro=0.71):
 		  False    True
 		-------  ------
-		  0.997   0.471
-	f1 (micro=0.995, macro=0.653):
+		  0.997   0.423
+	f1 (micro=0.995, macro=0.64):
 		  False    True
 		-------  ------
-		  0.309   0.998
-	!f1 (micro=0.311, macro=0.653):
+		  0.282   0.998
+	!f1 (micro=0.285, macro=0.64):
 		  False    True
 		-------  ------
-		  0.998   0.309
+		  0.998   0.282
 	accuracy (micro=0.996, macro=0.996):
 		  False    True
 		-------  ------
 		  0.996   0.996
-	fpr (micro=0.767, macro=0.386):
+	fpr (micro=0.785, macro=0.395):
 		  False    True
 		-------  ------
-		  0.001    0.77
-	roc_auc (micro=0.993, macro=0.921):
+		  0.001   0.788
+	roc_auc (micro=0.992, macro=0.921):
 		  False    True
 		-------  ------
-		  0.849   0.993
-	pr_auc (micro=0.996, macro=0.631):
+		  0.848   0.993
+	pr_auc (micro=0.996, macro=0.63):
 		  False    True
 		-------  ------
-		  0.264   0.999
+		  0.262   0.999
 	
-	 - score_schema: {'title': 'Scikit learn-based classifier score with probability', 'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}, 'type': 'object', 'description': 'A mapping of probabilities onto each of the potential output labels'}}, 'type': 'object'}
+	 - score_schema: {'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object'}}, 'title': 'Scikit learn-based classifier score with probability', 'type': 'object'}
 

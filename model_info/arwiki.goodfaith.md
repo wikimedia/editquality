@@ -1,7 +1,7 @@
 Model Information:
 	 - type: GradientBoosting
 	 - version: 0.5.0
-	 - params: {'min_samples_leaf': 1, 'min_impurity_split': None, 'max_leaf_nodes': None, 'min_weight_fraction_leaf': 0.0, 'label_weights': OrderedDict([(False, 10)]), 'labels': [True, False], 'min_samples_split': 2, 'random_state': None, 'init': None, 'max_depth': 7, 'learning_rate': 0.5, 'subsample': 1.0, 'warm_start': False, 'multilabel': False, 'presort': 'auto', 'loss': 'deviance', 'criterion': 'friedman_mse', 'verbose': 0, 'population_rates': None, 'n_estimators': 300, 'center': True, 'min_impurity_decrease': 0.0, 'scale': True, 'max_features': 'log2'}
+	 - params: {'max_leaf_nodes': None, 'random_state': None, 'verbose': 0, 'label_weights': OrderedDict([(False, 10)]), 'labels': [True, False], 'warm_start': False, 'criterion': 'friedman_mse', 'min_impurity_split': None, 'init': None, 'max_depth': 7, 'min_samples_split': 2, 'min_samples_leaf': 1, 'n_estimators': 300, 'max_features': 'log2', 'multilabel': False, 'learning_rate': 0.5, 'loss': 'deviance', 'min_weight_fraction_leaf': 0.0, 'min_impurity_decrease': 0.0, 'presort': 'auto', 'population_rates': None, 'center': True, 'scale': True, 'subsample': 1.0}
 	Environment:
 	 - revscoring_version: '2.3.4'
 	 - platform: 'Linux-4.9.0-8-amd64-x86_64-with-debian-9.5'
@@ -18,11 +18,11 @@ Model Information:
 	 - release: '4.9.0-8-amd64'
 	
 	Statistics:
-	counts (n=18530):
+	counts (n=18528):
 		label        n         ~True    ~False
 		-------  -----  ---  -------  --------
-		True     18443  -->    18423        20
-		False       87  -->       86         1
+		True     18441  -->    18420        21
+		False       87  -->       84         3
 	rates:
 		              True    False
 		----------  ------  -------
@@ -36,46 +36,46 @@ Model Information:
 		  False    True
 		-------  ------
 		  0.999   0.001
-	recall (micro=0.993, macro=0.505):
+	recall (micro=0.993, macro=0.517):
 		  False    True
 		-------  ------
-		  0.011   0.999
-	!recall (micro=0.018, macro=0.505):
+		  0.034   0.999
+	!recall (micro=0.04, macro=0.517):
 		  False    True
 		-------  ------
-		  0.999   0.011
-	precision (micro=0.988, macro=0.528):
+		  0.999   0.034
+	precision (micro=0.989, macro=0.576):
 		  False    True
 		-------  ------
-		  0.061   0.994
-	!precision (micro=0.067, macro=0.528):
+		  0.158   0.994
+	!precision (micro=0.163, macro=0.576):
 		  False    True
 		-------  ------
-		  0.994   0.061
-	f1 (micro=0.99, macro=0.508):
+		  0.994   0.158
+	f1 (micro=0.991, macro=0.527):
 		  False    True
 		-------  ------
-		  0.019   0.996
-	!f1 (micro=0.025, macro=0.508):
+		  0.057   0.996
+	!f1 (micro=0.062, macro=0.527):
 		  False    True
 		-------  ------
-		  0.996   0.019
+		  0.996   0.057
 	accuracy (micro=0.993, macro=0.993):
 		  False    True
 		-------  ------
 		  0.993   0.993
-	fpr (micro=0.982, macro=0.495):
+	fpr (micro=0.96, macro=0.483):
 		  False    True
 		-------  ------
-		  0.001   0.989
-	roc_auc (micro=0.978, macro=0.82):
+		  0.001   0.966
+	roc_auc (micro=0.983, macro=0.793):
 		  False    True
 		-------  ------
-		   0.66    0.98
-	pr_auc (micro=0.99, macro=0.525):
+		    0.6   0.985
+	pr_auc (micro=0.989, macro=0.524):
 		  False    True
 		-------  ------
-		  0.055   0.996
+		  0.053   0.995
 	
-	 - score_schema: {'properties': {'prediction': {'type': 'boolean', 'description': 'The most likely label predicted by the estimator'}, 'probability': {'type': 'object', 'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels'}}, 'title': 'Scikit learn-based classifier score with probability', 'type': 'object'}
+	 - score_schema: {'title': 'Scikit learn-based classifier score with probability', 'type': 'object', 'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object', 'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}}}}
 
