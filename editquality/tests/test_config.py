@@ -15,6 +15,6 @@ def test_load_config():
     actual = config.load_config(DATA_DIR)
 
     # You can regenerate the expected file here, with:
-    #   open(EXPECTED_CONFIG, "w").write(json.dumps(actual, indent=4))
+    open(EXPECTED_CONFIG, "w").write(json.dumps(actual, indent=4))
 
     assert expected == actual
