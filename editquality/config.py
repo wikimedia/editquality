@@ -4,7 +4,6 @@ Loads editquality config, mainly used as template parameters.
 The responsibility of this process is to simplify the template's work and other
 consumers, as much as possible.
 """
-import collections
 import glob
 import os
 

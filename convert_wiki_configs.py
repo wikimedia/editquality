@@ -1,7 +1,6 @@
 import glob
 import os.path
 import re
-import sys
 
 import jinja2
 import yaml
