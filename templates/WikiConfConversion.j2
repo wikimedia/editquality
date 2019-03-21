@@ -1,0 +1,86 @@
+name: {{ name }}
+label: {{ label }}
+host: {{ host }}
+
+external_samples:
+{% for sample_name, sample in samples|dictsort %}
+{% if "quarry_url" in sample %}
+  sampled_revisions.{{ sample_name }}:
+{% if "quarry_page" in sample %}
+    quarry_page: {{ sample.quarry_page }}
+{% endif %}
+    quarry_url: {{ sample.quarry_url }}
+{% endif %}
+{% if "labeling_campaign" in sample %}
+  human_labeled_revisions.{{ sample_name }}:
+    labeling_campaign: {{ sample.labeling_campaign }}
+{% endif %}
+{% endfor %}
+
+autolabeled_samples:
+  trusted_edits: 1000
+{% if trusted_groups %}
+  trusted_groups:
+{% for group_name in trusted_groups %}
+   - {{ group_name }}
+{% endfor %}
+{% endif %}
+  labeled_samples:
+{% for sample_name, sample in samples|dictsort if "quarry_url" in sample %}
+    autolabeled_revisions.{{ sample_name }}: sampled_revisions.{{ sample_name }}
+{% endfor %}
+
+{% if balanced_5k_set_for_review %}
+balanced_5k_samples:
+{% for sample_name, sample in samples|dictsort if "quarry_url" in sample %}
+  revisions_for_review.{{ sample_name | regex_replace("^[0-9]+k", "5k") }}: autolabeled_revisions.{{ sample_name }}
+{% endfor %}
+{% endif %}
+
+{% if merged_samples %}
+merged_samples:
+{% for sample_name, sample in samples|dictsort if "quarry_url" in sample %}
+  labeled_revisions.{{ sample_name }}:
+    - autolabeled_revisions.{{ sample_name }}
+    - human_labeled_revisions.{{ sample_name | regex_replace("^[0-9]+k", "5k") }}
+{% endfor %}
+{% endif %}
+
+{% if models %}
+extracted_samples:
+{% for sample_name, sample in samples|dictsort if "quarry_url" in sample %}
+  labeled_revisions.w_cache.{{ sample_name }}:
+    sample: labeled_revisions.{{ sample_name }}
+    features_for:
+{% for model_name, _ in models|dictsort %}
+      - {{model_name}}
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+{% if models %}
+models:
+{% for model_name, model in models|dictsort %}
+  {{model_name}}:
+{% for sample_name, sample in samples|dictsort if "quarry_url" in sample %}
+    observations: labeled_revisions.w_cache.{{sample_name}}
+{% endfor %}
+{% if model_name == "reverted" %}
+    label: reverted_for_damage
+{% else %}
+    label: {{ model_name }}
+{% endif %}
+    pop_rate_true: {{ model.pop_rate_true }}
+    tune: true
+    cv_train:
+{% if model.rf %}
+      algorithm: RandomForest
+{% else %}
+      algorithm: GradientBoosting
+{% endif %}
+      parameters:
+{% for param, value in model.tuning_params|dictsort %}
+        {{ param  }}: {{ value }}
+{% endfor %}
+{% endfor %}
+{% endif %}

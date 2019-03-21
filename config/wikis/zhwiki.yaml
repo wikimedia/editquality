@@ -2,17 +2,20 @@ name: zhwiki
 label: Chinese Wikipedia
 host: zh.wikipedia.org
 
-samples:
-    100k_2016:
-        quarry_url: "https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true"
+external_samples:
+  sampled_revisions.100k_2016:
+    quarry_url: https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true
 
-trusted_groups:
-    - checkuser
-    - bureaucrat
-    - sysop
-    - eliminator
-    - bot
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - checkuser
+   - bureaucrat
+   - sysop
+   - eliminator
+   - bot
+  labeled_samples:
+    autolabeled_revisions.100k_2016: sampled_revisions.100k_2016
 
-balanced_5k_set_for_review: true
-default_sample: 100k_2016
-review_sample: 5k_2016
+balanced_5k_samples:
+  revisions_for_review.5k_2016: autolabeled_revisions.100k_2016

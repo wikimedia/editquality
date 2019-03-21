@@ -2,30 +2,47 @@ name: nowiki
 label: Norwegian Wikipedia
 host: no.wikipedia.org
 
-samples:
-    100k_2015:
-        quarry_url: "https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true"
+external_samples:
+  sampled_revisions.100k_2015:
+    quarry_url: https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true
 
-balanced_5k_set_for_review: true
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - sysop
+   - oversight
+   - bot
+   - rollbacker
+   - checkuser
+   - abusefilter
+   - bureaucrat
+  labeled_samples:
+    autolabeled_revisions.100k_2015: sampled_revisions.100k_2015
 
-default_sample: 40k_2015
-default_sample_size: 40000
-default_sample_bigger_sample: 100k_2015
+balanced_5k_samples:
+  revisions_for_review.5k_2015: autolabeled_revisions.100k_2015
 
-review_sample: 5k_2015
+random_samples:
+  autolabeled_revisions.40k_2015:
+    n: 40000
+    input_name: autolabeled_revisions.100k_2015
+
+extracted_samples:
+  autolabeled_revisions.w_cache.40k_2015:
+    sample: autolabeled_revisions.40k_2015
+    features_for:
+      - reverted
 
 models:
-    reverted:
-        tuning_params:
-            n_estimators: 500
-        pop_rate_true: 0.019061539539679838
-        build_number: 1
-
-trusted_groups:
-    - sysop
-    - oversight
-    - bot
-    - rollbacker
-    - checkuser
-    - abusefilter
-    - bureaucrat
+  reverted:
+    observations: autolabeled_revisions.w_cache.40k_2015
+    label: reverted_for_damage
+    pop_rate_true: 0.019061539539679838
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 500

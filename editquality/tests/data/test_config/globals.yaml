@@ -1,0 +1,3 @@
+algorithm_filename_parts:
+  GradientBoosting: gradient_boosting
+  RandomForest: rf

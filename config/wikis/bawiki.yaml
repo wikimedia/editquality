@@ -2,19 +2,19 @@ name: bawiki
 label: Bashkir Wikipedia
 host: ba.wikipedia.org
 
-samples:
-    60k_2018:
-        quarry_url: "https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true"
-        quarry_page: "https://quarry.wmflabs.org/query/24777"
+external_samples:
+  sampled_revisions.60k_2018:
+    quarry_page: https://quarry.wmflabs.org/query/24777
+    quarry_url: https://quarry.wmflabs.org/run/236209/output/0/json-lines?download=true
 
-unbalanced_5k_set_for_review: true
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - bot
+   - sysop
+   - bureaucrat
+  labeled_samples:
+    autolabeled_revisions.60k_2018: sampled_revisions.60k_2018
 
-default_sample: 60k_2018
-review_sample: 5k_2018
 
-models: {}
 
-trusted_groups:
-    - bot
-    - sysop
-    - bureaucrat

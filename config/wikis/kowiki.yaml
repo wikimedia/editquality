@@ -2,42 +2,62 @@ name: kowiki
 label: Korean Wikipedia
 host: ko.wikipedia.org
 
-samples:
-    5k_2016:
-      labeling_campaign: https://labels.wmflabs.org/campaigns/kowiki/50/
-    20k_2016:
-      quarry_url: "https://quarry.wmflabs.org/run/165613/output/0/json-lines?download=true"
-      quarry_page: "https://quarry.wmflabs.org/query/17645"
+external_samples:
+  sampled_revisions.20k_2016:
+    quarry_page: https://quarry.wmflabs.org/query/17645
+    quarry_url: https://quarry.wmflabs.org/run/165613/output/0/json-lines?download=true
+  human_labeled_revisions.5k_2016:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/kowiki/50/
 
-
-trusted_groups:
-    - abusefilter
-    - bot
-    - bureaucrat
-    - checkuser
-    - eliminator
-    - interface-editor
-    - oversight
-    - rollbacker
-    - sysop
-
-default_sample: 20k_2016
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - abusefilter
+   - bot
+   - bureaucrat
+   - checkuser
+   - eliminator
+   - interface-editor
+   - oversight
+   - rollbacker
+   - sysop
+  labeled_samples:
+    autolabeled_revisions.20k_2016: sampled_revisions.20k_2016
 
 merged_samples:
-  20k_2016:
-    autolabeled_revisions: 20k_2016
-    human_labeled_revisions: 5k_2016
+  labeled_revisions.20k_2016:
+    - human_labeled_revisions.5k_2016
+    - autolabeled_revisions.20k_2016
+
+extracted_samples:
+  labeled_revisions.w_cache.20k_2016:
+    sample: labeled_revisions.20k_2016
+    features_for:
+      - damaging
+      - goodfaith
 
 models:
-    damaging:
-      pop_rate_true: 0.038665452792802445
-      n_estimators: 700
-      max_features: log2
-      learning_rate: 0.01
-      max_depth: 5
-    goodfaith:
-      pop_rate_true: 0.9807743801210304
-      max_features: log2
-      n_estimators: 700
-      max_depth: 7
-      learning_rate: 0.5
+  damaging:
+    observations: labeled_revisions.w_cache.20k_2016
+    label: damaging
+    pop_rate_true: 0.038665452792802445
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 700
+  goodfaith:
+    observations: labeled_revisions.w_cache.20k_2016
+    label: goodfaith
+    pop_rate_true: 0.9807743801210304
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 700

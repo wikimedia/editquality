@@ -2,21 +2,39 @@ name: ukwiki
 label: Ukranian Wikipedia
 host: uk.wikipedia.org
 
-samples:
-    20k_2015:
-        quarry_url: "http://quarry.wmflabs.org/run/48597/output/0/json-lines?download=true"
+external_samples:
+  sampled_revisions.20k_2015:
+    quarry_url: http://quarry.wmflabs.org/run/48597/output/0/json-lines?download=true
 
-trusted_groups:
-    - abusefilter
-    - arbcom
-    - bureaucrat
-    - checkuser
-    - rollbacker
-    - sysop
-    - bot
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - abusefilter
+   - arbcom
+   - bureaucrat
+   - checkuser
+   - rollbacker
+   - sysop
+   - bot
+  labeled_samples:
+    autolabeled_revisions.20k_2015: sampled_revisions.20k_2015
 
-default_sample: 20k_2015
+extracted_samples:
+  autolabeled_revisions.w_cache.20k_2015:
+    sample: autolabeled_revisions.20k_2015
+    features_for:
+      - reverted
 
 models:
-    reverted:
-        pop_rate_true: 0.021877665713282153
+  reverted:
+    observations: autolabeled_revisions.w_cache.20k_2015
+    label: reverted_for_damage
+    pop_rate_true: 0.021877665713282153
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 700

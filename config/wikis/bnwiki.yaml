@@ -2,27 +2,40 @@ name: bnwiki
 label: Bengali Wikipedia
 host: bn.wikipedia.org
 
-samples:
-    20k_2017:
-        quarry_url: "https://quarry.wmflabs.org/run/190661/output/0/json-lines?download=true"
-        quarry_page: "https://quarry.wmflabs.org/query/20229"
+external_samples:
+  sampled_revisions.20k_2017:
+    quarry_page: https://quarry.wmflabs.org/query/20229
+    quarry_url: https://quarry.wmflabs.org/run/190661/output/0/json-lines?download=true
 
-unbalanced_5k_set_for_review: true
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - autopatrolled
+   - bot
+   - bureaucrat
+   - checkuser
+   - reviewer
+   - rollbacker
+   - sysop
+  labeled_samples:
+    autolabeled_revisions.20k_2017: sampled_revisions.20k_2017
 
-default_sample: 20k_2017
-review_sample: 5k_2017
+extracted_samples:
+  autolabeled_revisions.w_cache.20k_2017:
+    sample: autolabeled_revisions.20k_2017
+    features_for:
+      - reverted
 
 models:
-    reverted:
-        tuning_params:
-            n_estimators: 500
-        pop_rate_true: 0.021554310862
-
-trusted_groups:
-    - autopatrolled
-    - bot
-    - bureaucrat
-    - checkuser
-    - reviewer
-    - rollbacker
-    - sysop
+  reverted:
+    observations: autolabeled_revisions.w_cache.20k_2017
+    label: reverted_for_damage
+    pop_rate_true: 0.021554310862
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 500

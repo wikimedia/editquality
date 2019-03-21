@@ -2,32 +2,45 @@ name: trwiki
 label: Turkish Wikipedia
 host: tr.wikipedia.org
 
-samples:
-    5k_2015:
-        labeling_campaign: "https://labels.wmflabs.org/campaigns/trwiki/5/"
-    20k_2015:
-        quarry_url: "http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true"
-
-default_sample: 20k_2015
-review_sample: 20k_2015
+external_samples:
+  sampled_revisions.20k_2015:
+    quarry_url: http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true
+  human_labeled_revisions.20k_2015:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/trwiki/5/
 
 merged_samples:
-    20k_2015:
-        autolabeled_revisions: "20k_2015"
-        human_labeled_revisions: "5k_2015"
+  labeled_revisions.20k_2015:
+    - human_labeled_revisions.20k_2015
+
+extracted_samples:
+  labeled_revisions.w_cache.20k_2015:
+    sample: labeled_revisions.20k_2015
+    features_for:
+      - damaging
+      - goodfaith
 
 models:
-    damaging:
-        pop_rate_true: 0.0495014425266994
-    goodfaith:
-        pop_rate_true: 0.9538897605911829
-
-trusted_groups:
-    - sysop
-    - oversight
-    - trusted
-    - bot
-    - rollbacker
-    - checkuser
-    - abusefilter
-    - bureaucrat
+  damaging:
+    observations: labeled_revisions.w_cache.20k_2015
+    label: damaging
+    pop_rate_true: 0.0495014425266994
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 700
+  goodfaith:
+    observations: labeled_revisions.w_cache.20k_2015
+    label: goodfaith
+    pop_rate_true: 0.9538897605911829
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 700

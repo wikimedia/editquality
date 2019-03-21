@@ -2,41 +2,59 @@ name: dewiki
 label: German Wikipedia
 host: de.wikipedia.org
 
-samples:
-    20k_2015:
-        quarry_url: "http://quarry.wmflabs.org/run/42223/output/0/json-lines?download=true"
-    5k_2015:
-        labeling_campaign: "https://labels.wmflabs.org/campaigns/dewiki/16/"
+external_samples:
+  sampled_revisions.20k_2015:
+    quarry_url: http://quarry.wmflabs.org/run/42223/output/0/json-lines?download=true
+  human_labeled_revisions.5k_2015:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/dewiki/16/
 
-default_sample: 20k_2015
-review_sample: 5k_2015
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - sysop
+   - oversight
+   - bot
+   - rollbacker
+   - checkuser
+   - abusefilter
+   - bureaucrat
+  labeled_samples:
+    autolabeled_revisions.20k_2015: sampled_revisions.20k_2015
 
 merged_samples:
-  20k_2015:
-    autolabeled_revisions: "20k_2015"
-    human_labeled_revisions: "5k_2015"
+  labeled_revisions.20k_2015:
+    - human_labeled_revisions.5k_2015
+    - autolabeled_revisions.20k_2015
+
+extracted_samples:
+  labeled_revisions.w_cache.20k_2015:
+    sample: labeled_revisions.20k_2015
+    features_for:
+      - damaging
+      - goodfaith
 
 models:
-    damaging:
-        tuning_params:
-            learning_rate: 0.1
-            max_depth: 3
-            n_estimators: 100
-            max_features: "log2"
-        pop_rate_true: 0.029975955116216937
-    goodfaith:
-        tuning_params:
-            learning_rate: 0.5
-            n_estimators: 500
-            max_features: "log2"
-            max_depth: 5
-        pop_rate_true: 0.9806572268234037
-
-trusted_groups:
-    - sysop
-    - oversight
-    - bot
-    - rollbacker
-    - checkuser
-    - abusefilter
-    - bureaucrat
+  damaging:
+    observations: labeled_revisions.w_cache.20k_2015
+    label: damaging
+    pop_rate_true: 0.029975955116216937
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.1
+        max_depth: 3
+        max_features: log2
+        n_estimators: 100
+  goodfaith:
+    observations: labeled_revisions.w_cache.20k_2015
+    label: goodfaith
+    pop_rate_true: 0.9806572268234037
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.5
+        max_depth: 5
+        max_features: log2
+        n_estimators: 500

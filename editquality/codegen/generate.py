@@ -20,5 +20,14 @@ def generate(variables, templates_path, main_template):
         trim_blocks=True
     )
 
+    def norm_alg_filename(alg_name):
+        if alg_name in variables['globals']['algorithm_filename_parts']:
+            return variables['globals']['algorithm_filename_parts'][alg_name]
+        else:
+            raise KeyError("{0} not found in globals.algorithm_filename_parts"
+                           .format(alg_name))
+
+    env.globals.update(norm_alg_filename=norm_alg_filename)
+
     template = env.from_string(main_template)
     return template.render(variables) + "\n"

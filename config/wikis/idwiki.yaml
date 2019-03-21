@@ -2,26 +2,42 @@ name: idwiki
 label: Indonesian Wikipedia
 host: id.wikipedia.org
 
-samples:
-    100k_2016:
-        quarry_url: "http://quarry.wmflabs.org/run/135748/output/0/json-lines?download=true"
+external_samples:
+  sampled_revisions.100k_2016:
+    quarry_url: http://quarry.wmflabs.org/run/135748/output/0/json-lines?download=true
 
-trusted_groups:
-    - autoreview
-    - bot
-    - bureaucrat
-    - checkuser
-    - editor
-    - flow-bot
-    - oversight
-    - reviewer
-    - rollbacker
-    - sysop
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - autoreview
+   - bot
+   - bureaucrat
+   - checkuser
+   - editor
+   - flow-bot
+   - oversight
+   - reviewer
+   - rollbacker
+   - sysop
+  labeled_samples:
+    autolabeled_revisions.100k_2016: sampled_revisions.100k_2016
 
-default_sample: 100k_2016
+extracted_samples:
+  autolabeled_revisions.w_cache.100k_2016:
+    sample: autolabeled_revisions.100k_2016
+    features_for:
+      - reverted
 
 models:
-    reverted:
-        tuning_params:
-            max_depth: 5
-        pop_rate_true: 0.02272613605673532
+  reverted:
+    observations: autolabeled_revisions.w_cache.100k_2016
+    label: reverted_for_damage
+    pop_rate_true: 0.02272613605673532
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 5
+        max_features: log2
+        n_estimators: 700

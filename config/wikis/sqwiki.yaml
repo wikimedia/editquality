@@ -2,37 +2,61 @@ name: sqwiki
 label: Albanian Wikipedia
 host: sq.wikipedia.org
 
-samples:
-    5k_2016:
-        labeling_campaign: "https://labels.wmflabs.org/campaigns/sqwiki/57/"
-    20k_2016:
-        quarry_url: "https://quarry.wmflabs.org/run/169099/output/0/json-lines?download=true"
-        quarry_page: "https://quarry.wmflabs.org/query/17988"
+external_samples:
+  sampled_revisions.20k_2016:
+    quarry_page: https://quarry.wmflabs.org/query/17988
+    quarry_url: https://quarry.wmflabs.org/run/169099/output/0/json-lines?download=true
+  human_labeled_revisions.5k_2016:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/sqwiki/57/
 
-default_sample: 20k_2016
-review_sample: 20k_2016
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - sysop
+   - oversight
+   - trusted
+   - bot
+   - rollbacker
+   - checkuser
+   - abusefilter
+   - bureaucrat
+  labeled_samples:
+    autolabeled_revisions.20k_2016: sampled_revisions.20k_2016
 
 merged_samples:
-    20k_2016:
-        autolabeled_revisions: "20k_2016"
-        human_labeled_revisions: "5k_2016"
+  labeled_revisions.20k_2016:
+    - human_labeled_revisions.5k_2016
+    - autolabeled_revisions.20k_2016
+
+extracted_samples:
+  labeled_revisions.w_cache.20k_2016:
+    sample: labeled_revisions.20k_2016
+    features_for:
+      - damaging
+      - goodfaith
 
 models:
-    damaging:
-        tuning_params:
-            n_estimators: 500
-        pop_rate_true: 0.0287028702870287
-    goodfaith:
-        tuning_params:
-            n_estimators: 500
-        pop_rate_true: 0.9763476347634763
-
-trusted_groups:
-    - sysop
-    - oversight
-    - trusted
-    - bot
-    - rollbacker
-    - checkuser
-    - abusefilter
-    - bureaucrat
+  damaging:
+    observations: labeled_revisions.w_cache.20k_2016
+    label: damaging
+    pop_rate_true: 0.0287028702870287
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 500
+  goodfaith:
+    observations: labeled_revisions.w_cache.20k_2016
+    label: goodfaith
+    pop_rate_true: 0.9763476347634763
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 500
