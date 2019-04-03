@@ -7,6 +7,9 @@ external_samples:
     quarry_url: http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true
   human_labeled_revisions.5k_2015:
     labeling_campaign: https://labels.wmflabs.org/campaigns/hewiki/25/
+  sampled_revisions.20k_2019:
+    quarry_page: https://quarry.wmflabs.org/query/33235
+    quarry_url: https://quarry.wmflabs.org/run/332742/output/0/json-lines
 
 autolabeled_samples:
   trusted_edits: 1000
@@ -20,6 +23,7 @@ autolabeled_samples:
    - bureaucrat
   labeled_samples:
     autolabeled_revisions.20k_2015: sampled_revisions.20k_2015
+    autolabeled_revisions.20k_2019: sampled_revisions.20k_2019
 
 balanced_5k_samples:
   revisions_for_review.5k_2015: autolabeled_revisions.20k_2015

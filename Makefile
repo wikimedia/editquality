@@ -1696,8 +1696,21 @@ datasets/hewiki.human_labeled_revisions.5k_2015.json:
 datasets/hewiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/42222/output/0/json-lines?download=true > $@
 
+# From https://quarry.wmflabs.org/query/33235
+datasets/hewiki.sampled_revisions.20k_2019.json:
+	wget -qO- https://quarry.wmflabs.org/run/332742/output/0/json-lines > $@
+
 datasets/hewiki.autolabeled_revisions.20k_2015.json: \
 		datasets/hewiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://he.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
+
+datasets/hewiki.autolabeled_revisions.20k_2019.json: \
+		datasets/hewiki.sampled_revisions.20k_2019.json
 	cat $< | \
 	./utility autolabel --host=https://he.wikipedia.org \
 		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
