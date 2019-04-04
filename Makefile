@@ -2919,8 +2919,21 @@ datasets/ruwiki.human_labeled_revisions.5k_2015.json:
 datasets/ruwiki.sampled_revisions.20k_2015.json:
 	wget -qO- https://quarry.wmflabs.org/run/48649/output/0/json-lines?download=true > $@
 
+# From https://quarry.wmflabs.org/query/34921
+datasets/ruwiki.sampled_revisions.20k_2019.json:
+	wget -qO- https://quarry.wmflabs.org/run/359270/output/0/json-lines > $@
+
 datasets/ruwiki.autolabeled_revisions.20k_2015.json: \
 		datasets/ruwiki.sampled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://ru.wikipedia.org \
+		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
+
+datasets/ruwiki.autolabeled_revisions.20k_2019.json: \
+		datasets/ruwiki.sampled_revisions.20k_2019.json
 	cat $< | \
 	./utility autolabel --host=https://ru.wikipedia.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
