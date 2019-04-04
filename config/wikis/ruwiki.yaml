@@ -5,6 +5,9 @@ host: ru.wikipedia.org
 external_samples:
   sampled_revisions.20k_2015:
     quarry_url: https://quarry.wmflabs.org/run/48649/output/0/json-lines?download=true
+  sampled_revisions.20k_2019:
+    quarry_page: https://quarry.wmflabs.org/query/34921
+    quarry_url: https://quarry.wmflabs.org/run/359270/output/0/json-lines
   human_labeled_revisions.5k_2015:
     labeling_campaign: https://labels.wmflabs.org/campaigns/ruwiki/10/
 
@@ -20,6 +23,7 @@ autolabeled_samples:
    - bot
   labeled_samples:
     autolabeled_revisions.20k_2015: sampled_revisions.20k_2015
+    autolabeled_revisions.20k_2019: sampled_revisions.20k_2019
 
 merged_samples:
   labeled_revisions.20k_2015:
