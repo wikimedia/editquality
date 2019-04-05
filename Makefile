@@ -20,6 +20,7 @@ models: \
 		eswiki_models \
 		eswikibooks_models \
 		eswikiquote_models \
+		eswikiversity_models \
 		etwiki_models \
 		fawiki_models \
 		fiwiki_models \
@@ -67,6 +68,7 @@ tuning_reports: \
 		eswiki_tuning_reports \
 		eswikibooks_tuning_reports \
 		eswikiquote_tuning_reports \
+		eswikiversity_tuning_reports \
 		etwiki_tuning_reports \
 		fawiki_tuning_reports \
 		fiwiki_tuning_reports \
@@ -1338,6 +1340,24 @@ eswikiquote_tuning_reports: \
 	tuning_reports/eswikiquote.damaging.md \
 	tuning_reports/eswikiquote.goodfaith.md
 
+
+############################# Spanish Wikiversity ################################
+# From https://quarry.wmflabs.org/query/34929
+datasets/eswikiversity.sampled_revisions.17k_2019.json:
+	wget -qO- https://quarry.wmflabs.org/run/359493/output/0/json-lines > $@
+
+datasets/eswikiversity.autolabeled_revisions.17k_2019.json: \
+		datasets/eswikiversity.sampled_revisions.17k_2019.json
+	cat $< | \
+	./utility autolabel --host=https://es.wikiversity.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
+
+eswikiversity_models:
+
+eswikiversity_tuning_reports:
 
 ############################# Estonian Wikipedia ################################
 datasets/etwiki.human_labeled_revisions.5k_2015.json:
