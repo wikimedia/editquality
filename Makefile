@@ -1350,8 +1350,8 @@ datasets/eswikiversity.autolabeled_revisions.17k_2019.json: \
 		datasets/eswikiversity.sampled_revisions.17k_2019.json
 	cat $< | \
 	./utility autolabel --host=https://es.wikiversity.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
-		--trusted-edits=1000 \
+		--trusted-groups=autoconfirmed,sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled \
+		--trusted-edits=100 \
 		--revert-radius=5 \
 		--verbose > $@
 

@@ -8,8 +8,9 @@ external_samples:
     quarry_url: https://quarry.wmflabs.org/run/359493/output/0/json-lines
 
 autolabeled_samples:
-  trusted_edits: 1000
+  trusted_edits: 100
   trusted_groups:
+   - autoconfirmed
    - sysop
    - oversight
    - bot
