@@ -5,6 +5,8 @@ host: zh.wikipedia.org
 external_samples:
   sampled_revisions.100k_2016:
     quarry_url: https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true
+  human_labeled_revisions.5k_2016:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/zhwiki/45
 
 autolabeled_samples:
   trusted_edits: 1000
@@ -19,3 +21,41 @@ autolabeled_samples:
 
 balanced_5k_samples:
   revisions_for_review.5k_2016: autolabeled_revisions.100k_2016
+
+merged_samples:
+  labeled_revisions.100k_2016:
+    - human_labeled_revisions.5k_2016
+    - autolabeled_revisions.100k_2016
+
+extracted_samples:
+  labeled_revisions.w_cache.100k_2016:
+    sample: labeled_revisions.100k_2016
+    features_for:
+      - damaging
+      - goodfaith
+
+models:
+  damaging:
+    observations: labeled_revisions.w_cache.100k_2016
+    label: damaging
+    pop_rate_true: 0.0405
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 1
+        max_features: log2
+        n_estimators: 100
+  goodfaith:
+    observations: labeled_revisions.w_cache.100k_2016
+    label: goodfaith
+    pop_rate_true: 0.9682
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.1
+        max_depth: 1
+        max_features: log2
+        n_estimators: 100
