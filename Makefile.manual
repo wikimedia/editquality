@@ -12,6 +12,10 @@ reverted_weight = 'true=10'
 damaging_weight = 'true=10'
 goodfaith_weight = 'false=10'
 
+reverted_tuning_statistic = roc_auc.labels.true
+damaging_tuning_statistic = roc_auc.labels.true
+goodfaith_tuning_statistic = roc_auc.labels.false
+
 max_extractors = 4
 
 
