@@ -2595,11 +2595,11 @@ models/nlwiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nlwiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=5' \
+		--version=$(damaging_major_minor).1 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'n_estimators=500' \
 		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.05068086413432989" \
 		--pop-rate "false=0.9493191358656701" \
@@ -2629,11 +2629,11 @@ models/nlwiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nlwiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=5' \
+		--version=$(goodfaith_major_minor).1 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'n_estimators=300' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9646257806900789" \
 		--pop-rate "false=0.03537421930992113" \
