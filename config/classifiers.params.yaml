@@ -5,6 +5,7 @@ GradientBoosting:
     max_depth: [1, 3, 5, 7]
     max_features: ["log2"]
     learning_rate: [0.01, 0.1,  0.5, 1]
+    min_samples_leaf: [1, 3, 5, 7, 13]
 LogisticRegression:
   class: revscoring.scoring.models.LogisticRegression
   params:
