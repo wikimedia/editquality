@@ -859,9 +859,27 @@ datasets/enwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ > $@
 
+datasets/enwiki.autolabeled_revisions.20k_2015.json: \
+		datasets/enwiki.labeled_revisions.20k_2015.json
+	cat $< | \
+	./utility autolabel --host=https://en.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
+
 datasets/enwiki.labeled_revisions.20k_2015.json: \
 		datasets/enwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
+
+datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/enwiki.autolabeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.enwiki.reverted \
+		--host https://en.wikipedia.org \
+		--extractors $(max_extractors) \
+		--verbose > $@
 
 datasets/enwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/enwiki.labeled_revisions.20k_2015.json
@@ -941,13 +959,49 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 
 	revscoring model_info $@ > model_info/enwiki.goodfaith.md
 
+tuning_reports/enwiki.reverted.md: \
+		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.enwiki.reverted \
+		reverted_for_damage \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
+		--pop-rate "true=0.0649" \
+		--pop-rate "false=0.9351" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/enwiki.reverted.gradient_boosting.model: \
+		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.enwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=1' \
+		-p 'max_depth=1' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=1' \
+		--label-weight $(reverted_weight) \
+		--pop-rate "true=0.0649" \
+		--pop-rate "false=0.9351" \
+		--center --scale > $@
+
+	revscoring model_info $@ > model_info/enwiki.reverted.md
+
 enwiki_models: \
 	models/enwiki.damaging.gradient_boosting.model \
-	models/enwiki.goodfaith.gradient_boosting.model
+	models/enwiki.goodfaith.gradient_boosting.model \
+	models/enwiki.reverted.gradient_boosting.model
 
 enwiki_tuning_reports: \
 	tuning_reports/enwiki.damaging.md \
-	tuning_reports/enwiki.goodfaith.md
+	tuning_reports/enwiki.goodfaith.md \
+	tuning_reports/enwiki.reverted.md
 
 
 ############################# English Wiktionary ################################

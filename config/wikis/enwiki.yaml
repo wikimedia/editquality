@@ -16,7 +16,8 @@ autolabeled_samples:
    - checkuser
    - abusefilter
    - bureaucrat
-  labeled_samples: {}
+  labeled_samples:
+    autolabeled_revisions.20k_2015: labeled_revisions.20k_2015
 
 merged_samples:
   labeled_revisions.20k_2015:
@@ -28,6 +29,10 @@ extracted_samples:
     features_for:
       - damaging
       - goodfaith
+  autolabeled_revisions.w_cache.20k_2015:
+    sample: autolabeled_revisions.20k_2015
+    features_for:
+      - reverted
 
 models:
   damaging:
@@ -54,3 +59,15 @@ models:
         max_depth: 7
         max_features: log2
         n_estimators: 700
+  reverted:
+    observations: autolabeled_revisions.w_cache.20k_2015
+    label: reverted_for_damage
+    pop_rate_true: 0.0649
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 1
+        max_depth: 1
+        max_features: log2
+        n_estimators: 1
