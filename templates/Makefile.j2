@@ -52,7 +52,7 @@ datasets/{{ wiki.name }}.{{ autolabeled_name }}.json: \
 	cat $< | \
 	./utility autolabel --host=https://{{ wiki.host }} \
 		--trusted-groups={{ wiki.autolabeled_samples.trusted_groups|join(",") }} \
-		--trusted-edits=1000 \
+		--trusted-edits={{ wiki.autolabeled_samples.trusted_edits }} \
 		--revert-radius=5 \
 		--verbose > $@
 

@@ -1,0 +1,23 @@
+name: eswikiversity
+label: Spanish Wikiversity
+host: es.wikiversity.org
+
+external_samples:
+  sampled_revisions.17k_2019:
+    quarry_page: https://quarry.wmflabs.org/query/34929
+    quarry_url: https://quarry.wmflabs.org/run/359493/output/0/json-lines
+
+autolabeled_samples:
+  trusted_edits: 100
+  trusted_groups:
+   - autoconfirmed
+   - sysop
+   - oversight
+   - bot
+   - rollbacker
+   - checkuser
+   - abusefilter
+   - bureaucrat
+   - autopatrolled
+  labeled_samples:
+    autolabeled_revisions.17k_2019: sampled_revisions.17k_2019
