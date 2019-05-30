@@ -156,8 +156,8 @@ tuning_reports/arwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.arwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.021427" \
 		--pop-rate "false=0.978573" \
 		--center --scale \
@@ -190,8 +190,8 @@ tuning_reports/arwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.arwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.993861" \
 		--pop-rate "false=0.0061390000000000056" \
 		--center --scale \
@@ -291,8 +291,8 @@ tuning_reports/bnwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.bnwiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.021554310862" \
 		--pop-rate "false=0.978445689138" \
 		--center --scale \
@@ -383,8 +383,8 @@ tuning_reports/bswiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.bswiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.028101164191087918" \
 		--pop-rate "false=0.9718988358089121" \
 		--center --scale \
@@ -417,8 +417,8 @@ tuning_reports/bswiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.bswiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9774939783219591" \
 		--pop-rate "false=0.022506021678040944" \
 		--center --scale \
@@ -493,8 +493,8 @@ tuning_reports/cawiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cawiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.019000475011875295" \
 		--pop-rate "false=0.9809995249881247" \
 		--center --scale \
@@ -527,8 +527,8 @@ tuning_reports/cawiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cawiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9854996374909373" \
 		--pop-rate "false=0.014500362509062725" \
 		--center --scale \
@@ -611,8 +611,8 @@ tuning_reports/cswiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0445968266680014" \
 		--pop-rate "false=0.9554031733319986" \
 		--center --scale \
@@ -645,8 +645,8 @@ tuning_reports/cswiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.cswiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.977526402722859" \
 		--pop-rate "false=0.022473597277141044" \
 		--center --scale \
@@ -720,8 +720,8 @@ tuning_reports/dewiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.dewiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.029975955116216937" \
 		--pop-rate "false=0.970024044883783" \
 		--center --scale \
@@ -754,8 +754,8 @@ tuning_reports/dewiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.dewiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9806572268234037" \
 		--pop-rate "false=0.019342773176596273" \
 		--center --scale \
@@ -820,8 +820,8 @@ tuning_reports/elwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.elwiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.05170687756532186" \
 		--pop-rate "false=0.9482931224346781" \
 		--center --scale \
@@ -880,8 +880,8 @@ tuning_reports/enwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.034163555464634586" \
 		--pop-rate "false=0.9658364445353654" \
 		--center --scale \
@@ -914,8 +914,8 @@ tuning_reports/enwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9671661637600368" \
 		--pop-rate "false=0.032833836239963166" \
 		--center --scale \
@@ -979,8 +979,8 @@ tuning_reports/enwiktionary.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.enwiktionary.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.004778273117085203" \
 		--pop-rate "false=0.9952217268829148" \
 		--center --scale \
@@ -1052,8 +1052,8 @@ tuning_reports/eswiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.11036013315847877" \
 		--pop-rate "false=0.8896398668415212" \
 		--center --scale \
@@ -1086,8 +1086,8 @@ tuning_reports/eswiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.11036013315847877" \
 		--pop-rate "false=0.8896398668415212" \
 		--center --scale \
@@ -1161,8 +1161,8 @@ tuning_reports/eswikibooks.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswikibooks.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.1126671580499105" \
 		--pop-rate "false=0.8873328419500895" \
 		--center --scale \
@@ -1195,8 +1195,8 @@ tuning_reports/eswikibooks.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswikibooks.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9139393939393939" \
 		--pop-rate "false=0.08606060606060606" \
 		--center --scale \
@@ -1271,8 +1271,8 @@ tuning_reports/eswikiquote.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswikiquote.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.08707101597009854" \
 		--pop-rate "false=0.9129289840299014" \
 		--center --scale \
@@ -1305,8 +1305,8 @@ tuning_reports/eswikiquote.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.eswikiquote.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9356099218484539" \
 		--pop-rate "false=0.06439007815154607" \
 		--center --scale \
@@ -1398,8 +1398,8 @@ tuning_reports/etwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.026158257457618593" \
 		--pop-rate "false=0.9738417425423814" \
 		--center --scale \
@@ -1432,8 +1432,8 @@ tuning_reports/etwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.etwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9841038281603702" \
 		--pop-rate "false=0.01589617183962977" \
 		--center --scale \
@@ -1520,8 +1520,8 @@ tuning_reports/fawiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0297029702970297" \
 		--pop-rate "false=0.9702970297029703" \
 		--center --scale \
@@ -1554,8 +1554,8 @@ tuning_reports/fawiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.fawiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9834641681438339" \
 		--pop-rate "false=0.01653583185616614" \
 		--center --scale \
@@ -1638,8 +1638,8 @@ tuning_reports/frwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.frwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.028751753155680224" \
 		--pop-rate "false=0.9712482468443198" \
 		--center --scale \
@@ -1672,8 +1672,8 @@ tuning_reports/frwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.frwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9786115007012622" \
 		--pop-rate "false=0.021388499298737762" \
 		--center --scale \
@@ -1769,8 +1769,8 @@ tuning_reports/hewiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.046281731975314835" \
 		--pop-rate "false=0.9537182680246852" \
 		--center --scale \
@@ -1803,8 +1803,8 @@ tuning_reports/hewiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hewiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9718244945060459" \
 		--pop-rate "false=0.02817550549395409" \
 		--center --scale \
@@ -1869,8 +1869,8 @@ tuning_reports/hrwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.hrwiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.07927353670258512" \
 		--pop-rate "false=0.9207264632974149" \
 		--center --scale \
@@ -1951,8 +1951,8 @@ tuning_reports/huwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.huwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.01093805131" \
 		--pop-rate "false=0.98906194869" \
 		--center --scale \
@@ -1985,8 +1985,8 @@ tuning_reports/huwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.huwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.99221230908" \
 		--pop-rate "false=0.007787690919999979" \
 		--center --scale \
@@ -2050,8 +2050,8 @@ tuning_reports/idwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.idwiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.02272613605673532" \
 		--pop-rate "false=0.9772738639432647" \
 		--center --scale \
@@ -2114,8 +2114,8 @@ tuning_reports/iswiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.iswiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.08115405770288514" \
 		--pop-rate "false=0.9188459422971149" \
 		--center --scale \
@@ -2187,8 +2187,8 @@ tuning_reports/itwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.itwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.038665452792802445" \
 		--pop-rate "false=0.9613345472071976" \
 		--center --scale \
@@ -2221,8 +2221,8 @@ tuning_reports/itwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.itwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9807743801210304" \
 		--pop-rate "false=0.019225619878969646" \
 		--center --scale \
@@ -2287,8 +2287,8 @@ tuning_reports/jawiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.jawiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.03256945140908635" \
 		--pop-rate "false=0.9674305485909136" \
 		--center --scale \
@@ -2361,8 +2361,8 @@ tuning_reports/kowiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.kowiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.038665452792802445" \
 		--pop-rate "false=0.9613345472071976" \
 		--center --scale \
@@ -2395,8 +2395,8 @@ tuning_reports/kowiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.kowiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9807743801210304" \
 		--pop-rate "false=0.019225619878969646" \
 		--center --scale \
@@ -2471,8 +2471,8 @@ tuning_reports/lvwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.lvwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0293" \
 		--pop-rate "false=0.9707" \
 		--center --scale \
@@ -2505,8 +2505,8 @@ tuning_reports/lvwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.lvwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.978" \
 		--pop-rate "false=0.02200000000000002" \
 		--center --scale \
@@ -2580,8 +2580,8 @@ tuning_reports/nlwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nlwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.05068086413432989" \
 		--pop-rate "false=0.9493191358656701" \
 		--center --scale \
@@ -2614,8 +2614,8 @@ tuning_reports/nlwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nlwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9646257806900789" \
 		--pop-rate "false=0.03537421930992113" \
 		--center --scale \
@@ -2692,8 +2692,8 @@ tuning_reports/nowiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.nowiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.019061539539679838" \
 		--pop-rate "false=0.9809384604603202" \
 		--center --scale \
@@ -2752,8 +2752,8 @@ tuning_reports/ptwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ptwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.06896029864299047" \
 		--pop-rate "false=0.9310397013570095" \
 		--center --scale \
@@ -2786,8 +2786,8 @@ tuning_reports/ptwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ptwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9397669373959542" \
 		--pop-rate "false=0.06023306260404582" \
 		--center --scale \
@@ -2861,8 +2861,8 @@ tuning_reports/rowiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.rowiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.04956982793117247" \
 		--pop-rate "false=0.9504301720688275" \
 		--center --scale \
@@ -2895,8 +2895,8 @@ tuning_reports/rowiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.rowiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9699379751900761" \
 		--pop-rate "false=0.030062024809923926" \
 		--center --scale \
@@ -2983,8 +2983,8 @@ tuning_reports/ruwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ruwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.053479185657854755" \
 		--pop-rate "false=0.9465208143421453" \
 		--center --scale \
@@ -3017,8 +3017,8 @@ tuning_reports/ruwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ruwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9713866099463182" \
 		--pop-rate "false=0.028613390053681798" \
 		--center --scale \
@@ -3093,8 +3093,8 @@ tuning_reports/sqwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.sqwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0287028702870287" \
 		--pop-rate "false=0.9712971297129713" \
 		--center --scale \
@@ -3127,8 +3127,8 @@ tuning_reports/sqwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.sqwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9763476347634763" \
 		--pop-rate "false=0.023652365236523698" \
 		--center --scale \
@@ -3164,6 +3164,10 @@ sqwiki_tuning_reports: \
 
 
 ############################# Serbian Wikipedia ################################
+datasets/srwiki.badfaith_relabeling_revisions.500_2017.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/srwiki/89/ > $@
+
 datasets/srwiki.human_labeled_revisions.5k_2017.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/srwiki/62/ > $@
@@ -3181,6 +3185,11 @@ datasets/srwiki.autolabeled_revisions.120k_2017.json: \
 		--verbose > $@
 
 datasets/srwiki.labeled_revisions.120k_2017.json: \
+		datasets/srwiki.badfaith_relabeling_revisions.500_2017.json \
+		datasets/srwiki.original_labeled_revisions.120k_2017.json
+	./utility merge_labels $^ > $@
+
+datasets/srwiki.original_labeled_revisions.120k_2017.json: \
 		datasets/srwiki.human_labeled_revisions.5k_2017.json \
 		datasets/srwiki.autolabeled_revisions.120k_2017.json
 	./utility merge_labels $^ > $@
@@ -3202,8 +3211,8 @@ tuning_reports/srwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.srwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0056294177044766075" \
 		--pop-rate "false=0.9943705822955234" \
 		--center --scale \
@@ -3217,7 +3226,7 @@ models/srwiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.srwiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
@@ -3236,8 +3245,8 @@ tuning_reports/srwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.srwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9961881521373275" \
 		--pop-rate "false=0.003811847862672524" \
 		--center --scale \
@@ -3251,11 +3260,11 @@ models/srwiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.srwiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
-		-p 'learning_rate=0.1' \
-		-p 'max_depth=7' \
+		--version=$(goodfaith_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'n_estimators=500' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9961881521373275" \
 		--pop-rate "false=0.003811847862672524" \
@@ -3320,8 +3329,8 @@ tuning_reports/svwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.svwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.025209073272463033" \
 		--pop-rate "false=0.974790926727537" \
 		--center --scale \
@@ -3354,8 +3363,8 @@ tuning_reports/svwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.svwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9822912868686937" \
 		--pop-rate "false=0.017708713131306286" \
 		--center --scale \
@@ -3420,8 +3429,8 @@ tuning_reports/tawiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.tawiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.015904172328753335" \
 		--pop-rate "false=0.9840958276712467" \
 		--center --scale \
@@ -3483,8 +3492,8 @@ tuning_reports/trwiki.damaging.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.trwiki.damaging \
 		damaging \
-		roc_auc.labels.true \
-		--label-weight $(damaging_label_weight) \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0495014425266994" \
 		--pop-rate "false=0.9504985574733006" \
 		--center --scale \
@@ -3517,8 +3526,8 @@ tuning_reports/trwiki.goodfaith.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.trwiki.goodfaith \
 		goodfaith \
-		roc_auc.labels.true \
-		--label-weight $(goodfaith_label_weight) \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9538897605911829" \
 		--pop-rate "false=0.04611023940881709" \
 		--center --scale \
@@ -3582,8 +3591,8 @@ tuning_reports/ukwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.ukwiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.021877665713282153" \
 		--pop-rate "false=0.9781223342867178" \
 		--center --scale \
@@ -3680,8 +3689,8 @@ tuning_reports/viwiki.reverted.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.viwiki.reverted \
 		reverted_for_damage \
-		roc_auc.labels.true \
-		--label-weight $(reverted_label_weight) \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.019211042993949594" \
 		--pop-rate "false=0.9807889570060504" \
 		--center --scale \

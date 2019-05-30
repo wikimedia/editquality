@@ -125,8 +125,8 @@ tuning_reports/{{ wiki.name }}.{{ model_name }}.md: \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
 		{{ model.label }} \
-		roc_auc.labels.true \
-		--label-weight $({{ model_name }}_label_weight) \
+		$({{ model_name }}_tuning_statistic) \
+		--label-weight $({{ model_name }}_weight) \
 		--pop-rate "true={{ model.pop_rate_true }}" \
 		--pop-rate "false={{ 1 - model.pop_rate_true }}" \
 		--center --scale \
