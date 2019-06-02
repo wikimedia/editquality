@@ -974,18 +974,15 @@ tuning_reports/enwiki.reverted.md: \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/enwiki.reverted.gradient_boosting.model: \
+models/enwiki.reverted.logistic_regression.model: \
 		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
+		revscoring.scoring.models.LogisticRegression \
 		editquality.feature_lists.enwiki.reverted \
 		reverted_for_damage \
 		--version=$(reverted_major_minor).0 \
-		-p 'learning_rate=1' \
-		-p 'max_depth=1' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=1' \
+		-p 'penalty="l1"' \
 		--label-weight $(reverted_weight) \
 		--pop-rate "true=0.0649" \
 		--pop-rate "false=0.9351" \
@@ -996,7 +993,7 @@ models/enwiki.reverted.gradient_boosting.model: \
 enwiki_models: \
 	models/enwiki.damaging.gradient_boosting.model \
 	models/enwiki.goodfaith.gradient_boosting.model \
-	models/enwiki.reverted.gradient_boosting.model
+	models/enwiki.reverted.logistic_regression.model
 
 enwiki_tuning_reports: \
 	tuning_reports/enwiki.damaging.md \

@@ -65,9 +65,7 @@ models:
     pop_rate_true: 0.0649
     tune: true
     cv_train:
-      algorithm: GradientBoosting
+      algorithm: LogisticRegression
       parameters:
-        learning_rate: 1
-        max_depth: 1
-        max_features: log2
-        n_estimators: 1
+        penalty: l1
+
