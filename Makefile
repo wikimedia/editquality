@@ -3724,6 +3724,10 @@ viwiki_tuning_reports: \
 
 
 ############################# Chinese Wikipedia ################################
+datasets/zhwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/zhwiki/45 > $@
+
 datasets/zhwiki.sampled_revisions.100k_2016.json:
 	wget -qO- https://quarry.wmflabs.org/run/131979/output/0/json-lines?download=true > $@
 
@@ -3745,7 +3749,95 @@ datasets/zhwiki.revisions_for_review.5k_2016.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
-zhwiki_models:
+datasets/zhwiki.labeled_revisions.100k_2016.json: \
+		datasets/zhwiki.human_labeled_revisions.5k_2016.json \
+		datasets/zhwiki.autolabeled_revisions.100k_2016.json
+	./utility merge_labels $^ > $@
 
-zhwiki_tuning_reports:
+datasets/zhwiki.labeled_revisions.w_cache.100k_2016.json: \
+		datasets/zhwiki.labeled_revisions.100k_2016.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.zhwiki.damaging \
+		editquality.feature_lists.zhwiki.goodfaith \
+		--host https://zh.wikipedia.org \
+		--extractors $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/zhwiki.damaging.md: \
+		datasets/zhwiki.labeled_revisions.w_cache.100k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.zhwiki.damaging \
+		damaging \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.0405" \
+		--pop-rate "false=0.9595" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/zhwiki.damaging.gradient_boosting.model: \
+		datasets/zhwiki.labeled_revisions.w_cache.100k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.zhwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=3' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.0405" \
+		--pop-rate "false=0.9595" \
+		--center --scale > $@
+
+	revscoring model_info $@ > model_info/zhwiki.damaging.md
+
+tuning_reports/zhwiki.goodfaith.md: \
+		datasets/zhwiki.labeled_revisions.w_cache.100k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.zhwiki.goodfaith \
+		goodfaith \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.9682" \
+		--pop-rate "false=0.03180000000000005" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/zhwiki.goodfaith.gradient_boosting.model: \
+		datasets/zhwiki.labeled_revisions.w_cache.100k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.zhwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=3' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.9682" \
+		--pop-rate "false=0.03180000000000005" \
+		--center --scale > $@
+
+	revscoring model_info $@ > model_info/zhwiki.goodfaith.md
+
+zhwiki_models: \
+	models/zhwiki.damaging.gradient_boosting.model \
+	models/zhwiki.goodfaith.gradient_boosting.model
+
+zhwiki_tuning_reports: \
+	tuning_reports/zhwiki.damaging.md \
+	tuning_reports/zhwiki.goodfaith.md
+
 
