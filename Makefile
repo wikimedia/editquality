@@ -2258,6 +2258,10 @@ itwiki_tuning_reports: \
 
 
 ############################# Japanese Wikipedia ################################
+datasets/jawiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/jawiki/15 > $@
+
 # From https://quarry.wmflabs.org/query/9927
 datasets/jawiki.sampled_revisions.40k_2016.json:
 	wget -qO- https://quarry.wmflabs.org/run/89016/output/0/json-lines?download=true > $@
@@ -2271,54 +2275,98 @@ datasets/jawiki.autolabeled_revisions.40k_2016.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json: \
+datasets/jawiki.labeled_revisions.40k_2016.json: \
+		datasets/jawiki.human_labeled_revisions.5k_2016.json \
 		datasets/jawiki.autolabeled_revisions.40k_2016.json
+	./utility merge_labels $^ > $@
+
+datasets/jawiki.labeled_revisions.w_cache.40k_2016.json: \
+		datasets/jawiki.labeled_revisions.40k_2016.json
 	cat $< | \
 	revscoring extract \
-		editquality.feature_lists.jawiki.reverted \
+		editquality.feature_lists.jawiki.damaging \
+		editquality.feature_lists.jawiki.goodfaith \
 		--host https://ja.wikipedia.org \
 		--extractors $(max_extractors) \
 		--verbose > $@
 
-tuning_reports/jawiki.reverted.md: \
-		datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json
+tuning_reports/jawiki.damaging.md: \
+		datasets/jawiki.labeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.jawiki.reverted \
-		reverted_for_damage \
-		$(reverted_tuning_statistic) \
-		--label-weight $(reverted_weight) \
-		--pop-rate "true=0.03256945140908635" \
-		--pop-rate "false=0.9674305485909136" \
+		editquality.feature_lists.jawiki.damaging \
+		damaging \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.010758453070269498" \
+		--pop-rate "false=0.9892415469297305" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/jawiki.reverted.gradient_boosting.model: \
-		datasets/jawiki.autolabeled_revisions.w_cache.40k_2016.json
+models/jawiki.damaging.gradient_boosting.model: \
+		datasets/jawiki.labeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.jawiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
+		editquality.feature_lists.jawiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=1' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
-		--label-weight $(reverted_weight) \
-		--pop-rate "true=0.03256945140908635" \
-		--pop-rate "false=0.9674305485909136" \
+		-p 'min_samples_leaf=3' \
+		-p 'n_estimators=300' \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.010758453070269498" \
+		--pop-rate "false=0.9892415469297305" \
 		--center --scale > $@
 
-	revscoring model_info $@ > model_info/jawiki.reverted.md
+	revscoring model_info $@ > model_info/jawiki.damaging.md
+
+tuning_reports/jawiki.goodfaith.md: \
+		datasets/jawiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.jawiki.goodfaith \
+		goodfaith \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.00461076560154407" \
+		--pop-rate "false=0.995389234398456" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/jawiki.goodfaith.gradient_boosting.model: \
+		datasets/jawiki.labeled_revisions.w_cache.40k_2016.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.jawiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=1' \
+		-p 'max_features="log2"' \
+		-p 'min_samples_leaf=7' \
+		-p 'n_estimators=300' \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.00461076560154407" \
+		--pop-rate "false=0.995389234398456" \
+		--center --scale > $@
+
+	revscoring model_info $@ > model_info/jawiki.goodfaith.md
 
 jawiki_models: \
-	models/jawiki.reverted.gradient_boosting.model
+	models/jawiki.damaging.gradient_boosting.model \
+	models/jawiki.goodfaith.gradient_boosting.model
 
 jawiki_tuning_reports: \
-	tuning_reports/jawiki.reverted.md
+	tuning_reports/jawiki.damaging.md \
+	tuning_reports/jawiki.goodfaith.md
 
 
 ############################# Korean Wikipedia ################################
@@ -3790,6 +3838,7 @@ models/zhwiki.damaging.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
+		-p 'min_samples_leaf=7' \
 		-p 'n_estimators=700' \
 		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0405" \
@@ -3824,6 +3873,7 @@ models/zhwiki.goodfaith.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
+		-p 'min_samples_leaf=5' \
 		-p 'n_estimators=500' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9682" \
