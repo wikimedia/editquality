@@ -3,7 +3,7 @@
 This library provides a set of utilities for building and maintaining
 edit quality prediction models.
 
-* **Installation:** ``pip install editquality``
+* **Installation:** Clone the repository and run ``python setup.py install``
 * **Repository:** https://github.com/wikimedia/editquality
 * **License:** MIT
 
