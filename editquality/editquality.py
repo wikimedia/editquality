@@ -6,6 +6,7 @@ building edit quality predictors.
 * join_observations -- Joins a set of observations together
 * autolabel -- Labels edits by whether or not they require review
 * get_revisions -- Gathers all revisions from a wiki between two dates
+* generate_make -- Code-generate Makefile from template and configuration
 
 Usage:
     editquality (-h | --help)
