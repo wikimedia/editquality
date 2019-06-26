@@ -25,6 +25,7 @@ models: \
 		fawiki_models \
 		fiwiki_models \
 		frwiki_models \
+		glwiki_models \
 		hewiki_models \
 		hrwiki_models \
 		huwiki_models \
@@ -73,6 +74,7 @@ tuning_reports: \
 		fawiki_tuning_reports \
 		fiwiki_tuning_reports \
 		frwiki_tuning_reports \
+		glwiki_tuning_reports \
 		hewiki_tuning_reports \
 		hrwiki_tuning_reports \
 		huwiki_tuning_reports \
@@ -1706,6 +1708,80 @@ frwiki_models: \
 frwiki_tuning_reports: \
 	tuning_reports/frwiki.damaging.md \
 	tuning_reports/frwiki.goodfaith.md
+
+
+############################# Galician Wikipedia ################################
+datasets/glwiki.human_labeled_revisions.60k_2019.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/glwiki/85/ > $@
+
+
+datasets/glwiki.sampled_revisions.60k_2019.json:
+	wget -qO- https://quarry.wmflabs.org/run/385851/output/0/json-lines?download=true > $@
+
+datasets/glwiki.autolabeled_revisions.60k_2019.json: \
+		datasets/glwiki.sampled_revisions.60k_2019.json
+	cat $< | \
+	./utility autolabel --host=https://gl.wikipedia.org \
+		--trusted-groups=checkuser,bureaucrat,sysop,eliminator,bot \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
+
+datasets/glwiki.labeled_revisions.60k_2019.json: \
+		datasets/glwiki.human_labeled_revisions.60k_2019.json \
+		datasets/glwiki.autolabeled_revisions.60k_2019.json
+	./utility merge_labels $^ > $@
+
+datasets/glwiki.labeled_revisions.w_cache.60k_2019.json: \
+		datasets/glwiki.labeled_revisions.60k_2019.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.glwiki.reverted \
+		--host https://gl.wikipedia.org \
+		--extractors $(max_extractors) \
+		--verbose > $@
+
+tuning_reports/glwiki.reverted.md: \
+		datasets/glwiki.labeled_revisions.w_cache.60k_2019.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.glwiki.reverted \
+		reverted_for_damage \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
+		--pop-rate "true=0.0405" \
+		--pop-rate "false=0.9595" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/glwiki.reverted.gradient_boosting.model: \
+		datasets/glwiki.labeled_revisions.w_cache.60k_2019.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.glwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=3' \
+		-p 'max_features="log2"' \
+		-p 'min_samples_leaf=7' \
+		-p 'n_estimators=700' \
+		--label-weight $(reverted_weight) \
+		--pop-rate "true=0.0405" \
+		--pop-rate "false=0.9595" \
+		--center --scale > $@
+
+	revscoring model_info $@ > model_info/glwiki.reverted.md
+
+glwiki_models: \
+	models/glwiki.reverted.gradient_boosting.model
+
+glwiki_tuning_reports: \
+	tuning_reports/glwiki.reverted.md
 
 
 ############################# Hebrew Wikipedia ################################

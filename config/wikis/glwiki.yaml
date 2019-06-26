@@ -1,0 +1,39 @@
+name: glwiki
+label: Galician Wikipedia
+host: gl.wikipedia.org
+
+external_samples:
+  sampled_revisions.60k_2019:
+    quarry_url: https://quarry.wmflabs.org/run/385851/output/0/json-lines?download=true
+
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - checkuser
+   - bureaucrat
+   - sysop
+   - eliminator
+   - bot
+  labeled_samples:
+    autolabeled_revisions.60k_2019: sampled_revisions.60k_2019
+
+extracted_samples:
+  labeled_revisions.w_cache.60k_2019:
+    sample: labeled_revisions.60k_2019
+    features_for:
+      - reverted
+
+models:
+  reverted:
+    observations: labeled_revisions.w_cache.60k_2019
+    label: reverted_for_damage
+    pop_rate_true: 0.0405
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      parameters:
+        learning_rate: 0.01
+        max_depth: 3
+        max_features: log2
+        n_estimators: 700
+        min_samples_leaf: 7
