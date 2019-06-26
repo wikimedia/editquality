@@ -18,14 +18,14 @@ autolabeled_samples:
     autolabeled_revisions.60k_2019: sampled_revisions.60k_2019
 
 extracted_samples:
-  labeled_revisions.w_cache.60k_2019:
-    sample: labeled_revisions.60k_2019
+  autolabeled_revisions.w_cache.60k_2019:
+    sample: autolabeled_revisions.60k_2019
     features_for:
       - reverted
 
 models:
   reverted:
-    observations: labeled_revisions.w_cache.60k_2019
+    observations: autolabeled_revisions.w_cache.60k_2019
     label: reverted_for_damage
     pop_rate_true: 0.0405
     tune: true

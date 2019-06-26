@@ -1711,11 +1711,6 @@ frwiki_tuning_reports: \
 
 
 ############################# Galician Wikipedia ################################
-datasets/glwiki.human_labeled_revisions.60k_2019.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/glwiki/85/ > $@
-
-
 datasets/glwiki.sampled_revisions.60k_2019.json:
 	wget -qO- https://quarry.wmflabs.org/run/385851/output/0/json-lines?download=true > $@
 
@@ -1728,13 +1723,8 @@ datasets/glwiki.autolabeled_revisions.60k_2019.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/glwiki.labeled_revisions.60k_2019.json: \
-		datasets/glwiki.human_labeled_revisions.60k_2019.json \
+datasets/glwiki.autolabeled_revisions.w_cache.60k_2019.json: \
 		datasets/glwiki.autolabeled_revisions.60k_2019.json
-	./utility merge_labels $^ > $@
-
-datasets/glwiki.labeled_revisions.w_cache.60k_2019.json: \
-		datasets/glwiki.labeled_revisions.60k_2019.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.glwiki.reverted \
@@ -1743,7 +1733,7 @@ datasets/glwiki.labeled_revisions.w_cache.60k_2019.json: \
 		--verbose > $@
 
 tuning_reports/glwiki.reverted.md: \
-		datasets/glwiki.labeled_revisions.w_cache.60k_2019.json
+		datasets/glwiki.autolabeled_revisions.w_cache.60k_2019.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -1758,7 +1748,7 @@ tuning_reports/glwiki.reverted.md: \
 		--debug > $@
 
 models/glwiki.reverted.gradient_boosting.model: \
-		datasets/glwiki.labeled_revisions.w_cache.60k_2019.json
+		datasets/glwiki.autolabeled_revisions.w_cache.60k_2019.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
