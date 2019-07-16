@@ -7,6 +7,8 @@ external_samples:
     quarry_url: http://quarry.wmflabs.org/run/79645/output/0/json-lines?download=true
   human_labeled_revisions.5k_2016:
     labeling_campaign: https://labels.wmflabs.org/campaigns/huwiki/33/
+  badfaith_or_damaging_relabeling_revisions.5k_2019:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/huwiki/92/
 
 autolabeled_samples:
   trusted_edits: 1000
@@ -29,39 +31,44 @@ balanced_5k_samples:
   revisions_for_review.5k_2016: autolabeled_revisions.40k_2016
 
 merged_samples:
-  labeled_revisions.40k_2016:
+  original_labeled_revisions.40k_2016:
     - human_labeled_revisions.5k_2016
     - autolabeled_revisions.40k_2016
+  labeled_revisions.40k_2019:
+    - badfaith_or_damaging_relabeling_revisions.5k_2019
+    - original_labeled_revisions.40k_2016
 
 extracted_samples:
-  labeled_revisions.w_cache.40k_2016:
-    sample: labeled_revisions.40k_2016
+  labeled_revisions.w_cache.40k_2019:
+    sample: labeled_revisions.40k_2019
     features_for:
       - damaging
       - goodfaith
 
 models:
   damaging:
-    observations: labeled_revisions.w_cache.40k_2016
+    observations: labeled_revisions.w_cache.40k_2019
     label: damaging
     pop_rate_true: 0.01093805131
     tune: true
     cv_train:
       algorithm: GradientBoosting
+      build_number: 1
       parameters:
         learning_rate: 0.01
         max_depth: 5
         max_features: log2
         n_estimators: 500
   goodfaith:
-    observations: labeled_revisions.w_cache.40k_2016
+    observations: labeled_revisions.w_cache.40k_2019
     label: goodfaith
     pop_rate_true: 0.99221230908
     tune: true
     cv_train:
       algorithm: GradientBoosting
+      build_number: 1
       parameters:
-        learning_rate: 0.1
-        max_depth: 7
+        learning_rate: 0.01
+        max_depth: 5
         max_features: log2
-        n_estimators: 700
+        n_estimators: 500
