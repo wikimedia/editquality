@@ -103,7 +103,7 @@ def run(human_labels, auto_labels, verbose):
     # Merge human labels onto autolabeled defaults.
     for revision in auto_labels:
         if revision['rev_id'] in human_rev_map:
-            if not revision['autolabel']['needs_review']:
+            if not needs_review(revision):
                 revision.update(AUTO_DEFAULTS)
 
             human_labeled = human_rev_map[revision['rev_id']]
@@ -123,7 +123,7 @@ def run(human_labels, auto_labels, verbose):
             human_rev_ids.remove(revision['rev_id'])
 
         else:
-            if revision['autolabel']['needs_review']:
+            if needs_review(revision):
                 # TODO: Tally these warnings.
                 logger.warning("{0} has no labels, but was flagged for review"
                                .format(revision['rev_id']))
@@ -178,3 +178,11 @@ def has_all_labels(revision, labels):
         if label not in revision:
             return False
     return True
+
+
+def needs_review(revision):
+    """
+    Returns bool if revision needs review.
+    If autolabel is empty, assume true.
+    """
+    return revision['autolabel'].get('needs_review', True)
