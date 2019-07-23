@@ -1970,6 +1970,10 @@ hrwiki_tuning_reports: \
 
 
 ############################# Hungarian Wikipedia ################################
+datasets/huwiki.badfaith_or_damaging_relabeling_revisions.5k_2019.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/huwiki/92/ > $@
+
 datasets/huwiki.human_labeled_revisions.5k_2016.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/huwiki/33/ > $@
@@ -1995,13 +1999,18 @@ datasets/huwiki.revisions_for_review.5k_2016.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
-datasets/huwiki.labeled_revisions.40k_2016.json: \
+datasets/huwiki.labeled_revisions.40k_2019.json: \
+		datasets/huwiki.badfaith_or_damaging_relabeling_revisions.5k_2019.json \
+		datasets/huwiki.original_labeled_revisions.40k_2016.json
+	./utility merge_labels $^ > $@
+
+datasets/huwiki.original_labeled_revisions.40k_2016.json: \
 		datasets/huwiki.human_labeled_revisions.5k_2016.json \
 		datasets/huwiki.autolabeled_revisions.40k_2016.json
 	./utility merge_labels $^ > $@
 
-datasets/huwiki.labeled_revisions.w_cache.40k_2016.json: \
-		datasets/huwiki.labeled_revisions.40k_2016.json
+datasets/huwiki.labeled_revisions.w_cache.40k_2019.json: \
+		datasets/huwiki.labeled_revisions.40k_2019.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.huwiki.damaging \
@@ -2011,7 +2020,7 @@ datasets/huwiki.labeled_revisions.w_cache.40k_2016.json: \
 		--verbose > $@
 
 tuning_reports/huwiki.damaging.md: \
-		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
+		datasets/huwiki.labeled_revisions.w_cache.40k_2019.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -2026,13 +2035,13 @@ tuning_reports/huwiki.damaging.md: \
 		--debug > $@
 
 models/huwiki.damaging.gradient_boosting.model: \
-		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
+		datasets/huwiki.labeled_revisions.w_cache.40k_2019.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.huwiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
@@ -2045,7 +2054,7 @@ models/huwiki.damaging.gradient_boosting.model: \
 	revscoring model_info $@ > model_info/huwiki.damaging.md
 
 tuning_reports/huwiki.goodfaith.md: \
-		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
+		datasets/huwiki.labeled_revisions.w_cache.40k_2019.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -2060,17 +2069,17 @@ tuning_reports/huwiki.goodfaith.md: \
 		--debug > $@
 
 models/huwiki.goodfaith.gradient_boosting.model: \
-		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
+		datasets/huwiki.labeled_revisions.w_cache.40k_2019.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.huwiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
-		-p 'learning_rate=0.1' \
-		-p 'max_depth=7' \
+		--version=$(goodfaith_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'n_estimators=500' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.99221230908" \
 		--pop-rate "false=0.007787690919999979" \
