@@ -147,3 +147,19 @@ def test_merge_labels(human, auto, expected):
     merged = merge_labels.run(human, auto, False)
     merged = list(merged)
     assert expected == merged
+
+
+def test_needs_review():
+    """Test needs review filter."""
+    #  assume needs review if autolabel field is empty
+    revision = {'autolabel': {}}
+    res = merge_labels.needs_review(revision)
+    assert res == True  # noqa
+    #  check false
+    revision = {'autolabel': {'needs_review': False}}
+    res = merge_labels.needs_review(revision)
+    assert res == False  # noqa
+    #  check true
+    revision['autolabel']['needs_review'] = True
+    res = merge_labels.needs_review(revision)
+    assert res == True  # noqa
