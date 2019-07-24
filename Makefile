@@ -1999,7 +1999,7 @@ datasets/huwiki.revisions_for_review.5k_2016.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
-datasets/huwiki.labeled_revisions.40k_2019.json: \
+datasets/huwiki.labeled_revisions.40k_2016.json: \
 		datasets/huwiki.badfaith_or_damaging_relabeling_revisions.5k_2019.json \
 		datasets/huwiki.original_labeled_revisions.40k_2016.json
 	./utility merge_labels $^ > $@
@@ -2009,8 +2009,8 @@ datasets/huwiki.original_labeled_revisions.40k_2016.json: \
 		datasets/huwiki.autolabeled_revisions.40k_2016.json
 	./utility merge_labels $^ > $@
 
-datasets/huwiki.labeled_revisions.w_cache.40k_2019.json: \
-		datasets/huwiki.labeled_revisions.40k_2019.json
+datasets/huwiki.labeled_revisions.w_cache.40k_2016.json: \
+		datasets/huwiki.labeled_revisions.40k_2016.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.huwiki.damaging \
@@ -2020,7 +2020,7 @@ datasets/huwiki.labeled_revisions.w_cache.40k_2019.json: \
 		--verbose > $@
 
 tuning_reports/huwiki.damaging.md: \
-		datasets/huwiki.labeled_revisions.w_cache.40k_2019.json
+		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -2035,7 +2035,7 @@ tuning_reports/huwiki.damaging.md: \
 		--debug > $@
 
 models/huwiki.damaging.gradient_boosting.model: \
-		datasets/huwiki.labeled_revisions.w_cache.40k_2019.json
+		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
@@ -2054,7 +2054,7 @@ models/huwiki.damaging.gradient_boosting.model: \
 	revscoring model_info $@ > model_info/huwiki.damaging.md
 
 tuning_reports/huwiki.goodfaith.md: \
-		datasets/huwiki.labeled_revisions.w_cache.40k_2019.json
+		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -2069,7 +2069,7 @@ tuning_reports/huwiki.goodfaith.md: \
 		--debug > $@
 
 models/huwiki.goodfaith.gradient_boosting.model: \
-		datasets/huwiki.labeled_revisions.w_cache.40k_2019.json
+		datasets/huwiki.labeled_revisions.w_cache.40k_2016.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \

@@ -34,20 +34,20 @@ merged_samples:
   original_labeled_revisions.40k_2016:
     - human_labeled_revisions.5k_2016
     - autolabeled_revisions.40k_2016
-  labeled_revisions.40k_2019:
+  labeled_revisions.40k_2016:
     - badfaith_or_damaging_relabeling_revisions.5k_2019
     - original_labeled_revisions.40k_2016
 
 extracted_samples:
-  labeled_revisions.w_cache.40k_2019:
-    sample: labeled_revisions.40k_2019
+  labeled_revisions.w_cache.40k_2016:
+    sample: labeled_revisions.40k_2016
     features_for:
       - damaging
       - goodfaith
 
 models:
   damaging:
-    observations: labeled_revisions.w_cache.40k_2019
+    observations: labeled_revisions.w_cache.40k_2016
     label: damaging
     pop_rate_true: 0.01093805131
     tune: true
@@ -60,7 +60,7 @@ models:
         max_features: log2
         n_estimators: 500
   goodfaith:
-    observations: labeled_revisions.w_cache.40k_2019
+    observations: labeled_revisions.w_cache.40k_2016
     label: goodfaith
     pop_rate_true: 0.99221230908
     tune: true
