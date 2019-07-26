@@ -14,7 +14,7 @@ addons:
     - myspell-en-za
 
 # command to install dependencies
-install: 
+install:
   - pip install -r requirements.txt
   - python setup.py install
   - pip install codecov
@@ -22,7 +22,7 @@ install:
   - python -m nltk.downloader stopwords
 
 script:
-  - flake8 . --ignore=E722 --max-line-length=85
+  - flake8 . --ignore=E722 --max-line-length=85 --exclude docs/conf.py
   - coverage run --source editquality -m pytest -m "not nottravis"
 
 after_success:
