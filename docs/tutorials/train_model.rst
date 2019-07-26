@@ -1,6 +1,8 @@
+.. _tutorials.train_model:
 =====================
 How to train a model
 =====================
+
 
 This is a simple guide to training a model using editquality. This tutorial
 assumes that you have cloned the editquality repo, installed all dependencies and are working from

@@ -1,13 +1,6 @@
-editquality
-================
-.. toctree::
-  :maxdepth: 1
-
-  readme
-  installation
-  usage
-  reference/index
-  tutorials/index
+Edit Quality
+============
+.. automodule:: editquality
 
 
 Indices and tables

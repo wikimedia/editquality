@@ -314,7 +314,7 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/3/': None,
-                       'https://pythonhosted.org/revscoring/': None,
+                       #'https://pythonhosted.org/revscoring/': None,
                        #'http://pythonhosted.org/pyenchant/': None,
                        'http://www.nltk.org/': None,
                        'http://scikit-learn.org/0.15/': None}
