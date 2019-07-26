@@ -62,6 +62,51 @@ Example config::
 In the above config we define some sampled data from Quarry to be autolabeled
 and feature extracted. Then we define our revert model and specify parameters.
 
+Create a features list
+-----------------------
+Now  we need to create a list of language features we would like to extract
+from the data. This should correspond to an existing feature collection module in
+`revscoring <https://pythonhosted.org/revscoring/#language-support>`_. Also, make
+sure that you have installed the language dictionary files needed for your
+model.
+
+This list should be Python file located in the `feature_lists/` directory. The
+contents of this file should be a couple of list variables containing different features we would like to extract.
+
+Here is an example feature list for our "foowiki" revert model::
+
+    from revscoring.languages import foo
+
+    from . import enwiki, mediawiki, wikipedia, wikitext
+
+    badwords = [
+        foo.badwords.revision.diff.match_delta_sum,
+        foo.badwords.revision.diff.match_delta_increase,
+        foo.badwords.revision.diff.match_delta_decrease,
+        foo.badwords.revision.diff.match_prop_delta_sum,
+        foo.badwords.revision.diff.match_prop_delta_increase,
+        foo.badwords.revision.diff.match_prop_delta_decrease
+    ]
+
+    informals = [
+        foo.informals.revision.diff.match_delta_sum,
+        foo.informals.revision.diff.match_delta_increase,
+        foo.informals.revision.diff.match_delta_decrease,
+        foo.informals.revision.diff.match_prop_delta_sum,
+        foo.informals.revision.diff.match_prop_delta_increase,
+        foo.informals.revision.diff.match_prop_delta_decrease
+    ]
+
+    damaging = wikipedia.page + \
+        wikitext.parent + wikitext.diff + mediawiki.user_rights + \
+        mediawiki.protected_user + mediawiki.comment + \
+        badwords + informals +\
+        enwiki.badwords + enwiki.informals
+
+    reverted = damaging
+    goodfaith = damaging
+
+
 Generate a Makefile
 --------------------
 
