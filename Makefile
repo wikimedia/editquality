@@ -628,7 +628,7 @@ models/cswiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cswiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=0.6.0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
@@ -662,7 +662,7 @@ models/cswiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cswiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=0.6.0 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
@@ -2830,7 +2830,7 @@ models/nowiki.reverted.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.nowiki.reverted \
 		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		--version=$(reverted_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
@@ -2999,7 +2999,7 @@ models/rowiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
@@ -3033,7 +3033,7 @@ models/rowiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.rowiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
@@ -3467,7 +3467,7 @@ models/svwiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.svwiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
@@ -3501,7 +3501,7 @@ models/svwiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.svwiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
@@ -3630,7 +3630,7 @@ models/trwiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.trwiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
@@ -3664,7 +3664,7 @@ models/trwiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.trwiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \

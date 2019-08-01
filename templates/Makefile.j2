@@ -142,7 +142,7 @@ models/{{ wiki.name }}.{{ model_name }}.{{ norm_alg_filename(model.cv_train.algo
 		revscoring.scoring.models.{{ model.cv_train.algorithm }} \
 		editquality.feature_lists.{{ wiki.name }}.{{ model_name }} \
 		{{ model.label }} \
-		--version=$({{ model_name }}_major_minor).{{ model.cv_train.build_number }} \
+		--version={% if model.cv_train.major_minor %}{{model.cv_train.major_minor}}{% else %}$({{ model_name }}_major_minor){% endif %}.{{ model.cv_train.build_number }} \
 {% for key, value in model.cv_train.parameters|dictsort %}
 		-p '{{ key }}={{ value|tojson }}' \
 {% endfor %}
