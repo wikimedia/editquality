@@ -27,6 +27,7 @@ models:
     tune: true
     cv_train:
       algorithm: GradientBoosting
+      build_number: 1
       parameters:
         learning_rate: 0.01
         max_depth: 7
@@ -39,6 +40,7 @@ models:
     tune: true
     cv_train:
       algorithm: GradientBoosting
+      build_number: 1
       parameters:
         learning_rate: 0.01
         max_depth: 7
