@@ -19,6 +19,7 @@ install:
   - python setup.py install
   - pip install codecov
   - pip install flake8
+  - pip install twine
   - python -m nltk.downloader stopwords
 
 script:
