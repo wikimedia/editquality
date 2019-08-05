@@ -174,5 +174,7 @@ damaging = \
     enwiki.badwords + enwiki.informals + wikitext.diff + \
     mediawiki.protected_user + mediawiki.user_rights + \
     wikitext.parent + translatewiki + detected_langs
+"Damaging Features"
+
 reverted = damaging
 goodfaith = damaging

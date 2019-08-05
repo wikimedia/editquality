@@ -1,21 +1,24 @@
 """
-Joins data from Y into X for two sets of obersvations.  The output dataset
-only include observations from X, but with additional fields present in Y based
-on an provided identifier field.
+``editquality join_observations -h``
+::
+    Joins data from Y into X for two sets of obersvations.  The output dataset
+    only include observations from X, but with additional fields present in Y
+    based on an provided identifier field.
 
-Usage:
-    join_observations <X> <Y> <identifier>
-                      [--output=<path>]
-                      [--debug] [--verbose]
+    Usage:
+        join_observations <X> <Y> <identifier>
+                          [--output=<path>]
+                          [--debug] [--verbose]
 
-Options:
-    <X>                   Path to a file containing observations
-    <Y>                   Path to a file containing observations with new data
-    <identifier>          The field to use as an identifier for matching
-    --output=<path>       Path to a file to write output to
-                          [default: <stdout>]
-    --debug               Print debug logging
-    --verbose             Print dots and stuff representing progress
+    Options:
+        <X>                   Path to a file containing observations
+        <Y>                   Path to a file containing observations with new
+                              data
+        <identifier>          The field to use as an identifier for matching
+        --output=<path>       Path to a file to write output to
+                              [default: <stdout>]
+        --debug               Print debug logging
+        --verbose             Print dots and stuff representing progress
 """
 import json
 import logging

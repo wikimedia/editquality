@@ -1,3 +1,7 @@
-from .eswiki import damaging, goodfaith, reverted
+from . import eswiki
 
-__all__ = (damaging, goodfaith, reverted)
+damaging = eswiki.damaging
+"Damaging Features"
+
+goodfaith = eswiki.goodfaith
+reverted = eswiki.reverted

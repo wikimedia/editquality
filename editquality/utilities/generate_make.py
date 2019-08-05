@@ -1,25 +1,27 @@
 """
-Code-generate Makefile from template and configuration
+``editquality generate_make -h``
+::
+    Code-generate Makefile from template and configuration
 
-:Usage:
-    generate_make -h | --help
-    generate_make
-                 [--config=<path>]
-                 [--main=<filename>]
-                 [--output=<path>]
-                 [--templates=<path>]
-                 [--debug]
+    :Usage:
+        generate_make -h | --help
+        generate_make
+                     [--config=<path>]
+                     [--main=<filename>]
+                     [--output=<path>]
+                     [--templates=<path>]
+                     [--debug]
 
-:Options:
-    --config=<path>         Directory to search for configuration files
-                            [default: config/]
-    --main=<filename>       Override to use a main template other than the
-                            default [default: Makefile.j2]
-    --output=<path>         Where to write the Makefile output.
-                            [default: <stdout>]
-    --templates=<path>      Directory to search for input templates.
-                            [default: templates/]
-    --debug                 Print debug logging
+    :Options:
+        --config=<path>         Directory to search for configuration files
+                                [default: config/]
+        --main=<filename>       Override to use a main template other than the
+                                default [default: Makefile.j2]
+        --output=<path>         Where to write the Makefile output.
+                                [default: <stdout>]
+        --templates=<path>      Directory to search for input templates.
+                                [default: templates/]
+        --debug                 Print debug logging
 
 """
 

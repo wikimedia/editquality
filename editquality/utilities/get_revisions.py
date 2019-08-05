@@ -1,22 +1,26 @@
 """
-Gathers a complete set of revisions from a particular wiki between two dates.
+``editquality get_revisions -h``
+::
+    Gathers a complete set of revisions from a particular wiki between two
+    dates.
 
 
-:Usage:
-    get_revisions -h | --help
-    get_revisions <host> <start> <end>
-                  [--output=<path>]
-                  [--verbose]
-                  [--debug]
+    :Usage:
+        get_revisions -h | --help
+        get_revisions <host> <start> <end>
+                      [--output=<path>]
+                      [--verbose]
+                      [--debug]
 
-:Options:
-    <host>                   The host URL of the MediaWiki install where an API
-                             can be found.
-    <start>                  The timestamp to start scanning.
-    <end>                    The timestamp to end scanning.
-    --output=<path>          The path to write labels to [default: <stdout>]
-    --verbose                Prints dots and stuff to <stderr>
-    --debug                  Prints debug logs to stderr
+    :Options:
+        <host>                   The host URL of the MediaWiki install where
+                                 an API can be found.
+        <start>                  The timestamp to start scanning.
+        <end>                    The timestamp to end scanning.
+        --output=<path>          The path to write labels to
+                                 [default: <stdout>]
+        --verbose                Prints dots and stuff to <stderr>
+        --debug                  Prints debug logs to stderr
 
 """
 import json

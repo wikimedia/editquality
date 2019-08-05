@@ -1,22 +1,24 @@
 """
-Extracts 'damaging' and 'goodfaith' labels from campaign on a Wikilabels
-server.  Assumes the general schema of the Edit quality campaign.
+``editquality fetch_labels -h``
+::
+    Extracts 'damaging' and 'goodfaith' labels from campaign on a Wikilabels
+    server.  Assumes the general schema of the Edit quality campaign.
 
-Usage:
-    fetch_labels <campaign-url>
-                 [--filter=<condition>...]
-                 [--output=<path>]
-                 [--debug]
-                 [--verbose]
+    Usage:
+        fetch_labels <campaign-url>
+                     [--filter=<condition>...]
+                     [--output=<path>]
+                     [--debug]
+                     [--verbose]
 
-Options:
-    <campaign-url>        The base URL of a campaign from which to extract
-                          labels.
-    --filter=<condition>  A condition for inclusion of labels in the output.
-    --output=<path>       Path to an file to write output to
-                          [default: <stdout>]
-    --debug               Print debug logging
-    --verbose             Print dots and stuff representing progress
+    Options:
+        <campaign-url>        The base URL of a campaign from which to extract
+                              labels
+        --filter=<condition>  A condition for inclusion of labels in the output
+        --output=<path>       Path to an file to write output to
+                              [default: <stdout>]
+        --debug               Print debug logging
+        --verbose             Print dots and stuff representing progress
 """
 import json
 import logging

@@ -40,6 +40,7 @@ damaging = wikipedia.page + \
     mediawiki.protected_user + mediawiki.comment + \
     badwords + informals + dict_words + \
     enwiki.badwords
+"Damaging Features"
 
 reverted = damaging
 goodfaith = damaging
