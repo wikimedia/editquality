@@ -1,47 +1,50 @@
 """
-Filters a set of revision IDs for use in an edit quality labeling campaign by
-whether they need review or not.  This script uses a MediaWiki API check the
-reverted status of an edit and to mark edits by trusted users
-(that have not been reverted) as not needing review.
+``editquality autolabel -h``
+::
+    Filters a set of revision IDs for use in an edit quality labeling campaign
+    by whether they need review or not.  This script uses a MediaWiki API
+    check the reverted status of an edit and to mark edits by trusted users
+    (that have not been reverted) as not needing review.
 
-:Usage:
-    autolabel -h | --help
-    autolabel --host=<url>
-             [--trusted-groups=<grp>]
-             [--trusted-edits=<edits>]
-             [--revert-radius=<revs>]
-             [--revert-window=<hours>]
-             [--exclude-reverted=<regex>]
-             [--exclude-reverting=<regex>]
-             [--threads=<num>]
-             [--input=<path>]
-             [--output=<path>]
-             [--verbose]
-             [--debug]
+    :Usage:
+        autolabel -h | --help
+        autolabel --host=<url>
+                 [--trusted-groups=<grp>]
+                 [--trusted-edits=<edits>]
+                 [--revert-radius=<revs>]
+                 [--revert-window=<hours>]
+                 [--exclude-reverted=<regex>]
+                 [--exclude-reverting=<regex>]
+                 [--threads=<num>]
+                 [--input=<path>]
+                 [--output=<path>]
+                 [--verbose]
+                 [--debug]
 
-:Options:
-    --host=<url>             The host URL of the MediaWiki install where an API
-                             can be found.
-    --trusted-groups=<grp>   A list of comma-separated user_group names to
-                             filter.
-    --trusted-edits=<edits>  Mark an edit as trusted if the editor has saved at
-                             least this many edits.
-    --revert-radius=<revs>   Maximum number of revisions that can be reverted
-                             [default: 15]
-    --revert-window=<hrs>    Maximum amount of time before an edit can be
-                             reverted in hours.  If unset, no limit will be
-                             used.
-    --exclude-reverted=<regex>   If the reverted edit comment matches the
-                                 regex, consider the edit not reverted
-    --exclude-reverting=<regex>  If the reverting edit comment matches the
-                                 regex, consider the edit not reverted
-    --threads=<num>          The number of parallel threads to start for
-                             processing edits. [default: <cpu_count>]
-    --input=<path>           The path to a file containing rev_ids to process
-                             [default: <stdin>]
-    --output=<path>          The path to write labels to [default: <stdout>]
-    --verbose                Prints dots and stuff to <stderr>
-    --debug                  Prints debug logs to stderr
+    :Options:
+        --host=<url>             The host URL of the MediaWiki install where an
+                                 API can be found.
+        --trusted-groups=<grp>   A list of comma-separated user_group names to
+                                 filter.
+        --trusted-edits=<edits>  Mark an edit as trusted if the editor has
+                                 saved at least this many edits.
+        --revert-radius=<revs>   Maximum number of revisions that can be
+                                 reverted [default: 15]
+        --revert-window=<hrs>    Maximum amount of time before an edit can be
+                                 reverted in hours.  If unset, no limit will be
+                                 used.
+        --exclude-reverted=<regex>   If the reverted edit comment matches the
+                                     regex, consider the edit not reverted
+        --exclude-reverting=<regex>  If the reverting edit comment matches the
+                                     regex, consider the edit not reverted
+        --threads=<num>          The number of parallel threads to start for
+                                 processing edits. [default: <cpu_count>]
+        --input=<path>           The path to a file containing rev_ids to
+                                 process [default: <stdin>]
+        --output=<path>          The path to write labels to
+                                 [default: <stdout>]
+        --verbose                Prints dots and stuff to <stderr>
+        --debug                  Prints debug logs to stderr
 
 """
 import json

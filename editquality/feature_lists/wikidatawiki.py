@@ -228,5 +228,7 @@ comment_related = [
 damaging = mediawiki.comment + mediawiki.user_rights + \
     mediawiki.protected_user + wikibase.parent + wikibase.diff + \
     local_wiki + comment_related
+"Damaging Features"
+
 reverted = damaging
 goodfaith = damaging

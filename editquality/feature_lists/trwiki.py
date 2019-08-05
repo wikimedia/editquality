@@ -1,5 +1,5 @@
-from revscoring.languages import turkish
 from revscoring.features import revision_oriented
+from revscoring.languages import turkish
 
 from . import enwiki, mediawiki, wikipedia, wikitext
 
@@ -34,6 +34,7 @@ damaging = wikipedia.page + \
     badwords + informals + \
     enwiki.badwords + enwiki.informals + \
     trwiki_user_rights
+"Damaging Features"
 
 reverted = damaging
 goodfaith = damaging

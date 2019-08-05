@@ -1,44 +1,46 @@
 r"""
-Gathers the reverted status for a set of revisions and
-prints a TSV to stdout of the format:
+``editquality extract_damaging -h``
+::
+    Gathers the reverted status for a set of revisions and
+    prints a TSV to stdout of the format:
 
-<rev_id>\t<reverted>\t<reason>
+    <rev_id>\t<reverted>\t<reason>
 
-Usage:
-    extract_damaging -h | --help
-    extract_damaging <dump-file>... [--host=<url>]
-                                    [--start=<date>]
-                                    [--end=<date>]
-                                    [--trusted-groups=<groups>]
-                                    [--trusted-edits=<num>]
-                                    [--revert-radius=<revs>]
-                                    [--revert-window=<hrs>]
-                                    [--reverted-only]
-                                    [--check-blocked]
-                                    [--verbose]
-                                    [--rev-reverteds=<path>]
+    Usage:
+        extract_damaging -h | --help
+        extract_damaging <dump-file>... [--host=<url>]
+                                        [--start=<date>]
+                                        [--end=<date>]
+                                        [--trusted-groups=<groups>]
+                                        [--trusted-edits=<num>]
+                                        [--revert-radius=<revs>]
+                                        [--revert-window=<hrs>]
+                                        [--reverted-only]
+                                        [--check-blocked]
+                                        [--verbose]
+                                        [--rev-reverteds=<path>]
 
-Options:
-    -h --help                   Prints out this documentation.
-    <dump-file>                 Path to dump file.
-    --host=<url>                The host URL of the MediaWiki install where an
-                                API can be found.
-    --start=<timestamp>         Start time.
-    --end=<timestamp>           End time.
-    --reverted-only             Only mark reverted edits as potentially
-                                damaging
-    --revert-radius=<revs>      The maximum amount of revisions that a
-                                reverting edit can revert [default: 15]
-    --revert-window=<hrs>       The maximum amount of time to wait for a
-                                revision to be reverted [default: 48]
-    --trusted-groups=<groups>   User groups that should be considered trusted.
-                                Split by ",".
-    --trusted-edits=<num>       Minimum number of edits to be considered
-                                trusted.
-    --check-blocked             Check if users are blocked.
-    --verbose                   Prints dots and stuff to stderr
-    --rev-reverteds=<path>      The location to write output to.
-                                [default: <stdout>]
+    Options:
+        -h --help                   Prints out this documentation.
+        <dump-file>                 Path to dump file.
+        --host=<url>                The host URL of the MediaWiki install where
+                                    an API can be found.
+        --start=<timestamp>         Start time.
+        --end=<timestamp>           End time.
+        --reverted-only             Only mark reverted edits as potentially
+                                    damaging
+        --revert-radius=<revs>      The maximum amount of revisions that a
+                                    reverting edit can revert [default: 15]
+        --revert-window=<hrs>       The maximum amount of time to wait for a
+                                    revision to be reverted [default: 48]
+        --trusted-groups=<groups>   User groups that should be considered
+                                    trusted.  Split by ",".
+        --trusted-edits=<num>       Minimum number of edits to be considered
+                                    trusted.
+        --check-blocked             Check if users are blocked.
+        --verbose                   Prints dots and stuff to stderr
+        --rev-reverteds=<path>      The location to write output to.
+                                    [default: <stdout>]
 """
 import logging
 import sys
@@ -50,9 +52,8 @@ import mwapi
 import mwreverts
 import mwtypes
 import mwxml
-from mwtypes import Timestamp
-
 import mysqltsv
+from mwtypes import Timestamp
 
 Revision = namedtuple("Revision", ['id', 'status', 'reason'])
 User = namedtuple("User", ['id', 'editcount', 'groups'])

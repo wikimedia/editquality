@@ -1,30 +1,33 @@
 """
-Merges human-applied labels into an autolabeled set
+``editquality merge_labels -h``
+::
+    Merges human-applied labels into an autolabeled set
 
-If an observation was autolabeled as needing review, but has no human labels,
-we throw it out.  If these observations are partially human-labeled, we fill in
-the other label by assuming that damaging and good-faith are mutually
-exclusive.
+    If an observation was autolabeled as needing review, but has no human
+    labels, we throw it out.  If these observations are partially
+    human-labeled, we fill in the other label by assuming that damaging and
+    good-faith are mutually exclusive.
 
-Any observation autolabeled as not needing review will default to not-damaging,
-good-faith.  Human labels will override these defaults, when available.
+    Any observation autolabeled as not needing review will default to
+    not-damaging, good-faith.  Human labels will override these defaults,
+    when available.
 
-We always take auto-labeled data from the autolabeled file rather than the
-human-labeled file, because these fields in human-labeled data are just a copy,
-and may be stale.
+    We always take auto-labeled data from the autolabeled file rather than the
+    human-labeled file, because these fields in human-labeled data are just a
+    copy, and may be stale.
 
-Usage:
-    merge_labels <from-human-labels> [<to-auto-labels>]
-                 [--output=<path>]
-                 [--debug] [--verbose]
+    Usage:
+        merge_labels <from-human-labels> [<to-auto-labels>]
+                     [--output=<path>]
+                     [--debug] [--verbose]
 
-Options:
-    <from-human-labels>   Path to a file containing human-labeled revisions
-    <to-auto-labels>      Path to a file containing auto-labeled revisions
-    --output=<path>       Path to a file to write output to
-                          [default: <stdout>]
-    --debug               Print debug logging
-    --verbose             Print dots and stuff representing progress
+    Options:
+        <from-human-labels>   Path to a file containing human-labeled revisions
+        <to-auto-labels>      Path to a file containing auto-labeled revisions
+        --output=<path>       Path to a file to write output to
+                              [default: <stdout>]
+        --debug               Print debug logging
+        --verbose             Print dots and stuff representing progress
 """
 # TODO: Auto labels should come first, since the last file gets priority.
 import json
