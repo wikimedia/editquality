@@ -4,7 +4,7 @@ This library provides a set of utilities for building and maintaining
 edit quality prediction models for Wikipedia and other Wikimedia projects.
 
 * **Repository:** https://github.com/wikimedia/editquality
-* **Documentation:** https://pythonhosted.org/editquality
+* **Documentation:** https://editquality.readthedocs.io
 * **License:** MIT
 
 ## Installation
