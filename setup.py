@@ -31,6 +31,11 @@ setup(
     },
     long_description=read('README.md'),
     install_requires=requirements('requirements.txt'),
+    extras_require={
+        'dev': [
+            'twine'
+        ],
+    },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Software Development :: Libraries :: Python Modules",
