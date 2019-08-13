@@ -1,16 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.5.0] - 2019-08-13
 
 ### Added
 - Added `needs_review` filter for `merge_labels`.
-- Added release_criteria
+- RELEASE_CRITERIA.md
+- CHANGELOG.md
+- CODE OF CONDUCT.md
+- Release automation using Travis
 - Added modularized config structure
 - New `join_observations` utility
 - Ability to configure the number of extractors in Makefile
 - Feature Lists for sqwiki, kowiki, fiwiki, rowiki, zhwiki and glwiki
-- Code of Conduct
 
 ### Fixed
 - `extractors` typo in generated parameters
