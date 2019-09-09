@@ -1,20 +1,22 @@
 """
-This script provides access to a set of utilities for extracting features and
-building edit quality predictors.
+``$ editquality -h``
+::
+    This script provides access to a set of utilities for extracting features and
+    building edit quality predictors.
 
-* fetch_labels -- Fetches labels from the labels server for a campaign
-* join_observations -- Joins a set of observations together
-* autolabel -- Labels edits by whether or not they require review
-* get_revisions -- Gathers all revisions from a wiki between two dates
-* generate_make -- Code-generate Makefile from template and configuration
+    * fetch_labels -- Fetches labels from the labels server for a campaign
+    * join_observations -- Joins a set of observations together
+    * autolabel -- Labels edits by whether or not they require review
+    * get_revisions -- Gathers all revisions from a wiki between two dates
+    * generate_make -- Code-generate Makefile from template and configuration
 
-Usage:
-    editquality (-h | --help)
-    editquality <utility> [-h | --help]
+    Usage:
+        editquality (-h | --help)
+        editquality <utility> [-h | --help]
 
-Options:
-    -h | --help  Prints this documentation
-    <utility>    The name of the utility to run
+    Options:
+        -h | --help  Prints this documentation
+        <utility>    The name of the utility to run
 """
 import sys
 import traceback
