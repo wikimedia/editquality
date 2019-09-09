@@ -1,6 +1,7 @@
 """
 ``editquality join_observations -h``
 ::
+
     Joins data from Y into X for two sets of obersvations.  The output dataset
     only include observations from X, but with additional fields present in Y
     based on an provided identifier field.

@@ -7,6 +7,15 @@ available from the commandline.  Run `editquality -h` for more
 information.  You can also run `./utility -h` within the project directory to
 run the utilities while doing development work.
 
+===============
+Editquality CLI
+===============
+.. automodule:: editquality.editquality
+
+=============
+Sub-utilities
+=============
+
 autolabel
 +++++++++
 .. automodule:: editquality.utilities.autolabel

@@ -1,6 +1,7 @@
 """
 ``editquality generate_make -h``
 ::
+
     Code-generate Makefile from template and configuration
 
     :Usage:

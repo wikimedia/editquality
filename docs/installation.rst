@@ -1,3 +1,4 @@
+:orphan:
 ============
 Installation
 ============
@@ -15,6 +16,7 @@ Local Development
 ===================
 You can clone the project repo and work from the
 root directory as follows::
+
     git clone  https://github.com/wikimedia/editquality.git
     cd editquality
     virtualenv -p python3 venv

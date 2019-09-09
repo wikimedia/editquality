@@ -1,6 +1,7 @@
 r"""
 ``editquality extract_damaging -h``
 ::
+
     Gathers the reverted status for a set of revisions and
     prints a TSV to stdout of the format:
 
