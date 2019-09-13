@@ -7,11 +7,41 @@ addons:
   apt:
     packages:
     - enchant
-    - aspell-hu
+    - aspell-ar
+    - aspell-bn
+    - myspell-cs
+    - aspell-de
+    - myspell-es
     - myspell-en-au
     - myspell-en-gb
     - myspell-en-us
     - myspell-en-za
+    - aspell-et
+    - aspell-el
+    - myspell-fa
+    - myspell-fr
+    - myspell-he
+    - myspell-hr
+    - aspell-hi
+    - aspell-hu
+    - aspell-id
+    - myspell-it
+    - myspell-nb
+    - aspell-nl
+    - aspell-pl
+    - aspell-sv
+    - myspell-pt
+    - aspell-ro
+    - aspell-ru
+    - aspell-ta
+    - aspell-uk
+    - hunspell-bs
+    - hunspell-vi
+    - hunspell-sr
+    - myspell-lv
+    - aspell-is
+    - myspell-ca
+    - hunspell-gl
 
 # command to install dependencies
 install:
