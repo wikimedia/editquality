@@ -1,5 +1,6 @@
 """
 ``$ editquality -h``
+
 ::
     This script provides access to a set of utilities for extracting features and
     building edit quality predictors.
