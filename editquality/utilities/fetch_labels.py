@@ -1,6 +1,7 @@
 """
 ``editquality fetch_labels -h``
 ::
+
     Extracts 'damaging' and 'goodfaith' labels from campaign on a Wikilabels
     server.  Assumes the general schema of the Edit quality campaign.
 

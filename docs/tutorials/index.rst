@@ -1,4 +1,7 @@
 .. _tutorials:
+
+:orphan:
+
 Tutorials
 =========
 

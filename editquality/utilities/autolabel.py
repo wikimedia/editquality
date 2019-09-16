@@ -1,6 +1,7 @@
 """
 ``editquality autolabel -h``
 ::
+
     Filters a set of revision IDs for use in an edit quality labeling campaign
     by whether they need review or not.  This script uses a MediaWiki API
     check the reverted status of an edit and to mark edits by trusted users

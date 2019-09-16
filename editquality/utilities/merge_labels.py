@@ -1,6 +1,7 @@
 """
 ``editquality merge_labels -h``
 ::
+
     Merges human-applied labels into an autolabeled set
 
     If an observation was autolabeled as needing review, but has no human

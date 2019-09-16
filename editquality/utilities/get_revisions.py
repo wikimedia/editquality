@@ -1,6 +1,7 @@
 """
 ``editquality get_revisions -h``
 ::
+
     Gathers a complete set of revisions from a particular wiki between two
     dates.
 

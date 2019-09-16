@@ -1,5 +1,5 @@
 language: python
-dist: trusty
+dist: xenial
 python:
   - "3.5"
 
@@ -7,15 +7,46 @@ addons:
   apt:
     packages:
     - enchant
-    - aspell-hu
+    - aspell-ar
+    - aspell-bn
+    - myspell-cs
+    - aspell-de
+    - myspell-es
     - myspell-en-au
     - myspell-en-gb
     - myspell-en-us
     - myspell-en-za
+    - aspell-et
+    - aspell-el
+    - myspell-fa
+    - myspell-fr
+    - myspell-he
+    - myspell-hr
+    - aspell-hi
+    - aspell-hu
+    - aspell-id
+    - myspell-it
+    - myspell-nb
+    - aspell-nl
+    - aspell-pl
+    - aspell-sv
+    - myspell-pt
+    - aspell-ro
+    - aspell-ru
+    - aspell-ta
+    - aspell-uk
+    - hunspell-bs
+    - hunspell-vi
+    - hunspell-sr
+    - myspell-lv
+    - aspell-is
+    - myspell-ca
+    - hunspell-gl
 
 # command to install dependencies
 install:
   - pip install -r requirements.txt
+  - pip install -r docs/requirements.txt
   - python setup.py install
   - pip install codecov
   - pip install flake8
@@ -25,6 +56,8 @@ install:
 script:
   - flake8 . --ignore=E722 --max-line-length=85 --exclude docs/conf.py
   - coverage run --source editquality -m pytest -m "not nottravis"
+  - sphinx-build -anW -b html docs dist/docs
+  - sphinx-build -b linkcheck docs dist/docs
 
 after_success:
   - coverage report

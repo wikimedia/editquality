@@ -11,19 +11,20 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
+# If extensions (or modules to document with autodoc) are in another directory,
 import sys
 
 import alabaster
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-import os
+import editquality
+
 dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 print(dir_path)
 sys.path.insert(0, dir_path)
-import editquality
 
 
 # -- General configuration ------------------------------------------------
@@ -315,7 +316,4 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/3/': None,
-                       #'https://pythonhosted.org/revscoring/': None,
-                       #'http://pythonhosted.org/pyenchant/': None,
-                       'http://www.nltk.org/': None,
-                       'http://scikit-learn.org/0.15/': None}
+                       'https://revscoring.readthedocs.io/en/latest/': None}
