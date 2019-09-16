@@ -861,12 +861,44 @@ datasets/enwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/enwiki/4/ > $@
 
+datasets/enwiki.human_labeled_revisions.5k_2016.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/enwiki/41/ > $@
+
+# From https://quarry.wmflabs.org/query/11963
+datasets/enwiki.sampled_revisions.20k_2016.json:
+	wget -qO- https://quarry.wmflabs.org/run/109211/output/0/json-lines > $@
+
+datasets/enwiki.autolabeled_revisions.20k_2016.json: \
+		datasets/enwiki.sampled_revisions.20k_2016.json
+	cat $< | \
+	./utility autolabel --host=https://en.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
+
 datasets/enwiki.labeled_revisions.20k_2015.json: \
 		datasets/enwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
+datasets/enwiki.labeled_revisions.20k_2016.json: \
+		datasets/enwiki.human_labeled_revisions.5k_2016.json \
+		datasets/enwiki.autolabeled_revisions.20k_2016.json
+	./utility merge_labels $^ > $@
+
 datasets/enwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/enwiki.labeled_revisions.20k_2015.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.enwiki.damaging \
+		editquality.feature_lists.enwiki.goodfaith \
+		--host https://en.wikipedia.org \
+		--extractors $(max_extractors) \
+		--verbose > $@
+
+datasets/enwiki.labeled_revisions.w_cache.20k_2016.json: \
+		datasets/enwiki.labeled_revisions.20k_2016.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.enwiki.damaging \
