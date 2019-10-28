@@ -1,6 +1,6 @@
 from revscoring.languages import catalan
 
-from . import enwiki, mediawiki, wikipedia, wikitext
+from . import enwiki, eswiki, mediawiki, wikipedia, wikitext
 
 badwords = [
     catalan.badwords.revision.diff.match_delta_sum,
@@ -39,7 +39,8 @@ damaging = wikipedia.page + \
     wikitext.parent + wikitext.diff + mediawiki.user_rights + \
     mediawiki.protected_user + mediawiki.comment + \
     badwords + informals + dict_words + \
-    enwiki.badwords + enwiki.informals
+    enwiki.badwords + enwiki.informals + \
+    eswiki.badwords + eswiki.informals
 "Damaging Features"
 
 reverted = damaging
