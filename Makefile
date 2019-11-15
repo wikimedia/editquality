@@ -510,10 +510,11 @@ models/cawiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cawiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
-		-p 'max_depth=5' \
+		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
+		-p 'min_samples_leaf=13' \
 		-p 'n_estimators=700' \
 		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.019000475011875295" \
@@ -544,10 +545,11 @@ models/cawiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.cawiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
-		-p 'learning_rate=0.1' \
-		-p 'max_depth=7' \
+		--version=$(goodfaith_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
+		-p 'min_samples_leaf=3' \
 		-p 'n_estimators=700' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9854996374909373" \
