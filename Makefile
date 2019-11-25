@@ -2776,6 +2776,10 @@ nlwiki_tuning_reports: \
 
 
 ############################# Norwegian Wikipedia ################################
+datasets/nowiki.human_labeled_revisions.5k_2019.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/nowiki/27/ > $@
+
 datasets/nowiki.sampled_revisions.100k_2015.json:
 	wget -qO- https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true > $@
 
@@ -2797,15 +2801,21 @@ datasets/nowiki.revisions_for_review.5k_2015.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
+datasets/nowiki.labeled_revisions.100k_2015.json: \
+		datasets/nowiki.human_labeled_revisions.5k_2019.json \
+		datasets/nowiki.autolabeled_revisions.100k_2015.json
+	./utility merge_labels $^ > $@
+
 datasets/nowiki.autolabeled_revisions.40k_2015.json: \
 		datasets/nowiki.autolabeled_revisions.100k_2015.json
 	cat $^ | shuf -n 40000 > $@
 
 datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json: \
-		datasets/nowiki.autolabeled_revisions.40k_2015.json
+		datasets/nowiki.labeled_revisions.100k_2015.json
 	cat $< | \
 	revscoring extract \
-		editquality.feature_lists.nowiki.reverted \
+		editquality.feature_lists.nowiki.damaging \
+		editquality.feature_lists.nowiki.goodfaith \
 		--host https://no.wikipedia.org \
 		--extractors $(max_extractors) \
 		--verbose > $@

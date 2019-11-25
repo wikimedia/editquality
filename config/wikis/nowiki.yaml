@@ -5,6 +5,8 @@ host: no.wikipedia.org
 external_samples:
   sampled_revisions.100k_2015:
     quarry_url: https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true
+  human_labeled_revisions.5k_2019:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/nowiki/27/
 
 autolabeled_samples:
   trusted_edits: 1000
@@ -27,11 +29,17 @@ random_samples:
     n: 40000
     input_name: autolabeled_revisions.100k_2015
 
+merged_samples:
+  labeled_revisions.100k_2015:
+    - human_labeled_revisions.5k_2019
+    - autolabeled_revisions.100k_2015
+
 extracted_samples:
   autolabeled_revisions.w_cache.40k_2015:
-    sample: autolabeled_revisions.40k_2015
+    sample: labeled_revisions.100k_2015
     features_for:
-      - reverted
+      - damaging
+      - goodfaith
 
 models:
   reverted:
