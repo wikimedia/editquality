@@ -35,17 +35,17 @@ merged_samples:
     - autolabeled_revisions.100k_2015
 
 extracted_samples:
-  autolabeled_revisions.w_cache.40k_2015:
+  labeled_revisions.w_cache.100k_2015.json:
     sample: labeled_revisions.100k_2015
     features_for:
       - damaging
       - goodfaith
 
 models:
-  reverted:
-    observations: autolabeled_revisions.w_cache.40k_2015
-    label: reverted_for_damage
-    pop_rate_true: 0.019061539539679838
+  damaging:
+    observations: labeled_revisions.w_cache.100k_2015.json
+    label: damaging
+    pop_rate_true: 0.018525821674654473
     tune: true
     cv_train:
       algorithm: GradientBoosting
@@ -55,3 +55,16 @@ models:
         max_depth: 7
         max_features: log2
         n_estimators: 500
+  goodfaith:
+    observations: labeled_revisions.w_cache.100k_2015.json
+    label: goodfaith
+    pop_rate_true: 0.9865927208557759
+    tune: true
+    cv_train:
+      algorithm: GradientBoosting
+      build_number: 1
+      parameters:
+        learning_rate: 0.01
+        max_depth: 7
+        max_features: log2
+        n_estimators: 500 
