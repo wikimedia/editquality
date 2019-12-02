@@ -2844,9 +2844,9 @@ models/nowiki.damaging.gradient_boosting.model: \
 		damaging \
 		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
+		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
+		-p 'n_estimators=700' \
 		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.018525821674654473" \
 		--pop-rate "false=0.9814741783253456" \
@@ -2878,9 +2878,9 @@ models/nowiki.goodfaith.gradient_boosting.model: \
 		goodfaith \
 		--version=$(goodfaith_major_minor).1 \
 		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
+		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
+		-p 'n_estimators=700' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9865927208557759" \
 		--pop-rate "false=0.013407279144224127" \

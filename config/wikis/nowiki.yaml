@@ -52,9 +52,9 @@ models:
       build_number: 1
       parameters:
         learning_rate: 0.01
-        max_depth: 7
+        max_depth: 5
         max_features: log2
-        n_estimators: 500
+        n_estimators: 700
   goodfaith:
     observations: labeled_revisions.w_cache.100k_2015.json
     label: goodfaith
@@ -65,6 +65,6 @@ models:
       build_number: 1
       parameters:
         learning_rate: 0.01
-        max_depth: 7
+        max_depth: 5
         max_features: log2
-        n_estimators: 500 
+        n_estimators: 700 
