@@ -2776,6 +2776,10 @@ nlwiki_tuning_reports: \
 
 
 ############################# Norwegian Wikipedia ################################
+datasets/nowiki.human_labeled_revisions.5k_2019.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/nowiki/27/ > $@
+
 datasets/nowiki.sampled_revisions.100k_2015.json:
 	wget -qO- https://quarry.wmflabs.org/run/67250/output/0/json-lines?download=true > $@
 
@@ -2797,58 +2801,100 @@ datasets/nowiki.revisions_for_review.5k_2015.json: \
 	 shuf -n 2500 \
 	) | shuf > $@
 
+datasets/nowiki.labeled_revisions.100k_2015.json: \
+		datasets/nowiki.human_labeled_revisions.5k_2019.json \
+		datasets/nowiki.autolabeled_revisions.100k_2015.json
+	./utility merge_labels $^ > $@
+
 datasets/nowiki.autolabeled_revisions.40k_2015.json: \
 		datasets/nowiki.autolabeled_revisions.100k_2015.json
 	cat $^ | shuf -n 40000 > $@
 
-datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json: \
-		datasets/nowiki.autolabeled_revisions.40k_2015.json
+datasets/nowiki.labeled_revisions.w_cache.100k_2015.json.json: \
+		datasets/nowiki.labeled_revisions.100k_2015.json
 	cat $< | \
 	revscoring extract \
-		editquality.feature_lists.nowiki.reverted \
+		editquality.feature_lists.nowiki.damaging \
+		editquality.feature_lists.nowiki.goodfaith \
 		--host https://no.wikipedia.org \
 		--extractors $(max_extractors) \
 		--verbose > $@
 
-tuning_reports/nowiki.reverted.md: \
-		datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
+tuning_reports/nowiki.damaging.md: \
+		datasets/nowiki.labeled_revisions.w_cache.100k_2015.json.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.nowiki.reverted \
-		reverted_for_damage \
-		$(reverted_tuning_statistic) \
-		--label-weight $(reverted_weight) \
-		--pop-rate "true=0.019061539539679838" \
-		--pop-rate "false=0.9809384604603202" \
+		editquality.feature_lists.nowiki.damaging \
+		damaging \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.018525821674654473" \
+		--pop-rate "false=0.9814741783253456" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/nowiki.reverted.gradient_boosting.model: \
-		datasets/nowiki.autolabeled_revisions.w_cache.40k_2015.json
+models/nowiki.damaging.gradient_boosting.model: \
+		datasets/nowiki.labeled_revisions.w_cache.100k_2015.json.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.nowiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).1 \
+		editquality.feature_lists.nowiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
+		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
-		--label-weight $(reverted_weight) \
-		--pop-rate "true=0.019061539539679838" \
-		--pop-rate "false=0.9809384604603202" \
+		-p 'n_estimators=700' \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.018525821674654473" \
+		--pop-rate "false=0.9814741783253456" \
 		--center --scale > $@
 
-	revscoring model_info $@ > model_info/nowiki.reverted.md
+	revscoring model_info $@ > model_info/nowiki.damaging.md
+
+tuning_reports/nowiki.goodfaith.md: \
+		datasets/nowiki.labeled_revisions.w_cache.100k_2015.json.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.nowiki.goodfaith \
+		goodfaith \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.9865927208557759" \
+		--pop-rate "false=0.013407279144224127" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/nowiki.goodfaith.gradient_boosting.model: \
+		datasets/nowiki.labeled_revisions.w_cache.100k_2015.json.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.nowiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.9865927208557759" \
+		--pop-rate "false=0.013407279144224127" \
+		--center --scale > $@
+
+	revscoring model_info $@ > model_info/nowiki.goodfaith.md
 
 nowiki_models: \
-	models/nowiki.reverted.gradient_boosting.model
+	models/nowiki.damaging.gradient_boosting.model \
+	models/nowiki.goodfaith.gradient_boosting.model
 
 nowiki_tuning_reports: \
-	tuning_reports/nowiki.reverted.md
+	tuning_reports/nowiki.damaging.md \
+	tuning_reports/nowiki.goodfaith.md
 
 
 ############################# Portugueses Wikipedia ################################
