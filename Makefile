@@ -739,7 +739,7 @@ models/dewiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.dewiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=3' \
 		-p 'max_features="log2"' \
@@ -773,7 +773,7 @@ models/dewiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.dewiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'learning_rate=0.5' \
 		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
@@ -899,7 +899,7 @@ models/enwiki.damaging.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.enwiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
@@ -933,7 +933,7 @@ models/enwiki.goodfaith.gradient_boosting.model: \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.enwiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
@@ -2901,6 +2901,19 @@ nowiki_tuning_reports: \
 datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ > $@
+
+# From https://quarry.wmflabs.org/query/43215
+datasets/ptwiki.sampled_revisions.10k_2020.json:
+	wget -qO- https://quarry.wmflabs.org/run/444194/output/0/json-lines > $@
+
+datasets/ptwiki.autolabeled_revisions.10k_2020.json: \
+		datasets/ptwiki.sampled_revisions.10k_2020.json
+	cat $< | \
+	./utility autolabel --host=https://pt.wikipedia.org \
+		--trusted-groups=bot,sysop,bureaucrat \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
 
 datasets/ptwiki.labeled_revisions.20k_2015.json: \
 		datasets/ptwiki.human_labeled_revisions.20k_2015.json
