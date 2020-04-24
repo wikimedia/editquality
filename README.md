@@ -21,6 +21,8 @@ editquality -h
 ```
 
 ## Local Development
+First, make sure you have `python3`, `virtualenv`, and `git-lfs` installed and configured on your system.  Note that `git-lfs` will need you to run `git lfs install` once before it works. 
+
 You can clone the project repo and work from the
 root directory as follows:
 ```
