@@ -5,6 +5,20 @@ host: pt.wikipedia.org
 external_samples:
   human_labeled_revisions.20k_2015:
     labeling_campaign: https://labels.wmflabs.org/campaigns/ptwiki/7/
+  sampled_revisions.10k_2020:
+    quarry_page: https://quarry.wmflabs.org/query/43215
+    quarry_url: https://quarry.wmflabs.org/run/444194/output/0/json-lines
+
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+   - bot
+   - sysop
+   - bureaucrat
+   - autoreviewer
+   - rollbacker
+  labeled_samples:
+    autolabeled_revisions.10k_2020: sampled_revisions.10k_2020
 
 merged_samples:
   labeled_revisions.20k_2015:
