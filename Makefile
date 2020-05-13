@@ -27,6 +27,7 @@ models: \
 		frwiki_models \
 		glwiki_models \
 		hewiki_models \
+		hiwiki_models \
 		hrwiki_models \
 		huwiki_models \
 		idwiki_models \
@@ -76,6 +77,7 @@ tuning_reports: \
 		frwiki_tuning_reports \
 		glwiki_tuning_reports \
 		hewiki_tuning_reports \
+		hiwiki_tuning_reports \
 		hrwiki_tuning_reports \
 		huwiki_tuning_reports \
 		idwiki_tuning_reports \
@@ -1907,6 +1909,24 @@ hewiki_tuning_reports: \
 	tuning_reports/hewiki.goodfaith.md
 
 
+############################# Hindi Wikipedia ################################
+# From https://quarry.wmflabs.org/query/44835
+datasets/hiwiki.sampled_revisions.10k_2020.json:
+	wget -qO- https://quarry.wmflabs.org/run/467016/output/0/json-lines > $@
+
+datasets/hiwiki.autolabeled_revisions.10k_2020.json: \
+		datasets/hiwiki.sampled_revisions.10k_2020.json
+	cat $< | \
+	./utility autolabel --host=https://hi.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled,autoreview,reviewer \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
+
+hiwiki_models:
+
+hiwiki_tuning_reports:
+
 ############################# Croatian Wikipedia ################################
 # From https://quarry.wmflabs.org/query/21213
 datasets/hrwiki.sampled_revisions.20k_2017.json:
@@ -2910,7 +2930,7 @@ datasets/ptwiki.autolabeled_revisions.10k_2020.json: \
 		datasets/ptwiki.sampled_revisions.10k_2020.json
 	cat $< | \
 	./utility autolabel --host=https://pt.wikipedia.org \
-		--trusted-groups=bot,sysop,bureaucrat \
+		--trusted-groups=bot,sysop,bureaucrat,autoreviewer,rollbacker \
 		--trusted-edits=1000 \
 		--revert-radius=5 \
 		--verbose > $@
