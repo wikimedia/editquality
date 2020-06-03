@@ -1,12 +1,12 @@
 Model Information:
 	 - type: GradientBoosting
 	 - version: 0.5.0
-	 - params: {'scale': True, 'random_state': None, 'validation_fraction': 0.1, 'loss': 'deviance', 'labels': [True, False], 'max_features': 'log2', 'max_leaf_nodes': None, 'n_iter_no_change': None, 'verbose': 0, 'min_impurity_split': None, 'criterion': 'friedman_mse', 'learning_rate': 0.01, 'presort': 'auto', 'init': None, 'min_impurity_decrease': 0.0, 'center': True, 'tol': 0.0001, 'min_weight_fraction_leaf': 0.0, 'multilabel': False, 'population_rates': None, 'warm_start': False, 'min_samples_split': 2, 'label_weights': OrderedDict([(True, 10)]), 'n_estimators': 500, 'min_samples_leaf': 1, 'subsample': 1.0, 'max_depth': 7}
+	 - params: {'multilabel': False, 'min_impurity_decrease': 0.0, 'max_depth': 7, 'min_samples_split': 2, 'tol': 0.0001, 'min_weight_fraction_leaf': 0.0, 'loss': 'deviance', 'label_weights': OrderedDict([(True, 10)]), 'min_samples_leaf': 1, 'max_features': 'log2', 'population_rates': None, 'max_leaf_nodes': None, 'validation_fraction': 0.1, 'min_impurity_split': None, 'learning_rate': 0.01, 'center': True, 'n_estimators': 500, 'random_state': None, 'criterion': 'friedman_mse', 'ccp_alpha': 0.0, 'subsample': 1.0, 'verbose': 0, 'init': None, 'n_iter_no_change': None, 'labels': [True, False], 'presort': 'deprecated', 'warm_start': False, 'scale': True}
 	Environment:
-	 - revscoring_version: '2.5.1'
-	 - platform: 'Linux-4.9.0-9-amd64-x86_64-with-debian-9.9'
+	 - revscoring_version: '2.8.0'
+	 - platform: 'Linux-4.9.0-11-amd64-x86_64-with-debian-9.12'
 	 - machine: 'x86_64'
-	 - version: '#1 SMP Debian 4.9.168-1+deb9u2 (2019-05-13)'
+	 - version: '#1 SMP Debian 4.9.189-3+deb9u1 (2019-09-20)'
 	 - system: 'Linux'
 	 - processor: ''
 	 - python_build: ('default', 'Sep 27 2018 17:25:39')
@@ -15,67 +15,67 @@ Model Information:
 	 - python_implementation: 'CPython'
 	 - python_revision: ''
 	 - python_version: '3.5.3'
-	 - release: '4.9.0-9-amd64'
+	 - release: '4.9.0-11-amd64'
 	
 	Statistics:
-	counts (n=19829):
+	counts (n=19734):
 		label        n         ~True    ~False
 		-------  -----  ---  -------  --------
-		True       954  -->      617       337
-		False    18875  -->     1403     17472
+		True       947  -->      629       318
+		False    18787  -->     1381     17406
 	rates:
 		              True    False
 		----------  ------  -------
 		sample       0.048    0.952
 		population   0.052    0.948
 	match_rate (micro=0.855, macro=0.5):
-		  False    True
-		-------  ------
-		  0.896   0.104
+		  True    False
+		------  -------
+		 0.104    0.896
 	filter_rate (micro=0.145, macro=0.5):
-		  False    True
-		-------  ------
-		  0.104   0.896
-	recall (micro=0.911, macro=0.786):
-		  False    True
-		-------  ------
-		  0.926   0.647
-	!recall (micro=0.661, macro=0.786):
-		  False    True
-		-------  ------
-		  0.647   0.926
-	precision (micro=0.946, macro=0.651):
-		  False    True
-		-------  ------
-		   0.98   0.322
-	!precision (micro=0.356, macro=0.651):
-		  False    True
-		-------  ------
-		  0.322    0.98
-	f1 (micro=0.925, macro=0.691):
-		  False    True
-		-------  ------
-		  0.952    0.43
-	!f1 (micro=0.457, macro=0.691):
-		  False    True
-		-------  ------
-		   0.43   0.952
-	accuracy (micro=0.911, macro=0.911):
-		  False    True
-		-------  ------
-		  0.911   0.911
-	fpr (micro=0.339, macro=0.214):
-		  False    True
-		-------  ------
-		  0.353   0.074
-	roc_auc (micro=0.909, macro=0.909):
-		  False    True
-		-------  ------
-		  0.909   0.909
-	pr_auc (micro=0.965, macro=0.718):
-		  False    True
-		-------  ------
-		  0.994   0.443
+		  True    False
+		------  -------
+		 0.896    0.104
+	recall (micro=0.913, macro=0.795):
+		  True    False
+		------  -------
+		 0.664    0.926
+	!recall (micro=0.678, macro=0.795):
+		  True    False
+		------  -------
+		 0.926    0.664
+	precision (micro=0.947, macro=0.655):
+		  True    False
+		------  -------
+		  0.33    0.981
+	!precision (micro=0.364, macro=0.655):
+		  True    False
+		------  -------
+		 0.981     0.33
+	f1 (micro=0.926, macro=0.697):
+		  True    False
+		------  -------
+		 0.441    0.953
+	!f1 (micro=0.467, macro=0.697):
+		  True    False
+		------  -------
+		 0.953    0.441
+	accuracy (micro=0.913, macro=0.913):
+		  True    False
+		------  -------
+		 0.913    0.913
+	fpr (micro=0.322, macro=0.205):
+		  True    False
+		------  -------
+		 0.074    0.336
+	roc_auc (micro=0.912, macro=0.912):
+		  True    False
+		------  -------
+		 0.912    0.912
+	pr_auc (micro=0.966, macro=0.717):
+		  True    False
+		------  -------
+		 0.441    0.994
 	
-	 - score_schema: {'title': 'Scikit learn-based classifier score with probability', 'type': 'object', 'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object', 'properties': {'true': {'type': 'number'}, 'false': {'type': 'number'}}}}}
+	 - score_schema: {'properties': {'prediction': {'description': 'The most likely label predicted by the estimator', 'type': 'boolean'}, 'probability': {'properties': {'false': {'type': 'number'}, 'true': {'type': 'number'}}, 'description': 'A mapping of probabilities onto each of the potential output labels', 'type': 'object'}}, 'title': 'Scikit learn-based classifier score with probability', 'type': 'object'}
 
