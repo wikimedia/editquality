@@ -2910,7 +2910,7 @@ datasets/ptwiki.autolabeled_revisions.10k_2020.json: \
 		datasets/ptwiki.sampled_revisions.10k_2020.json
 	cat $< | \
 	./utility autolabel --host=https://pt.wikipedia.org \
-		--trusted-groups=bot,sysop,bureaucrat \
+		--trusted-groups=bot,sysop,bureaucrat,autoreviewer,rollbacker \
 		--trusted-edits=1000 \
 		--revert-radius=5 \
 		--verbose > $@
@@ -3747,6 +3747,10 @@ trwiki_tuning_reports: \
 
 
 ############################# Ukranian Wikipedia ################################
+datasets/ukwiki.human_labeled_revisions.5k_2015.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/ukwiki/11/ > $@
+
 datasets/ukwiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/48597/output/0/json-lines?download=true > $@
 
@@ -3759,54 +3763,96 @@ datasets/ukwiki.autolabeled_revisions.20k_2015.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json: \
+datasets/ukwiki.labeled_revisions.20k_2015.json: \
+		datasets/ukwiki.human_labeled_revisions.5k_2015.json \
 		datasets/ukwiki.autolabeled_revisions.20k_2015.json
+	./utility merge_labels $^ > $@
+
+datasets/ukwiki.labeled_revisions.w_cache.20k_2015.json: \
+		datasets/ukwiki.labeled_revisions.20k_2015.json
 	cat $< | \
 	revscoring extract \
-		editquality.feature_lists.ukwiki.reverted \
+		editquality.feature_lists.ukwiki.damaging \
+		editquality.feature_lists.ukwiki.goodfaith \
 		--host https://uk.wikipedia.org \
 		--extractors $(max_extractors) \
 		--verbose > $@
 
-tuning_reports/ukwiki.reverted.md: \
-		datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
+tuning_reports/ukwiki.damaging.md: \
+		datasets/ukwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
-		editquality.feature_lists.ukwiki.reverted \
-		reverted_for_damage \
-		$(reverted_tuning_statistic) \
-		--label-weight $(reverted_weight) \
-		--pop-rate "true=0.021877665713282153" \
-		--pop-rate "false=0.9781223342867178" \
+		editquality.feature_lists.ukwiki.damaging \
+		damaging \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.022485268272511114" \
+		--pop-rate "false=0.9775147317274889" \
 		--center --scale \
 		--cv-timeout 60 \
 		--debug > $@
 
-models/ukwiki.reverted.gradient_boosting.model: \
-		datasets/ukwiki.autolabeled_revisions.w_cache.20k_2015.json
+models/ukwiki.damaging.gradient_boosting.model: \
+		datasets/ukwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.ukwiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
+		editquality.feature_lists.ukwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
+		-p 'max_depth=5' \
 		-p 'max_features="log2"' \
 		-p 'n_estimators=700' \
-		--label-weight $(reverted_weight) \
-		--pop-rate "true=0.021877665713282153" \
-		--pop-rate "false=0.9781223342867178" \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.022485268272511114" \
+		--pop-rate "false=0.9775147317274889" \
 		--center --scale > $@
 
-	revscoring model_info $@ > model_info/ukwiki.reverted.md
+	revscoring model_info $@ > model_info/ukwiki.damaging.md
+
+tuning_reports/ukwiki.goodfaith.md: \
+		datasets/ukwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.ukwiki.goodfaith \
+		goodfaith \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.9853199627830043" \
+		--pop-rate "false=0.014680037216995734" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+
+models/ukwiki.goodfaith.gradient_boosting.model: \
+		datasets/ukwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.ukwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=5' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.9853199627830043" \
+		--pop-rate "false=0.014680037216995734" \
+		--center --scale > $@
+
+	revscoring model_info $@ > model_info/ukwiki.goodfaith.md
 
 ukwiki_models: \
-	models/ukwiki.reverted.gradient_boosting.model
+	models/ukwiki.damaging.gradient_boosting.model \
+	models/ukwiki.goodfaith.gradient_boosting.model
 
 ukwiki_tuning_reports: \
-	tuning_reports/ukwiki.reverted.md
+	tuning_reports/ukwiki.damaging.md \
+	tuning_reports/ukwiki.goodfaith.md
 
 
 ############################# Urdu Wikipedia ################################
