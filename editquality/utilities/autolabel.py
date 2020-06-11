@@ -301,9 +301,19 @@ def get_user_doc(session, user_name):
 
 
 @lru_cache(maxsize=5000)
+def get_global_user_doc(session, user_name):
+    logger.debug("Getting global user_doc for {0}".format(user_name))
+    doc = session.get(action='query', list='globalallusers', agufrom=user_name,
+                      agulimit=1, aguprop=['groups'])
+    return doc['query']['globalallusers'][0]
+
+
+@lru_cache(maxsize=5000)
 def get_user_groups(session, user_name):
     user_doc = get_user_doc(session, user_name)
-    return user_doc.get('groups', []) + user_doc.get('implicitgroups', [])
+    global_user_doc = get_global_user_doc(session, user_name)
+    return user_doc.get('groups', []) + user_doc.get('implicitgroups', []) + \
+        global_user_doc.get('groups', [])
 
 
 @lru_cache(maxsize=5000)
