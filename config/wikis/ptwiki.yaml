@@ -5,6 +5,8 @@ host: pt.wikipedia.org
 external_samples:
   human_labeled_revisions.20k_2015:
     labeling_campaign: https://labels.wmflabs.org/campaigns/ptwiki/7/
+  human_labeled_revisions.4k_2020:
+    labeling_campaign: https://labels.wmflabs.org/campaigns/ptwiki/93/
   sampled_revisions.10k_2020:
     quarry_page: https://quarry.wmflabs.org/query/43215
     quarry_url: https://quarry.wmflabs.org/run/444194/output/0/json-lines
@@ -23,34 +25,44 @@ autolabeled_samples:
 merged_samples:
   labeled_revisions.20k_2015:
     - human_labeled_revisions.20k_2015
+  labeled_revisions.10k_2020:
+    - human_labeled_revisions.4k_2020
+    - autolabeled_revisions.10k_2020
+
+concatenated_samples:
+  labeled_revisions.30k_2015_2020:
+    - labeled_revisions.20k_2015
+    - labeled_revisions.10k_2020
 
 extracted_samples:
-  labeled_revisions.w_cache.20k_2015:
-    sample: labeled_revisions.20k_2015
+  labeled_revisions.w_cache.30k_2015_2020:
+    sample: labeled_revisions.30k_2015_2020
     features_for:
       - damaging
       - goodfaith
 
 models:
   damaging:
-    observations: labeled_revisions.w_cache.20k_2015
+    observations: labeled_revisions.w_cache.30k_2015_2020
     label: damaging
     pop_rate_true: 0.06896029864299047
     tune: true
     cv_train:
       algorithm: GradientBoosting
+      build_number: 1
       parameters:
         learning_rate: 0.01
         max_depth: 7
         max_features: log2
         n_estimators: 700
   goodfaith:
-    observations: labeled_revisions.w_cache.20k_2015
+    observations: labeled_revisions.w_cache.30k_2015_2020
     label: goodfaith
     pop_rate_true: 0.9397669373959542
     tune: true
     cv_train:
       algorithm: GradientBoosting
+      build_number: 1
       parameters:
         learning_rate: 0.01
         max_depth: 7

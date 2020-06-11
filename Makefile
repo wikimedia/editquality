@@ -2922,6 +2922,10 @@ datasets/ptwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/ptwiki/7/ > $@
 
+datasets/ptwiki.human_labeled_revisions.4k_2020.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/ptwiki/93/ > $@
+
 # From https://quarry.wmflabs.org/query/43215
 datasets/ptwiki.sampled_revisions.10k_2020.json:
 	wget -qO- https://quarry.wmflabs.org/run/444194/output/0/json-lines > $@
@@ -2935,12 +2939,22 @@ datasets/ptwiki.autolabeled_revisions.10k_2020.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
+datasets/ptwiki.labeled_revisions.10k_2020.json: \
+		datasets/ptwiki.human_labeled_revisions.4k_2020.json \
+		datasets/ptwiki.autolabeled_revisions.10k_2020.json
+	./utility merge_labels $^ > $@
+
 datasets/ptwiki.labeled_revisions.20k_2015.json: \
 		datasets/ptwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
-datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json: \
-		datasets/ptwiki.labeled_revisions.20k_2015.json
+datasets/ptwiki.labeled_revisions.30k_2015_2020.json: \
+		datasets/ptwiki.labeled_revisions.20k_2015.json \
+		datasets/ptwiki.labeled_revisions.10k_2020.json
+	cat $^ > $@
+
+datasets/ptwiki.labeled_revisions.w_cache.30k_2015_2020.json: \
+		datasets/ptwiki.labeled_revisions.30k_2015_2020.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.ptwiki.damaging \
@@ -2950,7 +2964,7 @@ datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json: \
 		--verbose > $@
 
 tuning_reports/ptwiki.damaging.md: \
-		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
+		datasets/ptwiki.labeled_revisions.w_cache.30k_2015_2020.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -2965,13 +2979,13 @@ tuning_reports/ptwiki.damaging.md: \
 		--debug > $@
 
 models/ptwiki.damaging.gradient_boosting.model: \
-		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
+		datasets/ptwiki.labeled_revisions.w_cache.30k_2015_2020.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ptwiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
@@ -2984,7 +2998,7 @@ models/ptwiki.damaging.gradient_boosting.model: \
 	revscoring model_info $@ > model_info/ptwiki.damaging.md
 
 tuning_reports/ptwiki.goodfaith.md: \
-		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
+		datasets/ptwiki.labeled_revisions.w_cache.30k_2015_2020.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -2999,13 +3013,13 @@ tuning_reports/ptwiki.goodfaith.md: \
 		--debug > $@
 
 models/ptwiki.goodfaith.gradient_boosting.model: \
-		datasets/ptwiki.labeled_revisions.w_cache.20k_2015.json
+		datasets/ptwiki.labeled_revisions.w_cache.30k_2015_2020.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.ptwiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
