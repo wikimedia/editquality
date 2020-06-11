@@ -1,7 +1,8 @@
 language: python
 dist: xenial
 python:
-  - "3.5"
+  - 3.5
+  - 3.7
 
 addons:
   apt:
@@ -47,14 +48,13 @@ addons:
 install:
   - pip install -r requirements.txt
   - pip install -r docs/requirements.txt
+  - pip install -r test-requirements.txt
   - python setup.py install
-  - pip install codecov
-  - pip install flake8
   - pip install twine
   - python -m nltk.downloader stopwords
 
 script:
-  - flake8 . --ignore=E722 --max-line-length=85 --exclude docs/conf.py
+  - flake8 . --max-line-length=85 --exclude docs/conf.py
   - coverage run --source editquality -m pytest -m "not nottravis"
   - sphinx-build -anW -b html docs dist/docs
   - sphinx-build -b linkcheck docs dist/docs
