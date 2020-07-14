@@ -913,6 +913,37 @@ models/enwiki.damaging.gradient_boosting.model: \
 
 	revscoring model_info $@ > model_info/enwiki.damaging.md
 
+
+datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json: \
+		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+        ./utility autolabel --host=https://en.wikipedia.org \
+                --trusted-groups=bot,bureaucrat,sysop \
+                --trusted-edits=1000 \
+                --revert-radius=5 \
+                --verbose > $@
+
+
+models/enwiki.reverted.gradient_boosting.model: \
+		datasets/enwiki.autolabeled_revisions.w_cache.20k_2015.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.enwiki.damaging \
+		reverted_for_damage \
+		--version=$(damaging_major_minor).1 \
+		-p 'learning_rate=0.01' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.034163555464634586" \
+		--pop-rate "false=0.9658364445353654" \
+		--center --scale > $@
+
+	revscoring model_info $@ > model_info/enwiki.reverted.md
+
+
 tuning_reports/enwiki.goodfaith.md: \
 		datasets/enwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
