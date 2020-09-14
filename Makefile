@@ -3682,19 +3682,19 @@ tawiki_tuning_reports: \
 
 
 ############################# Turkish Wikipedia ################################
-datasets/trwiki.human_labeled_revisions.20k_2015.json:
+datasets/trwiki.human_labeled_revisions.20k_2019.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ > $@
 
-datasets/trwiki.sampled_revisions.20k_2015.json:
-	wget -qO- http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true > $@
+datasets/trwiki.sampled_revisions.20k_2019.json:
+	wget -qO- http://quarry.wmflabs.org/run/495204/output/0/json-lines?download=true > $@
 
-datasets/trwiki.labeled_revisions.20k_2015.json: \
-		datasets/trwiki.human_labeled_revisions.20k_2015.json
+datasets/trwiki.labeled_revisions.20k_2019.json: \
+		datasets/trwiki.human_labeled_revisions.20k_2019.json
 	./utility merge_labels $^ > $@
 
-datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
-		datasets/trwiki.labeled_revisions.20k_2015.json
+datasets/trwiki.labeled_revisions.w_cache.20k_2019.json: \
+		datasets/trwiki.labeled_revisions.20k_2019.json
 	cat $< | \
 	revscoring extract \
 		editquality.feature_lists.trwiki.damaging \
@@ -3704,7 +3704,7 @@ datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
 		--verbose > $@
 
 tuning_reports/trwiki.damaging.md: \
-		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
+		datasets/trwiki.labeled_revisions.w_cache.20k_2019.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -3719,7 +3719,7 @@ tuning_reports/trwiki.damaging.md: \
 		--debug > $@
 
 models/trwiki.damaging.gradient_boosting.model: \
-		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
+		datasets/trwiki.labeled_revisions.w_cache.20k_2019.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
@@ -3738,7 +3738,7 @@ models/trwiki.damaging.gradient_boosting.model: \
 	revscoring model_info $@ > model_info/trwiki.damaging.md
 
 tuning_reports/trwiki.goodfaith.md: \
-		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
+		datasets/trwiki.labeled_revisions.w_cache.20k_2019.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -3753,7 +3753,7 @@ tuning_reports/trwiki.goodfaith.md: \
 		--debug > $@
 
 models/trwiki.goodfaith.gradient_boosting.model: \
-		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
+		datasets/trwiki.labeled_revisions.w_cache.20k_2019.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
