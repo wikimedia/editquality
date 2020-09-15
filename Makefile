@@ -3686,6 +3686,9 @@ datasets/trwiki.human_labeled_revisions.20k_2015.json:
 	./utility fetch_labels \
 		https://labels.wmflabs.org/campaigns/trwiki/5/ > $@
 
+datasets/trwiki.sampled_revisions.20k_2015.json:
+	wget -qO- http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true > $@
+
 datasets/trwiki.sampled_revisions.20k_2020.json:
 	wget -qO- http://quarry.wmflabs.org/run/495204/output/0/json-lines?download=true > $@
 
@@ -3693,7 +3696,7 @@ datasets/trwiki.autolabeled_revisions.20k_2020.json: \
 		datasets/trwiki.sampled_revisions.20k_2020.json
 	cat $< | \
 	./utility autolabel --host=https://tr.wikipedia.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot,interface-admin,interface-editor \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot,interface-admin,interface-editor,patroller \
 		--trusted-edits=1000 \
 		--revert-radius=5 \
 		--verbose > $@
@@ -3702,16 +3705,7 @@ datasets/trwiki.labeled_revisions.20k_2015.json: \
 		datasets/trwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@
 
-datasets/trwiki.labeled_revisions.20k_2020.json: \
-		datasets/trwiki.autolabeled_revisions.20k_2020.json
-	./utility merge_labels $^ > $@
-
-datasets/trwiki.labeled_revisions.40k_2015_2020.json: \
-		datasets/trwiki.labeled_revisions.20k_2015.json \
-		datasets/trwiki.labeled_revisions.20k_2020.json
-	cat $^ > $@
-
-datasets/trwiki.labeled_revisions.w_cache.40k_2015_2020.json: \
+datasets/trwiki.labeled_revisions.w_cache.20k_2015.json: \
 		datasets/trwiki.labeled_revisions.20k_2015.json
 	cat $< | \
 	revscoring extract \
@@ -3722,7 +3716,7 @@ datasets/trwiki.labeled_revisions.w_cache.40k_2015_2020.json: \
 		--verbose > $@
 
 tuning_reports/trwiki.damaging.md: \
-		datasets/trwiki.labeled_revisions.w_cache.40k_2015_2020.json
+		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -3737,7 +3731,7 @@ tuning_reports/trwiki.damaging.md: \
 		--debug > $@
 
 models/trwiki.damaging.gradient_boosting.model: \
-		datasets/trwiki.labeled_revisions.w_cache.40k_2015_2020.json
+		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
@@ -3756,7 +3750,7 @@ models/trwiki.damaging.gradient_boosting.model: \
 	revscoring model_info $@ > model_info/trwiki.damaging.md
 
 tuning_reports/trwiki.goodfaith.md: \
-		datasets/trwiki.labeled_revisions.w_cache.40k_2015_2020.json
+		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring tune \
 		config/classifiers.params.yaml \
@@ -3771,7 +3765,7 @@ tuning_reports/trwiki.goodfaith.md: \
 		--debug > $@
 
 models/trwiki.goodfaith.gradient_boosting.model: \
-		datasets/trwiki.labeled_revisions.w_cache.40k_2015_2020.json
+		datasets/trwiki.labeled_revisions.w_cache.20k_2015.json
 	cat $< | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \

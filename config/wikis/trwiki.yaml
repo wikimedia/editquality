@@ -3,6 +3,8 @@ label: Turkish Wikipedia
 host: tr.wikipedia.org
 
 external_samples:
+  sampled_revisions.20k_2015:
+    quarry_url: http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true
   sampled_revisions.20k_2020:
     quarry_url: http://quarry.wmflabs.org/run/495204/output/0/json-lines?download=true
   human_labeled_revisions.20k_2015:
@@ -21,22 +23,16 @@ autolabeled_samples:
     - flow-bot
     - interface-admin
     - interface-editor
+    - patroller
   labeled_samples:
     autolabeled_revisions.20k_2020: sampled_revisions.20k_2020
 
 merged_samples:
-  labeled_revisions.20k_2020:
-    - autolabeled_revisions.20k_2020
   labeled_revisions.20k_2015:
     - human_labeled_revisions.20k_2015
 
-concatenated_samples:
-  labeled_revisions.40k_2015_2020:
-    - labeled_revisions.20k_2015
-    - labeled_revisions.20k_2020
-
 extracted_samples:
-  labeled_revisions.w_cache.40k_2015_2020:
+  labeled_revisions.w_cache.20k_2015:
     sample: labeled_revisions.20k_2015
     features_for:
       - damaging
@@ -44,7 +40,7 @@ extracted_samples:
 
 models:
   damaging:
-    observations: labeled_revisions.w_cache.40k_2015_2020
+    observations: labeled_revisions.w_cache.20k_2015
     label: damaging
     pop_rate_true: 0.0495014425266994
     tune: true
@@ -57,7 +53,7 @@ models:
         max_features: log2
         n_estimators: 700
   goodfaith:
-    observations: labeled_revisions.w_cache.40k_2015_2020
+    observations: labeled_revisions.w_cache.20k_2015
     label: goodfaith
     pop_rate_true: 0.9538897605911829
     tune: true
