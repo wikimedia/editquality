@@ -2,12 +2,12 @@
 Code to find bad words automatically.
 
 It gets a set of added words and determines tf-idf of words
-the it uses K-means algorithm to determine them.
+then it uses K-means algorithm to determine them.
 
 Some parts are copied from
 https://github.com/halfak/Objective-Revision-Evaluation-Service/blob/master/ores/label_reverted.py
 
->>> from bad_words_detection_system import *
+>>> from editquality.bwds import Bot, Edit
 >>> edits = [Edit(1, {'one':1, 'two': 2}, False), Edit(2, {'three':3}, True),
 ...          Edit(3, {'one':5, 'four': 1}, False)]
 >>> bot = Bot()
@@ -15,19 +15,11 @@ https://github.com/halfak/Objective-Revision-Evaluation-Service/blob/master/ores
 >>> bot.parse_bad_edits()
 """
 import math
-import sys
-import traceback
 import json
 import time
-from importlib import import_module
 from collections import OrderedDict
-# TODO: User argparse
 
-from revscoring.extractors.api import Extractor
-from revscoring.datasources import revision_oriented
-
-from mwapi import Session
-import mwreverts
+base_file_path = '/data/project/dexbot/pywikibot-core/something_'
 
 
 class Edit(object):
@@ -54,7 +46,7 @@ class Bot(object):
         self.bad_words_db = {}
         self.bad_counter = 0
         if bool(bad_words_cache) != bool(words_cache):
-            raise "You should define both"
+            raise ValueError("bad_words_cache should be defined if and only words_cache is defined")
         if words_cache:
             self.cache = True
             self.initiate_cache(words_cache, bad_words_cache, no_docs)
@@ -103,16 +95,16 @@ class Bot(object):
 
     def tf_idf(self, word):
         tf = math.log(self.bad_edits.added_words[word]) + 1
-        idf = math.log(float(self.counter)/self.words_db[word])
+        idf = math.log(self.counter/self.words_db[word])
         return tf*idf
 
     def idf(self, word):
-        return math.log(float(self.counter)/self.words_db[word])
+        return math.log(self.counter/self.words_db[word])
 
     def show_results(self, numbers_to_show):
         print("Showing %d results" % numbers_to_show)
         values = sorted(self.possible_bad_words.values())
-        lim = values[numbers_to_show*-1]
+        lim = values[max(0, len(values) - numbers_to_show)]
         res = {}
         for word in self.possible_bad_words:
             if self.possible_bad_words[word] >= lim:
@@ -131,7 +123,7 @@ class Bot(object):
     def show_results2(self, numbers_to_show):
         print("Showing another %d results" % numbers_to_show)
         values = sorted(self.stop_words.values(), reverse=True)
-        lim = values[numbers_to_show*-1]
+        lim = values[max(0, len(values) - numbers_to_show)]
         res = {}
         for word in self.stop_words:
             if self.stop_words[word] <= lim:
