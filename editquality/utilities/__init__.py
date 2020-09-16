@@ -43,4 +43,12 @@ join_observations
 merge_labels
 ++++++++++++
 .. automodule:: editquality.utilities.merge_labels
+
+bad_words_detection_system
+++++++++++++++++++++++++++
+.. automodule:: editquality.utilities.bad_words_detection_system
+
+dump_based_detection
+++++++++++++++++++++
+.. automodule:: editquality.utilities.dump_based_detection
 """
