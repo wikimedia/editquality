@@ -9,6 +9,8 @@ edit quality prediction models for Wikipedia and other Wikimedia projects.
 
 ## Installation
 
+First, follow the [installation instructions for revscoring](https://github.com/wikimedia/revscoring).
+
 At the command line:
 ```
 pip install editquality
