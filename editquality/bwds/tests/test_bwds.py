@@ -2,6 +2,9 @@ from editquality.bwds import import_from_path, cache_parse, Edit, Bot
 from editquality.utilities.bad_words_detection_system import bot_gen
 
 
+EDITS = [Edit(1, {'one': 1, 'two': 2}, False), Edit(2, {'three': 3}, True), Edit(3, {'one': 5, 'four': 1}, False)]
+
+
 def test_import_from_path():
     import_from_path('revscoring.languages.english')
 
@@ -23,7 +26,36 @@ def test_bot_gen():
 
 
 def test_parse_bad_edits():
-    edits = [Edit(1, {'one': 1, 'two': 2}, False), Edit(2, {'three': 3}, True), Edit(3, {'one': 5, 'four': 1}, False)]
     bot = Bot()
-    bot.parse_edits(edits)
+    bot.parse_edits(EDITS)
     bot.parse_bad_edits(numbers_to_show=0)
+
+
+def dump_empty():
+    bot = Bot()
+    bot.dump()
+    with open('words_db.txt') as words_db:
+        assert words_db.read() == '{}'
+    with open('bad_edits_words.txt') as bad_edits_words:
+        assert bad_edits_words.read() == '{}'
+    with open('no_docs.txt') as no_docs:
+        assert no_docs.read() == '0'
+
+
+def dump_toy_data():
+    bot = Bot()
+    bot.parse_edits(EDITS)
+    bot.parse_bad_edits(0)
+    bot.dump()
+    with open('words_db.txt') as words_db:
+        assert words_db.read() == '{"three": 1}'
+    with open('bad_edits_words.txt') as bad_edits_words:
+        assert bad_edits_words.read() == '{"three": 3}'
+    with open('no_docs.txt') as no_docs:
+        assert no_docs.read() == '4'
+
+
+def test_dump():
+    # Calling both tests from here because we want to ensure they're not run concurrently
+    dump_empty()
+    dump_toy_data()
