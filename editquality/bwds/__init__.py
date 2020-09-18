@@ -18,6 +18,7 @@ import math
 import json
 import time
 from collections import OrderedDict
+from importlib import import_module
 
 base_file_path = '/data/project/dexbot/pywikibot-core/something_'
 
@@ -150,8 +151,35 @@ class Bot(object):
             f.write(json.dumps(self.counter))
 
 
-def test_parse_bad_edits():
-    edits = [Edit(1, {'one': 1, 'two': 2}, False), Edit(2, {'three': 3}, True), Edit(3, {'one': 5, 'four': 1}, False)]
-    bot = Bot()
-    bot.parse_edits(edits)
-    bot.parse_bad_edits(numbers_to_show=0)
+def read_rev_pages(f):
+
+    for line in f:
+        parts = line.strip().split('\t')
+
+        if len(parts) == 1:
+            rev_id = parts
+            yield int(rev_id[0]), None
+        elif len(parts) == 2:
+            rev_id, page_id = parts
+            yield int(rev_id), int(page_id)
+
+
+def import_from_path(path):
+    parts = path.split(".")
+    module_path = ".".join(parts[:-1])
+    attribute_name = parts[-1]
+
+    module = import_module(module_path)
+
+    attribute = getattr(module, attribute_name)
+
+    return attribute
+
+
+def cache_parse(pathes, num_res):
+    if not pathes.strip():
+        pathes = 'words_db.txt,bad_edits_words.txt,no_docs.txt'
+    pathes = pathes.split(',')
+    bot = Bot(words_cache=pathes[0], bad_words_cache=pathes[1],
+              no_docs=pathes[2])
+    bot.parse_bad_edits(num_res)
