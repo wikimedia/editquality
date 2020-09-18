@@ -1,6 +1,4 @@
-from editquality.bwds import import_from_path, cache_parse, Edit, Bot, read_rev_pages
-from editquality.utilities.bad_words_detection_system import bot_gen
-
+from editquality.bwds import import_from_path, cache_parse, Edit, Bot, read_rev_pages, bot_gen, EditNamedTuple
 
 EDITS = [Edit(1, {'one': 1, 'two': 2}, False), Edit(2, {'three': 3}, True), Edit(3, {'one': 5, 'four': 1}, False)]
 
@@ -19,10 +17,11 @@ def test_cache_parse():
 
 
 def test_bot_gen():
-    en_main_page_id = 232335
     a_revision_id = 7101436
+    en_main_page_id = 232335
     en_api_url = 'https://en.wikipedia.org/w/api.php'
-    bot_gen([(en_main_page_id, a_revision_id)], 'TODO', en_api_url)
+    assert list(bot_gen([(a_revision_id, en_main_page_id)], 'TODO', en_api_url))[0].as_named_tuple() == \
+        EditNamedTuple(7101436, {"TODO"}, False)
 
 
 def test_read_rev_pages():

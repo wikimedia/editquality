@@ -10,16 +10,7 @@ Use cache:
 python3 bad_words_detection_system.py --cache:
 """
 import sys
-import traceback
-# TODO: User argparse
-
-from revscoring.extractors.api import Extractor
-from revscoring.features.wikitext import Diff
-
-from mwapi import Session
-import mwreverts
-
-from editquality.bwds import Bot, Edit, cache_parse, import_from_path, read_rev_pages
+from editquality.bwds import Bot, Edit, cache_parse, import_from_path, read_rev_pages, bot_gen
 
 
 def handle_args():
@@ -38,38 +29,6 @@ def handle_args():
         else:
             print('Unknown argument')
     return args
-
-
-def bot_gen(rev_pages, language, api_url):
-
-    session = Session(api_url)
-    extractor = Extractor(session)
-
-    for rev_id, page_id in rev_pages:
-        api_result = session.get(action='query', titles='Main Page', prop='revisions', rvlimit=500, rvprop='sha1|ids')
-        revisions = next(iter(api_result['query']['pages'].values()))['revisions']
-
-        sys.stderr.write(".")
-        sys.stderr.flush()
-        try:
-            revisions = [revision for revision in revisions if 'sha1hidden' not in revision]
-
-            # Detect reverted status
-            for revert in mwreverts.detect((revision['sha1'], revision) for revision in revisions):
-                for reverted in revert.reverteds:
-                    # added_words = list(extractor.extract(rev_id, [diff.added_words]))[0]
-                    added_words = list() # TODO how to upgrade this?
-                    yield Edit(rev_id, added_words, reverted)
-
-        except KeyboardInterrupt:
-            sys.stderr.write("\n^C Caught.  Exiting...")
-            break
-
-        except:
-            sys.stderr.write(traceback.format_exc())
-            sys.stderr.write("\n")
-
-    sys.stderr.write("\n")
 
 
 def main():

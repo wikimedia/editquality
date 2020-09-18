@@ -16,11 +16,26 @@ https://github.com/halfak/Objective-Revision-Evaluation-Service/blob/master/ores
 """
 import math
 import json
+import sys
 import time
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 from importlib import import_module
 
+import traceback
+# TODO: User argparse
+
+from revscoring.extractors.api import Extractor
+from revscoring.features.wikitext import Diff
+
+from mwapi import Session
+import mwreverts
+
+
 base_file_path = '/data/project/dexbot/pywikibot-core/something_'
+
+
+# This is nice for debugging, e.g. printing this includes it values
+EditNamedTuple = namedtuple('EditNamedTuple', ['id', 'added_words', 'reverted'])
 
 
 class Edit(object):
@@ -36,6 +51,9 @@ class Edit(object):
         for word in self.added_words:
             temp[word] = temp.get(word, 0) + 1
         self.added_words = temp
+
+    def as_named_tuple(self):
+        return EditNamedTuple(self.id, self.added_words, self.reverted)
 
 
 class Bot(object):
@@ -175,3 +193,38 @@ def cache_parse(pathes, num_res):
     bot = Bot(words_cache=pathes[0], bad_words_cache=pathes[1],
               no_docs=pathes[2])
     bot.parse_bad_edits(num_res)
+
+
+def bot_gen(rev_pages, language, api_url):
+    session = Session(api_url)
+    extractor = Extractor(session)
+
+    for revision_id, page_id in rev_pages:
+        api_result = session.get(action='query', titles='Main Page', prop='revisions', rvlimit=500, rvprop='sha1|ids')
+        revisions = next(iter(api_result['query']['pages'].values()))['revisions']
+
+        sys.stderr.write(".")
+        sys.stderr.flush()
+        try:
+            revisions = [revision for revision in revisions if 'sha1hidden' not in revision]
+
+            reverted_revision_ids = set()
+            # Detect reverted status
+            for revert in mwreverts.detect((revision['sha1'], revision) for revision in revisions):
+                for reverted in revert.reverteds:
+                    reverted_revision_ids.add(reverted['revid'])
+
+            # added_words = list(extractor.extract(rev_id, [diff.added_words]))[0]
+            added_words = list()  # TODO how to upgrade this?
+            yield Edit(revision_id, added_words, revision_id in reverted_revision_ids)
+
+        except KeyboardInterrupt:
+            sys.stderr.write("\n^C Caught.  Exiting...")
+            break
+
+        except:
+            sys.stderr.write(traceback.format_exc())
+            sys.stderr.write("\n")
+
+    sys.stderr.write("\n")
+
