@@ -148,3 +148,10 @@ class Bot(object):
             f.write(json.dumps(self.bad_edits.added_words))
         with open('no_docs.txt', 'w') as f:
             f.write(json.dumps(self.counter))
+
+
+def test_parse_bad_edits():
+    edits = [Edit(1, {'one': 1, 'two': 2}, False), Edit(2, {'three': 3}, True), Edit(3, {'one': 5, 'four': 1}, False)]
+    bot = Bot()
+    bot.parse_edits(edits)
+    bot.parse_bad_edits(numbers_to_show=0)
