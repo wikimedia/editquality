@@ -3689,6 +3689,18 @@ datasets/trwiki.human_labeled_revisions.20k_2015.json:
 datasets/trwiki.sampled_revisions.20k_2015.json:
 	wget -qO- http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true > $@
 
+datasets/trwiki.sampled_revisions.20k_2020.json:
+	wget -qO- http://quarry.wmflabs.org/run/495204/output/0/json-lines?download=true > $@
+
+datasets/trwiki.autolabeled_revisions.20k_2020.json: \
+		datasets/trwiki.sampled_revisions.20k_2020.json
+	cat $< | \
+	./utility autolabel --host=https://tr.wikipedia.org \
+		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,flow-bot,interface-admin,interface-editor,patroller \
+		--trusted-edits=1000 \
+		--revert-radius=5 \
+		--verbose > $@
+
 datasets/trwiki.labeled_revisions.20k_2015.json: \
 		datasets/trwiki.human_labeled_revisions.20k_2015.json
 	./utility merge_labels $^ > $@

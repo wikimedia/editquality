@@ -5,8 +5,27 @@ host: tr.wikipedia.org
 external_samples:
   sampled_revisions.20k_2015:
     quarry_url: http://quarry.wmflabs.org/run/168286/output/0/json-lines?download=true
+  sampled_revisions.20k_2020:
+    quarry_url: http://quarry.wmflabs.org/run/495204/output/0/json-lines?download=true
   human_labeled_revisions.20k_2015:
     labeling_campaign: https://labels.wmflabs.org/campaigns/trwiki/5/
+
+autolabeled_samples:
+  trusted_edits: 1000
+  trusted_groups:
+    - sysop
+    - oversight
+    - bot
+    - rollbacker
+    - checkuser
+    - abusefilter
+    - bureaucrat
+    - flow-bot
+    - interface-admin
+    - interface-editor
+    - patroller
+  labeled_samples:
+    autolabeled_revisions.20k_2020: sampled_revisions.20k_2020
 
 merged_samples:
   labeled_revisions.20k_2015:
