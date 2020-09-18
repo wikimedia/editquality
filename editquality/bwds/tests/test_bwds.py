@@ -1,4 +1,4 @@
-from editquality.bwds import import_from_path, cache_parse, Edit, Bot
+from editquality.bwds import import_from_path, cache_parse, Edit, Bot, read_rev_pages
 from editquality.utilities.bad_words_detection_system import bot_gen
 
 
@@ -23,6 +23,10 @@ def test_bot_gen():
     a_revision_id = 7101436
     en_api_url = 'https://en.wikipedia.org/w/api.php'
     bot_gen([(en_main_page_id, a_revision_id)], 'TODO', en_api_url)
+
+
+def test_read_rev_pages():
+    assert list(read_rev_pages(["0", "1\t2"])) == [(0, None), (1, 2)]
 
 
 def test_parse_bad_edits():
