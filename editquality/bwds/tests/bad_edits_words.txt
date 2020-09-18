@@ -1,1 +1,1 @@
-bad_edits_words
+{"x": 1}

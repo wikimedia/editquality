@@ -11,7 +11,7 @@ def test_cache_parse():
         'editquality/bwds/tests/words_db.txt,'
         'editquality/bwds/tests/bad_edits_words.txt,'
         'editquality/bwds/tests/no_docs.txt',
-        num_res=1
+        0
     )
 
 
