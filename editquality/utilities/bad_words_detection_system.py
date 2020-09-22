@@ -10,7 +10,8 @@ Use cache:
 python3 bad_words_detection_system.py --cache:
 """
 import sys
-from editquality.bwds import Bot, Edit, cache_parse, import_from_path, read_rev_pages, bot_gen
+
+from editquality.bwds import Bot, cache_parse, import_from_path, read_rev_pages, bot_gen
 
 
 def handle_args():
