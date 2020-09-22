@@ -16,6 +16,11 @@ def test_cache_parse():
     )
 
 
+def test_bot_gen_empty():
+    en_api_url = 'https://en.wikipedia.org/w/api.php'
+    assert list(bot_gen([], 'TODO', en_api_url)) == []
+
+
 def test_bot_gen():
     a_revision_id = 7101436
     en_main_page_id = 232335
