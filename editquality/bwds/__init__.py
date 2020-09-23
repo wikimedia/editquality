@@ -19,11 +19,8 @@ import json
 import sys
 import time
 from collections import OrderedDict, namedtuple
-from importlib import import_module
 
 import traceback
-# TODO: User argparse
-from revscoring.datasources import Datasource, revision_oriented
 from revscoring.extractors.api import Extractor
 from revscoring.features import wikitext
 
@@ -181,10 +178,6 @@ def read_rev_pages(f):
             yield int(rev_id), int(page_id)
 
 
-def import_from_path(path):
-    return import_module(path)
-
-
 def cache_parse(pathes, num_res):
     if not pathes.strip():
         pathes = 'words_db.txt,bad_edits_words.txt,no_docs.txt'
@@ -194,7 +187,7 @@ def cache_parse(pathes, num_res):
     bot.parse_bad_edits(num_res)
 
 
-def bot_gen(rev_pages, language, api_url):
+def bot_gen(rev_pages, api_url):
     session = Session(api_url)
     extractor = Extractor(session)
 

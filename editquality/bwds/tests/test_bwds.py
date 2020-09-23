@@ -1,12 +1,8 @@
 from deltas import Token
 
-from editquality.bwds import import_from_path, cache_parse, Edit, Bot, read_rev_pages, bot_gen, EditNamedTuple
+from editquality.bwds import cache_parse, Edit, Bot, read_rev_pages, bot_gen
 
 EDITS = [Edit(1, {'one': 1, 'two': 2}, False), Edit(2, {'three': 3}, True), Edit(3, {'one': 5, 'four': 1}, False)]
-
-
-def test_import_from_path():
-    import_from_path('revscoring.languages.english')
 
 
 def test_cache_parse():
@@ -20,14 +16,14 @@ def test_cache_parse():
 
 def test_bot_gen_empty():
     en_api_url = 'https://en.wikipedia.org/w/api.php'
-    assert list(bot_gen([], 'TODO', en_api_url)) == []
+    assert list(bot_gen([], en_api_url)) == []
 
 
 def test_bot_gen():
     a_revision_id = 979192243
     pasta_page_id = 23871
     en_api_url = 'https://en.wikipedia.org/w/api.php'
-    generated, = bot_gen([(a_revision_id, pasta_page_id)], '', en_api_url)
+    generated, = bot_gen([(a_revision_id, pasta_page_id)], en_api_url)
     assert generated.id == a_revision_id
     assert Token('unleavened', type='word') in generated.added_words
     assert not generated.reverted

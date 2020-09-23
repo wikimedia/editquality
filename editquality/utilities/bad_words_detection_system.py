@@ -4,23 +4,21 @@ The script to find bad words automatically.
 
 python3 bad_words_detection_system.py --rev-pages:f.txt
     --api:https://en.wikipedia.org/w/api.php
-    --language:revscoring.languages.english
 
 Use cache:
 python3 bad_words_detection_system.py --cache:
 """
 import sys
 
-from editquality.bwds import Bot, cache_parse, import_from_path, read_rev_pages, bot_gen
+from editquality.bwds import Bot, cache_parse, read_rev_pages, bot_gen
 
 
+# TODO: Use argparse
 def handle_args():
     args = {}
     for arg in sys.argv[1:]:
         if arg.startswith('--rev-pages:'):
             args['--rev-pages'] = arg[len('--rev-pages:'):]
-        elif arg.startswith('--language:'):
-            args['--language'] = arg[len('--language:'):]
         elif arg.startswith('--api:'):
             args['--api'] = arg[len('--api:'):]
         elif arg.startswith('--cache:'):
@@ -43,13 +41,8 @@ def main():
         return
     rev_pages = read_rev_pages(open(args['--rev-pages']))
 
-    if args['--language'] is not None:
-        language = import_from_path(args['--language'])
-    else:
-        language = None
-
     api_url = args['--api']
-    gen = bot_gen(rev_pages, language, api_url)
+    gen = bot_gen(rev_pages, api_url)
     bot = Bot()
     bot.parse_edits(gen)
     bot.parse_bad_edits(num_res)
