@@ -2,7 +2,11 @@ from deltas import Token
 
 from editquality.bwds import cache_parse, Edit, Bot, read_rev_pages, bot_gen
 
-EDITS = [Edit(1, {'one': 1, 'two': 2}, False), Edit(2, {'three': 3}, True), Edit(3, {'one': 5, 'four': 1}, False)]
+EDITS = [
+    Edit(1, {'one': 1, 'two': 2}, False),
+    Edit(2, {'three': 3}, True),
+    Edit(3, {'one': 5, 'four': 1}, False)
+]
 
 
 def test_cache_parse():
@@ -64,6 +68,7 @@ def dump_toy_data():
 
 
 def test_dump():
-    # Calling both tests from here because we want to ensure they're not run concurrently
+    # Calling both tests from here because we want to ensure they're not run
+    # concurrently
     dump_empty()
     dump_toy_data()

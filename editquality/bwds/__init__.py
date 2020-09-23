@@ -61,7 +61,9 @@ class Bot(object):
         self.bad_words_db = {}
         self.bad_counter = 0
         if bool(bad_words_cache) != bool(words_cache):
-            raise ValueError("bad_words_cache should be defined if and only words_cache is defined")
+            raise ValueError(
+                "bad_words_cache should be defined if and only words_cache is "
+                "defined")
         if words_cache:
             self.cache = True
             self.initiate_cache(words_cache, bad_words_cache, no_docs)
@@ -110,11 +112,11 @@ class Bot(object):
 
     def tf_idf(self, word):
         tf = math.log(self.bad_edits.added_words[word]) + 1
-        idf = math.log(self.counter/self.words_db[word])
-        return tf*idf
+        idf = math.log(self.counter / self.words_db[word])
+        return tf * idf
 
     def idf(self, word):
-        return math.log(self.counter/self.words_db[word])
+        return math.log(self.counter / self.words_db[word])
 
     def show_results(self, numbers_to_show):
         print("Showing %d results" % numbers_to_show)
@@ -192,21 +194,34 @@ def bot_gen(rev_pages, api_url):
     extractor = Extractor(session)
 
     for revision_id, page_id in rev_pages:
-        api_result = session.get(action='query', titles='Main Page', prop='revisions', rvlimit=500, rvprop='sha1|ids')
+        api_result = session.get(
+            action='query',
+            titles='Main Page',
+            prop='revisions',
+            rvlimit=500,
+            rvprop='sha1|ids'
+        )
         revisions = next(iter(api_result['query']['pages'].values()))['revisions']
-        revisions = [revision for revision in revisions if 'sha1hidden' not in revision]
+        revisions = [
+            revision for revision in revisions if 'sha1hidden' not in revision]
 
         sys.stderr.write(".")
         sys.stderr.flush()
         try:
             reverted_revision_ids = set()
             # Detect reverted status
-            for revert in mwreverts.detect((revision['sha1'], revision) for revision in revisions):
+            for revert in mwreverts.detect(
+                    (revision['sha1'], revision) for revision in revisions
+            ):
                 for reverted in revert.reverteds:
                     reverted_revision_ids.add(reverted['revid'])
 
-            added_words = set(extractor.extract(revision_id, wikitext.revision.diff.datasources.words_added))
-            yield Edit(revision_id, added_words, revision_id in reverted_revision_ids)
+            added_words = set(extractor.extract(
+                revision_id, wikitext.revision.diff.datasources.words_added
+            ))
+            yield Edit(
+                revision_id, added_words, revision_id in reverted_revision_ids
+            )
 
         except KeyboardInterrupt:
             sys.stderr.write("\n^C Caught.  Exiting...")
@@ -217,4 +232,3 @@ def bot_gen(rev_pages, api_url):
             sys.stderr.write("\n")
 
     sys.stderr.write("\n")
-
