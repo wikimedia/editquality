@@ -25,11 +25,10 @@ import traceback
 # TODO: User argparse
 from revscoring.datasources import Datasource, revision_oriented
 from revscoring.extractors.api import Extractor
-from revscoring.features.wikitext import revision
+from revscoring.features import wikitext
 
 from mwapi import Session
 import mwreverts
-from tests.extractors.test_extractor import get_last_two
 
 base_file_path = '/data/project/dexbot/pywikibot-core/something_'
 
@@ -202,21 +201,18 @@ def bot_gen(rev_pages, language, api_url):
     for revision_id, page_id in rev_pages:
         api_result = session.get(action='query', titles='Main Page', prop='revisions', rvlimit=500, rvprop='sha1|ids')
         revisions = next(iter(api_result['query']['pages'].values()))['revisions']
+        revisions = [revision for revision in revisions if 'sha1hidden' not in revision]
 
         sys.stderr.write(".")
         sys.stderr.flush()
         try:
-            revisions = [revision for revision in revisions if 'sha1hidden' not in revision]
-
             reverted_revision_ids = set()
             # Detect reverted status
             for revert in mwreverts.detect((revision['sha1'], revision) for revision in revisions):
                 for reverted in revert.reverteds:
                     reverted_revision_ids.add(reverted['revid'])
 
-            # added_words = list(extractor.extract(revision_id, [revision.diff.words_added]))[0]
-            datasource = Datasource("last_two_in_id", get_last_two, depends_on=[revision_oriented.revision.id])
-            added_words = {extractor.extract(revision_id, datasource)}
+            added_words = set(extractor.extract(revision_id, wikitext.revision.diff.datasources.words_added))
             yield Edit(revision_id, added_words, revision_id in reverted_revision_ids)
 
         except KeyboardInterrupt:
