@@ -33,6 +33,17 @@ parent = [
         name="revision.parent.markups_per_token"),
 ]
 
+parent_cjk = [
+    log(wikitext.revision.parent.cjk_chars + 1),
+    log(wikitext.revision.parent.cjk.cjks + 1),
+    div(wikitext.revision.parent.cjk_chars,
+        max(wikitext.revision.parent.cjk.cjks, 1),
+        name="revision.parent.cjkchars_per_cjkwordthing"),
+    div(wikitext.revision.parent.cjk.cjks,
+        max(wikitext.revision.parent.cjk.tokens, 1),
+        name="revision.parent.cjkwordthings_per_token"),
+]
+
 diff = [
     wikitext.revision.diff.markup_delta_sum,
     wikitext.revision.diff.markup_delta_increase,
@@ -92,25 +103,14 @@ diff = [
                         wikitext.revision.longest_repeated_char])
 ]
 
-if hasattr(wikitext.revision, 'cjk') and hasattr(wikitext.revision.parent, 'cjk'):
-    parent.append(
-        log(wikitext.revision.parent.cjk_chars + 1),
-        log(wikitext.revision.parent.cjk.cjks + 1),
-        div(wikitext.revision.parent.cjk_chars,
-            max(wikitext.revision.parent.cjk.cjks, 1),
-            name="revision.parent.cjkchars_per_cjkwordthing"),
-        div(wikitext.revision.parent.cjk.cjks,
-            max(wikitext.revision.parent.cjk.tokens, 1),
-            name="revision.parent.cjkwordthings_per_token"),
-        )
-    diff.append(
-        sub(wikitext.revision.cjk_chars,
-            wikitext.revision.parent.cjk_chars,
-            name="revision.diff.cjkchars_change"),
-        sub(wikitext.revision.cjk.tokens,
-            wikitext.revision.parent.cjk.tokens,
-            name="revision.diff.tokens_change_inc_cjktokens"),
-        sub(wikitext.revision.cjk.cjks,
-            wikitext.revision.parent.cjk.cjks,
-            name="revision.diff.cjkwordthings_change"),
-    )
+diff_cjk = [
+    sub(wikitext.revision.cjk_chars,
+        wikitext.revision.parent.cjk_chars,
+        name="revision.diff.cjkchars_change"),
+    sub(wikitext.revision.cjk.tokens,
+        wikitext.revision.parent.cjk.tokens,
+        name="revision.diff.tokens_change_inc_cjktokens"),
+    sub(wikitext.revision.cjk.cjks,
+        wikitext.revision.parent.cjk.cjks,
+        name="revision.diff.cjkwordthings_change"),
+]

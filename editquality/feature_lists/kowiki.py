@@ -27,5 +27,8 @@ damaging = wikipedia.page + \
     enwiki.badwords + enwiki.informals + enwiki.dict_words
 "Damaging Features"
 
+cjk = wikitext.parent_cjk + wikitext.diff_cjk
+"CJK features"
+
 reverted = damaging
 goodfaith = damaging

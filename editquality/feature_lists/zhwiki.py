@@ -1,5 +1,4 @@
 from revscoring.languages import chinese
-
 from . import enwiki, mediawiki, wikipedia, wikitext
 
 badwords = [
@@ -34,6 +33,9 @@ damaging = wikipedia.page + \
     badwords + informals + words_to_watch + \
     enwiki.badwords + enwiki.informals
 "Damaging Features"
+
+cjk = wikitext.parent_cjk + wikitext.diff_cjk
+"CJK features"
 
 reverted = damaging
 goodfaith = damaging
