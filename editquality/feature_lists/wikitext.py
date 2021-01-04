@@ -38,10 +38,10 @@ parent_cjk = [
     log(wikitext.revision.parent.cjk.cjks + 1),
     div(wikitext.revision.parent.cjk_chars,
         max(wikitext.revision.parent.cjk.cjks, 1),
-        name="revision.parent.cjkchars_per_cjkwordthing"),
+        name="revision.parent.cjk.cjkchars_per_cjkwordthing"),
     div(wikitext.revision.parent.cjk.cjks,
         max(wikitext.revision.parent.cjk.tokens, 1),
-        name="revision.parent.cjkwordthings_per_token"),
+        name="revision.parent.cjk.cjkwordthings_per_token"),
 ]
 
 diff = [
@@ -109,8 +109,8 @@ diff_cjk = [
         name="revision.diff.cjkchars_change"),
     sub(wikitext.revision.cjk.tokens,
         wikitext.revision.parent.cjk.tokens,
-        name="revision.diff.tokens_change_inc_cjktokens"),
+        name="revision.diff.cjk.tokens_change_inc_cjktokens"),
     sub(wikitext.revision.cjk.cjks,
         wikitext.revision.parent.cjk.cjks,
-        name="revision.diff.cjkwordthings_change"),
+        name="revision.diff.cjk.cjkwordthings_change"),
 ]

@@ -27,15 +27,14 @@ words_to_watch = [
     chinese.words_to_watch.revision.diff.match_prop_delta_increase,
     chinese.words_to_watch.revision.diff.match_prop_delta_decrease
 ]
+
 damaging = wikipedia.page + \
     wikitext.parent + wikitext.diff + mediawiki.user_rights + \
     mediawiki.protected_user + mediawiki.comment + \
     badwords + informals + words_to_watch + \
-    enwiki.badwords + enwiki.informals
+    enwiki.badwords + enwiki.informals + \
+    wikitext.parent_cjk + wikitext.diff_cjk
 "Damaging Features"
-
-cjk = wikitext.parent_cjk + wikitext.diff_cjk
-"CJK features"
 
 reverted = damaging
 goodfaith = damaging
