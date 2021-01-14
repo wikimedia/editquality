@@ -15,6 +15,7 @@ ipython/.ipynb_checkpoints/
 .*.sw?
 .ipynb_checkpoints/
 .vscode/
+*.ipynb
 
 # C extensions
 *.so
