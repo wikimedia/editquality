@@ -29,7 +29,7 @@ words_to_watch = [
 ]
 
 damaging = wikipedia.page + \
-    wikitext.parent + wikitext.diff + mediawiki.user_rights + \
+    mediawiki.user_rights + \
     mediawiki.protected_user + mediawiki.comment + \
     badwords + informals + words_to_watch + \
     enwiki.badwords + enwiki.informals + \
