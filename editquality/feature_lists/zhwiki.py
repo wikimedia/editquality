@@ -29,11 +29,10 @@ words_to_watch = [
 ]
 
 damaging = wikipedia.page + \
-    mediawiki.user_rights + \
+    wikitext.parent_cjk + wikitext.diff_cjk + mediawiki.user_rights + \
     mediawiki.protected_user + mediawiki.comment + \
     badwords + informals + words_to_watch + \
-    enwiki.badwords + enwiki.informals + \
-    wikitext.parent_cjk + wikitext.diff_cjk
+    enwiki.badwords + enwiki.informals
 "Damaging Features"
 
 reverted = damaging

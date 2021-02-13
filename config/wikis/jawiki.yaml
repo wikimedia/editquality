@@ -62,5 +62,5 @@ models:
         max_depth: 1
         max_features: log2
         n_estimators: 300
-        min_samples_leaf: 7
+        min_samples_leaf: 3
 

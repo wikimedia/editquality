@@ -45,10 +45,11 @@ models:
     cv_train:
       algorithm: GradientBoosting
       parameters:
-        learning_rate: 0.01
-        max_depth: 7
+        learning_rate: 0.5
+        max_depth: 1
         max_features: log2
-        n_estimators: 700
+        n_estimators: 500
+        min_samples_leaf: 5
   goodfaith:
     observations: labeled_revisions.w_cache.20k_2016
     label: goodfaith
@@ -60,4 +61,5 @@ models:
         learning_rate: 0.01
         max_depth: 7
         max_features: log2
-        n_estimators: 700
+        n_estimators: 500
+        min_samples_leaf: 13

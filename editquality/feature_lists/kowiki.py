@@ -21,11 +21,10 @@ informals = [
 ]
 
 damaging = wikipedia.page + \
-    mediawiki.user_rights + \
+    wikitext.parent_cjk + wikitext.diff_cjk + mediawiki.user_rights + \
     mediawiki.protected_user + mediawiki.comment + \
     badwords + informals + \
-    enwiki.badwords + enwiki.informals + enwiki.dict_words + \
-    wikitext.parent_cjk + wikitext.diff_cjk
+    enwiki.badwords + enwiki.informals
 "Damaging Features"
 
 reverted = damaging
