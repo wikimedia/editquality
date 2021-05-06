@@ -1,5 +1,4 @@
 from revscoring.languages import chinese
-
 from . import enwiki, mediawiki, wikipedia, wikitext
 
 badwords = [
@@ -28,8 +27,9 @@ words_to_watch = [
     chinese.words_to_watch.revision.diff.match_prop_delta_increase,
     chinese.words_to_watch.revision.diff.match_prop_delta_decrease
 ]
+
 damaging = wikipedia.page + \
-    wikitext.parent + wikitext.diff + mediawiki.user_rights + \
+    wikitext.parent_cjk + wikitext.diff_cjk + mediawiki.user_rights + \
     mediawiki.protected_user + mediawiki.comment + \
     badwords + informals + words_to_watch + \
     enwiki.badwords + enwiki.informals

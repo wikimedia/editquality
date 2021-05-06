@@ -13,6 +13,9 @@ ipython/.ipynb_checkpoints/
 # Temporary text editor files
 *~
 .*.sw?
+.ipynb_checkpoints/
+.vscode/
+*.ipynb
 
 # C extensions
 *.so

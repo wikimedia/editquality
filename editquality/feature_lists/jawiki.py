@@ -21,7 +21,7 @@ informals = [
 ]
 
 damaging = wikipedia.page + \
-    wikitext.parent + wikitext.diff + mediawiki.user_rights + \
+    wikitext.parent_cjk + wikitext.diff_cjk + mediawiki.user_rights + \
     mediawiki.protected_user + mediawiki.comment + \
     badwords + informals + \
     enwiki.badwords + enwiki.informals

@@ -46,7 +46,7 @@ models: \
 		srwiki_models \
 		svwiki_models \
 		tawiki_models \
-		translatewiki_models \
+#		translatewiki_models \
 		trwiki_models \
 		ukwiki_models \
 		urwiki_models \
@@ -96,7 +96,7 @@ tuning_reports: \
 		srwiki_tuning_reports \
 		svwiki_tuning_reports \
 		tawiki_tuning_reports \
-		translatewiki_tuning_reports \
+#		translatewiki_tuning_reports \
 		trwiki_tuning_reports \
 		ukwiki_tuning_reports \
 		urwiki_tuning_reports \
@@ -2448,7 +2448,7 @@ models/jawiki.goodfaith.gradient_boosting.model: \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=1' \
 		-p 'max_features="log2"' \
-		-p 'min_samples_leaf=7' \
+		-p 'min_samples_leaf=3' \
 		-p 'n_estimators=300' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.00461076560154407" \
@@ -2522,10 +2522,11 @@ models/kowiki.damaging.gradient_boosting.model: \
 		editquality.feature_lists.kowiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=7' \
+		-p 'learning_rate=0.5' \
+		-p 'max_depth=1' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'min_samples_leaf=5' \
+		-p 'n_estimators=500' \
 		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.038665452792802445" \
 		--pop-rate "false=0.9613345472071976" \
@@ -2559,7 +2560,8 @@ models/kowiki.goodfaith.gradient_boosting.model: \
 		-p 'learning_rate=0.01' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=700' \
+		-p 'min_samples_leaf=13' \
+		-p 'n_estimators=500' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9807743801210304" \
 		--pop-rate "false=0.019225619878969646" \
@@ -4063,11 +4065,11 @@ models/zhwiki.damaging.gradient_boosting.model: \
 		editquality.feature_lists.zhwiki.damaging \
 		damaging \
 		--version=$(damaging_major_minor).0 \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=1' \
 		-p 'max_features="log2"' \
-		-p 'min_samples_leaf=7' \
-		-p 'n_estimators=700' \
+		-p 'min_samples_leaf=3' \
+		-p 'n_estimators=300' \
 		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.0405" \
 		--pop-rate "false=0.9595" \
@@ -4098,11 +4100,11 @@ models/zhwiki.goodfaith.gradient_boosting.model: \
 		editquality.feature_lists.zhwiki.goodfaith \
 		goodfaith \
 		--version=$(goodfaith_major_minor).0 \
-		-p 'learning_rate=0.01' \
-		-p 'max_depth=3' \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=1' \
 		-p 'max_features="log2"' \
-		-p 'min_samples_leaf=5' \
-		-p 'n_estimators=500' \
+		-p 'min_samples_leaf=3' \
+		-p 'n_estimators=300' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.9682" \
 		--pop-rate "false=0.03180000000000005" \
