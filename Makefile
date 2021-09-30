@@ -1910,6 +1910,10 @@ hewiki_tuning_reports: \
 
 
 ############################# Hindi Wikipedia ################################
+datasets/hiwiki.human_labeled_revisions.5k_2020.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/hiwiki/94/ > $@
+
 # From https://quarry.wmflabs.org/query/44835
 datasets/hiwiki.sampled_revisions.10k_2020.json:
 	wget -qO- https://quarry.wmflabs.org/run/467016/output/0/json-lines > $@
@@ -1922,6 +1926,11 @@ datasets/hiwiki.autolabeled_revisions.10k_2020.json: \
 		--trusted-edits=1000 \
 		--revert-radius=5 \
 		--verbose > $@
+
+datasets/hiwiki.labeled_revisions.10k_2020.json: \
+		datasets/hiwiki.human_labeled_revisions.5k_2020.json \
+		datasets/hiwiki.autolabeled_revisions.10k_2020.json
+	./utility merge_labels $^ > $@
 
 uning_reports/hiwiki.reverted.md: \
 		datasets/hiwiki.autolabeled_revisions.w_cache.20k_2017.json
