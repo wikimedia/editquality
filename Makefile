@@ -1923,9 +1923,46 @@ datasets/hiwiki.autolabeled_revisions.10k_2020.json: \
 		--revert-radius=5 \
 		--verbose > $@
 
-hiwiki_models:
+uning_reports/hiwiki.reverted.md: \
+		datasets/hiwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hiwiki.reverted \
+		reverted_for_damage \
+		$(reverted_tuning_statistic) \
+		--label-weight $(reverted_weight) \
+		--pop-rate "true=0.021554310862" \
+		--pop-rate "false=0.978445689138" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
 
-hiwiki_tuning_reports:
+models/hiwiki.reverted.gradient_boosting.model: \
+		datasets/hiwiki.autolabeled_revisions.w_cache.20k_2017.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.hiwiki.reverted \
+		reverted_for_damage \
+		--version=$(reverted_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=3' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight $(reverted_weight) \
+		--pop-rate "true=0.07927353670258512" \
+		--pop-rate "false=0.9207264632974149" \
+		--center --scale > $@
+
+	revscoring model_info $@ > model_info/hiwiki.reverted.md
+
+hiwiki_models: \
+	models/hiwiki.reverted.gradient_boosting.model
+
+hiwiki_tuning_reports: \
+	tuning_reports/hiwiki.reverted.md
+
 
 ############################# Croatian Wikipedia ################################
 # From https://quarry.wmflabs.org/query/21213
