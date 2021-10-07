@@ -1911,67 +1911,103 @@ hewiki_tuning_reports: \
 
 ############################# Hindi Wikipedia ################################
 datasets/hiwiki.human_labeled_revisions.5k_2020.json:
-	./utility fetch_labels \
-		https://labels.wmflabs.org/campaigns/hiwiki/94/ > $@
-
+   ./utility fetch_labels \
+       https://labels.wmflabs.org/campaigns/hiwiki/94/ > $@
+ 
 # From https://quarry.wmflabs.org/query/44835
 datasets/hiwiki.sampled_revisions.10k_2020.json:
-	wget -qO- https://quarry.wmflabs.org/run/467016/output/0/json-lines > $@
-
+   wget -qO- https://quarry.wmflabs.org/run/467016/output/0/json-lines > $@
+ 
 datasets/hiwiki.autolabeled_revisions.10k_2020.json: \
-		datasets/hiwiki.sampled_revisions.10k_2020.json
-	cat $< | \
-	./utility autolabel --host=https://hi.wikipedia.org \
-		--trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled,autoreview,reviewer \
-		--trusted-edits=1000 \
-		--revert-radius=5 \
-		--verbose > $@
-
+       datasets/hiwiki.sampled_revisions.10k_2020.json
+   cat $< | \
+   ./utility autolabel --host=https://hi.wikipedia.org \
+       --trusted-groups=sysop,oversight,bot,rollbacker,checkuser,abusefilter,bureaucrat,autopatrolled,autoreview,reviewer \
+       --trusted-edits=1000 \
+       --revert-radius=5 \
+       --verbose > $@
+ 
 datasets/hiwiki.labeled_revisions.10k_2020.json: \
-		datasets/hiwiki.human_labeled_revisions.5k_2020.json \
-		datasets/hiwiki.autolabeled_revisions.10k_2020.json
-	./utility merge_labels $^ > $@
-
-uning_reports/hiwiki.reverted.md: \
-		datasets/hiwiki.autolabeled_revisions.w_cache.20k_2017.json
-	cat $< | \
-	revscoring tune \
-		config/classifiers.params.yaml \
-		editquality.feature_lists.hiwiki.reverted \
-		reverted_for_damage \
-		$(reverted_tuning_statistic) \
-		--label-weight $(reverted_weight) \
-		--pop-rate "true=0.021554310862" \
-		--pop-rate "false=0.978445689138" \
-		--center --scale \
-		--cv-timeout 60 \
-		--debug > $@
-
-models/hiwiki.reverted.gradient_boosting.model: \
-		datasets/hiwiki.autolabeled_revisions.w_cache.20k_2017.json
-	cat $< | \
-	revscoring cv_train \
-		revscoring.scoring.models.GradientBoosting \
-		editquality.feature_lists.hiwiki.reverted \
-		reverted_for_damage \
-		--version=$(reverted_major_minor).0 \
-		-p 'learning_rate=0.1' \
-		-p 'max_depth=3' \
-		-p 'max_features="log2"' \
-		-p 'n_estimators=500' \
-		--label-weight $(reverted_weight) \
-		--pop-rate "true=0.07927353670258512" \
-		--pop-rate "false=0.9207264632974149" \
-		--center --scale > $@
-
-	revscoring model_info $@ > model_info/hiwiki.reverted.md
-
+       datasets/hiwiki.human_labeled_revisions.5k_2020.json \
+       datasets/hiwiki.autolabeled_revisions.10k_2020.json
+   ./utility merge_labels $^ > $@
+ 
+tuning_reports/hiwiki.damaging.md: \
+       datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json
+   cat $< | \
+   revscoring tune \
+       config/classifiers.params.yaml \
+       editquality.feature_lists.hiwiki.damaging \
+       damaging \
+       $(damaging_tuning_statistic) \
+       --label-weight $(damaging_weight) \
+       --pop-rate "true=0.121685653795745539" \
+       --pop-rate "false=0.878314346204254461" \
+       --center --scale \
+       --cv-timeout 60 \
+       --debug > $@
+ 
+models/hiwiki.damaging.gradient_boosting.model: \
+       datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json
+   cat $< | \
+   revscoring cv_train \
+       revscoring.scoring.models.GradientBoosting \
+       editquality.feature_lists.hiwiki.damaging \
+       damaging \
+       --version=$(damaging_major_minor).0 \
+       -p 'learning_rate=0.1' \
+       -p 'max_depth=7' \
+       -p 'max_features="log2"' \
+       -p 'n_estimators=300' \
+       --label-weight $(damaging_weight) \
+       --pop-rate "true=0.121685653795745539" \
+       --pop-rate "false=0.878314346204254461" \
+       --center --scale > $@
+ 
+   revscoring model_info $@ > model_info/hiwiki.damaging.md
+ 
+tuning_reports/hiwiki.goodfaith.md: \
+       datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json
+   cat $< | \
+   revscoring tune \
+       config/classifiers.params.yaml \
+       editquality.feature_lists.hiwiki.goodfaith \
+       goodfaith \
+       $(goodfaith_tuning_statistic) \
+       --label-weight $(goodfaith_weight) \
+       --pop-rate "true=0.91591894344187922" \
+       --pop-rate "false=0.08408105655812078" \
+       --center --scale \
+       --cv-timeout 60 \
+       --debug > $@
+ 
+models/hiwiki.goodfaith.gradient_boosting.model: \
+       datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json
+   cat $< | \
+   revscoring cv_train \
+       revscoring.scoring.models.GradientBoosting \
+       editquality.feature_lists.hiwiki.goodfaith \
+       goodfaith \
+       --version=$(goodfaith_major_minor).0 \
+       -p 'learning_rate=0.1' \
+       -p 'max_depth=7' \
+       -p 'max_features="log2"' \
+       -p 'n_estimators=300' \
+       --label-weight $(goodfaith_weight) \
+       --pop-rate "true=0.91591894344187922" \
+       --pop-rate "false=0.08408105655812078" \
+       --center --scale > $@
+ 
+   revscoring model_info $@ > model_info/hiwiki.goodfaith.md
+ 
 hiwiki_models: \
-	models/hiwiki.reverted.gradient_boosting.model
-
+   models/hiwiki.damaging.gradient_boosting.model \
+   models/hiwiki.goodfaith.gradient_boosting.model
+ 
 hiwiki_tuning_reports: \
-	tuning_reports/hiwiki.reverted.md
-
+   tuning_reports/hiwiki.damaging.md \
+   tuning_reports/hiwiki.goodfaith.md
+ 
 
 ############################# Croatian Wikipedia ################################
 # From https://quarry.wmflabs.org/query/21213
