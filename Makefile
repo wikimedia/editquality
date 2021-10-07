@@ -1932,6 +1932,16 @@ datasets/hiwiki.labeled_revisions.10k_2020.json: \
 		datasets/hiwiki.autolabeled_revisions.10k_2020.json
 	./utility merge_labels $^ > $@
  
+datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json: \
+		datasets/hiwiki.labeled_revisions.10k_2020.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.hiwiki.damaging \
+		editquality.feature_lists.hiwiki.goodfaith \
+		--host https://hi.wikipedia.org \
+		--extractors $(max_extractors) \
+		--verbose > $@
+
 tuning_reports/hiwiki.damaging.md: \
 		datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json
 	cat $< | \
