@@ -1968,7 +1968,7 @@ models/hiwiki.damaging.gradient_boosting.model: \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=300' \
+		-p 'n_estimators=700' \
 		--label-weight $(damaging_weight) \
 		--pop-rate "true=0.121685653795745539" \
 		--pop-rate "false=0.878314346204254461" \
@@ -2002,7 +2002,7 @@ models/hiwiki.goodfaith.gradient_boosting.model: \
 		-p 'learning_rate=0.1' \
 		-p 'max_depth=7' \
 		-p 'max_features="log2"' \
-		-p 'n_estimators=300' \
+		-p 'n_estimators=500' \
 		--label-weight $(goodfaith_weight) \
 		--pop-rate "true=0.91591894344187922" \
 		--pop-rate "false=0.08408105655812078" \
