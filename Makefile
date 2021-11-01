@@ -1910,10 +1910,14 @@ hewiki_tuning_reports: \
 
 
 ############################# Hindi Wikipedia ################################
+datasets/hiwiki.human_labeled_revisions.5k_2020.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/hiwiki/94/ > $@
+ 
 # From https://quarry.wmflabs.org/query/44835
 datasets/hiwiki.sampled_revisions.10k_2020.json:
-	wget -qO- https://quarry.wmflabs.org/run/467016/output/0/json-lines > $@
-
+   	wget -qO- https://quarry.wmflabs.org/run/467016/output/0/json-lines > $@
+ 
 datasets/hiwiki.autolabeled_revisions.10k_2020.json: \
 		datasets/hiwiki.sampled_revisions.10k_2020.json
 	cat $< | \
@@ -1922,10 +1926,98 @@ datasets/hiwiki.autolabeled_revisions.10k_2020.json: \
 		--trusted-edits=1000 \
 		--revert-radius=5 \
 		--verbose > $@
+ 
+datasets/hiwiki.labeled_revisions.10k_2020.json: \
+		datasets/hiwiki.human_labeled_revisions.5k_2020.json \
+		datasets/hiwiki.autolabeled_revisions.10k_2020.json
+	./utility merge_labels $^ > $@
+ 
+datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json: \
+		datasets/hiwiki.labeled_revisions.10k_2020.json
+	cat $< | \
+	revscoring extract \
+		editquality.feature_lists.hiwiki.damaging \
+		editquality.feature_lists.hiwiki.goodfaith \
+		--host https://hi.wikipedia.org \
+		--extractors $(max_extractors) \
+		--verbose > $@
 
-hiwiki_models:
-
-hiwiki_tuning_reports:
+tuning_reports/hiwiki.damaging.md: \
+		datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hiwiki.damaging \
+		damaging \
+		$(damaging_tuning_statistic) \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.121685653795745539" \
+		--pop-rate "false=0.878314346204254461" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+ 
+models/hiwiki.damaging.gradient_boosting.model: \
+		datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.hiwiki.damaging \
+		damaging \
+		--version=$(damaging_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=700' \
+		--label-weight $(damaging_weight) \
+		--pop-rate "true=0.121685653795745539" \
+		--pop-rate "false=0.878314346204254461" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/hiwiki.damaging.md
+ 
+tuning_reports/hiwiki.goodfaith.md: \
+		datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json
+	cat $< | \
+	revscoring tune \
+		config/classifiers.params.yaml \
+		editquality.feature_lists.hiwiki.goodfaith \
+		goodfaith \
+		$(goodfaith_tuning_statistic) \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.91591894344187922" \
+		--pop-rate "false=0.08408105655812078" \
+		--center --scale \
+		--cv-timeout 60 \
+		--debug > $@
+ 
+models/hiwiki.goodfaith.gradient_boosting.model: \
+		datasets/hiwiki.labeled_revisions.w_cache.10k_2020.json
+	cat $< | \
+	revscoring cv_train \
+		revscoring.scoring.models.GradientBoosting \
+		editquality.feature_lists.hiwiki.goodfaith \
+		goodfaith \
+		--version=$(goodfaith_major_minor).0 \
+		-p 'learning_rate=0.1' \
+		-p 'max_depth=7' \
+		-p 'max_features="log2"' \
+		-p 'n_estimators=500' \
+		--label-weight $(goodfaith_weight) \
+		--pop-rate "true=0.91591894344187922" \
+		--pop-rate "false=0.08408105655812078" \
+		--center --scale > $@
+	
+	revscoring model_info $@ > model_info/hiwiki.goodfaith.md
+ 
+hiwiki_models: \
+	models/hiwiki.damaging.gradient_boosting.model \
+	models/hiwiki.goodfaith.gradient_boosting.model
+ 
+hiwiki_tuning_reports: \
+	tuning_reports/hiwiki.damaging.md \
+	tuning_reports/hiwiki.goodfaith.md
+ 
 
 ############################# Croatian Wikipedia ################################
 # From https://quarry.wmflabs.org/query/21213
