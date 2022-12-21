@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.5.1] - 2022-12-21
+
+### Added
+* Add Github Action that build & pushes to PYPI index
+
 ## [0.5.0] - 2019-08-13
 
 ### Added
