@@ -339,7 +339,7 @@ translatewiki_tuning_reports: \
 datasets/wikidatawiki.autolabeled_revisions.20k_2015.json: \
 		datasets/wikidatawiki.balanced_revisions.20k_2015.json
 	cat $< | \
-	./utility autolabel --host=https://wikidata.org \
+	./utility autolabel --host=https://www.wikidata.org \
 		--trusted-groups=abusefilter,arbcom,bureaucrat,checkuser,rollbacker,sysop,bot \
 		--trusted-edits=1000 \
 		--verbose > $@
@@ -360,8 +360,22 @@ datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json: \
 		editquality.feature_lists.wikidatawiki.reverted \
 		editquality.feature_lists.wikidatawiki.damaging \
 		editquality.feature_lists.wikidatawiki.goodfaith \
-		--host https://wikidata.org \
+		--host https://www.wikidata.org \
 		--verbose > $@
+
+datasets/wikidatawiki.labeled_revisions.6k_2018.json:
+	./utility fetch_labels \
+		https://labels.wmflabs.org/campaigns/wikidatawiki/81/ > $@
+
+datasets/wikidatawiki.labeled_revisions.w_cache.6k_2018.json: \
+                datasets/wikidatawiki.labeled_revisions.6k_2018.json
+        cat $< | \
+        revscoring extract \
+                editquality.feature_lists.wikidatawiki.reverted \
+                editquality.feature_lists.wikidatawiki.damaging \
+                editquality.feature_lists.wikidatawiki.goodfaith \
+                --host https://www.wikidata.org \
+                --verbose > $@
 
 # https://quarry.wmflabs.org/query/27882
 datasets/wikidatawiki.sampled_revisions.500k_2018.json:
@@ -382,29 +396,29 @@ datasets/wikidatawiki.autolabeled_revisions.500k_2018.review.json: \
 	cat $< | grep -E '"needs_review": (true|"True")' | grep -v '"review_reason": "blocked user"' > $@
 
 tuning_reports/wikidatawiki.damaging.md: \
-		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
+		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/wikidatawiki.labeled_revisions.w_cache.6k_2018.json
+	cat $^ | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.damaging \
 		damaging \
 		roc_auc.labels.true \
 		--label-weight $(damaging_weight) \
-		--pop-rate "true=0.0008668694143782405" \
-		--pop-rate "false=0.9991331305856218" \
 		--labels "true,false" \
 		--center --scale \
 		--cv-timeout=60 \
 		--debug > $@
 
 models/wikidatawiki.damaging.gradient_boosting.model: \
-		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
+		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/wikidatawiki.labeled_revisions.w_cache.6k_2018.json
+	cat $^ | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.damaging \
 		damaging \
-		--version=$(damaging_major_minor).0 \
+		--version=$(damaging_major_minor).1 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.01' \
 		-p 'max_features="log2"' \
@@ -414,28 +428,28 @@ models/wikidatawiki.damaging.gradient_boosting.model: \
 		--center --scale > $@
 
 tuning_reports/wikidatawiki.goodfaith.md: \
-		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
+		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/wikidatawiki.labeled_revisions.w_cache.6k_2018.json
+	cat $^ | \
 	revscoring tune \
 		config/classifiers.params.yaml \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		goodfaith \
 		roc_auc.labels.true \
 		--label-weight $(goodfaith_weight) \
-		--pop-rate "true=0.9998525516181488" \
-		--pop-rate "false=0.00014744838185121178" \
 		--labels "true,false" \
 		--cv-timeout=60 \
 		--debug > $@
 
 models/wikidatawiki.goodfaith.gradient_boosting.model: \
-		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json
-	cat $< | \
+		datasets/wikidatawiki.labeled_revisions.w_cache.20k_2015.json \
+		datasets/wikidatawiki.labeled_revisions.w_cache.6k_2018.json
+	cat $^ | \
 	revscoring cv_train \
 		revscoring.scoring.models.GradientBoosting \
 		editquality.feature_lists.wikidatawiki.goodfaith \
 		goodfaith \
-		--version=$(goodfaith_major_minor).0 \
+		--version=$(goodfaith_major_minor).1 \
 		-p 'max_depth=7' \
 		-p 'learning_rate=0.1' \
 		-p 'max_features="log2"' \
